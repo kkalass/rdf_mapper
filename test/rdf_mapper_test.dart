@@ -718,12 +718,118 @@ class _TestIriTermMapper implements RdfIriTermMapper<_TestType> {
   }
 }
 
-class _TestBlankSubjectMapper implements RdfBlankSubjectMapper<_TestType> {
+// Implementation of a test blank subject mapper for addresses
+class AddressMapper implements RdfBlankSubjectMapper<Address> {
   @override
-  _TestType fromBlankNodeTerm(
+  final IriTerm typeIri = IriTerm('http://schema.org/PostalAddress');
+
+  @override
+  Address fromBlankNodeTerm(
     BlankNodeTerm term,
     DeserializationContext context,
   ) {
-    return _TestType(term.id);
+    // Get address properties
+    final street = context.getRequiredPropertyValue<String>(
+      term,
+      IriTerm('http://schema.org/streetAddress'),
+    );
+
+    final city = context.getRequiredPropertyValue<String>(
+      term,
+      IriTerm('http://schema.org/addressLocality'),
+    );
+
+    final zipCode = context.getRequiredPropertyValue<String>(
+      term,
+      IriTerm('http://schema.org/postalCode'),
+    );
+
+    final country = context.getRequiredPropertyValue<String>(
+      term,
+      IriTerm('http://schema.org/addressCountry'),
+    );
+
+    return Address(
+      street: street,
+      city: city,
+      zipCode: zipCode,
+      country: country,
+    );
   }
+
+  @override
+  (RdfSubject, List<Triple>) toRdfSubject(
+    Address value,
+    SerializationContext context, {
+    RdfSubject? parentSubject,
+  }) {
+    // Create a blank node subject - no ID needed for addresses
+    final subject = BlankNodeTerm();
+
+    final triples = <Triple>[
+      // Street address triple
+      Triple(
+        subject,
+        IriTerm('http://schema.org/streetAddress'),
+        LiteralTerm.string(value.street),
+      ),
+
+      // City/locality triple
+      Triple(
+        subject,
+        IriTerm('http://schema.org/addressLocality'),
+        LiteralTerm.string(value.city),
+      ),
+
+      // Postal code triple
+      Triple(
+        subject,
+        IriTerm('http://schema.org/postalCode'),
+        LiteralTerm.string(value.zipCode),
+      ),
+
+      // Country triple
+      Triple(
+        subject,
+        IriTerm('http://schema.org/addressCountry'),
+        LiteralTerm.string(value.country),
+      ),
+
+      // Type triple
+      Triple(subject, RdfConstants.typeIri, typeIri),
+    ];
+
+    return (subject, triples);
+  }
+}
+
+// Address model class representing a postal address
+class Address {
+  final String street;
+  final String city;
+  final String zipCode;
+  final String country;
+
+  Address({
+    required this.street,
+    required this.city,
+    required this.zipCode,
+    required this.country,
+  });
+
+  @override
+  String toString() => 'Address($street, $city, $zipCode, $country)';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Address &&
+          street == other.street &&
+          city == other.city &&
+          zipCode == other.zipCode &&
+          country == other.country;
+
+  @override
+  int get hashCode =>
+      street.hashCode ^ city.hashCode ^ zipCode.hashCode ^ country.hashCode;
 }
