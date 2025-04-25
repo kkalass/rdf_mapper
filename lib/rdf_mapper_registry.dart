@@ -63,8 +63,8 @@ final class RdfMapperRegistry {
   /// @param loggerService Optional logger for diagnostic information
   RdfMapperRegistry() {
     // commonly used deserializers
-    registerIriDeserializer(IriFullDeserializer());
-    registerIriSerializer(IriFullSerializer());
+    registerIriTermDeserializer(IriFullDeserializer());
+    registerIriTermSerializer(IriFullSerializer());
 
     registerLiteralDeserializer(StringDeserializer());
     registerLiteralDeserializer(IntDeserializer());
@@ -79,12 +79,12 @@ final class RdfMapperRegistry {
     registerLiteralSerializer(DateTimeSerializer());
   }
 
-  void registerIriDeserializer<T>(RdfIriTermDeserializer<T> deserializer) {
+  void registerIriTermDeserializer<T>(RdfIriTermDeserializer<T> deserializer) {
     _log.fine('Registering IriTerm deserializer for type ${T.toString()}');
     _iriDeserializers[T] = deserializer;
   }
 
-  void registerIriSerializer<T>(RdfIriTermSerializer<T> serializer) {
+  void registerIriTermSerializer<T>(RdfIriTermSerializer<T> serializer) {
     _log.fine('Registering IriTerm serializer for type ${T.toString()}');
     _iriSerializers[T] = serializer;
   }
@@ -101,7 +101,7 @@ final class RdfMapperRegistry {
     _literalSerializers[T] = serializer;
   }
 
-  void registerBlankNodeDeserializer<T>(
+  void registerBlankNodeTermDeserializer<T>(
     RdfBlankNodeTermDeserializer<T> deserializer,
   ) {
     _log.fine(

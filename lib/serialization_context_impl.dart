@@ -45,9 +45,11 @@ class SerializationContextImpl extends SerializationContext {
       );
     }
 
+    final typeIri = ser.typeIri;
     return [
       // Add rdf:type for the child only if not already present
-      if (!hasTypeTriple) constant(childIri, RdfConstants.typeIri, ser.typeIri),
+      if (!hasTypeTriple && typeIri != null)
+        constant(childIri, RdfConstants.typeIri, typeIri),
       ...childTriples,
       // connect the parent to the child
       constant(subject, predicate, childIri),
@@ -122,11 +124,13 @@ class SerializationContextImpl extends SerializationContext {
       }
     }
 
+    final typeIri = ser.typeIri;
     return (
       iri,
       [
         // Add rdf:type only if not already present in triples
-        if (!hasTypeTriple) constant(iri, RdfConstants.typeIri, ser.typeIri),
+        if (!hasTypeTriple && typeIri != null)
+          constant(iri, RdfConstants.typeIri, typeIri),
         ...triples,
       ],
     );

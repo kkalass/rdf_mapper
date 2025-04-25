@@ -2,6 +2,7 @@ import 'package:rdf_core/constants/rdf_constants.dart';
 import 'package:rdf_core/graph/rdf_graph.dart';
 import 'package:rdf_core/graph/rdf_term.dart';
 import 'package:rdf_core/graph/triple.dart';
+import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
 import 'package:test/test.dart';
 
@@ -346,6 +347,280 @@ void main() {
       // Verify the temporary registration didn't affect the original registry
       expect(rdfMapper.registry.hasSubjectSerializerFor<TestPerson>(), isFalse);
     });
+
+    test(
+      'toString should serialize an object to RDF string using default Turtle format',
+      () {
+        // Register a custom mapper
+        rdfMapper.registry.registerSubjectMapper<TestPerson>(
+          TestPersonMapper(),
+        );
+
+        // Create a test object
+        final person = TestPerson(
+          id: 'http://example.org/person/1',
+          name: 'John Doe',
+          age: 30,
+        );
+
+        // Convert to string with default format (Turtle)
+        final turtle = rdfMapper.toStringFromSubject(person);
+
+        // Verify the Turtle string contains expected content
+        expect(turtle, contains('<http://example.org/person/1>'));
+        expect(turtle, contains('a <http://xmlns.com/foaf/0.1/Person>'));
+        expect(turtle, contains('<http://xmlns.com/foaf/0.1/name>'));
+        expect(turtle, contains('"John Doe"'));
+        expect(turtle, contains('<http://xmlns.com/foaf/0.1/age>'));
+        expect(turtle, contains('"30"'));
+      },
+    );
+
+    test(
+      'fromString should deserialize an RDF string to an object using default Turtle format',
+      () {
+        // Register a custom mapper
+        rdfMapper.registry.registerSubjectMapper<TestPerson>(
+          TestPersonMapper(),
+        );
+
+        // Create a test Turtle string
+        final turtle = '''
+          @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+          
+          <http://example.org/person/1> a foaf:Person ;
+            foaf:name "John Doe" ;
+            foaf:age "30"^^<http://www.w3.org/2001/XMLSchema#integer> .
+        ''';
+
+        // Deserialize from string with default format (Turtle)
+        final person = rdfMapper.fromString<TestPerson>(turtle);
+
+        // Verify the object properties
+        expect(person, isNotNull);
+        expect(person.id, equals('http://example.org/person/1'));
+        expect(person.name, equals('John Doe'));
+        expect(person.age, equals(30));
+      },
+    );
+
+    test(
+      'fromStringAllSubjects should deserialize multiple subjects from an RDF string',
+      () {
+        // Register a custom mapper
+        rdfMapper.registry.registerSubjectMapper<TestPerson>(
+          TestPersonMapper(),
+        );
+
+        // Create a test Turtle string with multiple subjects
+        final turtle = '''
+          @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+          
+          <http://example.org/person/1> a foaf:Person ;
+            foaf:name "John Doe" ;
+            foaf:age "30"^^<http://www.w3.org/2001/XMLSchema#integer> .
+            
+          <http://example.org/person/2> a foaf:Person ;
+            foaf:name "Jane Smith" ;
+            foaf:age "28"^^<http://www.w3.org/2001/XMLSchema#integer> .
+        ''';
+
+        // Deserialize all subjects from Turtle string
+        final objects = rdfMapper.fromStringAllSubjects(
+          turtle,
+          contentType: 'text/turtle',
+        );
+
+        // Verify we got both persons
+        expect(objects.length, equals(2));
+
+        // Convert to strongly typed list for easier assertions
+        final people = objects.whereType<TestPerson>().toList();
+        expect(people.length, equals(2));
+
+        // Sort by name for consistent test assertions
+        people.sort((a, b) => a.name.compareTo(b.name));
+
+        // Verify Jane's properties
+        expect(people[0].id, equals('http://example.org/person/2'));
+        expect(people[0].name, equals('Jane Smith'));
+        expect(people[0].age, equals(28));
+
+        // Verify John's properties
+        expect(people[1].id, equals('http://example.org/person/1'));
+        expect(people[1].name, equals('John Doe'));
+        expect(people[1].age, equals(30));
+      },
+    );
+
+    test(
+      'toStringFromList should serialize a list of objects to an RDF string',
+      () {
+        // Register a custom mapper
+        rdfMapper.registry.registerSubjectMapper<TestPerson>(
+          TestPersonMapper(),
+        );
+
+        // Create test objects
+        final people = [
+          TestPerson(
+            id: 'http://example.org/person/1',
+            name: 'John Doe',
+            age: 30,
+          ),
+          TestPerson(
+            id: 'http://example.org/person/2',
+            name: 'Jane Smith',
+            age: 28,
+          ),
+        ];
+
+        // Convert to Turtle format
+        final turtle = rdfMapper.toStringFromSubjects(
+          people,
+          contentType: 'text/turtle',
+        );
+
+        // Verify the Turtle string contains content from both persons
+        expect(turtle, contains('<http://example.org/person/1>'));
+        expect(turtle, contains('<http://example.org/person/2>'));
+        expect(turtle, contains('"John Doe"'));
+        expect(turtle, contains('"Jane Smith"'));
+        expect(turtle, contains('"30"'));
+        expect(turtle, contains('"28"'));
+      },
+    );
+
+    test('should use injected RdfCore instance', () {
+      // Create RdfMapper with a real RdfCore
+      final customRdfMapper = RdfMapper(registry: RdfMapperRegistry());
+
+      // Register mapper for testing
+      customRdfMapper.registerSubjectMapper<TestPerson>(TestPersonMapper());
+
+      // Test parsing using the mock
+      final person = customRdfMapper.fromString<TestPerson>(
+        'THIS CONTENT IS IGNORED BY THE MOCK',
+      );
+      expect(person.name, equals('Test Person'));
+      expect(person.age, equals(42));
+
+      // Test serialization using the mock
+      final serialized = customRdfMapper.toStringFromSubject(person);
+      expect(serialized, equals('TEST SERIALIZATION RESULT'));
+    });
+  });
+
+  group('Mapper registration convenience methods', () {
+    test(
+      'registerSubjectMapper should register a subject serializer and deserializer in the registry',
+      () {
+        final mapper = TestPersonMapper();
+
+        // Verify mapper is not registered initially
+        expect(
+          rdfMapper.registry.hasSubjectSerializerFor<TestPerson>(),
+          isFalse,
+        );
+        expect(
+          rdfMapper.registry.hasSubjectDeserializerFor<TestPerson>(),
+          isFalse,
+        );
+
+        // Register mapper through convenience method
+        rdfMapper.registerSubjectMapper<TestPerson>(mapper);
+
+        // Verify mapper is now registered
+        expect(
+          rdfMapper.registry.hasSubjectSerializerFor<TestPerson>(),
+          isTrue,
+        );
+        expect(
+          rdfMapper.registry.hasSubjectDeserializerFor<TestPerson>(),
+          isTrue,
+        );
+
+        // Test the registered mapper works for serialization
+        final person = TestPerson(
+          id: 'http://test.org/p1',
+          name: 'Test',
+          age: 25,
+        );
+        final graph = rdfMapper.toGraph(person);
+        expect(graph.triples, isNotEmpty);
+      },
+    );
+
+    test(
+      'registerLiteralMapper should register a serializer and deserializer in the registry',
+      () {
+        final mapper = _TestLiteralMapper();
+
+        // Verify serializer is not registered initially
+        expect(
+          rdfMapper.registry.hasLiteralSerializerFor<_TestType>(),
+          isFalse,
+        );
+        expect(
+          rdfMapper.registry.hasLiteralDeserializerFor<_TestType>(),
+          isFalse,
+        );
+
+        // Register serializer through convenience method
+        rdfMapper.registerLiteralMapper<_TestType>(mapper);
+
+        // Verify serializer is now registered
+        expect(rdfMapper.registry.hasLiteralSerializerFor<_TestType>(), isTrue);
+        expect(
+          rdfMapper.registry.hasLiteralDeserializerFor<_TestType>(),
+          isTrue,
+        );
+      },
+    );
+
+    test(
+      'registerIriTermMapper should register a IriTerm serializer and deserializer in the registry',
+      () {
+        final mapper = _TestIriTermMapper();
+
+        // Verify serializer is not registered initially
+        expect(rdfMapper.registry.hasIriSerializerFor<_TestType>(), isFalse);
+        expect(rdfMapper.registry.hasIriDeserializerFor<_TestType>(), isFalse);
+
+        // Register serializer through convenience method
+        rdfMapper.registerIriTermMapper<_TestType>(mapper);
+
+        // Verify serializer is now registered
+        expect(rdfMapper.registry.hasIriSerializerFor<_TestType>(), isTrue);
+        expect(rdfMapper.registry.hasIriDeserializerFor<_TestType>(), isTrue);
+      },
+    );
+    test(
+      'registerBlankSubjectTermMapper should register a serializer and deserializer for blank nodes in the registry',
+      () {
+        final mapper = _TestBlankSubjectMapper();
+
+        // Verify deserializer is not registered initially
+        expect(
+          rdfMapper.registry.hasBlankNodeDeserializerFor<_TestType>(),
+          isFalse,
+        );
+        expect(
+          rdfMapper.registry.hasSubjectSerializerFor<_TestType>(),
+          isFalse,
+        );
+
+        // Register deserializer through convenience method
+        rdfMapper.registerBlankSubjectMapper<_TestType>(mapper);
+
+        // Verify deserializer is now registered
+        expect(
+          rdfMapper.registry.hasBlankNodeDeserializerFor<_TestType>(),
+          isTrue,
+        );
+        expect(rdfMapper.registry.hasSubjectSerializerFor<_TestType>(), isTrue);
+      },
+    );
   });
 }
 
@@ -409,5 +684,46 @@ class TestPersonMapper implements RdfSubjectMapper<TestPerson> {
     ];
 
     return (subject, triples);
+  }
+}
+
+// Simple test type for registration tests
+class _TestType {
+  final String value;
+  _TestType(this.value);
+}
+
+// Test serializers and deserializers for registration tests
+class _TestLiteralMapper implements RdfLiteralTermMapper<_TestType> {
+  @override
+  LiteralTerm toLiteralTerm(_TestType value, SerializationContext context) {
+    return LiteralTerm.string(value.value);
+  }
+
+  @override
+  _TestType fromLiteralTerm(LiteralTerm term, DeserializationContext context) {
+    return _TestType(term.value);
+  }
+}
+
+class _TestIriTermMapper implements RdfIriTermMapper<_TestType> {
+  @override
+  IriTerm toIriTerm(_TestType value, SerializationContext context) {
+    return IriTerm('http://example.org/${value.value}');
+  }
+
+  @override
+  _TestType fromIriTerm(IriTerm term, DeserializationContext context) {
+    return _TestType(term.iri.split('/').last);
+  }
+}
+
+class _TestBlankSubjectMapper implements RdfBlankSubjectMapper<_TestType> {
+  @override
+  _TestType fromBlankNodeTerm(
+    BlankNodeTerm term,
+    DeserializationContext context,
+  ) {
+    return _TestType(term.id);
   }
 }

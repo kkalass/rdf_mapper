@@ -45,7 +45,7 @@ void main() {
 
     test('registerIriDeserializer registers a new IRI deserializer', () {
       // Register custom deserializer
-      registry.registerIriDeserializer(TestIriDeserializer());
+      registry.registerIriTermDeserializer(TestIriDeserializer());
 
       // Verify registration
       expect(registry.hasIriDeserializerFor<CustomType>(), isTrue);
@@ -57,7 +57,7 @@ void main() {
 
     test('registerIriSerializer registers a new IRI serializer', () {
       // Register custom serializer
-      registry.registerIriSerializer(TestIriSerializer());
+      registry.registerIriTermSerializer(TestIriSerializer());
 
       // Verify registration
       expect(registry.hasIriSerializerFor<CustomType>(), isTrue);
@@ -98,7 +98,7 @@ void main() {
       'registerBlankNodeDeserializer registers a new blank node deserializer',
       () {
         // Register custom deserializer
-        registry.registerBlankNodeDeserializer(TestBlankNodeDeserializer());
+        registry.registerBlankNodeTermDeserializer(TestBlankNodeDeserializer());
 
         // Verify registration
         expect(registry.hasBlankNodeDeserializerFor<CustomType>(), isTrue);

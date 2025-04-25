@@ -114,7 +114,7 @@ void main() {
 
     test('getPropertyValue correctly retrieves IRI values', () {
       // Register custom IRI deserializer
-      registry.registerIriDeserializer<String>(CustomIriDeserializer());
+      registry.registerIriTermDeserializer<String>(CustomIriDeserializer());
 
       final value = context.getPropertyValue<String>(
         subject,
@@ -185,7 +185,7 @@ void main() {
     test(
       'fromRdf correctly converts BlankNode values with custom deserializer',
       () {
-        registry.registerBlankNodeDeserializer<TestAddress>(
+        registry.registerBlankNodeTermDeserializer<TestAddress>(
           CustomBlankNodeDeserializer(),
         );
 
