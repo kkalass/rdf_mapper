@@ -3,7 +3,7 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('RdfOrm more tests', () {
+  group('RdfMapper more tests', () {
     late RdfCore rdf;
     late RdfMapper orm;
     setUp(() {

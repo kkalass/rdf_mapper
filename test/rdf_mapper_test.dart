@@ -6,32 +6,35 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 import 'package:test/test.dart';
 
 void main() {
-  late RdfMapper rdfOrm;
+  late RdfMapper rdfMapper;
 
   setUp(() {
     // Create a fresh instance for each test
-    rdfOrm = RdfMapper.withDefaultRegistry();
+    rdfMapper = RdfMapper.withDefaultRegistry();
   });
 
-  group('RdfOrm facade', () {
+  group('RdfMapper facade', () {
     test(
       'withDefaultRegistry should create an instance with standard mappers',
       () {
-        expect(rdfOrm, isNotNull);
-        expect(rdfOrm.registry, isNotNull);
+        expect(rdfMapper, isNotNull);
+        expect(rdfMapper.registry, isNotNull);
 
         // Check that standard primitive type serializers and deserializers are registered
-        expect(rdfOrm.registry.hasLiteralDeserializerFor<String>(), isTrue);
-        expect(rdfOrm.registry.hasLiteralDeserializerFor<int>(), isTrue);
-        expect(rdfOrm.registry.hasLiteralDeserializerFor<double>(), isTrue);
-        expect(rdfOrm.registry.hasLiteralDeserializerFor<bool>(), isTrue);
-        expect(rdfOrm.registry.hasLiteralDeserializerFor<DateTime>(), isTrue);
+        expect(rdfMapper.registry.hasLiteralDeserializerFor<String>(), isTrue);
+        expect(rdfMapper.registry.hasLiteralDeserializerFor<int>(), isTrue);
+        expect(rdfMapper.registry.hasLiteralDeserializerFor<double>(), isTrue);
+        expect(rdfMapper.registry.hasLiteralDeserializerFor<bool>(), isTrue);
+        expect(
+          rdfMapper.registry.hasLiteralDeserializerFor<DateTime>(),
+          isTrue,
+        );
 
-        expect(rdfOrm.registry.hasLiteralSerializerFor<String>(), isTrue);
-        expect(rdfOrm.registry.hasLiteralSerializerFor<int>(), isTrue);
-        expect(rdfOrm.registry.hasLiteralSerializerFor<double>(), isTrue);
-        expect(rdfOrm.registry.hasLiteralSerializerFor<bool>(), isTrue);
-        expect(rdfOrm.registry.hasLiteralSerializerFor<DateTime>(), isTrue);
+        expect(rdfMapper.registry.hasLiteralSerializerFor<String>(), isTrue);
+        expect(rdfMapper.registry.hasLiteralSerializerFor<int>(), isTrue);
+        expect(rdfMapper.registry.hasLiteralSerializerFor<double>(), isTrue);
+        expect(rdfMapper.registry.hasLiteralSerializerFor<bool>(), isTrue);
+        expect(rdfMapper.registry.hasLiteralSerializerFor<DateTime>(), isTrue);
       },
     );
 
@@ -39,7 +42,9 @@ void main() {
       'toGraph should serialize an object to RDF graph using a custom mapper',
       () {
         // Register a custom mapper
-        rdfOrm.registry.registerSubjectMapper<TestPerson>(TestPersonMapper());
+        rdfMapper.registry.registerSubjectMapper<TestPerson>(
+          TestPersonMapper(),
+        );
 
         // Create a test object
         final person = TestPerson(
@@ -49,7 +54,7 @@ void main() {
         );
 
         // Serialize to graph
-        final graph = rdfOrm.toGraph(person);
+        final graph = rdfMapper.toGraph(person);
 
         // Check for the person name triple
         final nameTriples = graph.findTriples(
@@ -106,7 +111,7 @@ void main() {
 
     test('fromGraphBySubject should deserialize an RDF graph to an object', () {
       // Register a custom mapper
-      rdfOrm.registry.registerSubjectMapper<TestPerson>(TestPersonMapper());
+      rdfMapper.registry.registerSubjectMapper<TestPerson>(TestPersonMapper());
 
       // Create a test graph
       final subjectId = IriTerm('http://example.org/person/1');
@@ -131,7 +136,7 @@ void main() {
       );
 
       // Deserialize from graph
-      final person = rdfOrm.fromGraphBySubject<TestPerson>(graph, subjectId);
+      final person = rdfMapper.fromGraphBySubject<TestPerson>(graph, subjectId);
 
       // Verify the object properties
       expect(person, isNotNull);
@@ -142,7 +147,7 @@ void main() {
 
     test('fromGraph should deserialize the single subject in an RDF graph', () {
       // Register a custom mapper
-      rdfOrm.registry.registerSubjectMapper<TestPerson>(TestPersonMapper());
+      rdfMapper.registry.registerSubjectMapper<TestPerson>(TestPersonMapper());
 
       // Create a test graph with a single subject
       final subjectId = IriTerm('http://example.org/person/1');
@@ -167,7 +172,7 @@ void main() {
       );
 
       // Deserialize from graph
-      final person = rdfOrm.fromGraphSingleSubject<TestPerson>(graph);
+      final person = rdfMapper.fromGraphSingleSubject<TestPerson>(graph);
 
       // Verify the object properties
       expect(person, isNotNull);
@@ -180,7 +185,9 @@ void main() {
       'toGraphFromList should serialize a list of objects to an RDF graph',
       () {
         // Register a custom mapper
-        rdfOrm.registry.registerSubjectMapper<TestPerson>(TestPersonMapper());
+        rdfMapper.registry.registerSubjectMapper<TestPerson>(
+          TestPersonMapper(),
+        );
 
         // Create test objects
         final people = [
@@ -197,7 +204,7 @@ void main() {
         ];
 
         // Serialize to graph
-        final graph = rdfOrm.toGraphFromList(people);
+        final graph = rdfMapper.toGraphFromList(people);
 
         // Check for John's name property
         final johnNameTriples = graph.findTriples(
@@ -245,7 +252,9 @@ void main() {
       'fromGraphAllSubjects should deserialize all subjects in an RDF graph',
       () {
         // Register a custom mapper
-        rdfOrm.registry.registerSubjectMapper<TestPerson>(TestPersonMapper());
+        rdfMapper.registry.registerSubjectMapper<TestPerson>(
+          TestPersonMapper(),
+        );
 
         // Create a test graph with multiple subjects
         final graph = RdfGraph(
@@ -287,7 +296,7 @@ void main() {
         );
 
         // Deserialize all subjects from graph
-        final objects = rdfOrm.fromGraph(graph);
+        final objects = rdfMapper.fromGraph(graph);
 
         // Verify we got both persons
         expect(objects.length, equals(2));
@@ -320,7 +329,7 @@ void main() {
       );
 
       // Serialize to graph using a temporary mapper registration
-      final graph = rdfOrm.toGraph<TestPerson>(
+      final graph = rdfMapper.toGraph<TestPerson>(
         person,
         register: (registry) {
           registry.registerSubjectMapper<TestPerson>(TestPersonMapper());
@@ -335,7 +344,7 @@ void main() {
       expect(nameTriples.isNotEmpty, isTrue);
 
       // Verify the temporary registration didn't affect the original registry
-      expect(rdfOrm.registry.hasSubjectSerializerFor<TestPerson>(), isFalse);
+      expect(rdfMapper.registry.hasSubjectSerializerFor<TestPerson>(), isFalse);
     });
   });
 }
