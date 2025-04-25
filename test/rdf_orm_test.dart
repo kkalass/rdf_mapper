@@ -2,15 +2,15 @@ import 'package:rdf_core/constants/rdf_constants.dart';
 import 'package:rdf_core/graph/rdf_graph.dart';
 import 'package:rdf_core/graph/rdf_term.dart';
 import 'package:rdf_core/graph/triple.dart';
-import 'package:rdf_mapper/rdf_orm.dart';
+import 'package:rdf_mapper/rdf_mapper.dart';
 import 'package:test/test.dart';
 
 void main() {
-  late RdfOrm rdfOrm;
+  late RdfMapper rdfOrm;
 
   setUp(() {
     // Create a fresh instance for each test
-    rdfOrm = RdfOrm.withDefaultRegistry();
+    rdfOrm = RdfMapper.withDefaultRegistry();
   });
 
   group('RdfOrm facade', () {
@@ -167,7 +167,7 @@ void main() {
       );
 
       // Deserialize from graph
-      final person = rdfOrm.fromGraph<TestPerson>(graph);
+      final person = rdfOrm.fromGraphSingleSubject<TestPerson>(graph);
 
       // Verify the object properties
       expect(person, isNotNull);
@@ -287,7 +287,7 @@ void main() {
         );
 
         // Deserialize all subjects from graph
-        final objects = rdfOrm.fromGraphAllSubjects(graph);
+        final objects = rdfOrm.fromGraph(graph);
 
         // Verify we got both persons
         expect(objects.length, equals(2));

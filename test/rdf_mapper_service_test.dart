@@ -1,7 +1,7 @@
 import 'package:rdf_core/constants/rdf_constants.dart';
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/exceptions/deserialization_exception.dart';
-import 'package:rdf_mapper/rdf_orm.dart';
+import 'package:rdf_mapper/rdf_mapper.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -112,7 +112,7 @@ void main() {
       );
 
       // Deserialize the object
-      final person = service.fromGraph<TestPerson>(graph);
+      final person = service.fromGraphSingleSubject<TestPerson>(graph);
 
       // Verify the deserialized object
       expect(person.id, equals('http://example.org/person/1'));
@@ -122,7 +122,7 @@ void main() {
 
     test('fromGraph throws for empty graph', () {
       expect(
-        () => service.fromGraph<TestPerson>(RdfGraph()),
+        () => service.fromGraphSingleSubject<TestPerson>(RdfGraph()),
         throwsA(isA<DeserializationException>()),
       );
     });
@@ -149,7 +149,7 @@ void main() {
 
       // Attempt to deserialize should throw
       expect(
-        () => service.fromGraph<TestPerson>(graph),
+        () => service.fromGraphSingleSubject<TestPerson>(graph),
         throwsA(isA<DeserializationException>()),
       );
     });
@@ -200,7 +200,7 @@ void main() {
         );
 
         // Deserialize all subjects
-        final objects = service.fromGraphAllSubjects(graph);
+        final objects = service.fromGraph(graph);
 
         // Verify the deserialized objects
         expect(objects.length, equals(2));
@@ -258,7 +258,7 @@ void main() {
       );
 
       // Deserialize all subjects
-      final objects = service.fromGraphAllSubjects(graph);
+      final objects = service.fromGraph(graph);
 
       // Only the Person should be deserialized, the Address should be ignored
       expect(objects.length, equals(1));

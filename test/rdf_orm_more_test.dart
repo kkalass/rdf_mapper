@@ -1,14 +1,14 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/rdf_orm.dart';
+import 'package:rdf_mapper/rdf_mapper.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('RdfOrm more tests', () {
     late RdfCore rdf;
-    late RdfOrm orm;
+    late RdfMapper orm;
     setUp(() {
       rdf = RdfCore.withStandardFormats();
-      orm = RdfOrm.withDefaultRegistry();
+      orm = RdfMapper.withDefaultRegistry();
       orm.registry.registerSubjectMapper<TestItem>(
         TestItemRdfMapper(storageRoot: "https://some.static.url.example.com/"),
       );
@@ -22,7 +22,7 @@ void main() {
       expect(graph.triples, isNotEmpty);
 
       // Convert back to item
-      final reconstructedItem = orm.fromGraph<TestItem>(graph);
+      final reconstructedItem = orm.fromGraphSingleSubject<TestItem>(graph);
 
       // Verify properties match
       expect(reconstructedItem.name, equals(originalItem.name));
@@ -110,7 +110,7 @@ void main() {
 
       // Convert to graph
       final graph = parser.parse(turtle);
-      final allSubjects = orm.fromGraphAllSubjects(
+      final allSubjects = orm.fromGraph(
         graph,
         register:
             (registry) => registry.registerSubjectSerializer(

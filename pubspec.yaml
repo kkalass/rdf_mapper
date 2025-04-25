@@ -1,6 +1,20 @@
 name: rdf_mapper
 version: 0.1.0
-homepage: https://github.com/yourusername/rdf_mapper
+homepage: https://kkalass.github.io/rdf_mapper/
+repository: https://github.com/kkalass/rdf_mapper
+issue_tracker: https://github.com/kkalass/rdf_mapper/issues
+documentation: https://kkalass.github.io/rdf_mapper/
+topics:
+  - rdf
+  - linked-data
+  - semantic-web
+  - graph
+  - serialization
+readme: README.md
+changelog: CHANGELOG.md
+license: LICENSE
+maintainers:
+  - "Klas Kalaß <habbatical@gmail.com>"
 description: >
   ORM-like mapping between plain Dart classes and RdfGraph from rdf_core. Companion library for https://pub.dev/packages/rdf_core.
 environment:

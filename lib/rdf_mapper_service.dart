@@ -70,11 +70,11 @@ final class RdfMapperService {
   }
 
   /// Convenience method to deserialize the single subject [T] from an RDF graph
-  T fromGraph<T>(
+  T fromGraphSingleSubject<T>(
     RdfGraph graph, {
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    var result = fromGraphAllSubjects(graph, register: register);
+    var result = fromGraph(graph, register: register);
     if (result.isEmpty) {
       throw DeserializationException('No subject found in graph');
     }
@@ -90,7 +90,7 @@ final class RdfMapperService {
   ///
   /// Optionally, a [register] callback can be provided to temporarily register
   /// custom mappers for this operation. The callback receives a clone of the registry.
-  List<Object> fromGraphAllSubjects(
+  List<Object> fromGraph(
     RdfGraph graph, {
     void Function(RdfMapperRegistry registry)? register,
   }) {

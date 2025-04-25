@@ -8,14 +8,14 @@
 /// ## Usage Example
 ///
 /// ```dart
-/// import 'package:rdf_mapper/rdf_orm.dart';
+/// import 'package:rdf_mapper/rdf_mapper.dart';
 ///
-/// final orm = RdfOrm.withDefaultRegistry();
-/// final graph = orm.toGraph('root', myObject);
-/// final obj = orm.fromGraph<MyType>('root', graph, subject);
+/// final rdfmapper = RdfMapper.withDefaultRegistry();
+/// final graph = rdfmapper.toGraph(myObject);
+/// final obj = rdfmapper.fromGraph<MyType>(graph);
 /// ```
 ///
-library rdf_orm;
+library rdf_mapper;
 
 import 'package:rdf_core/graph/rdf_graph.dart';
 import 'package:rdf_core/graph/rdf_term.dart';
@@ -38,19 +38,20 @@ export 'rdf_subject_serializer.dart';
 export 'serialization_context.dart';
 export 'serialization_context_impl.dart';
 
-/// Central facade for the RDF ORM library, providing access to object mapping and registry operations.
+/// Central facade for the RDF Mapper library, providing access to object mapping and registry operations.
 ///
-/// This class serves as the primary entry point for the RDF ORM system, offering a simplified API
+/// This class serves as the primary entry point for the RDF Mapper system, offering a simplified API
 /// for mapping objects to and from RDF graphs, and for accessing the underlying registry.
-final class RdfOrm {
+final class RdfMapper {
   final RdfMapperService _service;
 
   /// Creates an ORM facade with a custom registry.
-  RdfOrm({required RdfMapperRegistry registry})
+  RdfMapper({required RdfMapperRegistry registry})
     : _service = RdfMapperService(registry: registry);
 
   /// Creates an ORM facade with a default registry and standard mappers.
-  factory RdfOrm.withDefaultRegistry() => RdfOrm(registry: RdfMapperRegistry());
+  factory RdfMapper.withDefaultRegistry() =>
+      RdfMapper(registry: RdfMapperRegistry());
 
   /// Access to the underlying registry for custom mapper registration.
   RdfMapperRegistry get registry => _service.registry;
@@ -66,19 +67,19 @@ final class RdfOrm {
   }
 
   /// Convenience method to deserialize the single subject [T] from an RDF graph
-  T fromGraph<T>(
+  T fromGraphSingleSubject<T>(
+    RdfGraph graph, {
+    void Function(RdfMapperRegistry registry)? register,
+  }) {
+    return _service.fromGraphSingleSubject(graph, register: register);
+  }
+
+  /// Deserialize a list of objects from all subjects in the RDF graph.
+  List<Object> fromGraph(
     RdfGraph graph, {
     void Function(RdfMapperRegistry registry)? register,
   }) {
     return _service.fromGraph(graph, register: register);
-  }
-
-  /// Deserialize a list of objects from all subjects in the RDF graph.
-  List<Object> fromGraphAllSubjects(
-    RdfGraph graph, {
-    void Function(RdfMapperRegistry registry)? register,
-  }) {
-    return _service.fromGraphAllSubjects(graph, register: register);
   }
 
   /// Serialize an object of type [T] to an RDF graph.
