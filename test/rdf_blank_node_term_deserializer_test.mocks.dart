@@ -16,8 +16,6 @@ import 'package:rdf_mapper/rdf_subject_deserializer.dart' as _i4;
 // ignore_for_file: avoid_redundant_argument_values
 // ignore_for_file: avoid_setters_without_getters
 // ignore_for_file: comment_references
-// ignore_for_file: deprecated_member_use
-// ignore_for_file: deprecated_member_use_from_same_package
 // ignore_for_file: implementation_imports
 // ignore_for_file: invalid_use_of_visible_for_testing_member
 // ignore_for_file: must_be_immutable

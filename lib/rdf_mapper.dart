@@ -11,8 +11,14 @@
 /// import 'package:rdf_mapper/rdf_mapper.dart';
 ///
 /// final rdfmapper = RdfMapper.withDefaultRegistry();
-/// final graph = rdfmapper.toGraph(myObject);
-/// final obj = rdfmapper.deserialize<MyType>(graph);
+///
+/// // String-based operations
+/// final turtle = rdfmapper.serialize(myObject);
+/// final obj = rdfmapper.deserialize<MyType>(turtle);
+///
+/// // Graph-based operations
+/// final graph = rdfmapper.graph.serialize(myObject);
+/// final objFromGraph = rdfmapper.graph.deserialize<MyType>(graph);
 /// ```
 ///
 library rdf_mapper;
@@ -22,6 +28,7 @@ import 'package:rdf_mapper/rdf_blank_subject_mapper.dart';
 import 'package:rdf_mapper/rdf_iri_term_mapper.dart';
 import 'package:rdf_mapper/rdf_literal_term_mapper.dart';
 import 'package:rdf_mapper/rdf_subject_mapper.dart';
+import 'package:rdf_mapper/graph_operations.dart';
 
 import 'rdf_mapper_registry.dart';
 import 'rdf_mapper_service.dart';
@@ -40,16 +47,23 @@ export 'rdf_subject_mapper.dart';
 export 'rdf_subject_serializer.dart';
 export 'serialization_context.dart';
 export 'serialization_context_impl.dart';
+export 'graph_operations.dart';
 
 /// Central facade for the RDF Mapper library, providing access to object mapping and registry operations.
 ///
 /// This class serves as the primary entry point for the RDF Mapper system, offering a simplified API
-/// for mapping objects to and from RDF graphs, and for accessing the underlying registry.
+/// for mapping objects to and from RDF string representations, as well as access to graph operations
+/// through the [graph] property.
+///
+/// The API is organized into two main categories:
+/// - Primary API: String-based operations for typical use cases
+/// - Graph API: Direct graph manipulation through the [graph] property for advanced scenarios
 final class RdfMapper {
   final RdfMapperService _service;
   final RdfCore _rdfCore;
+  final GraphOperations _graphOperations;
 
-  /// Creates an ORM facade with custom components.
+  /// Creates an RDF Mapper facade with custom components.
   ///
   /// Allows dependency injection of both the registry and RDF core components,
   /// enabling more flexible usage and better testability.
@@ -58,38 +72,87 @@ final class RdfMapper {
   /// @param rdfCore Optional RDF core instance for string parsing/serialization
   RdfMapper({required RdfMapperRegistry registry, RdfCore? rdfCore})
     : _service = RdfMapperService(registry: registry),
-      _rdfCore = rdfCore ?? RdfCore.withStandardFormats();
+      _rdfCore = rdfCore ?? RdfCore.withStandardFormats(),
+      _graphOperations = GraphOperations(RdfMapperService(registry: registry));
 
-  /// Creates an ORM facade with a default registry and standard mappers.
+  /// Creates an RDF Mapper facade with a default registry and standard mappers.
   factory RdfMapper.withDefaultRegistry() =>
       RdfMapper(registry: RdfMapperRegistry());
 
   /// Access to the underlying registry for custom mapper registration.
   RdfMapperRegistry get registry => _service.registry;
 
-  /// Deserialize an object of type [T] from an RDF graph, identified by the subject.
-  T deserializeSubject<T>(
-    RdfGraph graph,
+  /// Access to graph-based operations.
+  ///
+  /// This property provides access to the graph operations API, which works directly
+  /// with RDF graphs instead of string representations.
+  GraphOperations get graph => _graphOperations;
+
+  // ---- PRIMARY API: STRING-BASED OPERATIONS ----
+
+  /// Deserializes an object of type [T] from an RDF string representation.
+  ///
+  /// This method parses the provided [rdfString] into an RDF graph using the specified
+  /// [format], then deserializes it into an object of type [T] using registered mappers.
+  ///
+  /// [format] should be a MIME type like 'text/turtle' or 'application/ld+json'.
+  /// If not specified, the format will be auto-detected.
+  ///
+  /// The [register] callback allows temporary registration of custom mappers
+  /// for this operation without affecting the global registry.
+  ///
+  /// Usage:
+  /// ```dart
+  /// // Register a mapper for the Person class
+  /// rdfMapper.registerSubjectMapper<Person>(PersonMapper());
+  ///
+  /// final turtle = '''
+  ///   @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+  ///   <http://example.org/person/1> a foaf:Person ;
+  ///     foaf:name "John Doe" ;
+  ///     foaf:age 30 .
+  /// ''';
+  ///
+  /// final person = rdfMapper.deserialize<Person>(turtle);
+  /// ```
+  T deserialize<T>(
+    String rdfString, {
+    String? format,
+    void Function(RdfMapperRegistry registry)? register,
+  }) {
+    final graph = _rdfCore.parse(rdfString, contentType: format);
+    return _graphOperations.deserialize<T>(graph, register: register);
+  }
+
+  /// Deserializes an object of type [T] from an RDF string, identified by the subject.
+  ///
+  /// This method is similar to [deserialize] but allows specifying a particular subject
+  /// to deserialize when the RDF representation contains multiple subjects.
+  ///
+  /// [format] should be a MIME type like 'text/turtle' or 'application/ld+json'.
+  /// If not specified, the format will be auto-detected.
+  T deserializeBySubject<T>(
+    String rdfString,
     RdfSubject subjectId, {
+    String? format,
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    return _service.fromGraphBySubject<T>(graph, subjectId, register: register);
+    final graph = _rdfCore.parse(rdfString, contentType: format);
+    return _graphOperations.deserializeBySubject<T>(
+      graph,
+      subjectId,
+      register: register,
+    );
   }
 
-  /// Convenience method to deserialize a single subject from an RDF graph.
-  T deserializeSingle<T>(
-    RdfGraph graph, {
-    void Function(RdfMapperRegistry registry)? register,
-  }) {
-    return _service.fromGraphSingleSubject(graph, register: register);
-  }
-
-  /// Deserialize multiple objects from an RDF string representation.
+  /// Deserializes all subjects from an RDF string into a list of objects.
   ///
-  /// This method deserializes all subjects in the parsed RDF graph into a list of objects.
+  /// This method parses the RDF string and deserializes all subjects in the graph
+  /// into objects using the registered mappers. The resulting list may contain
+  /// objects of different types.
   ///
-  /// [contentType] should be a MIME type like 'text/turtle' or 'application/ld+json'.
-  /// Defaults to 'text/turtle' if not specified.
+  /// [format] should be a MIME type like 'text/turtle' or 'application/ld+json'.
+  /// If not specified, the format will be auto-detected.
   ///
   /// Usage:
   /// ```dart
@@ -110,114 +173,40 @@ final class RdfMapper {
   ///   .whereType<Person>()
   ///   .toList();
   /// ```
-  ///
   List<Object> deserializeAll(
-    RdfGraph graph, {
-    void Function(RdfMapperRegistry registry)? register,
-  }) {
-    return _service.fromGraph(graph, register: register);
-  }
-
-  /// Serialize an object of type [T] to an RDF graph.
-  RdfGraph toGraph<T>(
-    T instance, {
-    void Function(RdfMapperRegistry registry)? register,
-  }) {
-    return _service.toGraph<T>(instance, register: register);
-  }
-
-  /// Serialize a list of objects to an RDF graph.
-  RdfGraph toGraphList<T>(
-    List<T> instances, {
-    void Function(RdfMapperRegistry registry)? register,
-  }) {
-    return _service.toGraphFromList<T>(instances, register: register);
-  }
-
-  /// Deserialize an object of type [T] from an RDF string representation.
-  ///
-  /// This method parses the provided [rdfString] into an RDF graph using the specified
-  /// [contentType] format, then deserializes it into an object of type [T] using the
-  /// registered subject mappers.
-  ///
-  /// [contentType] should be a MIME type like 'text/turtle' or 'application/ld+json'.
-  /// If not specified, the format will be auto-detected.
-  ///
-  /// Usage:
-  /// ```dart
-  /// // Register a mapper for the Person class
-  /// rdfMapper.registerSubjectMapper<Person>(PersonMapper());
-  ///
-  /// final turtle = '''
-  ///   @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-  ///   <http://example.org/person/1> a foaf:Person ;
-  ///     foaf:name "John Doe" ;
-  ///     foaf:age 30 .
-  /// ''';
-  ///
-  /// final person = rdfMapper.deserialize<Person>(turtle);
-  /// ```
-  ///
-  T deserialize<T>(
     String rdfString, {
-    String? contentType,
+    String? format,
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    final graph = _rdfCore.parse(rdfString, contentType: contentType);
-    return deserializeSingle<T>(graph, register: register);
+    final graph = _rdfCore.parse(rdfString, contentType: format);
+    return _graphOperations.deserializeAll(graph, register: register);
   }
 
-  /// Deserialize an object of type [T] from an RDF string, identified by the subject.
+  /// Deserializes all subjects of type [T] from an RDF string.
   ///
-  /// This method is similar to [deserialize] but allows specifying a particular subject
-  /// to deserialize when the RDF representation contains multiple subjects.
+  /// This method is a type-safe variant of [deserializeAll] that filters
+  /// the results to only include objects of the specified type.
   ///
-  /// [contentType] should be a MIME type like 'text/turtle' or 'application/ld+json'.
+  /// [format] should be a MIME type like 'text/turtle' or 'application/ld+json'.
   /// If not specified, the format will be auto-detected.
-  ///
-  /// @deprecated Use [deserializeBySubject] instead
-  @Deprecated('Use deserializeBySubject instead')
-  T fromStringBySubject<T>(
-    String rdfString,
-    RdfSubject subjectId, {
-    String? contentType,
+  List<T> deserializeAllOfType<T>(
+    String rdfString, {
+    String? format,
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    return deserializeBySubject<T>(
+    return deserializeAll(
       rdfString,
-      subjectId,
-      contentType: contentType,
+      format: format,
       register: register,
-    );
+    ).whereType<T>().toList();
   }
 
-  /// Deserialize an object of type [T] from an RDF string, identified by the subject.
-  T deserializeBySubject<T>(
-    String rdfString,
-    RdfSubject subjectId, {
-    String? contentType,
-    void Function(RdfMapperRegistry registry)? register,
-  }) {
-    final graph = _rdfCore.parse(rdfString, contentType: contentType);
-    return deserializeSubject<T>(graph, subjectId, register: register);
-  }
-
-  /// Deserialize multiple objects from an RDF string representation.
-  List<Object> deserializeAllFromString(
-    String rdfString, {
-    String? contentType,
-    void Function(RdfMapperRegistry registry)? register,
-  }) {
-    final graph = _rdfCore.parse(rdfString, contentType: contentType);
-    return deserializeAll(graph, register: register);
-  }
-
-  /// Serialize an object of type [T] to an RDF string representation.
+  /// Serializes an object of type [T] to an RDF string representation.
   ///
   /// This method converts the provided [instance] to an RDF graph using registered serializers,
   /// then serializes the graph to a string in the specified format.
   ///
-  /// [contentType] should be a MIME type like 'text/turtle' or 'application/ld+json'.
+  /// [format] should be a MIME type like 'text/turtle' or 'application/ld+json'.
   /// Defaults to 'text/turtle' if not specified.
   ///
   /// Usage:
@@ -235,19 +224,19 @@ final class RdfMapper {
   /// ```
   String serialize<T>(
     T instance, {
-    String contentType = 'text/turtle',
+    String format = 'text/turtle',
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    final graph = toGraph<T>(instance, register: register);
-    return _rdfCore.serialize(graph, contentType: contentType);
+    final graph = this.graph.serialize<T>(instance, register: register);
+    return _rdfCore.serialize(graph, contentType: format);
   }
 
-  /// Serialize a list of objects to an RDF string representation.
+  /// Serializes a list of objects to an RDF string representation.
   ///
   /// This method converts the provided [instances] to an RDF graph using registered serializers,
   /// then serializes the graph to a string in the specified format.
   ///
-  /// [contentType] should be a MIME type like 'text/turtle' or 'application/ld+json'.
+  /// [format] should be a MIME type like 'text/turtle' or 'application/ld+json'.
   /// Defaults to 'text/turtle' if not specified.
   ///
   /// Usage:
@@ -262,30 +251,16 @@ final class RdfMapper {
   ///
   /// final turtle = rdfMapper.serializeList(people);
   /// ```
-  ///
-  /// @deprecated Use [serializeList] instead
-  @Deprecated('Use serializeList instead')
-  String toStringFromSubjects<T>(
-    List<T> instances, {
-    String contentType = 'text/turtle',
-    void Function(RdfMapperRegistry registry)? register,
-  }) {
-    return serializeList<T>(
-      instances,
-      contentType: contentType,
-      register: register,
-    );
-  }
-
-  /// Serialize a list of objects to an RDF string representation.
   String serializeList<T>(
     List<T> instances, {
-    String contentType = 'text/turtle',
+    String format = 'text/turtle',
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    final graph = toGraphList<T>(instances, register: register);
-    return _rdfCore.serialize(graph, contentType: contentType);
+    final graph = this.graph.serializeList<T>(instances, register: register);
+    return _rdfCore.serialize(graph, contentType: format);
   }
+
+  // ---- MAPPER REGISTRATION METHODS ----
 
   /// Registers a subject mapper for type [T].
   ///
@@ -296,10 +271,8 @@ final class RdfMapper {
   /// ```dart
   /// rdfMapper.registerSubjectMapper<Person>(PersonMapper());
   /// final person = Person(...);
-  /// final graph = rdfMapper.toGraph(person);
+  /// final graph = rdfMapper.graph.serialize(person);
   /// ```
-  ///
-  /// @param mapper The mapper implementation for type T
   void registerSubjectMapper<T>(RdfSubjectMapper<T> mapper) {
     registry.registerSubjectMapper<T>(mapper);
   }
@@ -307,15 +280,12 @@ final class RdfMapper {
   /// Registers a blank subject mapper for type [T].
   ///
   /// This is a convenience method that delegates to [registry.registerBlankSubjectMapper].
-  /// It simplifies the registration of
-  /// mappers for blank nodes directly through the facade.
+  /// It simplifies the registration of mappers for blank nodes directly through the facade.
   ///
   /// Example:
   /// ```dart
   /// rdfMapper.registerBlankSubjectMapper<Address>(AddressMapper());
   /// ```
-  ///
-  /// @param mapper The mapper implementation for type T
   void registerBlankSubjectMapper<T>(RdfBlankSubjectMapper<T> mapper) {
     registry.registerBlankSubjectMapper<T>(mapper);
   }
@@ -323,17 +293,13 @@ final class RdfMapper {
   /// Registers both a literal serializer and deserializer for type [T].
   ///
   /// This is a convenience method that delegates to [registry.registerLiteralMapper].
-  ///
-  /// @param mapper The mapper implementation for type T
   void registerLiteralMapper<T>(RdfLiteralTermMapper<T> mapper) {
     registry.registerLiteralMapper<T>(mapper);
   }
 
-  /// Registers an IRI term serializer for type [T].
+  /// Registers an IRI term mapper for type [T].
   ///
   /// This is a convenience method that delegates to [registry.registerIriTermMapper].
-  ///
-  /// @param serializer The serializer implementation for type T
   void registerIriTermMapper<T>(RdfIriTermMapper<T> mapper) {
     registry.registerIriTermMapper<T>(mapper);
   }

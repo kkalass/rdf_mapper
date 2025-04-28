@@ -29,7 +29,9 @@ void main() {
     ],
   );
 
-  // Convert to RDF Turtle format
+  // --- PRIMARY API: String-based operations ---
+
+  // Convert the book to RDF Turtle format
   final turtle = rdf.serialize(book);
 
   // Print the resulting Turtle representation
@@ -71,6 +73,69 @@ _:b2 a schema:Chapter;
   print('Chapters:');
   for (final chapter in deserializedBook.chapters) {
     print('- ${chapter.title} (${chapter.number})');
+  }
+
+  // Example with multiple books using deserializeAllOfType
+  final multipleBooks = '''
+@prefix schema: <https://schema.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://example.org/book/hobbit> a schema:Book;
+    schema:name "The Hobbit";
+    schema:author "J.R.R. Tolkien";
+    schema:datePublished "1937-09-20T23:00:00.000Z"^^xsd:dateTime;
+    schema:isbn <urn:isbn:9780618260300>;
+    schema:aggregateRating "5"^^xsd:integer .
+    
+<http://example.org/book/lotr> a schema:Book;
+    schema:name "The Lord of the Rings";
+    schema:author "J.R.R. Tolkien";
+    schema:datePublished "1954-07-28T23:00:00.000Z"^^xsd:dateTime;
+    schema:isbn <urn:isbn:9780618640157>;
+    schema:aggregateRating "5"^^xsd:integer .
+''';
+
+  // Use the type-safe deserialization for collections
+  final books = rdf.deserializeAllOfType<Book>(multipleBooks);
+
+  print('\nDeserialized multiple books:');
+  print('Found ${books.length} books');
+  for (final book in books) {
+    print('- ${book.title} by ${book.author}');
+  }
+
+  // --- GRAPH API: Direct graph operations ---
+
+  print('\n=== GRAPH API EXAMPLES ===');
+
+  // Convert the book to an RDF graph
+  final bookGraph = rdf.graph.serialize(book);
+  print('Graph contains ${bookGraph.size} triples');
+
+  // Deserialize from the graph
+  final bookFromGraph = rdf.graph.deserialize<Book>(bookGraph);
+  print('Successfully deserialized book from graph: ${bookFromGraph.title}');
+
+  // Create a combined graph with more data
+  final anotherBook = Book(
+    id: 'http://example.org/book/silmarillion',
+    title: 'The Silmarillion',
+    author: 'J.R.R. Tolkien',
+    published: DateTime(1977, 9, 15),
+    isbn: ISBN('9780048231536'),
+    rating: Rating(4),
+    chapters: [Chapter('Ainulindalë', 1)],
+  );
+
+  // Serialize multiple books to a single graph
+  final booksGraph = rdf.graph.serializeList([book, anotherBook]);
+  print('Combined graph contains ${booksGraph.size} triples');
+
+  // Retrieve all books from the graph with type safety
+  final booksFromGraph = rdf.graph.deserializeAllOfType<Book>(booksGraph);
+  print('Found ${booksFromGraph.length} books in the graph:');
+  for (final book in booksFromGraph) {
+    print('- ${book.title} (${book.published.year})');
   }
 }
 

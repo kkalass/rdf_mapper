@@ -4,12 +4,12 @@ import 'package:test/test.dart';
 
 void main() {
   group('RdfMapper more tests', () {
-    late RdfCore rdf;
-    late RdfMapper orm;
+    late RdfCore rdfCore;
+    late RdfMapper rdf;
     setUp(() {
-      rdf = RdfCore.withStandardFormats();
-      orm = RdfMapper.withDefaultRegistry();
-      orm.registry.registerSubjectMapper<TestItem>(
+      rdfCore = RdfCore.withStandardFormats();
+      rdf = RdfMapper.withDefaultRegistry();
+      rdf.registerSubjectMapper<TestItem>(
         TestItemRdfMapper(storageRoot: "https://some.static.url.example.com/"),
       );
     });
@@ -18,11 +18,11 @@ void main() {
       final originalItem = TestItem(name: 'Graph conversion test', age: 42);
 
       // Convert to graph
-      final graph = orm.toGraph<TestItem>(originalItem);
+      final graph = rdf.graph.serialize<TestItem>(originalItem);
       expect(graph.triples, isNotEmpty);
 
       // Convert back to item
-      final reconstructedItem = orm.deserializeSingle<TestItem>(graph);
+      final reconstructedItem = rdf.graph.deserialize<TestItem>(graph);
 
       // Verify properties match
       expect(reconstructedItem.name, equals(originalItem.name));
@@ -30,13 +30,13 @@ void main() {
     });
 
     test('Converting item to turtle', () {
-      final serializer = rdf.getSerializer(contentType: 'text/turtle');
+      final serializer = rdfCore.getSerializer(contentType: 'text/turtle');
       // Create test item
       final originalItem = TestItem(name: 'Graph Conversion Test', age: 42);
 
       // Convert to graph, using a custom deserializer to provide a custom
       // storage root.
-      final graph = orm.toGraph<TestItem>(
+      final graph = rdf.graph.serialize<TestItem>(
         originalItem,
         register:
             (registry) => registry.registerSubjectSerializer(
@@ -62,12 +62,12 @@ void main() {
     });
 
     test('Converting item to turtle with prefixes', () {
-      final serializer = rdf.getSerializer(contentType: 'text/turtle');
+      final serializer = rdfCore.getSerializer(contentType: 'text/turtle');
       // Create test item
       final originalItem = TestItem(name: 'Graph Conversion Test', age: 42);
 
       // Convert to graph
-      final graph = orm.toGraph<TestItem>(
+      final graph = rdf.graph.serialize<TestItem>(
         originalItem,
         register:
             (registry) => registry.registerSubjectSerializer(
@@ -97,7 +97,7 @@ void main() {
     });
 
     test('Converting item from turtle ', () {
-      final parser = rdf.getParser(contentType: 'text/turtle');
+      final parser = rdfCore.getParser(contentType: 'text/turtle');
       // Create test item
       final turtle = """
 @prefix test: <http://kalass.de/dart/rdf/test-ontology#> .
@@ -110,7 +110,7 @@ void main() {
 
       // Convert to graph
       final graph = parser.parse(turtle);
-      final allSubjects = orm.deserializeAll(
+      final allSubjects = rdf.graph.deserializeAll(
         graph,
         register:
             (registry) => registry.registerSubjectSerializer(
