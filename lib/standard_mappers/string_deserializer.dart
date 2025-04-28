@@ -1,6 +1,5 @@
-import 'package:rdf_core/constants/rdf_constants.dart';
-import 'package:rdf_core/constants/xsd_constants.dart';
 import 'package:rdf_core/graph/rdf_term.dart';
+import 'package:rdf_core/vocab/vocab.dart';
 import 'package:rdf_mapper/deserialization_context.dart';
 import 'package:rdf_mapper/rdf_literal_term_deserializer.dart';
 
@@ -17,14 +16,14 @@ final class StringDeserializer implements RdfLiteralTermDeserializer<String> {
   /// When [acceptLangString] is true, both xsd:string and rdf:langString will be accepted.
   /// If [datatype] is provided, it overrides the default xsd:string datatype.
   StringDeserializer({IriTerm? datatype, bool acceptLangString = false})
-    : _datatype = datatype ?? XsdConstants.stringIri,
+    : _datatype = datatype ?? XsdTypes.string,
       _acceptLangString = acceptLangString;
 
   @override
   String fromLiteralTerm(LiteralTerm term, DeserializationContext context) {
     final isExpectedDatatype = term.datatype == _datatype;
     final isLangString =
-        _acceptLangString && term.datatype == RdfConstants.langStringIri;
+        _acceptLangString && term.datatype == RdfTypes.langString;
 
     if (!isExpectedDatatype && !isLangString) {
       throw Exception(

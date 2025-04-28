@@ -1,9 +1,13 @@
-import 'package:rdf_core/constants/xsd_constants.dart';
+import 'package:mockito/annotations.dart';
 import 'package:rdf_core/graph/rdf_term.dart';
+import 'package:rdf_core/vocab/vocab.dart';
 import 'package:rdf_mapper/rdf_literal_term_deserializer.dart';
 import 'package:test/test.dart';
 
-import 'mocks/mock_deserialization_context.dart';
+import 'package:rdf_mapper/deserialization_context.dart';
+
+@GenerateMocks([DeserializationContext])
+import 'rdf_literal_term_deserializer_test.mocks.dart';
 
 void main() {
   group('RdfLiteralTermDeserializer', () {
@@ -37,7 +41,7 @@ void main() {
       final deserializer = IntegerLiteralDeserializer();
 
       // Test with integer literal
-      final term = LiteralTerm('42', datatype: XsdConstants.integerIri);
+      final term = LiteralTerm('42', datatype: XsdTypes.integer);
       final result = deserializer.fromLiteralTerm(term, context);
 
       expect(result, equals(42));
@@ -47,10 +51,7 @@ void main() {
       final deserializer = IntegerLiteralDeserializer();
 
       // Test with non-integer literal
-      final term = LiteralTerm(
-        'not-a-number',
-        datatype: XsdConstants.integerIri,
-      );
+      final term = LiteralTerm('not-a-number', datatype: XsdTypes.integer);
 
       expect(
         () => deserializer.fromLiteralTerm(term, context),
@@ -62,8 +63,8 @@ void main() {
       final deserializer = BooleanLiteralDeserializer();
 
       // Test with boolean literals
-      final trueTerm = LiteralTerm('true', datatype: XsdConstants.booleanIri);
-      final falseTerm = LiteralTerm('false', datatype: XsdConstants.booleanIri);
+      final trueTerm = LiteralTerm('true', datatype: XsdTypes.boolean);
+      final falseTerm = LiteralTerm('false', datatype: XsdTypes.boolean);
 
       expect(deserializer.fromLiteralTerm(trueTerm, context), isTrue);
       expect(deserializer.fromLiteralTerm(falseTerm, context), isFalse);
@@ -73,8 +74,8 @@ void main() {
       final deserializer = BooleanLiteralDeserializer();
 
       // Test with different casing
-      final trueTerm = LiteralTerm('TRUE', datatype: XsdConstants.booleanIri);
-      final falseTerm = LiteralTerm('False', datatype: XsdConstants.booleanIri);
+      final trueTerm = LiteralTerm('TRUE', datatype: XsdTypes.boolean);
+      final falseTerm = LiteralTerm('False', datatype: XsdTypes.boolean);
 
       expect(deserializer.fromLiteralTerm(trueTerm, context), isTrue);
       expect(deserializer.fromLiteralTerm(falseTerm, context), isFalse);
@@ -84,7 +85,7 @@ void main() {
       final deserializer = DoubleLiteralDeserializer();
 
       // Test with double literal
-      final term = LiteralTerm('3.14159', datatype: XsdConstants.doubleIri);
+      final term = LiteralTerm('3.14159', datatype: XsdTypes.double);
       final result = deserializer.fromLiteralTerm(term, context);
 
       expect(result, equals(3.14159));

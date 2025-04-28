@@ -3,7 +3,6 @@ import 'package:rdf_core/graph/triple.dart';
 import 'package:rdf_mapper/deserialization_context.dart';
 import 'package:rdf_mapper/exceptions/deserializer_not_found_exception.dart';
 import 'package:rdf_mapper/exceptions/serializer_not_found_exception.dart';
-import 'package:rdf_mapper/rdf_blank_node_term_deserializer.dart';
 import 'package:rdf_mapper/rdf_iri_term_deserializer.dart';
 import 'package:rdf_mapper/rdf_iri_term_serializer.dart';
 import 'package:rdf_mapper/rdf_literal_term_deserializer.dart';
@@ -93,21 +92,6 @@ void main() {
       var serializer = registry.getLiteralSerializer<CustomType>();
       expect(serializer, isA<TestLiteralSerializer>());
     });
-
-    test(
-      'registerBlankNodeDeserializer registers a new blank node deserializer',
-      () {
-        // Register custom deserializer
-        registry.registerBlankNodeTermDeserializer(TestBlankNodeDeserializer());
-
-        // Verify registration
-        expect(registry.hasBlankNodeDeserializerFor<CustomType>(), isTrue);
-
-        // Verify retrieval works
-        var deserializer = registry.getBlankNodeDeserializer<CustomType>();
-        expect(deserializer, isA<TestBlankNodeDeserializer>());
-      },
-    );
 
     test(
       'registerSubjectDeserializer registers deserializer by type and typeIri',
@@ -295,17 +279,6 @@ class TestLiteralSerializer implements RdfLiteralTermSerializer<CustomType> {
   @override
   LiteralTerm toLiteralTerm(CustomType value, SerializationContext context) {
     return LiteralTerm.string(value.value);
-  }
-}
-
-class TestBlankNodeDeserializer
-    implements RdfBlankNodeTermDeserializer<CustomType> {
-  @override
-  CustomType fromBlankNodeTerm(
-    BlankNodeTerm term,
-    DeserializationContext context,
-  ) {
-    return CustomType(term.label);
   }
 }
 

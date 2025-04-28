@@ -1,8 +1,5 @@
 import 'package:logging/logging.dart';
-import 'package:rdf_core/constants/rdf_constants.dart';
-import 'package:rdf_core/graph/rdf_graph.dart';
-import 'package:rdf_core/graph/rdf_term.dart';
-import 'package:rdf_core/graph/triple.dart';
+import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/deserialization_context_impl.dart';
 import 'package:rdf_mapper/exceptions/deserialization_exception.dart';
 import 'package:rdf_mapper/exceptions/deserializer_not_found_exception.dart';
@@ -95,7 +92,7 @@ final class RdfMapperService {
     void Function(RdfMapperRegistry registry)? register,
   }) {
     var deserializationSubjects = graph.findTriples(
-      predicate: RdfConstants.typeIri,
+      predicate: RdfPredicates.type,
     );
 
     // Clone registry if registration callback is provided

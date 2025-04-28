@@ -1,6 +1,7 @@
 import 'package:rdf_core/graph/rdf_graph.dart';
 import 'package:rdf_core/graph/rdf_term.dart';
 import 'package:rdf_core/graph/triple.dart';
+import 'package:rdf_core/vocab/vocab.dart';
 import 'package:rdf_mapper/deserialization_context_impl.dart';
 import 'package:rdf_mapper/exceptions/property_value_not_found_exception.dart';
 import 'package:rdf_mapper/exceptions/too_many_property_values_exception.dart';
@@ -20,6 +21,7 @@ void main() {
 
   setUp(() {
     registry = RdfMapperRegistry();
+    final addressNode = BlankNodeTerm();
     graph = RdfGraph(
       triples: [
         // String property
@@ -68,10 +70,11 @@ void main() {
         ),
 
         // Blank node property
+        Triple(subject, IriTerm('http://example.org/address'), addressNode),
         Triple(
-          subject,
-          IriTerm('http://example.org/address'),
-          BlankNodeTerm('address1'),
+          addressNode,
+          VcardPredicates.locality,
+          LiteralTerm.string("Hamburg"),
         ),
       ],
     );
@@ -195,7 +198,7 @@ void main() {
         );
 
         expect(address, isNotNull);
-        expect(address!.id, equals('address1'));
+        expect(address!.city, equals('Hamburg'));
       },
     );
 
@@ -240,9 +243,9 @@ class TestPerson {
 }
 
 class TestAddress {
-  final String id;
+  final String city;
 
-  TestAddress(this.id);
+  TestAddress({required this.city});
 }
 
 class TestPersonDeserializer implements RdfSubjectDeserializer<TestPerson> {
@@ -276,6 +279,10 @@ class CustomBlankNodeDeserializer
     BlankNodeTerm term,
     DeserializationContext context,
   ) {
-    return TestAddress(term.label);
+    var city = context.getRequiredPropertyValue<String>(
+      term,
+      VcardPredicates.locality,
+    );
+    return TestAddress(city: city);
   }
 }

@@ -1,6 +1,6 @@
-import 'package:rdf_core/constants/rdf_constants.dart';
 import 'package:rdf_core/graph/rdf_term.dart';
 import 'package:rdf_core/graph/triple.dart';
+import 'package:rdf_core/vocab/vocab.dart';
 import 'package:rdf_mapper/rdf_mapper_registry.dart';
 import 'package:rdf_mapper/rdf_subject_serializer.dart';
 import 'package:rdf_mapper/serialization_context.dart';
@@ -38,7 +38,7 @@ void main() {
             triples
                 .where(
                   (triple) =>
-                      triple.predicate == RdfConstants.typeIri &&
+                      triple.predicate == RdfPredicates.type &&
                       triple.subject == IriTerm(person.id),
                 )
                 .toList();
@@ -68,7 +68,7 @@ void main() {
           triples
               .where(
                 (triple) =>
-                    triple.predicate == RdfConstants.typeIri &&
+                    triple.predicate == RdfPredicates.type &&
                     triple.subject == IriTerm(person.id),
               )
               .toList();
@@ -99,7 +99,7 @@ void main() {
           triples
               .where(
                 (triple) =>
-                    triple.predicate == RdfConstants.typeIri &&
+                    triple.predicate == RdfPredicates.type &&
                     triple.subject == IriTerm(person.id),
               )
               .toList();
@@ -140,7 +140,7 @@ class TestPersonSerializerWithTypeTriple
       ),
 
       // Explicitly add type triple
-      Triple(subject, RdfConstants.typeIri, typeIri),
+      Triple(subject, RdfPredicates.type, typeIri),
     ];
 
     return (subject, triples);

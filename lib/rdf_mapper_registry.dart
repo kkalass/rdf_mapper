@@ -3,9 +3,12 @@ import 'package:rdf_core/graph/rdf_term.dart';
 import 'package:rdf_mapper/exceptions/deserializer_not_found_exception.dart';
 import 'package:rdf_mapper/exceptions/serializer_not_found_exception.dart';
 import 'package:rdf_mapper/rdf_blank_node_term_deserializer.dart';
+import 'package:rdf_mapper/rdf_blank_subject_mapper.dart';
 import 'package:rdf_mapper/rdf_iri_term_deserializer.dart';
+import 'package:rdf_mapper/rdf_iri_term_mapper.dart';
 import 'package:rdf_mapper/rdf_iri_term_serializer.dart';
 import 'package:rdf_mapper/rdf_literal_term_deserializer.dart';
+import 'package:rdf_mapper/rdf_literal_term_mapper.dart';
 import 'package:rdf_mapper/rdf_literal_term_serializer.dart';
 import 'package:rdf_mapper/rdf_subject_deserializer.dart';
 import 'package:rdf_mapper/rdf_subject_mapper.dart';
@@ -126,6 +129,21 @@ final class RdfMapperRegistry {
     _subjectSerializers[T] = serializer;
   }
 
+  void registerBlankSubjectMapper<T>(RdfBlankSubjectMapper<T> mapper) {
+    registerBlankNodeTermDeserializer<T>(mapper);
+    registerSubjectSerializer<T>(mapper);
+  }
+
+  void registerLiteralMapper<T>(RdfLiteralTermMapper<T> mapper) {
+    registerLiteralSerializer<T>(mapper);
+    registerLiteralDeserializer<T>(mapper);
+  }
+
+  void registerIriTermMapper<T>(RdfIriTermMapper<T> mapper) {
+    registerIriTermSerializer<T>(mapper);
+    registerIriTermDeserializer<T>(mapper);
+  }
+
   /// Gets the deserializer for a specific type
   ///
   /// @return The deserializer for type T or null if none is registered
@@ -166,6 +184,23 @@ final class RdfMapperRegistry {
     return serializer as RdfIriTermSerializer<T>;
   }
 
+  /// Gets a IRI serializer by runtime type rather than generic type parameter
+  ///
+  /// This method is primarily used to handle nullable types, where the serializer
+  /// might be registered for a non-nullable type (e.g., STring) but needs to be
+  /// retrieved for a nullable type (e.g., String?).
+  ///
+  /// @param type The runtime Type to look up
+  /// @return The serializer for the specified type
+  /// @throws SerializerNotFoundException if no serializer is registered for the type
+  RdfIriTermSerializer<T> getIriSerializerByType<T>(Type type) {
+    final serializer = _iriSerializers[type];
+    if (serializer == null) {
+      throw SerializerNotFoundException('RdfIriTermSerializer?', type);
+    }
+    return serializer as RdfIriTermSerializer<T>;
+  }
+
   RdfLiteralTermDeserializer<T> getLiteralDeserializer<T>() {
     final deserializer = _literalDeserializers[T];
     if (deserializer == null) {
@@ -182,6 +217,23 @@ final class RdfMapperRegistry {
     return serializer as RdfLiteralTermSerializer<T>;
   }
 
+  /// Gets a literal serializer by runtime type rather than generic type parameter
+  ///
+  /// This method is primarily used to handle nullable types, where the serializer
+  /// might be registered for a non-nullable type (e.g., STring) but needs to be
+  /// retrieved for a nullable type (e.g., String?).
+  ///
+  /// @param type The runtime Type to look up
+  /// @return The serializer for the specified type
+  /// @throws SerializerNotFoundException if no serializer is registered for the type
+  RdfLiteralTermSerializer<T> getLiteralSerializerByType<T>(Type type) {
+    final serializer = _literalSerializers[type];
+    if (serializer == null) {
+      throw SerializerNotFoundException('RdfLiteralTermSerializer?', type);
+    }
+    return serializer as RdfLiteralTermSerializer<T>;
+  }
+
   RdfBlankNodeTermDeserializer<T> getBlankNodeDeserializer<T>() {
     final deserializer = _blankNodeDeserializers[T];
     if (deserializer == null) {
@@ -194,6 +246,23 @@ final class RdfMapperRegistry {
     final serializer = _subjectSerializers[T];
     if (serializer == null) {
       throw SerializerNotFoundException('RdfToTriplesSerializer', T);
+    }
+    return serializer as RdfSubjectSerializer<T>;
+  }
+
+  /// Gets a subject serializer by runtime type rather than generic type parameter
+  ///
+  /// This method is primarily used to handle nullable types, where the serializer
+  /// might be registered for a non-nullable type (e.g., Address) but needs to be
+  /// retrieved for a nullable type (e.g., Address?).
+  ///
+  /// @param type The runtime Type to look up
+  /// @return The serializer for the specified type
+  /// @throws SerializerNotFoundException if no serializer is registered for the type
+  RdfSubjectSerializer<T> getSubjectSerializerByType<T>(Type type) {
+    final serializer = _subjectSerializers[type];
+    if (serializer == null) {
+      throw SerializerNotFoundException('RdfToTriplesSerializer', type);
     }
     return serializer as RdfSubjectSerializer<T>;
   }

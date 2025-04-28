@@ -29,12 +29,9 @@ import 'rdf_mapper_service.dart';
 export 'deserialization_context.dart';
 export 'deserialization_context_impl.dart';
 export 'rdf_blank_node_term_deserializer.dart';
-export 'rdf_blank_subject_mapper.dart';
 export 'rdf_iri_term_deserializer.dart';
-export 'rdf_iri_term_mapper.dart';
 export 'rdf_iri_term_serializer.dart';
 export 'rdf_literal_term_deserializer.dart';
-export 'rdf_literal_term_mapper.dart';
 export 'rdf_literal_term_serializer.dart';
 export 'rdf_mapper_registry.dart';
 export 'rdf_mapper_service.dart';
@@ -137,7 +134,7 @@ final class RdfMapper {
   /// ```
   T fromString<T>(
     String rdfString, {
-    String contentType = 'text/turtle',
+    String? contentType,
     void Function(RdfMapperRegistry registry)? register,
   }) {
     final graph = _rdfCore.parse(rdfString, contentType: contentType);
@@ -154,7 +151,7 @@ final class RdfMapper {
   T fromStringBySubject<T>(
     String rdfString,
     RdfSubject subjectId, {
-    String contentType = 'text/turtle',
+    String? contentType,
     void Function(RdfMapperRegistry registry)? register,
   }) {
     final graph = _rdfCore.parse(rdfString, contentType: contentType);
@@ -272,42 +269,37 @@ final class RdfMapper {
     registry.registerSubjectMapper<T>(mapper);
   }
 
-  /// Registers a subject mapper for type [T] for subjects that are not
-  /// globally identified by an IriTerm but only use a locally referencable BlankNodeTerm.
+  /// Registers a blank subject mapper for type [T].
   ///
-  /// This is a convenience method that delegates to [registry.registerBlankNodeTermDeserializer] and [registry.registerSubjectSerializer] .
-  /// It simplifies the registration of mappers for blank nodes directly through the facade.
+  /// This is a convenience method that delegates to [registry.registerBlankSubjectMapper].
+  /// It simplifies the registration of
+  /// mappers for blank nodes directly through the facade.
   ///
   /// Example:
   /// ```dart
   /// rdfMapper.registerBlankSubjectMapper<Address>(AddressMapper());
-  /// final address = Address(...);
-  /// final graph = rdfMapper.toGraph(address);
   /// ```
   ///
   /// @param mapper The mapper implementation for type T
   void registerBlankSubjectMapper<T>(RdfBlankSubjectMapper<T> mapper) {
-    registry.registerBlankNodeTermDeserializer<T>(mapper);
-    registry.registerSubjectSerializer<T>(mapper);
+    registry.registerBlankSubjectMapper<T>(mapper);
   }
 
-  /// Registers a literal mapper for type [T].
+  /// Registers both a literal serializer and deserializer for type [T].
   ///
-  /// This is a convenience method that delegates to [registry.registerLiteralSerializer] and [registry.registerLiteralDeserializer].
+  /// This is a convenience method that delegates to [registry.registerLiteralMapper].
   ///
-  /// @param serializer The serializer implementation for type T
+  /// @param mapper The mapper implementation for type T
   void registerLiteralMapper<T>(RdfLiteralTermMapper<T> mapper) {
-    registry.registerLiteralSerializer<T>(mapper);
-    registry.registerLiteralDeserializer<T>(mapper);
+    registry.registerLiteralMapper<T>(mapper);
   }
 
   /// Registers an IRI term serializer for type [T].
   ///
-  /// This is a convenience method that delegates to [registry.registerIriTermSerializer] and [registry.registerIriTermDeserializer].
+  /// This is a convenience method that delegates to [registry.registerIriTermMapper].
   ///
   /// @param serializer The serializer implementation for type T
   void registerIriTermMapper<T>(RdfIriTermMapper<T> mapper) {
-    registry.registerIriTermSerializer<T>(mapper);
-    registry.registerIriTermDeserializer<T>(mapper);
+    registry.registerIriTermMapper<T>(mapper);
   }
 }

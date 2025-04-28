@@ -1,4 +1,4 @@
-import 'package:rdf_core/constants/xsd_constants.dart';
+import 'package:rdf_core/vocab/vocab.dart';
 import 'package:rdf_core/graph/rdf_term.dart';
 import 'package:rdf_mapper/exceptions/deserialization_exception.dart';
 import 'package:rdf_mapper/standard_mappers/base_rdf_literal_term_deserializer.dart';
@@ -6,7 +6,7 @@ import 'package:rdf_mapper/standard_mappers/base_rdf_literal_term_deserializer.d
 final class BoolDeserializer extends BaseRdfLiteralTermDeserializer<bool> {
   BoolDeserializer({IriTerm? datatype})
     : super(
-        datatype: datatype ?? XsdConstants.booleanIri,
+        datatype: datatype ?? XsdTypes.boolean,
         convertFromLiteral: (term, _) {
           final value = term.value.toLowerCase();
 

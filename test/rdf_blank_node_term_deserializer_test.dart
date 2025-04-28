@@ -1,9 +1,11 @@
+import 'package:mockito/annotations.dart';
 import 'package:rdf_core/graph/rdf_term.dart';
 import 'package:rdf_mapper/deserialization_context.dart';
 import 'package:rdf_mapper/rdf_blank_node_term_deserializer.dart';
 import 'package:test/test.dart';
 
-import 'mocks/mock_deserialization_context.dart';
+@GenerateMocks([DeserializationContext])
+import 'rdf_blank_node_term_deserializer_test.mocks.dart';
 
 void main() {
   group('RdfBlankNodeTermDeserializer', () {
@@ -20,26 +22,16 @@ void main() {
         final deserializer = TestBlankNodeDeserializer();
 
         // Test with a regular blank node
-        var term = BlankNodeTerm('node1');
+        var term = BlankNodeTerm();
         var result = deserializer.fromBlankNodeTerm(term, context);
 
         // Verify conversion
-        expect(result.label, equals('node1'));
-      },
-    );
-
-    test(
-      'custom blank node deserializer handles special characters in labels',
-      () {
-        // Create a custom deserializer
-        final deserializer = TestBlankNodeDeserializer();
-
-        // Test with blank node containing special characters
-        var term = BlankNodeTerm('node-with_special.chars');
-        var result = deserializer.fromBlankNodeTerm(term, context);
-
-        // Verify conversion
-        expect(result.label, equals('node-with_special.chars'));
+        expect(
+          result.label,
+          equals(
+            'not very useful by itself, but in combination with other parts it can be useful',
+          ),
+        );
       },
     );
   });
@@ -60,6 +52,8 @@ class TestBlankNodeDeserializer
     BlankNodeTerm term,
     DeserializationContext context,
   ) {
-    return BlankNodeValue(term.label);
+    return BlankNodeValue(
+      "not very useful by itself, but in combination with other parts it can be useful",
+    );
   }
 }

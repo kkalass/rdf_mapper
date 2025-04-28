@@ -1,4 +1,3 @@
-import 'package:rdf_core/constants/rdf_constants.dart';
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/exceptions/deserialization_exception.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
@@ -33,7 +32,7 @@ void main() {
         ),
         Triple(
           subject,
-          RdfConstants.typeIri,
+          RdfPredicates.type,
           IriTerm('http://xmlns.com/foaf/0.1/Person'),
         ),
       ];
@@ -70,7 +69,7 @@ void main() {
           ),
           Triple(
             subject,
-            RdfConstants.typeIri,
+            RdfPredicates.type,
             IriTerm('http://xmlns.com/foaf/0.1/Person'),
           ),
         ],
@@ -105,7 +104,7 @@ void main() {
           ),
           Triple(
             subject,
-            RdfConstants.typeIri,
+            RdfPredicates.type,
             IriTerm('http://xmlns.com/foaf/0.1/Person'),
           ),
         ],
@@ -136,12 +135,12 @@ void main() {
         triples: [
           Triple(
             IriTerm('http://example.org/person/1'),
-            RdfConstants.typeIri,
+            RdfPredicates.type,
             IriTerm('http://xmlns.com/foaf/0.1/Person'),
           ),
           Triple(
             IriTerm('http://example.org/person/2'),
-            RdfConstants.typeIri,
+            RdfPredicates.type,
             IriTerm('http://xmlns.com/foaf/0.1/Person'),
           ),
         ],
@@ -166,7 +165,7 @@ void main() {
             // Person 1
             Triple(
               IriTerm('http://example.org/person/1'),
-              RdfConstants.typeIri,
+              RdfPredicates.type,
               IriTerm('http://xmlns.com/foaf/0.1/Person'),
             ),
             Triple(
@@ -183,7 +182,7 @@ void main() {
             // Person 2
             Triple(
               IriTerm('http://example.org/person/2'),
-              RdfConstants.typeIri,
+              RdfPredicates.type,
               IriTerm('http://xmlns.com/foaf/0.1/Person'),
             ),
             Triple(
@@ -234,7 +233,7 @@ void main() {
           // Person
           Triple(
             IriTerm('http://example.org/person/1'),
-            RdfConstants.typeIri,
+            RdfPredicates.type,
             IriTerm('http://xmlns.com/foaf/0.1/Person'),
           ),
           Triple(
@@ -246,7 +245,7 @@ void main() {
           // Address (unmapped type)
           Triple(
             IriTerm('http://example.org/address/1'),
-            RdfConstants.typeIri,
+            RdfPredicates.type,
             IriTerm('http://example.org/Address'),
           ),
           Triple(
@@ -297,7 +296,7 @@ void main() {
       // Check for the type triple
       final typeTriples = graph.findTriples(
         subject: IriTerm('http://example.org/person/1'),
-        predicate: RdfConstants.typeIri,
+        predicate: RdfPredicates.type,
       );
       expect(typeTriples.length, equals(1));
       expect(
