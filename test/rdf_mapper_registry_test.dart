@@ -1,5 +1,4 @@
-import 'package:rdf_core/graph/rdf_term.dart';
-import 'package:rdf_core/graph/triple.dart';
+import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
 import 'package:rdf_mapper/src/exceptions/deserializer_not_found_exception.dart';
 import 'package:rdf_mapper/src/exceptions/serializer_not_found_exception.dart';

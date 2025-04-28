@@ -1,5 +1,5 @@
-import 'package:rdf_core/graph/rdf_term.dart';
-import 'package:rdf_core/vocab/vocab.dart';
+import 'package:rdf_core/rdf_core.dart';
+import 'package:rdf_core/vocab.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
 import 'package:rdf_mapper/src/deserializers/rdf_literal_term_deserializer.dart';
 

@@ -1,4 +1,4 @@
-import 'package:rdf_core/graph/rdf_term.dart';
+import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
 import 'package:rdf_mapper/src/exceptions/property_value_not_found_exception.dart';
 import 'package:rdf_mapper/src/exceptions/too_many_property_values_exception.dart';
@@ -7,7 +7,6 @@ import 'package:rdf_mapper/src/deserializers/rdf_subject_deserializer.dart';
 import 'package:rdf_mapper/src/deserializers/rdf_blank_node_term_deserializer.dart';
 import 'package:rdf_mapper/src/deserializers/rdf_iri_term_deserializer.dart';
 import 'package:rdf_mapper/src/deserializers/rdf_literal_term_deserializer.dart';
-import 'package:rdf_core/graph/rdf_graph.dart';
 
 class DeserializationContextImpl extends DeserializationContext {
   final RdfGraph _graph;

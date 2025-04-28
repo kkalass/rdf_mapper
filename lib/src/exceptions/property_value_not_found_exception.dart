@@ -1,4 +1,4 @@
-import 'package:rdf_core/graph/rdf_term.dart';
+import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/exceptions/rdf_mapping_exception.dart';
 
 /// Exception thrown when a required property value is not found in the RDF graph

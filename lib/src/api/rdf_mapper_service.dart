@@ -1,5 +1,6 @@
 import 'package:logging/logging.dart';
 import 'package:rdf_core/rdf_core.dart';
+import 'package:rdf_core/vocab.dart';
 import 'package:rdf_mapper/src/context/deserialization_context_impl.dart';
 import 'package:rdf_mapper/src/exceptions/deserialization_exception.dart';
 import 'package:rdf_mapper/src/exceptions/deserializer_not_found_exception.dart';

@@ -1,5 +1,6 @@
 import 'package:logging/logging.dart';
 import 'package:rdf_core/rdf_core.dart';
+import 'package:rdf_core/vocab.dart';
 import 'package:rdf_mapper/src/serializers/rdf_iri_term_serializer.dart';
 import 'package:rdf_mapper/src/serializers/rdf_literal_term_serializer.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';

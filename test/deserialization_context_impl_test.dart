@@ -1,7 +1,5 @@
-import 'package:rdf_core/graph/rdf_graph.dart';
-import 'package:rdf_core/graph/rdf_term.dart';
-import 'package:rdf_core/graph/triple.dart';
-import 'package:rdf_core/vocab/vocab.dart';
+import 'package:rdf_core/rdf_core.dart';
+import 'package:rdf_core/vocab.dart';
 import 'package:rdf_mapper/src/context/deserialization_context_impl.dart';
 import 'package:rdf_mapper/src/exceptions/property_value_not_found_exception.dart';
 import 'package:rdf_mapper/src/exceptions/too_many_property_values_exception.dart';

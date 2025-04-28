@@ -5,7 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i8;
-import 'package:rdf_core/graph/rdf_term.dart' as _i3;
+import 'package:rdf_core/rdf_core.dart' as _i3;
 import 'package:rdf_mapper/src/api/deserialization_context.dart' as _i2;
 import 'package:rdf_mapper/src/deserializers/rdf_blank_node_term_deserializer.dart'
     as _i7;
