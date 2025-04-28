@@ -1,18 +1,18 @@
 import 'package:rdf_core/graph/rdf_term.dart';
 import 'package:rdf_core/graph/triple.dart';
 import 'package:rdf_core/vocab/vocab.dart';
-import 'package:rdf_mapper/deserialization_context.dart';
-import 'package:rdf_mapper/serialization_context.dart';
-import 'package:rdf_mapper/standard_mappers/bool_deserializer.dart';
-import 'package:rdf_mapper/standard_mappers/bool_serializer.dart';
-import 'package:rdf_mapper/standard_mappers/date_time_deserializer.dart';
-import 'package:rdf_mapper/standard_mappers/date_time_serializer.dart';
-import 'package:rdf_mapper/standard_mappers/double_deserializer.dart';
-import 'package:rdf_mapper/standard_mappers/double_serializer.dart';
-import 'package:rdf_mapper/standard_mappers/int_deserializer.dart';
-import 'package:rdf_mapper/standard_mappers/int_serializer.dart';
-import 'package:rdf_mapper/standard_mappers/string_deserializer.dart';
-import 'package:rdf_mapper/standard_mappers/string_serializer.dart';
+import 'package:rdf_mapper/src/api/deserialization_context.dart';
+import 'package:rdf_mapper/src/api/serialization_context.dart';
+import 'package:rdf_mapper/src/mappers/literal/bool_deserializer.dart';
+import 'package:rdf_mapper/src/mappers/literal/bool_serializer.dart';
+import 'package:rdf_mapper/src/mappers/literal/date_time_deserializer.dart';
+import 'package:rdf_mapper/src/mappers/literal/date_time_serializer.dart';
+import 'package:rdf_mapper/src/mappers/literal/double_deserializer.dart';
+import 'package:rdf_mapper/src/mappers/literal/double_serializer.dart';
+import 'package:rdf_mapper/src/mappers/literal/int_deserializer.dart';
+import 'package:rdf_mapper/src/mappers/literal/int_serializer.dart';
+import 'package:rdf_mapper/src/mappers/literal/string_deserializer.dart';
+import 'package:rdf_mapper/src/mappers/literal/string_serializer.dart';
 import 'package:test/test.dart';
 
 // Mock implementation of SerializationContext for testing

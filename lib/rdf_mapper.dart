@@ -24,30 +24,30 @@
 library rdf_mapper;
 
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/rdf_blank_subject_mapper.dart';
-import 'package:rdf_mapper/rdf_iri_term_mapper.dart';
-import 'package:rdf_mapper/rdf_literal_term_mapper.dart';
-import 'package:rdf_mapper/rdf_subject_mapper.dart';
-import 'package:rdf_mapper/graph_operations.dart';
+import 'package:rdf_mapper/src/mappers/rdf_blank_subject_mapper.dart';
+import 'package:rdf_mapper/src/mappers/rdf_iri_term_mapper.dart';
+import 'package:rdf_mapper/src/mappers/rdf_literal_term_mapper.dart';
+import 'package:rdf_mapper/src/mappers/rdf_subject_mapper.dart';
+import 'package:rdf_mapper/src/api/graph_operations.dart';
 
-import 'rdf_mapper_registry.dart';
-import 'rdf_mapper_service.dart';
+import 'src/api/rdf_mapper_registry.dart';
+import 'src/api/rdf_mapper_service.dart';
 
-export 'deserialization_context.dart';
-export 'deserialization_context_impl.dart';
-export 'rdf_blank_node_term_deserializer.dart';
-export 'rdf_iri_term_deserializer.dart';
-export 'rdf_iri_term_serializer.dart';
-export 'rdf_literal_term_deserializer.dart';
-export 'rdf_literal_term_serializer.dart';
-export 'rdf_mapper_registry.dart';
-export 'rdf_mapper_service.dart';
-export 'rdf_subject_deserializer.dart';
-export 'rdf_subject_mapper.dart';
-export 'rdf_subject_serializer.dart';
-export 'serialization_context.dart';
-export 'serialization_context_impl.dart';
-export 'graph_operations.dart';
+export 'src/api/deserialization_context.dart';
+export 'src/context/deserialization_context_impl.dart';
+export 'src/deserializers/rdf_blank_node_term_deserializer.dart';
+export 'src/deserializers/rdf_iri_term_deserializer.dart';
+export 'src/serializers/rdf_iri_term_serializer.dart';
+export 'src/deserializers/rdf_literal_term_deserializer.dart';
+export 'src/serializers/rdf_literal_term_serializer.dart';
+export 'src/api/rdf_mapper_registry.dart';
+export 'src/api/rdf_mapper_service.dart';
+export 'src/deserializers/rdf_subject_deserializer.dart';
+export 'src/mappers/rdf_subject_mapper.dart';
+export 'src/serializers/rdf_subject_serializer.dart';
+export 'src/api/serialization_context.dart';
+export 'src/context/serialization_context_impl.dart';
+export 'src/api/graph_operations.dart';
 
 /// Central facade for the RDF Mapper library, providing access to object mapping and registry operations.
 ///

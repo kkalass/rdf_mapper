@@ -1,17 +1,17 @@
 import 'package:rdf_core/graph/rdf_term.dart';
 import 'package:rdf_core/graph/triple.dart';
-import 'package:rdf_mapper/deserialization_context.dart';
-import 'package:rdf_mapper/exceptions/deserializer_not_found_exception.dart';
-import 'package:rdf_mapper/exceptions/serializer_not_found_exception.dart';
-import 'package:rdf_mapper/rdf_iri_term_deserializer.dart';
-import 'package:rdf_mapper/rdf_iri_term_serializer.dart';
-import 'package:rdf_mapper/rdf_literal_term_deserializer.dart';
-import 'package:rdf_mapper/rdf_literal_term_serializer.dart';
-import 'package:rdf_mapper/rdf_mapper_registry.dart';
-import 'package:rdf_mapper/rdf_subject_deserializer.dart';
-import 'package:rdf_mapper/rdf_subject_mapper.dart';
-import 'package:rdf_mapper/rdf_subject_serializer.dart';
-import 'package:rdf_mapper/serialization_context.dart';
+import 'package:rdf_mapper/src/api/deserialization_context.dart';
+import 'package:rdf_mapper/src/exceptions/deserializer_not_found_exception.dart';
+import 'package:rdf_mapper/src/exceptions/serializer_not_found_exception.dart';
+import 'package:rdf_mapper/src/deserializers/rdf_iri_term_deserializer.dart';
+import 'package:rdf_mapper/src/serializers/rdf_iri_term_serializer.dart';
+import 'package:rdf_mapper/src/deserializers/rdf_literal_term_deserializer.dart';
+import 'package:rdf_mapper/src/serializers/rdf_literal_term_serializer.dart';
+import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
+import 'package:rdf_mapper/src/deserializers/rdf_subject_deserializer.dart';
+import 'package:rdf_mapper/src/mappers/rdf_subject_mapper.dart';
+import 'package:rdf_mapper/src/serializers/rdf_subject_serializer.dart';
+import 'package:rdf_mapper/src/api/serialization_context.dart';
 import 'package:test/test.dart';
 
 void main() {

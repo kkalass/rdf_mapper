@@ -2,15 +2,15 @@ import 'package:rdf_core/graph/rdf_graph.dart';
 import 'package:rdf_core/graph/rdf_term.dart';
 import 'package:rdf_core/graph/triple.dart';
 import 'package:rdf_core/vocab/vocab.dart';
-import 'package:rdf_mapper/deserialization_context_impl.dart';
-import 'package:rdf_mapper/exceptions/property_value_not_found_exception.dart';
-import 'package:rdf_mapper/exceptions/too_many_property_values_exception.dart';
-import 'package:rdf_mapper/rdf_blank_node_term_deserializer.dart';
-import 'package:rdf_mapper/rdf_iri_term_deserializer.dart';
-import 'package:rdf_mapper/rdf_literal_term_deserializer.dart';
-import 'package:rdf_mapper/rdf_mapper_registry.dart';
-import 'package:rdf_mapper/rdf_subject_deserializer.dart';
-import 'package:rdf_mapper/deserialization_context.dart';
+import 'package:rdf_mapper/src/context/deserialization_context_impl.dart';
+import 'package:rdf_mapper/src/exceptions/property_value_not_found_exception.dart';
+import 'package:rdf_mapper/src/exceptions/too_many_property_values_exception.dart';
+import 'package:rdf_mapper/src/deserializers/rdf_blank_node_term_deserializer.dart';
+import 'package:rdf_mapper/src/deserializers/rdf_iri_term_deserializer.dart';
+import 'package:rdf_mapper/src/deserializers/rdf_literal_term_deserializer.dart';
+import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
+import 'package:rdf_mapper/src/deserializers/rdf_subject_deserializer.dart';
+import 'package:rdf_mapper/src/api/deserialization_context.dart';
 import 'package:test/test.dart';
 
 void main() {

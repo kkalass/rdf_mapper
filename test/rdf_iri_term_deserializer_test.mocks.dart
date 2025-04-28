@@ -6,11 +6,15 @@
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i8;
 import 'package:rdf_core/graph/rdf_term.dart' as _i3;
-import 'package:rdf_mapper/deserialization_context.dart' as _i2;
-import 'package:rdf_mapper/rdf_blank_node_term_deserializer.dart' as _i7;
-import 'package:rdf_mapper/rdf_iri_term_deserializer.dart' as _i5;
-import 'package:rdf_mapper/rdf_literal_term_deserializer.dart' as _i6;
-import 'package:rdf_mapper/rdf_subject_deserializer.dart' as _i4;
+import 'package:rdf_mapper/src/api/deserialization_context.dart' as _i2;
+import 'package:rdf_mapper/src/deserializers/rdf_blank_node_term_deserializer.dart'
+    as _i7;
+import 'package:rdf_mapper/src/deserializers/rdf_iri_term_deserializer.dart'
+    as _i5;
+import 'package:rdf_mapper/src/deserializers/rdf_literal_term_deserializer.dart'
+    as _i6;
+import 'package:rdf_mapper/src/deserializers/rdf_subject_deserializer.dart'
+    as _i4;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values

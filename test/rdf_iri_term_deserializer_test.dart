@@ -1,8 +1,8 @@
 import 'package:mockito/annotations.dart';
 import 'package:rdf_core/graph/rdf_term.dart';
-import 'package:rdf_mapper/rdf_iri_term_deserializer.dart';
+import 'package:rdf_mapper/src/deserializers/rdf_iri_term_deserializer.dart';
 import 'package:test/test.dart';
-import 'package:rdf_mapper/deserialization_context.dart';
+import 'package:rdf_mapper/src/api/deserialization_context.dart';
 
 @GenerateMocks([DeserializationContext])
 import 'rdf_iri_term_deserializer_test.mocks.dart';

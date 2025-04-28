@@ -1,7 +1,7 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/rdf_blank_subject_mapper.dart';
-import 'package:rdf_mapper/rdf_iri_term_mapper.dart';
-import 'package:rdf_mapper/rdf_literal_term_mapper.dart';
+import 'package:rdf_mapper/src/mappers/rdf_blank_subject_mapper.dart';
+import 'package:rdf_mapper/src/mappers/rdf_iri_term_mapper.dart';
+import 'package:rdf_mapper/src/mappers/rdf_literal_term_mapper.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
 import 'package:test/test.dart';
 
