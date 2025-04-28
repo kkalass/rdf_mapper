@@ -30,7 +30,7 @@ void main() {
   );
 
   // Convert to RDF Turtle format
-  final turtle = rdf.toStringFromSubject(book);
+  final turtle = rdf.serialize(book);
 
   // Print the resulting Turtle representation
   final expectedTurtle = '''
@@ -60,7 +60,7 @@ _:b2 a schema:Chapter;
   assert(turtle == expectedTurtle);
 
   // Deserialize back to a Book object
-  final deserializedBook = rdf.fromString<Book>(turtle);
+  final deserializedBook = rdf.deserialize<Book>(turtle);
 
   // Verify it worked correctly
   print('\nDeserialized book:');
@@ -147,24 +147,12 @@ class BookMapper implements RdfSubjectMapper<Book> {
   Book fromIriTerm(IriTerm subject, DeserializationContext context) {
     return Book(
       id: subject.iri,
-      title: context.getRequiredPropertyValue<String>(subject, titlePredicate),
-      author: context.getRequiredPropertyValue<String>(
-        subject,
-        authorPredicate,
-      ),
-      published: context.getRequiredPropertyValue<DateTime>(
-        subject,
-        publishedPredicate,
-      ),
-      isbn: context.getRequiredPropertyValue<ISBN>(subject, isbnPredicate),
-      rating: context.getRequiredPropertyValue<Rating>(
-        subject,
-        ratingPredicate,
-      ),
-      chapters: context.getPropertyValueList<Chapter>(
-        subject,
-        chapterPredicate,
-      ),
+      title: context.require<String>(subject, titlePredicate),
+      author: context.require<String>(subject, authorPredicate),
+      published: context.require<DateTime>(subject, publishedPredicate),
+      isbn: context.require<ISBN>(subject, isbnPredicate),
+      rating: context.require<Rating>(subject, ratingPredicate),
+      chapters: context.getList<Chapter>(subject, chapterPredicate),
     );
   }
 
@@ -202,11 +190,8 @@ class ChapterMapper implements RdfBlankSubjectMapper<Chapter> {
     BlankNodeTerm term,
     DeserializationContext context,
   ) {
-    final title = context.getRequiredPropertyValue<String>(
-      term,
-      titlePredicate,
-    );
-    final number = context.getRequiredPropertyValue<int>(term, numberPredicate);
+    final title = context.require<String>(term, titlePredicate);
+    final number = context.require<int>(term, numberPredicate);
     return Chapter(title, number);
   }
 

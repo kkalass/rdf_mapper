@@ -22,7 +22,7 @@ void main() {
       expect(graph.triples, isNotEmpty);
 
       // Convert back to item
-      final reconstructedItem = orm.fromGraphSingleSubject<TestItem>(graph);
+      final reconstructedItem = orm.deserializeSingle<TestItem>(graph);
 
       // Verify properties match
       expect(reconstructedItem.name, equals(originalItem.name));
@@ -110,7 +110,7 @@ void main() {
 
       // Convert to graph
       final graph = parser.parse(turtle);
-      final allSubjects = orm.fromGraph(
+      final allSubjects = orm.deserializeAll(
         graph,
         register:
             (registry) => registry.registerSubjectSerializer(
@@ -150,11 +150,11 @@ final class TestItemRdfMapper implements RdfSubjectMapper<TestItem> {
   @override
   TestItem fromIriTerm(IriTerm iri, DeserializationContext context) {
     return TestItem(
-      name: context.getRequiredPropertyValue(
+      name: context.require(
         iri,
         IriTerm("http://kalass.de/dart/rdf/test-ontology#name"),
       ),
-      age: context.getRequiredPropertyValue(
+      age: context.require(
         iri,
         IriTerm("http://kalass.de/dart/rdf/test-ontology#age"),
       ),

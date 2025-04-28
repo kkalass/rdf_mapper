@@ -12,7 +12,7 @@
 ///
 /// final rdfmapper = RdfMapper.withDefaultRegistry();
 /// final graph = rdfmapper.toGraph(myObject);
-/// final obj = rdfmapper.fromGraph<MyType>(graph);
+/// final obj = rdfmapper.deserialize<MyType>(graph);
 /// ```
 ///
 library rdf_mapper;
@@ -68,94 +68,20 @@ final class RdfMapper {
   RdfMapperRegistry get registry => _service.registry;
 
   /// Deserialize an object of type [T] from an RDF graph, identified by the subject.
-  T fromGraphBySubject<T>(
+  T deserializeSubject<T>(
     RdfGraph graph,
     RdfSubject subjectId, {
-    // Optionally override the subject deserializer
     void Function(RdfMapperRegistry registry)? register,
   }) {
     return _service.fromGraphBySubject<T>(graph, subjectId, register: register);
   }
 
-  /// Convenience method to deserialize the single subject [T] from an RDF graph
-  T fromGraphSingleSubject<T>(
+  /// Convenience method to deserialize a single subject from an RDF graph.
+  T deserializeSingle<T>(
     RdfGraph graph, {
     void Function(RdfMapperRegistry registry)? register,
   }) {
     return _service.fromGraphSingleSubject(graph, register: register);
-  }
-
-  /// Deserialize a list of objects from all subjects in the RDF graph.
-  List<Object> fromGraph(
-    RdfGraph graph, {
-    void Function(RdfMapperRegistry registry)? register,
-  }) {
-    return _service.fromGraph(graph, register: register);
-  }
-
-  /// Serialize an object of type [T] to an RDF graph.
-  RdfGraph toGraph<T>(
-    T instance, {
-    void Function(RdfMapperRegistry registry)? register,
-  }) {
-    return _service.toGraph<T>(instance, register: register);
-  }
-
-  /// Serialize a list of objects to an RDF graph.
-  RdfGraph toGraphFromList<T>(
-    List<T> instances, {
-    void Function(RdfMapperRegistry registry)? register,
-  }) {
-    return _service.toGraphFromList<T>(instances, register: register);
-  }
-
-  /// Deserialize an object of type [T] from an RDF string representation.
-  ///
-  /// This method parses the provided [rdfString] into an RDF graph using the specified
-  /// [contentType] format, then deserializes it into an object of type [T] using the
-  /// registered subject mappers.
-  ///
-  /// [contentType] should be a MIME type like 'text/turtle' or 'application/ld+json'.
-  /// Defaults to 'text/turtle' if not specified.
-  ///
-  /// Usage:
-  /// ```dart
-  /// // Register a mapper for the Person class
-  /// rdfMapper.registerSubjectMapper<Person>(PersonMapper());
-  ///
-  /// final turtle = '''
-  ///   @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-  ///   <http://example.org/person/1> a foaf:Person ;
-  ///     foaf:name "John Doe" ;
-  ///     foaf:age 30 .
-  /// ''';
-  ///
-  /// final person = rdfMapper.fromString<Person>(turtle);
-  /// ```
-  T fromString<T>(
-    String rdfString, {
-    String? contentType,
-    void Function(RdfMapperRegistry registry)? register,
-  }) {
-    final graph = _rdfCore.parse(rdfString, contentType: contentType);
-    return fromGraphSingleSubject<T>(graph, register: register);
-  }
-
-  /// Deserialize an object of type [T] from an RDF string, identified by the subject.
-  ///
-  /// This method is similar to [fromString] but allows specifying a particular subject
-  /// to deserialize when the RDF representation contains multiple subjects.
-  ///
-  /// [contentType] should be a MIME type like 'text/turtle' or 'application/ld+json'.
-  /// Defaults to 'text/turtle' if not specified.
-  T fromStringBySubject<T>(
-    String rdfString,
-    RdfSubject subjectId, {
-    String? contentType,
-    void Function(RdfMapperRegistry registry)? register,
-  }) {
-    final graph = _rdfCore.parse(rdfString, contentType: contentType);
-    return fromGraphBySubject<T>(graph, subjectId, register: register);
   }
 
   /// Deserialize multiple objects from an RDF string representation.
@@ -180,17 +106,110 @@ final class RdfMapper {
   ///     foaf:age 28 .
   /// ''';
   ///
-  /// final people = rdfMapper.fromStringAllSubjects(turtle)
+  /// final people = rdfMapper.deserializeAll(turtle)
   ///   .whereType<Person>()
   ///   .toList();
   /// ```
-  List<Object> fromStringAllSubjects(
+  ///
+  List<Object> deserializeAll(
+    RdfGraph graph, {
+    void Function(RdfMapperRegistry registry)? register,
+  }) {
+    return _service.fromGraph(graph, register: register);
+  }
+
+  /// Serialize an object of type [T] to an RDF graph.
+  RdfGraph toGraph<T>(
+    T instance, {
+    void Function(RdfMapperRegistry registry)? register,
+  }) {
+    return _service.toGraph<T>(instance, register: register);
+  }
+
+  /// Serialize a list of objects to an RDF graph.
+  RdfGraph toGraphList<T>(
+    List<T> instances, {
+    void Function(RdfMapperRegistry registry)? register,
+  }) {
+    return _service.toGraphFromList<T>(instances, register: register);
+  }
+
+  /// Deserialize an object of type [T] from an RDF string representation.
+  ///
+  /// This method parses the provided [rdfString] into an RDF graph using the specified
+  /// [contentType] format, then deserializes it into an object of type [T] using the
+  /// registered subject mappers.
+  ///
+  /// [contentType] should be a MIME type like 'text/turtle' or 'application/ld+json'.
+  /// If not specified, the format will be auto-detected.
+  ///
+  /// Usage:
+  /// ```dart
+  /// // Register a mapper for the Person class
+  /// rdfMapper.registerSubjectMapper<Person>(PersonMapper());
+  ///
+  /// final turtle = '''
+  ///   @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+  ///   <http://example.org/person/1> a foaf:Person ;
+  ///     foaf:name "John Doe" ;
+  ///     foaf:age 30 .
+  /// ''';
+  ///
+  /// final person = rdfMapper.deserialize<Person>(turtle);
+  /// ```
+  ///
+  T deserialize<T>(
     String rdfString, {
-    String contentType = 'text/turtle',
+    String? contentType,
     void Function(RdfMapperRegistry registry)? register,
   }) {
     final graph = _rdfCore.parse(rdfString, contentType: contentType);
-    return fromGraph(graph, register: register);
+    return deserializeSingle<T>(graph, register: register);
+  }
+
+  /// Deserialize an object of type [T] from an RDF string, identified by the subject.
+  ///
+  /// This method is similar to [deserialize] but allows specifying a particular subject
+  /// to deserialize when the RDF representation contains multiple subjects.
+  ///
+  /// [contentType] should be a MIME type like 'text/turtle' or 'application/ld+json'.
+  /// If not specified, the format will be auto-detected.
+  ///
+  /// @deprecated Use [deserializeBySubject] instead
+  @Deprecated('Use deserializeBySubject instead')
+  T fromStringBySubject<T>(
+    String rdfString,
+    RdfSubject subjectId, {
+    String? contentType,
+    void Function(RdfMapperRegistry registry)? register,
+  }) {
+    return deserializeBySubject<T>(
+      rdfString,
+      subjectId,
+      contentType: contentType,
+      register: register,
+    );
+  }
+
+  /// Deserialize an object of type [T] from an RDF string, identified by the subject.
+  T deserializeBySubject<T>(
+    String rdfString,
+    RdfSubject subjectId, {
+    String? contentType,
+    void Function(RdfMapperRegistry registry)? register,
+  }) {
+    final graph = _rdfCore.parse(rdfString, contentType: contentType);
+    return deserializeSubject<T>(graph, subjectId, register: register);
+  }
+
+  /// Deserialize multiple objects from an RDF string representation.
+  List<Object> deserializeAllFromString(
+    String rdfString, {
+    String? contentType,
+    void Function(RdfMapperRegistry registry)? register,
+  }) {
+    final graph = _rdfCore.parse(rdfString, contentType: contentType);
+    return deserializeAll(graph, register: register);
   }
 
   /// Serialize an object of type [T] to an RDF string representation.
@@ -212,9 +231,9 @@ final class RdfMapper {
   ///   age: 30,
   /// );
   ///
-  /// final turtle = rdfMapper.toString(person);
+  /// final turtle = rdfMapper.serialize(person);
   /// ```
-  String toStringFromSubject<T>(
+  String serialize<T>(
     T instance, {
     String contentType = 'text/turtle',
     void Function(RdfMapperRegistry registry)? register,
@@ -241,14 +260,30 @@ final class RdfMapper {
   ///   Person(id: 'http://example.org/person/2', name: 'Jane Smith', age: 28),
   /// ];
   ///
-  /// final turtle = rdfMapper.toStringFromList(people);
+  /// final turtle = rdfMapper.serializeList(people);
   /// ```
+  ///
+  /// @deprecated Use [serializeList] instead
+  @Deprecated('Use serializeList instead')
   String toStringFromSubjects<T>(
     List<T> instances, {
     String contentType = 'text/turtle',
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    final graph = toGraphFromList<T>(instances, register: register);
+    return serializeList<T>(
+      instances,
+      contentType: contentType,
+      register: register,
+    );
+  }
+
+  /// Serialize a list of objects to an RDF string representation.
+  String serializeList<T>(
+    List<T> instances, {
+    String contentType = 'text/turtle',
+    void Function(RdfMapperRegistry registry)? register,
+  }) {
+    final graph = toGraphList<T>(instances, register: register);
     return _rdfCore.serialize(graph, contentType: contentType);
   }
 

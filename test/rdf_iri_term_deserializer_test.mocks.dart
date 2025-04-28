@@ -36,7 +36,7 @@ class MockDeserializationContext extends _i1.Mock
   }
 
   @override
-  T getRequiredPropertyValue<T>(
+  T require<T>(
     _i3.RdfSubject? subject,
     _i3.RdfPredicate? predicate, {
     bool? enforceSingleValue = true,
@@ -47,7 +47,7 @@ class MockDeserializationContext extends _i1.Mock
   }) =>
       (super.noSuchMethod(
             Invocation.method(
-              #getRequiredPropertyValue,
+              #require,
               [subject, predicate],
               {
                 #enforceSingleValue: enforceSingleValue,
@@ -60,7 +60,7 @@ class MockDeserializationContext extends _i1.Mock
             returnValue: _i8.dummyValue<T>(
               this,
               Invocation.method(
-                #getRequiredPropertyValue,
+                #require,
                 [subject, predicate],
                 {
                   #enforceSingleValue: enforceSingleValue,
@@ -75,7 +75,7 @@ class MockDeserializationContext extends _i1.Mock
           as T);
 
   @override
-  T? getPropertyValue<T>(
+  T? get<T>(
     _i3.RdfSubject? subject,
     _i3.RdfPredicate? predicate, {
     bool? enforceSingleValue = true,
@@ -86,7 +86,7 @@ class MockDeserializationContext extends _i1.Mock
   }) =>
       (super.noSuchMethod(
             Invocation.method(
-              #getPropertyValue,
+              #get,
               [subject, predicate],
               {
                 #enforceSingleValue: enforceSingleValue,
@@ -100,7 +100,7 @@ class MockDeserializationContext extends _i1.Mock
           as T?);
 
   @override
-  R getPropertyValues<T, R>(
+  R getMany<T, R>(
     _i3.RdfSubject? subject,
     _i3.RdfPredicate? predicate,
     R Function(Iterable<T>)? collector, {
@@ -111,7 +111,7 @@ class MockDeserializationContext extends _i1.Mock
   }) =>
       (super.noSuchMethod(
             Invocation.method(
-              #getPropertyValues,
+              #getMany,
               [subject, predicate, collector],
               {
                 #iriDeserializer: iriDeserializer,
@@ -123,7 +123,7 @@ class MockDeserializationContext extends _i1.Mock
             returnValue: _i8.dummyValue<R>(
               this,
               Invocation.method(
-                #getPropertyValues,
+                #getMany,
                 [subject, predicate, collector],
                 {
                   #iriDeserializer: iriDeserializer,
@@ -137,7 +137,7 @@ class MockDeserializationContext extends _i1.Mock
           as R);
 
   @override
-  List<T> getPropertyValueList<T>(
+  List<T> getList<T>(
     _i3.RdfSubject? subject,
     _i3.RdfPredicate? predicate, {
     _i5.RdfIriTermDeserializer<T>? iriDeserializer,
@@ -147,7 +147,7 @@ class MockDeserializationContext extends _i1.Mock
   }) =>
       (super.noSuchMethod(
             Invocation.method(
-              #getPropertyValueList,
+              #getList,
               [subject, predicate],
               {
                 #iriDeserializer: iriDeserializer,
@@ -161,7 +161,7 @@ class MockDeserializationContext extends _i1.Mock
           as List<T>);
 
   @override
-  Map<K, V> getPropertyValueMap<K, V>(
+  Map<K, V> getMap<K, V>(
     _i3.RdfSubject? subject,
     _i3.RdfPredicate? predicate, {
     _i5.RdfIriTermDeserializer<MapEntry<K, V>>? iriDeserializer,
@@ -171,7 +171,7 @@ class MockDeserializationContext extends _i1.Mock
   }) =>
       (super.noSuchMethod(
             Invocation.method(
-              #getPropertyValueMap,
+              #getMap,
               [subject, predicate],
               {
                 #iriDeserializer: iriDeserializer,

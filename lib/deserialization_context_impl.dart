@@ -54,7 +54,7 @@ class DeserializationContextImpl extends DeserializationContext {
   }
 
   @override
-  T? getPropertyValue<T>(
+  T? get<T>(
     RdfSubject subject,
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
@@ -86,7 +86,7 @@ class DeserializationContextImpl extends DeserializationContext {
   }
 
   @override
-  R getPropertyValues<T, R>(
+  R getMany<T, R>(
     RdfSubject subject,
     RdfPredicate predicate,
     R Function(Iterable<T>) collector, {
@@ -109,7 +109,7 @@ class DeserializationContextImpl extends DeserializationContext {
   }
 
   @override
-  T getRequiredPropertyValue<T>(
+  T require<T>(
     RdfSubject subject,
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
@@ -118,7 +118,7 @@ class DeserializationContextImpl extends DeserializationContext {
     RdfLiteralTermDeserializer<T>? literalDeserializer,
     RdfBlankNodeTermDeserializer<T>? blankNodeDeserializer,
   }) {
-    var result = getPropertyValue(
+    var result = get<T>(
       subject,
       predicate,
       enforceSingleValue: enforceSingleValue,

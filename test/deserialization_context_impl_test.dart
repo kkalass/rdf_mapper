@@ -84,7 +84,7 @@ void main() {
 
   group('DeserializationContextImpl', () {
     test('getPropertyValue returns null for non-existent properties', () {
-      final value = context.getPropertyValue<String>(
+      final value = context.get<String>(
         subject,
         IriTerm('http://example.org/nonexistent'),
       );
@@ -92,7 +92,7 @@ void main() {
     });
 
     test('getPropertyValue correctly retrieves string values', () {
-      final value = context.getPropertyValue<String>(
+      final value = context.get<String>(
         subject,
         IriTerm('http://example.org/name'),
       );
@@ -100,7 +100,7 @@ void main() {
     });
 
     test('getPropertyValue correctly retrieves integer values', () {
-      final value = context.getPropertyValue<int>(
+      final value = context.get<int>(
         subject,
         IriTerm('http://example.org/age'),
       );
@@ -108,7 +108,7 @@ void main() {
     });
 
     test('getPropertyValue correctly retrieves boolean values', () {
-      final value = context.getPropertyValue<bool>(
+      final value = context.get<bool>(
         subject,
         IriTerm('http://example.org/active'),
       );
@@ -119,34 +119,29 @@ void main() {
       // Register custom IRI deserializer
       registry.registerIriTermDeserializer<String>(CustomIriDeserializer());
 
-      final value = context.getPropertyValue<String>(
+      final value = context.get<String>(
         subject,
         IriTerm('http://example.org/friend'),
       );
       expect(value, equals('http://example.org/person/jane'));
     });
 
-    test(
-      'getRequiredPropertyValue throws exception for missing properties',
-      () {
-        expect(
-          () => context.getRequiredPropertyValue<String>(
-            subject,
-            IriTerm('http://example.org/nonexistent'),
-          ),
-          throwsA(isA<PropertyValueNotFoundException>()),
-        );
-      },
-    );
+    test('require throws exception for missing properties', () {
+      expect(
+        () => context.require<String>(
+          subject,
+          IriTerm('http://example.org/nonexistent'),
+        ),
+        throwsA(isA<PropertyValueNotFoundException>()),
+      );
+    });
 
     test(
       'getPropertyValue throws exception for multi-valued properties when enforceSingleValue is true',
       () {
         expect(
-          () => context.getPropertyValue<String>(
-            subject,
-            IriTerm('http://example.org/tags'),
-          ),
+          () =>
+              context.get<String>(subject, IriTerm('http://example.org/tags')),
           throwsA(isA<TooManyPropertyValuesException>()),
         );
       },
@@ -155,7 +150,7 @@ void main() {
     test(
       'getPropertyValue allows multi-valued properties when enforceSingleValue is false',
       () {
-        final value = context.getPropertyValue<String>(
+        final value = context.get<String>(
           subject,
           IriTerm('http://example.org/tags'),
           enforceSingleValue: false,
@@ -165,7 +160,7 @@ void main() {
     );
 
     test('getPropertyValues collects all values for a property', () {
-      final values = context.getPropertyValues<String, List<String>>(
+      final values = context.getMany<String, List<String>>(
         subject,
         IriTerm('http://example.org/tags'),
         (values) => values.toList(),
@@ -176,7 +171,7 @@ void main() {
     });
 
     test('getPropertyValueList is a convenient shorthand for lists', () {
-      final values = context.getPropertyValueList<String>(
+      final values = context.getList<String>(
         subject,
         IriTerm('http://example.org/tags'),
       );
@@ -192,7 +187,7 @@ void main() {
           CustomBlankNodeDeserializer(),
         );
 
-        final address = context.getPropertyValue<TestAddress>(
+        final address = context.get<TestAddress>(
           subject,
           IriTerm('http://example.org/address'),
         );
@@ -220,7 +215,7 @@ void main() {
     test('getPropertyValue uses custom deserializers when provided', () {
       final customLiteralDeserializer = CustomStringDeserializer();
 
-      final value = context.getPropertyValue<String>(
+      final value = context.get<String>(
         subject,
         IriTerm('http://example.org/name'),
         literalDeserializer: customLiteralDeserializer,
@@ -279,10 +274,7 @@ class CustomBlankNodeDeserializer
     BlankNodeTerm term,
     DeserializationContext context,
   ) {
-    var city = context.getRequiredPropertyValue<String>(
-      term,
-      VcardPredicates.locality,
-    );
+    var city = context.require<String>(term, VcardPredicates.locality);
     return TestAddress(city: city);
   }
 }

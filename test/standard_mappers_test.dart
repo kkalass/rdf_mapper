@@ -65,7 +65,7 @@ class MockSerializationContext extends SerializationContext {
 // Mock implementation of DeserializationContext for testing
 class MockDeserializationContext extends DeserializationContext {
   @override
-  T getRequiredPropertyValue<T>(
+  T require<T>(
     RdfSubject subject,
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
@@ -78,7 +78,7 @@ class MockDeserializationContext extends DeserializationContext {
   }
 
   @override
-  T? getPropertyValue<T>(
+  T? get<T>(
     RdfSubject subject,
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
@@ -91,7 +91,7 @@ class MockDeserializationContext extends DeserializationContext {
   }
 
   @override
-  R getPropertyValues<T, R>(
+  R getMany<T, R>(
     RdfSubject subject,
     RdfPredicate predicate,
     R Function(Iterable<T>) collector, {

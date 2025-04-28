@@ -426,17 +426,14 @@ class TestPersonMapper implements RdfSubjectMapper<TestPerson> {
     final id = term.iri;
 
     // Get name property
-    final name = context.getPropertyValue<String>(
+    final name = context.get<String>(
       term,
       IriTerm('http://xmlns.com/foaf/0.1/name'),
     );
 
     // Get age property
     final age =
-        context.getPropertyValue<int>(
-          term,
-          IriTerm('http://xmlns.com/foaf/0.1/age'),
-        ) ??
+        context.get<int>(term, IriTerm('http://xmlns.com/foaf/0.1/age')) ??
         0; // Default age to 0 if not present
 
     return TestPerson(id: id, name: name ?? 'Unknown', age: age);

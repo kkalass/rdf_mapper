@@ -9,18 +9,17 @@ import 'package:rdf_mapper/rdf_subject_deserializer.dart';
 /// Provides access to services and state needed during RDF deserialization.
 /// Used to delegate complex type reconstruction to the parent service.
 abstract class DeserializationContext {
-  /// Gets a property value from the RDF graph
+  /// Gets a required property value from the RDF graph
   ///
   /// In RDF, we have triples of "subject", "predicate", "object".
-  /// Translated to pure dart, the subject is the object we are working with,
-  /// the predicate is the property we are looking for, and the object is
-  /// the value we are looking for.
+  /// This method retrieves the object value for the given subject-predicate pair
+  /// and throws an exception if the value cannot be found.
   ///
   /// @param subject The subject IRI of the object we are working with
   /// @param predicate The predicate IRI of the property
-  /// @param failOnMultivalue If true, we will throw an exception if there is more than one matching term.
+  /// @param enforceSingleValue If true, we will throw an exception if there is more than one matching term.
   /// @return The object value of the property
-  T getRequiredPropertyValue<T>(
+  T require<T>(
     RdfSubject subject,
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
@@ -30,7 +29,11 @@ abstract class DeserializationContext {
     RdfBlankNodeTermDeserializer<T>? blankNodeDeserializer,
   });
 
-  T? getPropertyValue<T>(
+  /// Gets an optional property value from the RDF graph
+  ///
+  /// Similar to [require], but returns null if the property is not found
+  /// instead of throwing an exception.
+  T? get<T>(
     RdfSubject subject,
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
@@ -40,7 +43,8 @@ abstract class DeserializationContext {
     RdfBlankNodeTermDeserializer<T>? blankNodeDeserializer,
   });
 
-  R getPropertyValues<T, R>(
+  /// Gets multiple property values and collects them with a custom collector function
+  R getMany<T, R>(
     RdfSubject subject,
     RdfPredicate predicate,
     R Function(Iterable<T>) collector, {
@@ -50,14 +54,17 @@ abstract class DeserializationContext {
     RdfBlankNodeTermDeserializer<T>? blankNodeDeserializer,
   });
 
-  List<T> getPropertyValueList<T>(
+  /// Gets a list of property values
+  ///
+  /// Convenience method that collects multiple property values into a List.
+  List<T> getList<T>(
     RdfSubject subject,
     RdfPredicate predicate, {
     RdfIriTermDeserializer<T>? iriDeserializer,
     RdfSubjectDeserializer<T>? subjectDeserializer,
     RdfLiteralTermDeserializer<T>? literalDeserializer,
     RdfBlankNodeTermDeserializer<T>? blankNodeDeserializer,
-  }) => getPropertyValues<T, List<T>>(
+  }) => getMany<T, List<T>>(
     subject,
     predicate,
     (it) => it.toList(),
@@ -67,14 +74,17 @@ abstract class DeserializationContext {
     blankNodeDeserializer: blankNodeDeserializer,
   );
 
-  Map<K, V> getPropertyValueMap<K, V>(
+  /// Gets a map of property values
+  ///
+  /// Convenience method that collects multiple property values into a Map.
+  Map<K, V> getMap<K, V>(
     RdfSubject subject,
     RdfPredicate predicate, {
     RdfIriTermDeserializer<MapEntry<K, V>>? iriDeserializer,
     RdfSubjectDeserializer<MapEntry<K, V>>? subjectDeserializer,
     RdfLiteralTermDeserializer<MapEntry<K, V>>? literalDeserializer,
     RdfBlankNodeTermDeserializer<MapEntry<K, V>>? blankNodeDeserializer,
-  }) => getPropertyValues<MapEntry<K, V>, Map<K, V>>(
+  }) => getMany<MapEntry<K, V>, Map<K, V>>(
     subject,
     predicate,
     (it) => Map<K, V>.fromEntries(it),

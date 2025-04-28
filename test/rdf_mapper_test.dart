@@ -136,7 +136,7 @@ void main() {
       );
 
       // Deserialize from graph
-      final person = rdfMapper.fromGraphBySubject<TestPerson>(graph, subjectId);
+      final person = rdfMapper.deserializeSubject<TestPerson>(graph, subjectId);
 
       // Verify the object properties
       expect(person, isNotNull);
@@ -168,7 +168,7 @@ void main() {
       );
 
       // Deserialize from graph
-      final person = rdfMapper.fromGraphSingleSubject<TestPerson>(graph);
+      final person = rdfMapper.deserializeSingle<TestPerson>(graph);
 
       // Verify the object properties
       expect(person, isNotNull);
@@ -200,7 +200,7 @@ void main() {
         ];
 
         // Serialize to graph
-        final graph = rdfMapper.toGraphFromList(people);
+        final graph = rdfMapper.toGraphList(people);
 
         // Check for John's name property
         final johnNameTriples = graph.findTriples(
@@ -292,7 +292,7 @@ void main() {
         );
 
         // Deserialize all subjects from graph
-        final objects = rdfMapper.fromGraph(graph);
+        final objects = rdfMapper.deserializeAll(graph);
 
         // Verify we got both persons
         expect(objects.length, equals(2));
@@ -359,7 +359,7 @@ void main() {
         );
 
         // Convert to string with default format (Turtle)
-        final turtle = rdfMapper.toStringFromSubject(person);
+        final turtle = rdfMapper.serialize(person);
 
         // Verify the Turtle string contains expected content
         expect(turtle, contains('<http://example.org/person/1>'));
@@ -392,7 +392,7 @@ void main() {
         );
 
         // Convert to string with default format (Turtle)
-        final turtle = rdfMapper.toStringFromSubject(person);
+        final turtle = rdfMapper.serialize(person);
 
         final expectedTurtle = """
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
@@ -433,7 +433,7 @@ _:b0 a schema:PostalAddress;
         ''';
 
         // Deserialize from string with default format (Turtle)
-        final person = rdfMapper.fromString<TestPerson>(turtle);
+        final person = rdfMapper.deserialize<TestPerson>(turtle);
 
         // Verify the object properties
         expect(person, isNotNull);
@@ -466,7 +466,7 @@ _:b0 a schema:PostalAddress;
     schema:addressCountry "USA" .
 """;
         // Convert from string with detected format (Turtle)
-        final person = rdfMapper.fromString(turtle);
+        final person = rdfMapper.deserialize(turtle);
 
         // Create a test object
         final expectedPerson = TestPerson(
@@ -509,7 +509,7 @@ _:b0 a schema:PostalAddress;
         ''';
 
         // Deserialize all subjects from Turtle string
-        final objects = rdfMapper.fromStringAllSubjects(
+        final objects = rdfMapper.deserializeAllFromString(
           turtle,
           contentType: 'text/turtle',
         );
@@ -559,7 +559,7 @@ _:b0 a schema:PostalAddress;
         ];
 
         // Convert to Turtle format
-        final turtle = rdfMapper.toStringFromSubjects(
+        final turtle = rdfMapper.serializeList(
           people,
           contentType: 'text/turtle',
         );
@@ -608,14 +608,14 @@ _:b0 a schema:PostalAddress;
       customRdfMapper.registerSubjectMapper<TestPerson>(TestPersonMapper());
 
       // Test parsing using the mock
-      final person = customRdfMapper.fromString<TestPerson>(
+      final person = customRdfMapper.deserialize<TestPerson>(
         'THIS CONTENT IS IGNORED BY THE MOCK',
       );
       expect(person.name, equals('Test Person'));
       expect(person.age, equals(42));
 
       // Test serialization using the mock
-      final serialized = customRdfMapper.toStringFromSubject(
+      final serialized = customRdfMapper.serialize(
         person,
         contentType: 'application/predefined-results',
       );
@@ -837,23 +837,17 @@ class TestPersonMapper implements RdfSubjectMapper<TestPerson> {
     final id = subject.iri;
 
     // Get name property
-    final name = context.getRequiredPropertyValue<String>(
-      subject,
-      givenNamePredicate,
-    );
+    final name = context.require<String>(subject, givenNamePredicate);
 
     // Get age property
-    final age = context.getRequiredPropertyValue<int>(
+    final age = context.require<int>(
       subject,
       // Age currently has the status unstable in the spec, thus it is not
       // included in the predicates class
       agePredicate,
     );
 
-    final address = context.getPropertyValue<Address>(
-      subject,
-      addressPredicate,
-    );
+    final address = context.get<Address>(subject, addressPredicate);
     return TestPerson(id: id, name: name, age: age, address: address);
   }
 
@@ -900,25 +894,13 @@ class AddressMapper implements RdfBlankSubjectMapper<Address> {
     DeserializationContext context,
   ) {
     // Get address properties
-    final street = context.getRequiredPropertyValue<String>(
-      term,
-      streetAddressPredicate,
-    );
+    final street = context.require<String>(term, streetAddressPredicate);
 
-    final city = context.getRequiredPropertyValue<String>(
-      term,
-      addressLocalityPredicate,
-    );
+    final city = context.require<String>(term, addressLocalityPredicate);
 
-    final zipCode = context.getRequiredPropertyValue<String>(
-      term,
-      postalCodePredicate,
-    );
+    final zipCode = context.require<String>(term, postalCodePredicate);
 
-    final country = context.getRequiredPropertyValue<String>(
-      term,
-      addressCountryPredicate,
-    );
+    final country = context.require<String>(term, addressCountryPredicate);
 
     return Address(
       street: street,
