@@ -1,9 +1,9 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
 import 'package:rdf_mapper/src/exceptions/deserialization_exception.dart';
-import 'package:rdf_mapper/src/deserializers/rdf_iri_term_deserializer.dart';
+import 'package:rdf_mapper/src/deserializers/iri_term_deserializer.dart';
 
-class ExtractingIriTermDeserializer<T> implements RdfIriTermDeserializer<T> {
+class ExtractingIriTermDeserializer<T> implements IriTermDeserializer<T> {
   final T Function(IriTerm, DeserializationContext) _extract;
 
   ExtractingIriTermDeserializer({
@@ -11,7 +11,7 @@ class ExtractingIriTermDeserializer<T> implements RdfIriTermDeserializer<T> {
   }) : _extract = extract;
 
   @override
-  fromIriTerm(IriTerm term, DeserializationContext context) {
+  fromRdfTerm(IriTerm term, DeserializationContext context) {
     try {
       return _extract(term, context);
     } on DeserializationException {

@@ -1,7 +1,8 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
+import 'package:rdf_mapper/src/api/serializer.dart';
 
-abstract interface class RdfSubjectSerializer<T> {
+abstract interface class SubjectSerializer<T> implements Serializer<T> {
   /// The IRI of the type of the subject.
   /// This is used to determine the type of the subject when serializing it to RDF.
   /// If you want to not associate a type with the subject, return null - you

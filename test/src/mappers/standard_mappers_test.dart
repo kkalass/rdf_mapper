@@ -117,7 +117,7 @@ void main() {
       test('StringSerializer correctly serializes strings to RDF literals', () {
         final serializer = StringSerializer();
 
-        final literal = serializer.toLiteralTerm(
+        final literal = serializer.toRdfTerm(
           'Hello, World!',
           serializationContext,
         );
@@ -133,7 +133,7 @@ void main() {
         () {
           final deserializer = StringDeserializer();
 
-          final string = deserializer.fromLiteralTerm(
+          final string = deserializer.fromRdfTerm(
             LiteralTerm.string('Hello, World!'),
             deserializationContext,
           );
@@ -148,7 +148,7 @@ void main() {
           final deserializer = StringDeserializer();
 
           expect(
-            () => deserializer.fromLiteralTerm(
+            () => deserializer.fromRdfTerm(
               LiteralTerm.withLanguage('Hallo, Welt!', 'de'),
               deserializationContext,
             ),
@@ -162,7 +162,7 @@ void main() {
         () {
           final deserializer = StringDeserializer(acceptLangString: true);
 
-          final string = deserializer.fromLiteralTerm(
+          final string = deserializer.fromRdfTerm(
             LiteralTerm.withLanguage('Hallo, Welt!', 'de'),
             deserializationContext,
           );
@@ -183,12 +183,12 @@ void main() {
           );
 
           expect(
-            deserializer.fromLiteralTerm(customLiteral, deserializationContext),
+            deserializer.fromRdfTerm(customLiteral, deserializationContext),
             equals('Custom string'),
           );
 
           expect(
-            () => deserializer.fromLiteralTerm(
+            () => deserializer.fromRdfTerm(
               LiteralTerm.string('Standard string'),
               deserializationContext,
             ),
@@ -202,7 +202,7 @@ void main() {
       test('IntSerializer correctly serializes integers to RDF literals', () {
         final serializer = IntSerializer();
 
-        final literal = serializer.toLiteralTerm(42, serializationContext);
+        final literal = serializer.toRdfTerm(42, serializationContext);
 
         expect(literal, isA<LiteralTerm>());
         expect(literal.value, equals('42'));
@@ -214,12 +214,12 @@ void main() {
         () {
           final deserializer = IntDeserializer();
 
-          final int1 = deserializer.fromLiteralTerm(
+          final int1 = deserializer.fromRdfTerm(
             LiteralTerm.typed('42', 'integer'),
             deserializationContext,
           );
 
-          final int2 = deserializer.fromLiteralTerm(
+          final int2 = deserializer.fromRdfTerm(
             LiteralTerm.typed('-123', 'integer'),
             deserializationContext,
           );
@@ -234,14 +234,8 @@ void main() {
       test('BoolSerializer correctly serializes booleans to RDF literals', () {
         final serializer = BoolSerializer();
 
-        final trueLiteral = serializer.toLiteralTerm(
-          true,
-          serializationContext,
-        );
-        final falseLiteral = serializer.toLiteralTerm(
-          false,
-          serializationContext,
-        );
+        final trueLiteral = serializer.toRdfTerm(true, serializationContext);
+        final falseLiteral = serializer.toRdfTerm(false, serializationContext);
 
         expect(trueLiteral.value, equals('true'));
         expect(trueLiteral.datatype, equals(XsdTypes.boolean));
@@ -255,23 +249,23 @@ void main() {
         () {
           final deserializer = BoolDeserializer();
 
-          final trueValue = deserializer.fromLiteralTerm(
+          final trueValue = deserializer.fromRdfTerm(
             LiteralTerm.typed('true', 'boolean'),
             deserializationContext,
           );
 
-          final falseValue = deserializer.fromLiteralTerm(
+          final falseValue = deserializer.fromRdfTerm(
             LiteralTerm.typed('false', 'boolean'),
             deserializationContext,
           );
 
           // Test for "1" and "0" as boolean values
-          final oneValue = deserializer.fromLiteralTerm(
+          final oneValue = deserializer.fromRdfTerm(
             LiteralTerm.typed('1', 'boolean'),
             deserializationContext,
           );
 
-          final zeroValue = deserializer.fromLiteralTerm(
+          final zeroValue = deserializer.fromRdfTerm(
             LiteralTerm.typed('0', 'boolean'),
             deserializationContext,
           );
@@ -288,11 +282,8 @@ void main() {
       test('DoubleSerializer correctly serializes doubles to RDF literals', () {
         final serializer = DoubleSerializer();
 
-        final literal1 = serializer.toLiteralTerm(
-          3.14159,
-          serializationContext,
-        );
-        final literal2 = serializer.toLiteralTerm(-0.5, serializationContext);
+        final literal1 = serializer.toRdfTerm(3.14159, serializationContext);
+        final literal2 = serializer.toRdfTerm(-0.5, serializationContext);
 
         expect(literal1.value, equals('3.14159'));
         expect(literal1.datatype, equals(XsdTypes.decimal));
@@ -306,12 +297,12 @@ void main() {
         () {
           final deserializer = DoubleDeserializer();
 
-          final double1 = deserializer.fromLiteralTerm(
+          final double1 = deserializer.fromRdfTerm(
             LiteralTerm.typed('3.14159', 'decimal'),
             deserializationContext,
           );
 
-          final double2 = deserializer.fromLiteralTerm(
+          final double2 = deserializer.fromRdfTerm(
             LiteralTerm.typed('-0.5', 'decimal'),
             deserializationContext,
           );
@@ -329,10 +320,7 @@ void main() {
           final serializer = DateTimeSerializer();
 
           final dateTime = DateTime.utc(2023, 4, 1, 12, 30, 45);
-          final literal = serializer.toLiteralTerm(
-            dateTime,
-            serializationContext,
-          );
+          final literal = serializer.toRdfTerm(dateTime, serializationContext);
 
           expect(literal.value, equals('2023-04-01T12:30:45.000Z'));
           expect(literal.datatype, equals(XsdTypes.dateTime));
@@ -344,7 +332,7 @@ void main() {
         () {
           final deserializer = DateTimeDeserializer();
 
-          final dateTime = deserializer.fromLiteralTerm(
+          final dateTime = deserializer.fromRdfTerm(
             LiteralTerm.typed('2023-04-01T12:30:45.000Z', 'dateTime'),
             deserializationContext,
           );

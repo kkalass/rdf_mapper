@@ -1,7 +1,7 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_core/vocab.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
-import 'package:rdf_mapper/src/serializers/rdf_subject_serializer.dart';
+import 'package:rdf_mapper/src/serializers/subject_serializer.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
 import 'package:rdf_mapper/src/context/serialization_context_impl.dart';
 import 'package:test/test.dart';
@@ -119,7 +119,7 @@ class TestPerson {
 
 // Test serializer that explicitly adds a type triple
 class TestPersonSerializerWithTypeTriple
-    implements RdfSubjectSerializer<TestPerson> {
+    implements SubjectSerializer<TestPerson> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
@@ -148,7 +148,7 @@ class TestPersonSerializerWithTypeTriple
 
 // Test serializer that doesn't add a type triple
 class TestPersonSerializerWithoutTypeTriple
-    implements RdfSubjectSerializer<TestPerson> {
+    implements SubjectSerializer<TestPerson> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 

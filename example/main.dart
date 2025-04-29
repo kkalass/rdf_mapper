@@ -210,7 +210,7 @@ class BookMapper implements RdfSubjectMapper<Book> {
   final IriTerm typeIri = IriTerm('https://schema.org/Book');
 
   @override
-  Book fromIriTerm(IriTerm subject, DeserializationContext context) {
+  Book fromRdfTerm(IriTerm subject, DeserializationContext context) {
     return Book(
       id: subject.iri,
       title: context.require<String>(subject, titlePredicate),
@@ -252,10 +252,7 @@ class ChapterMapper implements RdfBlankSubjectMapper<Chapter> {
   final IriTerm typeIri = IriTerm('https://schema.org/Chapter');
 
   @override
-  Chapter fromBlankNodeTerm(
-    BlankNodeTerm term,
-    DeserializationContext context,
-  ) {
+  Chapter fromRdfTerm(BlankNodeTerm term, DeserializationContext context) {
     final title = context.require<String>(term, titlePredicate);
     final number = context.require<int>(term, numberPredicate);
     return Chapter(title, number);
@@ -281,12 +278,12 @@ class ISBNMapper implements RdfIriTermMapper<ISBN> {
   static const String ISBN_URI_PREFIX = 'urn:isbn:';
 
   @override
-  IriTerm toIriTerm(ISBN isbn, SerializationContext context) {
+  IriTerm toRdfTerm(ISBN isbn, SerializationContext context) {
     return IriTerm('$ISBN_URI_PREFIX${isbn.value}');
   }
 
   @override
-  ISBN fromIriTerm(IriTerm term, DeserializationContext context) {
+  ISBN fromRdfTerm(IriTerm term, DeserializationContext context) {
     final uri = term.iri;
     if (!uri.startsWith(ISBN_URI_PREFIX)) {
       throw ArgumentError('Invalid ISBN URI format: $uri');
@@ -298,12 +295,12 @@ class ISBNMapper implements RdfIriTermMapper<ISBN> {
 // Custom literal mapper
 class RatingMapper implements RdfLiteralTermMapper<Rating> {
   @override
-  LiteralTerm toLiteralTerm(Rating rating, SerializationContext context) {
+  LiteralTerm toRdfTerm(Rating rating, SerializationContext context) {
     return LiteralTerm.typed(rating.stars.toString(), 'integer');
   }
 
   @override
-  Rating fromLiteralTerm(LiteralTerm term, DeserializationContext context) {
+  Rating fromRdfTerm(LiteralTerm term, DeserializationContext context) {
     return Rating(int.parse(term.value));
   }
 }

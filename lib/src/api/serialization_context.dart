@@ -1,7 +1,7 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/src/serializers/rdf_iri_term_serializer.dart';
-import 'package:rdf_mapper/src/serializers/rdf_literal_term_serializer.dart';
-import 'package:rdf_mapper/src/serializers/rdf_subject_serializer.dart';
+import 'package:rdf_mapper/src/serializers/iri_term_serializer.dart';
+import 'package:rdf_mapper/src/serializers/literal_term_serializer.dart';
+import 'package:rdf_mapper/src/serializers/subject_serializer.dart';
 
 /// Context for serialization operations
 ///
@@ -10,7 +10,7 @@ import 'package:rdf_mapper/src/serializers/rdf_subject_serializer.dart';
 abstract class SerializationContext {
   (RdfSubject, List<Triple>) subject<T>(
     T instance, {
-    RdfSubjectSerializer<T>? serializer,
+    SubjectSerializer<T>? serializer,
   });
 
   Triple constant(RdfSubject subject, RdfPredicate predicate, RdfObject object);
@@ -19,7 +19,7 @@ abstract class SerializationContext {
     RdfSubject subject,
     RdfPredicate predicate,
     T instance, {
-    RdfLiteralTermSerializer<T>? serializer,
+    LiteralTermSerializer<T>? serializer,
   });
 
   List<Triple> literals<A, T>(
@@ -27,7 +27,7 @@ abstract class SerializationContext {
     RdfPredicate predicate,
     Iterable<T> Function(A) toIterable,
     A instance, {
-    RdfLiteralTermSerializer<T>? serializer,
+    LiteralTermSerializer<T>? serializer,
   }) =>
       toIterable(instance)
           .map(
@@ -39,7 +39,7 @@ abstract class SerializationContext {
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> instance, {
-    RdfLiteralTermSerializer<T>? serializer,
+    LiteralTermSerializer<T>? serializer,
   }) => literals<Iterable<T>, T>(
     subject,
     predicate,
@@ -52,7 +52,7 @@ abstract class SerializationContext {
     RdfSubject subject,
     RdfPredicate predicate,
     T instance, {
-    RdfIriTermSerializer<T>? serializer,
+    IriTermSerializer<T>? serializer,
   });
 
   List<Triple> iris<A, T>(
@@ -60,7 +60,7 @@ abstract class SerializationContext {
     RdfPredicate predicate,
     Iterable<T> Function(A) toIterable,
     A instance, {
-    RdfIriTermSerializer<T>? serializer,
+    IriTermSerializer<T>? serializer,
   }) =>
       toIterable(instance)
           .map((item) => iri(subject, predicate, item, serializer: serializer))
@@ -70,7 +70,7 @@ abstract class SerializationContext {
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> instance, {
-    RdfIriTermSerializer<T>? serializer,
+    IriTermSerializer<T>? serializer,
   }) => iris<Iterable<T>, T>(
     subject,
     predicate,
@@ -83,7 +83,7 @@ abstract class SerializationContext {
     RdfSubject subject,
     RdfPredicate predicate,
     T instance, {
-    RdfSubjectSerializer<T>? serializer,
+    SubjectSerializer<T>? serializer,
   });
 
   List<Triple> childSubjects<A, T>(
@@ -91,7 +91,7 @@ abstract class SerializationContext {
     RdfPredicate predicate,
     Iterable<T> Function(A p1) toIterable,
     A instance, {
-    RdfSubjectSerializer<T>? serializer,
+    SubjectSerializer<T>? serializer,
   }) =>
       toIterable(instance)
           .expand<Triple>(
@@ -104,7 +104,7 @@ abstract class SerializationContext {
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> instance, {
-    RdfSubjectSerializer<T>? serializer,
+    SubjectSerializer<T>? serializer,
   }) => childSubjects(
     subject,
     predicate,
@@ -117,7 +117,7 @@ abstract class SerializationContext {
     RdfSubject subject,
     RdfPredicate predicate,
     Map<K, V> instance,
-    RdfSubjectSerializer<MapEntry<K, V>> entrySerializer,
+    SubjectSerializer<MapEntry<K, V>> entrySerializer,
   ) => childSubjects<Map<K, V>, MapEntry<K, V>>(
     subject,
     predicate,

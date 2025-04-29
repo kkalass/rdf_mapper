@@ -148,7 +148,7 @@ final class TestItemRdfMapper implements RdfSubjectMapper<TestItem> {
   );
 
   @override
-  TestItem fromIriTerm(IriTerm iri, DeserializationContext context) {
+  TestItem fromRdfTerm(IriTerm iri, DeserializationContext context) {
     return TestItem(
       name: context.require(
         iri,

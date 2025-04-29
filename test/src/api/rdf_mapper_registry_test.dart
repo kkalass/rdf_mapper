@@ -2,14 +2,14 @@ import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
 import 'package:rdf_mapper/src/exceptions/deserializer_not_found_exception.dart';
 import 'package:rdf_mapper/src/exceptions/serializer_not_found_exception.dart';
-import 'package:rdf_mapper/src/deserializers/rdf_iri_term_deserializer.dart';
-import 'package:rdf_mapper/src/serializers/rdf_iri_term_serializer.dart';
-import 'package:rdf_mapper/src/deserializers/rdf_literal_term_deserializer.dart';
-import 'package:rdf_mapper/src/serializers/rdf_literal_term_serializer.dart';
+import 'package:rdf_mapper/src/deserializers/iri_term_deserializer.dart';
+import 'package:rdf_mapper/src/serializers/iri_term_serializer.dart';
+import 'package:rdf_mapper/src/deserializers/literal_term_deserializer.dart';
+import 'package:rdf_mapper/src/serializers/literal_term_serializer.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
-import 'package:rdf_mapper/src/deserializers/rdf_subject_deserializer.dart';
+import 'package:rdf_mapper/src/deserializers/subject_deserializer.dart';
 import 'package:rdf_mapper/src/mappers/rdf_subject_mapper.dart';
-import 'package:rdf_mapper/src/serializers/rdf_subject_serializer.dart';
+import 'package:rdf_mapper/src/serializers/subject_serializer.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
 import 'package:test/test.dart';
 
@@ -252,46 +252,45 @@ class AnotherCustomType {
   AnotherCustomType(this.value);
 }
 
-class TestIriDeserializer implements RdfIriTermDeserializer<CustomType> {
+class TestIriDeserializer implements IriTermDeserializer<CustomType> {
   @override
-  CustomType fromIriTerm(IriTerm term, DeserializationContext context) {
+  CustomType fromRdfTerm(IriTerm term, DeserializationContext context) {
     return CustomType(term.iri);
   }
 }
 
-class TestIriSerializer implements RdfIriTermSerializer<CustomType> {
+class TestIriSerializer implements IriTermSerializer<CustomType> {
   @override
-  IriTerm toIriTerm(CustomType value, SerializationContext context) {
+  IriTerm toRdfTerm(CustomType value, SerializationContext context) {
     return IriTerm(value.value);
   }
 }
 
-class TestLiteralDeserializer
-    implements RdfLiteralTermDeserializer<CustomType> {
+class TestLiteralDeserializer implements LiteralTermDeserializer<CustomType> {
   @override
-  CustomType fromLiteralTerm(LiteralTerm term, DeserializationContext context) {
+  CustomType fromRdfTerm(LiteralTerm term, DeserializationContext context) {
     return CustomType(term.value);
   }
 }
 
-class TestLiteralSerializer implements RdfLiteralTermSerializer<CustomType> {
+class TestLiteralSerializer implements LiteralTermSerializer<CustomType> {
   @override
-  LiteralTerm toLiteralTerm(CustomType value, SerializationContext context) {
+  LiteralTerm toRdfTerm(CustomType value, SerializationContext context) {
     return LiteralTerm.string(value.value);
   }
 }
 
-class TestSubjectDeserializer implements RdfSubjectDeserializer<CustomType> {
+class TestSubjectDeserializer implements SubjectDeserializer<CustomType> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/CustomType');
 
   @override
-  CustomType fromIriTerm(IriTerm term, DeserializationContext context) {
+  CustomType fromRdfTerm(IriTerm term, DeserializationContext context) {
     return CustomType(term.iri);
   }
 }
 
-class TestSubjectSerializer implements RdfSubjectSerializer<CustomType> {
+class TestSubjectSerializer implements SubjectSerializer<CustomType> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/CustomType');
 
@@ -318,7 +317,7 @@ class TestSubjectMapper implements RdfSubjectMapper<CustomType> {
   final IriTerm typeIri = IriTerm('http://example.org/CustomType');
 
   @override
-  CustomType fromIriTerm(IriTerm term, DeserializationContext context) {
+  CustomType fromRdfTerm(IriTerm term, DeserializationContext context) {
     return CustomType(term.iri);
   }
 
@@ -345,7 +344,7 @@ class AnotherTestSubjectMapper implements RdfSubjectMapper<AnotherCustomType> {
   final IriTerm typeIri = IriTerm('http://example.org/AnotherCustomType');
 
   @override
-  AnotherCustomType fromIriTerm(IriTerm term, DeserializationContext context) {
+  AnotherCustomType fromRdfTerm(IriTerm term, DeserializationContext context) {
     return AnotherCustomType(term.iri);
   }
 

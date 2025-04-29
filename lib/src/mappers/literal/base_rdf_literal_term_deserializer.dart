@@ -1,10 +1,10 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
 import 'package:rdf_mapper/src/exceptions/deserialization_exception.dart';
-import 'package:rdf_mapper/src/deserializers/rdf_literal_term_deserializer.dart';
+import 'package:rdf_mapper/src/deserializers/literal_term_deserializer.dart';
 
 abstract class BaseRdfLiteralTermDeserializer<T>
-    implements RdfLiteralTermDeserializer<T> {
+    implements LiteralTermDeserializer<T> {
   final IriTerm _datatype;
   final T Function(LiteralTerm term, DeserializationContext context)
   _convertFromLiteral;
@@ -17,7 +17,7 @@ abstract class BaseRdfLiteralTermDeserializer<T>
        _convertFromLiteral = convertFromLiteral;
 
   @override
-  T fromLiteralTerm(LiteralTerm term, DeserializationContext context) {
+  T fromRdfTerm(LiteralTerm term, DeserializationContext context) {
     if (term.datatype != _datatype) {
       throw DeserializationException(
         'Failed to parse ${T.toString()}: ${term.value}. Error: The expected datatype is ${_datatype.iri} but the actual datatype in the Literal was ${term.datatype.iri}',

@@ -1,10 +1,10 @@
 import 'package:logging/logging.dart';
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_core/vocab.dart';
-import 'package:rdf_mapper/src/serializers/rdf_iri_term_serializer.dart';
-import 'package:rdf_mapper/src/serializers/rdf_literal_term_serializer.dart';
+import 'package:rdf_mapper/src/serializers/iri_term_serializer.dart';
+import 'package:rdf_mapper/src/serializers/literal_term_serializer.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
-import 'package:rdf_mapper/src/serializers/rdf_subject_serializer.dart';
+import 'package:rdf_mapper/src/serializers/subject_serializer.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
 
 final _log = Logger("rdf_orm.serialization");
@@ -55,10 +55,10 @@ class SerializationContextImpl extends SerializationContext {
     RdfSubject subject,
     RdfPredicate predicate,
     T instance, {
-    RdfSubjectSerializer<T>? serializer,
+    SubjectSerializer<T>? serializer,
   }) {
     // Try to get serializer directly for type T if provided or available
-    RdfSubjectSerializer<T>? ser = _nullTrimmingLookup(
+    SubjectSerializer<T>? ser = _nullTrimmingLookup(
       serializer,
       instance,
       _registry.getSubjectSerializer,
@@ -110,7 +110,7 @@ class SerializationContextImpl extends SerializationContext {
     RdfSubject subject,
     RdfPredicate predicate,
     T instance, {
-    RdfIriTermSerializer<T>? serializer,
+    IriTermSerializer<T>? serializer,
   }) {
     if (instance == null) {
       throw ArgumentError(
@@ -126,7 +126,7 @@ class SerializationContextImpl extends SerializationContext {
           _registry.getIriSerializerByType,
         )!;
 
-    var term = ser.toIriTerm(instance, this);
+    var term = ser.toRdfTerm(instance, this);
     return Triple(subject, predicate, term);
   }
 
@@ -135,7 +135,7 @@ class SerializationContextImpl extends SerializationContext {
     RdfSubject subject,
     RdfPredicate predicate,
     T instance, {
-    RdfLiteralTermSerializer<T>? serializer,
+    LiteralTermSerializer<T>? serializer,
   }) {
     if (instance == null) {
       throw ArgumentError(
@@ -150,14 +150,14 @@ class SerializationContextImpl extends SerializationContext {
           _registry.getLiteralSerializerByType,
         )!;
 
-    var term = ser.toLiteralTerm(instance, this);
+    var term = ser.toRdfTerm(instance, this);
     return Triple(subject, predicate, term);
   }
 
   @override
   (RdfSubject, List<Triple>) subject<T>(
     T instance, {
-    RdfSubjectSerializer<T>? serializer,
+    SubjectSerializer<T>? serializer,
   }) {
     var ser = (serializer ?? _registry.getSubjectSerializer<T>());
     var (iri, triples) = ser.toRdfSubject(instance, this);

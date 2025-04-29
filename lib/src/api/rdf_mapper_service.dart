@@ -90,18 +90,18 @@ final class RdfMapperService {
     return deserializationSubjects
         .map((triple) {
           final subject = triple.subject;
-          final object = triple.object;
-          if ((subject is! IriTerm) || (object is! IriTerm)) {
+          final type = triple.object;
+          if ((subject is! IriTerm) || (type is! IriTerm)) {
             _log.warning(
-              "Will skip deserialization of subject $subject with type $object because both subject and type need to be IRIs in order to be able to deserialize.",
+              "Will skip deserialization of subject $subject with type $type because both subject and type need to be IRIs in order to be able to deserialize.",
             );
             return null;
           }
           try {
-            return context.deserializeSubject(subject, object);
+            return context.deserializeSubject(subject, type);
           } on DeserializerNotFoundException {
             _log.warning(
-              "Will skip deserialization of subject $subject with type $object because there is no Deserializer available in the registry.",
+              "Will skip deserialization of subject $subject with type $type because there is no Deserializer available in the registry.",
             );
             return null;
           }

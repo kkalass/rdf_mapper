@@ -1,16 +1,16 @@
 import 'package:mockito/annotations.dart';
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_core/vocab.dart';
-import 'package:rdf_mapper/src/deserializers/rdf_literal_term_deserializer.dart';
+import 'package:rdf_mapper/src/deserializers/literal_term_deserializer.dart';
 import 'package:test/test.dart';
 
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
 
 @GenerateMocks([DeserializationContext])
-import 'rdf_literal_term_deserializer_test.mocks.dart';
+import 'literal_term_deserializer_test.mocks.dart';
 
 void main() {
-  group('RdfLiteralTermDeserializer', () {
+  group('LiteralTermDeserializer', () {
     late MockDeserializationContext context;
 
     setUp(() {
@@ -22,7 +22,7 @@ void main() {
 
       // Test with simple string literal
       final term = LiteralTerm.string('Hello World');
-      final result = deserializer.fromLiteralTerm(term, context);
+      final result = deserializer.fromRdfTerm(term, context);
 
       expect(result, equals('Hello World'));
     });
@@ -32,7 +32,7 @@ void main() {
 
       // Test with language-tagged literal
       final term = LiteralTerm.withLanguage('Hello World', 'en');
-      final result = deserializer.fromLiteralTerm(term, context);
+      final result = deserializer.fromRdfTerm(term, context);
 
       expect(result, equals('Hello World'));
     });
@@ -42,7 +42,7 @@ void main() {
 
       // Test with integer literal
       final term = LiteralTerm('42', datatype: XsdTypes.integer);
-      final result = deserializer.fromLiteralTerm(term, context);
+      final result = deserializer.fromRdfTerm(term, context);
 
       expect(result, equals(42));
     });
@@ -54,7 +54,7 @@ void main() {
       final term = LiteralTerm('not-a-number', datatype: XsdTypes.integer);
 
       expect(
-        () => deserializer.fromLiteralTerm(term, context),
+        () => deserializer.fromRdfTerm(term, context),
         throwsA(isA<FormatException>()),
       );
     });
@@ -66,8 +66,8 @@ void main() {
       final trueTerm = LiteralTerm('true', datatype: XsdTypes.boolean);
       final falseTerm = LiteralTerm('false', datatype: XsdTypes.boolean);
 
-      expect(deserializer.fromLiteralTerm(trueTerm, context), isTrue);
-      expect(deserializer.fromLiteralTerm(falseTerm, context), isFalse);
+      expect(deserializer.fromRdfTerm(trueTerm, context), isTrue);
+      expect(deserializer.fromRdfTerm(falseTerm, context), isFalse);
     });
 
     test('boolean deserializer handles case-insensitive values', () {
@@ -77,8 +77,8 @@ void main() {
       final trueTerm = LiteralTerm('TRUE', datatype: XsdTypes.boolean);
       final falseTerm = LiteralTerm('False', datatype: XsdTypes.boolean);
 
-      expect(deserializer.fromLiteralTerm(trueTerm, context), isTrue);
-      expect(deserializer.fromLiteralTerm(falseTerm, context), isFalse);
+      expect(deserializer.fromRdfTerm(trueTerm, context), isTrue);
+      expect(deserializer.fromRdfTerm(falseTerm, context), isFalse);
     });
 
     test('double deserializer correctly converts double literals', () {
@@ -86,7 +86,7 @@ void main() {
 
       // Test with double literal
       final term = LiteralTerm('3.14159', datatype: XsdTypes.double);
-      final result = deserializer.fromLiteralTerm(term, context);
+      final result = deserializer.fromRdfTerm(term, context);
 
       expect(result, equals(3.14159));
     });
@@ -100,7 +100,7 @@ void main() {
         'x:10,y:20',
         datatype: IriTerm('http://example.org/Point'),
       );
-      final result = deserializer.fromLiteralTerm(term, context);
+      final result = deserializer.fromRdfTerm(term, context);
 
       expect(result.x, equals(10));
       expect(result.y, equals(20));
@@ -109,9 +109,9 @@ void main() {
 }
 
 /// Test implementation of a custom RdfLiteralTermDeserializer for Point objects
-class CustomLiteralDeserializer implements RdfLiteralTermDeserializer<Point> {
+class CustomLiteralDeserializer implements LiteralTermDeserializer<Point> {
   @override
-  Point fromLiteralTerm(
+  Point fromRdfTerm(
     LiteralTerm term,
     covariant MockDeserializationContext context,
   ) {
@@ -132,9 +132,9 @@ class Point {
 }
 
 /// Implementation of the standard string deserializer for testing
-class StringLiteralDeserializer implements RdfLiteralTermDeserializer<String> {
+class StringLiteralDeserializer implements LiteralTermDeserializer<String> {
   @override
-  String fromLiteralTerm(
+  String fromRdfTerm(
     LiteralTerm term,
     covariant MockDeserializationContext context,
   ) {
@@ -143,9 +143,9 @@ class StringLiteralDeserializer implements RdfLiteralTermDeserializer<String> {
 }
 
 /// Implementation of the standard integer deserializer for testing
-class IntegerLiteralDeserializer implements RdfLiteralTermDeserializer<int> {
+class IntegerLiteralDeserializer implements LiteralTermDeserializer<int> {
   @override
-  int fromLiteralTerm(
+  int fromRdfTerm(
     LiteralTerm term,
     covariant MockDeserializationContext context,
   ) {
@@ -154,9 +154,9 @@ class IntegerLiteralDeserializer implements RdfLiteralTermDeserializer<int> {
 }
 
 /// Implementation of the standard boolean deserializer for testing
-class BooleanLiteralDeserializer implements RdfLiteralTermDeserializer<bool> {
+class BooleanLiteralDeserializer implements LiteralTermDeserializer<bool> {
   @override
-  bool fromLiteralTerm(
+  bool fromRdfTerm(
     LiteralTerm term,
     covariant MockDeserializationContext context,
   ) {
@@ -165,9 +165,9 @@ class BooleanLiteralDeserializer implements RdfLiteralTermDeserializer<bool> {
 }
 
 /// Implementation of the standard double deserializer for testing
-class DoubleLiteralDeserializer implements RdfLiteralTermDeserializer<double> {
+class DoubleLiteralDeserializer implements LiteralTermDeserializer<double> {
   @override
-  double fromLiteralTerm(
+  double fromRdfTerm(
     LiteralTerm term,
     covariant MockDeserializationContext context,
   ) {

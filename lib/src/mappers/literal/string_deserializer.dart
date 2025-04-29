@@ -1,13 +1,13 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_core/vocab.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
-import 'package:rdf_mapper/src/deserializers/rdf_literal_term_deserializer.dart';
+import 'package:rdf_mapper/src/deserializers/literal_term_deserializer.dart';
 
 /// Deserializer for string literals in RDF.
 ///
 /// By default, it only accepts literals with xsd:string datatype.
 /// When [acceptLangString] is true, it will also accept literals with rdf:langString datatype.
-final class StringDeserializer implements RdfLiteralTermDeserializer<String> {
+final class StringDeserializer implements LiteralTermDeserializer<String> {
   final IriTerm _datatype;
   final bool _acceptLangString;
 
@@ -20,7 +20,7 @@ final class StringDeserializer implements RdfLiteralTermDeserializer<String> {
       _acceptLangString = acceptLangString;
 
   @override
-  String fromLiteralTerm(LiteralTerm term, DeserializationContext context) {
+  String fromRdfTerm(LiteralTerm term, DeserializationContext context) {
     final isExpectedDatatype = term.datatype == _datatype;
     final isLangString =
         _acceptLangString && term.datatype == RdfTypes.langString;

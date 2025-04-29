@@ -1,14 +1,14 @@
 import 'package:mockito/annotations.dart';
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
-import 'package:rdf_mapper/src/deserializers/rdf_blank_node_term_deserializer.dart';
+import 'package:rdf_mapper/src/deserializers/blank_node_term_deserializer.dart';
 import 'package:test/test.dart';
 
 @GenerateMocks([DeserializationContext])
-import 'rdf_blank_node_term_deserializer_test.mocks.dart';
+import 'blank_node_term_deserializer_test.mocks.dart';
 
 void main() {
-  group('RdfBlankNodeTermDeserializer', () {
+  group('BlankNodeTermDeserializer', () {
     late DeserializationContext context;
 
     setUp(() {
@@ -23,7 +23,7 @@ void main() {
 
         // Test with a regular blank node
         var term = BlankNodeTerm();
-        var result = deserializer.fromBlankNodeTerm(term, context);
+        var result = deserializer.fromRdfTerm(term, context);
 
         // Verify conversion
         expect(
@@ -46,9 +46,9 @@ class BlankNodeValue {
 
 /// Test implementation of RdfBlankNodeTermDeserializer
 class TestBlankNodeDeserializer
-    implements RdfBlankNodeTermDeserializer<BlankNodeValue> {
+    implements BlankNodeTermDeserializer<BlankNodeValue> {
   @override
-  BlankNodeValue fromBlankNodeTerm(
+  BlankNodeValue fromRdfTerm(
     BlankNodeTerm term,
     DeserializationContext context,
   ) {

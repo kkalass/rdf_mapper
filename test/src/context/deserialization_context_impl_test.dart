@@ -3,11 +3,11 @@ import 'package:rdf_core/vocab.dart';
 import 'package:rdf_mapper/src/context/deserialization_context_impl.dart';
 import 'package:rdf_mapper/src/exceptions/property_value_not_found_exception.dart';
 import 'package:rdf_mapper/src/exceptions/too_many_property_values_exception.dart';
-import 'package:rdf_mapper/src/deserializers/rdf_blank_node_term_deserializer.dart';
-import 'package:rdf_mapper/src/deserializers/rdf_iri_term_deserializer.dart';
-import 'package:rdf_mapper/src/deserializers/rdf_literal_term_deserializer.dart';
+import 'package:rdf_mapper/src/deserializers/blank_node_term_deserializer.dart';
+import 'package:rdf_mapper/src/deserializers/iri_term_deserializer.dart';
+import 'package:rdf_mapper/src/deserializers/literal_term_deserializer.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
-import 'package:rdf_mapper/src/deserializers/rdf_subject_deserializer.dart';
+import 'package:rdf_mapper/src/deserializers/subject_deserializer.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
 import 'package:test/test.dart';
 
@@ -241,37 +241,34 @@ class TestAddress {
   TestAddress({required this.city});
 }
 
-class TestPersonDeserializer implements RdfSubjectDeserializer<TestPerson> {
+class TestPersonDeserializer implements SubjectDeserializer<TestPerson> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
   @override
-  TestPerson fromIriTerm(IriTerm term, DeserializationContext context) {
+  TestPerson fromRdfTerm(IriTerm term, DeserializationContext context) {
     return TestPerson(term.iri);
   }
 }
 
-class CustomIriDeserializer implements RdfIriTermDeserializer<String> {
+class CustomIriDeserializer implements IriTermDeserializer<String> {
   @override
-  String fromIriTerm(IriTerm term, DeserializationContext context) {
+  String fromRdfTerm(IriTerm term, DeserializationContext context) {
     return term.iri;
   }
 }
 
-class CustomStringDeserializer implements RdfLiteralTermDeserializer<String> {
+class CustomStringDeserializer implements LiteralTermDeserializer<String> {
   @override
-  String fromLiteralTerm(LiteralTerm term, DeserializationContext context) {
+  String fromRdfTerm(LiteralTerm term, DeserializationContext context) {
     return term.value.toUpperCase(); // Convert to uppercase for testing
   }
 }
 
 class CustomBlankNodeDeserializer
-    implements RdfBlankNodeTermDeserializer<TestAddress> {
+    implements BlankNodeTermDeserializer<TestAddress> {
   @override
-  TestAddress fromBlankNodeTerm(
-    BlankNodeTerm term,
-    DeserializationContext context,
-  ) {
+  TestAddress fromRdfTerm(BlankNodeTerm term, DeserializationContext context) {
     var city = context.require<String>(term, VcardPredicates.locality);
     return TestAddress(city: city);
   }

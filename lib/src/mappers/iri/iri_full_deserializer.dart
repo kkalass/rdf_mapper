@@ -1,10 +1,10 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
-import 'package:rdf_mapper/src/deserializers/rdf_iri_term_deserializer.dart';
+import 'package:rdf_mapper/src/deserializers/iri_term_deserializer.dart';
 
-final class IriFullDeserializer implements RdfIriTermDeserializer<String> {
+final class IriFullDeserializer implements IriTermDeserializer<String> {
   @override
-  fromIriTerm(IriTerm term, DeserializationContext context) {
+  fromRdfTerm(IriTerm term, DeserializationContext context) {
     return term.iri;
   }
 }

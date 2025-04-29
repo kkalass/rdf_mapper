@@ -831,7 +831,7 @@ class TestPersonMapper implements RdfSubjectMapper<TestPerson> {
   final IriTerm typeIri = SchemaClasses.person;
 
   @override
-  TestPerson fromIriTerm(IriTerm subject, DeserializationContext context) {
+  TestPerson fromRdfTerm(IriTerm subject, DeserializationContext context) {
     final id = subject.iri;
 
     // Get name property
@@ -887,10 +887,7 @@ class AddressMapper implements RdfBlankSubjectMapper<Address> {
   final IriTerm typeIri = SchemaClasses.postalAddress;
 
   @override
-  Address fromBlankNodeTerm(
-    BlankNodeTerm term,
-    DeserializationContext context,
-  ) {
+  Address fromRdfTerm(BlankNodeTerm term, DeserializationContext context) {
     // Get address properties
     final street = context.require<String>(term, streetAddressPredicate);
 
@@ -979,24 +976,24 @@ class _TestType {
 // Test serializers and deserializers for registration tests
 class _TestLiteralMapper implements RdfLiteralTermMapper<_TestType> {
   @override
-  LiteralTerm toLiteralTerm(_TestType value, SerializationContext context) {
+  LiteralTerm toRdfTerm(_TestType value, SerializationContext context) {
     return LiteralTerm.string(value.value);
   }
 
   @override
-  _TestType fromLiteralTerm(LiteralTerm term, DeserializationContext context) {
+  _TestType fromRdfTerm(LiteralTerm term, DeserializationContext context) {
     return _TestType(term.value);
   }
 }
 
 class _TestIriTermMapper implements RdfIriTermMapper<_TestType> {
   @override
-  IriTerm toIriTerm(_TestType value, SerializationContext context) {
+  IriTerm toRdfTerm(_TestType value, SerializationContext context) {
     return IriTerm('http://example.org/${value.value}');
   }
 
   @override
-  _TestType fromIriTerm(IriTerm term, DeserializationContext context) {
+  _TestType fromRdfTerm(IriTerm term, DeserializationContext context) {
     return _TestType(term.iri.split('/').last);
   }
 }

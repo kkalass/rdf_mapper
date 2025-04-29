@@ -3,10 +3,10 @@ import 'package:rdf_mapper/src/api/deserialization_context.dart';
 import 'package:rdf_mapper/src/exceptions/property_value_not_found_exception.dart';
 import 'package:rdf_mapper/src/exceptions/too_many_property_values_exception.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
-import 'package:rdf_mapper/src/deserializers/rdf_subject_deserializer.dart';
-import 'package:rdf_mapper/src/deserializers/rdf_blank_node_term_deserializer.dart';
-import 'package:rdf_mapper/src/deserializers/rdf_iri_term_deserializer.dart';
-import 'package:rdf_mapper/src/deserializers/rdf_literal_term_deserializer.dart';
+import 'package:rdf_mapper/src/deserializers/subject_deserializer.dart';
+import 'package:rdf_mapper/src/deserializers/blank_node_term_deserializer.dart';
+import 'package:rdf_mapper/src/deserializers/iri_term_deserializer.dart';
+import 'package:rdf_mapper/src/deserializers/literal_term_deserializer.dart';
 
 class DeserializationContextImpl extends DeserializationContext {
   final RdfGraph _graph;
@@ -21,15 +21,15 @@ class DeserializationContextImpl extends DeserializationContext {
   Object deserializeSubject(IriTerm subjectIri, IriTerm typeIri) {
     var context = this;
     var ser = _registry.getSubjectDeserializerByTypeIri(typeIri);
-    return ser.fromIriTerm(subjectIri, context);
+    return ser.fromRdfTerm(subjectIri, context);
   }
 
   T deserialize<T>(
     RdfTerm term,
-    RdfIriTermDeserializer<T>? iriDeserializer,
-    RdfSubjectDeserializer<T>? subjectDeserializer,
-    RdfLiteralTermDeserializer<T>? literalDeserializer,
-    RdfBlankNodeTermDeserializer<T>? blankNodeDeserializer,
+    IriTermDeserializer<T>? iriDeserializer,
+    SubjectDeserializer<T>? subjectDeserializer,
+    LiteralTermDeserializer<T>? literalDeserializer,
+    BlankNodeTermDeserializer<T>? blankNodeDeserializer,
   ) {
     var context = this;
     switch (term) {
@@ -38,17 +38,17 @@ class DeserializationContextImpl extends DeserializationContext {
             _registry.hasSubjectDeserializerFor<T>()) {
           var ser =
               subjectDeserializer ?? _registry.getSubjectDeserializer<T>();
-          return ser.fromIriTerm(term, context);
+          return ser.fromRdfTerm(term, context);
         }
         var ser = iriDeserializer ?? _registry.getIriDeserializer<T>();
-        return ser.fromIriTerm(term, context);
+        return ser.fromRdfTerm(term, context);
       case LiteralTerm _:
         var ser = literalDeserializer ?? _registry.getLiteralDeserializer<T>();
-        return ser.fromLiteralTerm(term, context);
+        return ser.fromRdfTerm(term, context);
       case BlankNodeTerm _:
         var ser =
             blankNodeDeserializer ?? _registry.getBlankNodeDeserializer<T>();
-        return ser.fromBlankNodeTerm(term, context);
+        return ser.fromRdfTerm(term, context);
     }
   }
 
@@ -57,10 +57,10 @@ class DeserializationContextImpl extends DeserializationContext {
     RdfSubject subject,
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
-    RdfIriTermDeserializer<T>? iriDeserializer,
-    RdfSubjectDeserializer<T>? subjectDeserializer,
-    RdfLiteralTermDeserializer<T>? literalDeserializer,
-    RdfBlankNodeTermDeserializer<T>? blankNodeDeserializer,
+    IriTermDeserializer<T>? iriDeserializer,
+    SubjectDeserializer<T>? subjectDeserializer,
+    LiteralTermDeserializer<T>? literalDeserializer,
+    BlankNodeTermDeserializer<T>? blankNodeDeserializer,
   }) {
     final triples = _graph.findTriples(subject: subject, predicate: predicate);
     if (triples.isEmpty) {
@@ -89,10 +89,10 @@ class DeserializationContextImpl extends DeserializationContext {
     RdfSubject subject,
     RdfPredicate predicate,
     R Function(Iterable<T>) collector, {
-    RdfIriTermDeserializer<T>? iriDeserializer,
-    RdfSubjectDeserializer<T>? subjectDeserializer,
-    RdfLiteralTermDeserializer<T>? literalDeserializer,
-    RdfBlankNodeTermDeserializer<T>? blankNodeDeserializer,
+    IriTermDeserializer<T>? iriDeserializer,
+    SubjectDeserializer<T>? subjectDeserializer,
+    LiteralTermDeserializer<T>? literalDeserializer,
+    BlankNodeTermDeserializer<T>? blankNodeDeserializer,
   }) {
     final triples = _graph.findTriples(subject: subject, predicate: predicate);
     final convertedTriples = triples.map(
@@ -112,10 +112,10 @@ class DeserializationContextImpl extends DeserializationContext {
     RdfSubject subject,
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
-    RdfIriTermDeserializer<T>? iriDeserializer,
-    RdfSubjectDeserializer<T>? subjectDeserializer,
-    RdfLiteralTermDeserializer<T>? literalDeserializer,
-    RdfBlankNodeTermDeserializer<T>? blankNodeDeserializer,
+    IriTermDeserializer<T>? iriDeserializer,
+    SubjectDeserializer<T>? subjectDeserializer,
+    LiteralTermDeserializer<T>? literalDeserializer,
+    BlankNodeTermDeserializer<T>? blankNodeDeserializer,
   }) {
     var result = get<T>(
       subject,

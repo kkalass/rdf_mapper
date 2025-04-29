@@ -3,17 +3,17 @@ import 'package:rdf_core/rdf_core.dart';
 
 import 'package:rdf_mapper/src/exceptions/deserializer_not_found_exception.dart';
 import 'package:rdf_mapper/src/exceptions/serializer_not_found_exception.dart';
-import 'package:rdf_mapper/src/deserializers/rdf_blank_node_term_deserializer.dart';
+import 'package:rdf_mapper/src/deserializers/blank_node_term_deserializer.dart';
 import 'package:rdf_mapper/src/mappers/rdf_blank_subject_mapper.dart';
-import 'package:rdf_mapper/src/deserializers/rdf_iri_term_deserializer.dart';
+import 'package:rdf_mapper/src/deserializers/iri_term_deserializer.dart';
 import 'package:rdf_mapper/src/mappers/rdf_iri_term_mapper.dart';
-import 'package:rdf_mapper/src/serializers/rdf_iri_term_serializer.dart';
-import 'package:rdf_mapper/src/deserializers/rdf_literal_term_deserializer.dart';
+import 'package:rdf_mapper/src/serializers/iri_term_serializer.dart';
+import 'package:rdf_mapper/src/deserializers/literal_term_deserializer.dart';
 import 'package:rdf_mapper/src/mappers/rdf_literal_term_mapper.dart';
-import 'package:rdf_mapper/src/serializers/rdf_literal_term_serializer.dart';
-import 'package:rdf_mapper/src/deserializers/rdf_subject_deserializer.dart';
+import 'package:rdf_mapper/src/serializers/literal_term_serializer.dart';
+import 'package:rdf_mapper/src/deserializers/subject_deserializer.dart';
 import 'package:rdf_mapper/src/mappers/rdf_subject_mapper.dart';
-import 'package:rdf_mapper/src/serializers/rdf_subject_serializer.dart';
+import 'package:rdf_mapper/src/serializers/subject_serializer.dart';
 import 'package:rdf_mapper/src/mappers/literal/bool_deserializer.dart';
 import 'package:rdf_mapper/src/mappers/literal/bool_serializer.dart';
 import 'package:rdf_mapper/src/mappers/literal/date_time_deserializer.dart';
@@ -50,17 +50,16 @@ final class RdfMapperRegistry {
 
   /// Internal empty constructor for cloning
   RdfMapperRegistry._empty();
-  final Map<Type, RdfIriTermDeserializer<dynamic>> _iriDeserializers = {};
-  final Map<IriTerm, RdfSubjectDeserializer<dynamic>>
+  final Map<Type, IriTermDeserializer<dynamic>> _iriDeserializers = {};
+  final Map<IriTerm, SubjectDeserializer<dynamic>>
   _subjectDeserializersByTypeIri = {};
-  final Map<Type, RdfSubjectDeserializer<dynamic>> _subjectDeserializers = {};
-  final Map<Type, RdfIriTermSerializer<dynamic>> _iriSerializers = {};
-  final Map<Type, RdfBlankNodeTermDeserializer<dynamic>>
-  _blankNodeDeserializers = {};
-  final Map<Type, RdfLiteralTermDeserializer<dynamic>> _literalDeserializers =
+  final Map<Type, SubjectDeserializer<dynamic>> _subjectDeserializers = {};
+  final Map<Type, IriTermSerializer<dynamic>> _iriSerializers = {};
+  final Map<Type, BlankNodeTermDeserializer<dynamic>> _blankNodeDeserializers =
       {};
-  final Map<Type, RdfLiteralTermSerializer<dynamic>> _literalSerializers = {};
-  final Map<Type, RdfSubjectSerializer<dynamic>> _subjectSerializers = {};
+  final Map<Type, LiteralTermDeserializer<dynamic>> _literalDeserializers = {};
+  final Map<Type, LiteralTermSerializer<dynamic>> _literalSerializers = {};
+  final Map<Type, SubjectSerializer<dynamic>> _subjectSerializers = {};
 
   /// Creates a new RDF mapper registry
   ///
@@ -83,30 +82,28 @@ final class RdfMapperRegistry {
     registerLiteralSerializer(DateTimeSerializer());
   }
 
-  void registerIriTermDeserializer<T>(RdfIriTermDeserializer<T> deserializer) {
+  void registerIriTermDeserializer<T>(IriTermDeserializer<T> deserializer) {
     _log.fine('Registering IriTerm deserializer for type ${T.toString()}');
     _iriDeserializers[T] = deserializer;
   }
 
-  void registerIriTermSerializer<T>(RdfIriTermSerializer<T> serializer) {
+  void registerIriTermSerializer<T>(IriTermSerializer<T> serializer) {
     _log.fine('Registering IriTerm serializer for type ${T.toString()}');
     _iriSerializers[T] = serializer;
   }
 
-  void registerLiteralDeserializer<T>(
-    RdfLiteralTermDeserializer<T> deserializer,
-  ) {
+  void registerLiteralDeserializer<T>(LiteralTermDeserializer<T> deserializer) {
     _log.fine('Registering LiteralTerm deserializer for type ${T.toString()}');
     _literalDeserializers[T] = deserializer;
   }
 
-  void registerLiteralSerializer<T>(RdfLiteralTermSerializer<T> serializer) {
+  void registerLiteralSerializer<T>(LiteralTermSerializer<T> serializer) {
     _log.fine('Registering LiteralTerm serializer for type ${T.toString()}');
     _literalSerializers[T] = serializer;
   }
 
   void registerBlankNodeTermDeserializer<T>(
-    RdfBlankNodeTermDeserializer<T> deserializer,
+    BlankNodeTermDeserializer<T> deserializer,
   ) {
     _log.fine(
       'Registering BlankNodeTerm deserializer for type ${T.toString()}',
@@ -119,14 +116,14 @@ final class RdfMapperRegistry {
     registerSubjectSerializer(mapper);
   }
 
-  void registerSubjectDeserializer<T>(RdfSubjectDeserializer<T> deserializer) {
-    _log.fine('Registering IriTerm serializer for type ${T.toString()}');
+  void registerSubjectDeserializer<T>(SubjectDeserializer<T> deserializer) {
+    _log.fine('Registering Subject deserializer for type ${T.toString()}');
     _subjectDeserializers[T] = deserializer;
     _subjectDeserializersByTypeIri[deserializer.typeIri] = deserializer;
   }
 
-  void registerSubjectSerializer<T>(RdfSubjectSerializer<T> serializer) {
-    _log.fine('Registering ToTriples deserializer for type ${T.toString()}');
+  void registerSubjectSerializer<T>(SubjectSerializer<T> serializer) {
+    _log.fine('Registering Subject serializer for type ${T.toString()}');
     _subjectSerializers[T] = serializer;
   }
 
@@ -148,23 +145,23 @@ final class RdfMapperRegistry {
   /// Gets the deserializer for a specific type
   ///
   /// @return The deserializer for type T or null if none is registered
-  RdfIriTermDeserializer<T> getIriDeserializer<T>() {
+  IriTermDeserializer<T> getIriDeserializer<T>() {
     final deserializer = _iriDeserializers[T];
     if (deserializer == null) {
       throw DeserializerNotFoundException('RdfIriTermDeserializer', T);
     }
-    return deserializer as RdfIriTermDeserializer<T>;
+    return deserializer as IriTermDeserializer<T>;
   }
 
-  RdfSubjectDeserializer<T> getSubjectDeserializer<T>() {
+  SubjectDeserializer<T> getSubjectDeserializer<T>() {
     final deserializer = _subjectDeserializers[T];
     if (deserializer == null) {
       throw DeserializerNotFoundException('RdfSubjectDeserializer', T);
     }
-    return deserializer as RdfSubjectDeserializer<T>;
+    return deserializer as SubjectDeserializer<T>;
   }
 
-  RdfSubjectDeserializer<dynamic> getSubjectDeserializerByTypeIri(
+  SubjectDeserializer<dynamic> getSubjectDeserializerByTypeIri(
     IriTerm typeIri,
   ) {
     final deserializer = _subjectDeserializersByTypeIri[typeIri];
@@ -177,12 +174,12 @@ final class RdfMapperRegistry {
     return deserializer;
   }
 
-  RdfIriTermSerializer<T> getIriSerializer<T>() {
+  IriTermSerializer<T> getIriSerializer<T>() {
     final serializer = _iriSerializers[T];
     if (serializer == null) {
       throw SerializerNotFoundException('RdfIriTermSerializer', T);
     }
-    return serializer as RdfIriTermSerializer<T>;
+    return serializer as IriTermSerializer<T>;
   }
 
   /// Gets a IRI serializer by runtime type rather than generic type parameter
@@ -194,28 +191,28 @@ final class RdfMapperRegistry {
   /// @param type The runtime Type to look up
   /// @return The serializer for the specified type
   /// @throws SerializerNotFoundException if no serializer is registered for the type
-  RdfIriTermSerializer<T> getIriSerializerByType<T>(Type type) {
+  IriTermSerializer<T> getIriSerializerByType<T>(Type type) {
     final serializer = _iriSerializers[type];
     if (serializer == null) {
       throw SerializerNotFoundException('RdfIriTermSerializer?', type);
     }
-    return serializer as RdfIriTermSerializer<T>;
+    return serializer as IriTermSerializer<T>;
   }
 
-  RdfLiteralTermDeserializer<T> getLiteralDeserializer<T>() {
+  LiteralTermDeserializer<T> getLiteralDeserializer<T>() {
     final deserializer = _literalDeserializers[T];
     if (deserializer == null) {
       throw DeserializerNotFoundException('RdfLiteralTermDeserializer', T);
     }
-    return deserializer as RdfLiteralTermDeserializer<T>;
+    return deserializer as LiteralTermDeserializer<T>;
   }
 
-  RdfLiteralTermSerializer<T> getLiteralSerializer<T>() {
+  LiteralTermSerializer<T> getLiteralSerializer<T>() {
     final serializer = _literalSerializers[T];
     if (serializer == null) {
       throw SerializerNotFoundException('RdfLiteralTermSerializer', T);
     }
-    return serializer as RdfLiteralTermSerializer<T>;
+    return serializer as LiteralTermSerializer<T>;
   }
 
   /// Gets a literal serializer by runtime type rather than generic type parameter
@@ -227,28 +224,28 @@ final class RdfMapperRegistry {
   /// @param type The runtime Type to look up
   /// @return The serializer for the specified type
   /// @throws SerializerNotFoundException if no serializer is registered for the type
-  RdfLiteralTermSerializer<T> getLiteralSerializerByType<T>(Type type) {
+  LiteralTermSerializer<T> getLiteralSerializerByType<T>(Type type) {
     final serializer = _literalSerializers[type];
     if (serializer == null) {
       throw SerializerNotFoundException('RdfLiteralTermSerializer?', type);
     }
-    return serializer as RdfLiteralTermSerializer<T>;
+    return serializer as LiteralTermSerializer<T>;
   }
 
-  RdfBlankNodeTermDeserializer<T> getBlankNodeDeserializer<T>() {
+  BlankNodeTermDeserializer<T> getBlankNodeDeserializer<T>() {
     final deserializer = _blankNodeDeserializers[T];
     if (deserializer == null) {
       throw DeserializerNotFoundException('RdfBlankNodeTermDeserializer', T);
     }
-    return deserializer as RdfBlankNodeTermDeserializer<T>;
+    return deserializer as BlankNodeTermDeserializer<T>;
   }
 
-  RdfSubjectSerializer<T> getSubjectSerializer<T>() {
+  SubjectSerializer<T> getSubjectSerializer<T>() {
     final serializer = _subjectSerializers[T];
     if (serializer == null) {
-      throw SerializerNotFoundException('RdfToTriplesSerializer', T);
+      throw SerializerNotFoundException('RdfSubjectSerializer', T);
     }
-    return serializer as RdfSubjectSerializer<T>;
+    return serializer as SubjectSerializer<T>;
   }
 
   /// Gets a subject serializer by runtime type rather than generic type parameter
@@ -260,12 +257,12 @@ final class RdfMapperRegistry {
   /// @param type The runtime Type to look up
   /// @return The serializer for the specified type
   /// @throws SerializerNotFoundException if no serializer is registered for the type
-  RdfSubjectSerializer<T> getSubjectSerializerByType<T>(Type type) {
+  SubjectSerializer<T> getSubjectSerializerByType<T>(Type type) {
     final serializer = _subjectSerializers[type];
     if (serializer == null) {
-      throw SerializerNotFoundException('RdfToTriplesSerializer', type);
+      throw SerializerNotFoundException('RdfSubjectSerializer', type);
     }
-    return serializer as RdfSubjectSerializer<T>;
+    return serializer as SubjectSerializer<T>;
   }
 
   /// Checks if a mapper exists for a type

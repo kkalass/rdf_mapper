@@ -1,14 +1,14 @@
 import 'package:mockito/annotations.dart';
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/src/deserializers/rdf_iri_term_deserializer.dart';
+import 'package:rdf_mapper/src/deserializers/iri_term_deserializer.dart';
 import 'package:test/test.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
 
 @GenerateMocks([DeserializationContext])
-import 'rdf_iri_term_deserializer_test.mocks.dart';
+import 'iri_term_deserializer_test.mocks.dart';
 
 void main() {
-  group('RdfIriTermDeserializer', () {
+  group('IriTermDeserializer', () {
     late MockDeserializationContext context;
 
     setUp(() {
@@ -20,7 +20,7 @@ void main() {
 
       // Test with simple IRI
       final term = IriTerm('http://example.org/resource');
-      final result = deserializer.fromIriTerm(term, context);
+      final result = deserializer.fromRdfTerm(term, context);
 
       expect(result, equals('http://example.org/resource'));
     });
@@ -30,7 +30,7 @@ void main() {
 
       // Test with valid URI
       final term = IriTerm('http://example.org/resource');
-      final result = deserializer.fromIriTerm(term, context);
+      final result = deserializer.fromRdfTerm(term, context);
 
       expect(result.toString(), equals('http://example.org/resource'));
       expect(result.scheme, equals('http'));
@@ -43,7 +43,7 @@ void main() {
 
       // Test with URI containing encoded characters
       final term = IriTerm('http://example.org/resource%20with%20spaces');
-      final result = deserializer.fromIriTerm(term, context);
+      final result = deserializer.fromRdfTerm(term, context);
 
       expect(
         result.toString(),
@@ -62,15 +62,15 @@ void main() {
       final unknownTerm = IriTerm('http://example.org/Unknown');
 
       expect(
-        deserializer.fromIriTerm(personTerm, context),
+        deserializer.fromRdfTerm(personTerm, context),
         equals(ResourceType.person),
       );
       expect(
-        deserializer.fromIriTerm(organizationTerm, context),
+        deserializer.fromRdfTerm(organizationTerm, context),
         equals(ResourceType.organization),
       );
       expect(
-        () => deserializer.fromIriTerm(unknownTerm, context),
+        () => deserializer.fromRdfTerm(unknownTerm, context),
         throwsA(isA<ArgumentError>()),
       );
     });
@@ -80,7 +80,7 @@ void main() {
 
       // Test custom deserialization logic
       final term = IriTerm('http://example.org/resources/123');
-      final result = deserializer.fromIriTerm(term, context);
+      final result = deserializer.fromRdfTerm(term, context);
 
       expect(result.id, equals('123'));
       expect(result.namespace, equals('http://example.org/resources/'));
@@ -89,9 +89,9 @@ void main() {
 }
 
 /// Implementation of a string deserializer for IRI terms
-class StringIriDeserializer implements RdfIriTermDeserializer<String> {
+class StringIriDeserializer implements IriTermDeserializer<String> {
   @override
-  String fromIriTerm(
+  String fromRdfTerm(
     IriTerm term,
     covariant MockDeserializationContext context,
   ) {
@@ -100,9 +100,9 @@ class StringIriDeserializer implements RdfIriTermDeserializer<String> {
 }
 
 /// Implementation of a URI deserializer for IRI terms
-class UriIriDeserializer implements RdfIriTermDeserializer<Uri> {
+class UriIriDeserializer implements IriTermDeserializer<Uri> {
   @override
-  Uri fromIriTerm(IriTerm term, covariant MockDeserializationContext context) {
+  Uri fromRdfTerm(IriTerm term, covariant MockDeserializationContext context) {
     return Uri.parse(term.iri);
   }
 }
@@ -111,14 +111,14 @@ class UriIriDeserializer implements RdfIriTermDeserializer<Uri> {
 enum ResourceType { person, organization }
 
 /// Implementation of an enum deserializer for IRI terms
-class ResourceTypeDeserializer implements RdfIriTermDeserializer<ResourceType> {
+class ResourceTypeDeserializer implements IriTermDeserializer<ResourceType> {
   static final _mapping = {
     'http://example.org/Person': ResourceType.person,
     'http://example.org/Organization': ResourceType.organization,
   };
 
   @override
-  ResourceType fromIriTerm(
+  ResourceType fromRdfTerm(
     IriTerm term,
     covariant MockDeserializationContext context,
   ) {
@@ -139,9 +139,9 @@ class Resource {
 }
 
 /// Implementation of a custom resource deserializer for IRI terms
-class ResourceDeserializer implements RdfIriTermDeserializer<Resource> {
+class ResourceDeserializer implements IriTermDeserializer<Resource> {
   @override
-  Resource fromIriTerm(
+  Resource fromRdfTerm(
     IriTerm term,
     covariant MockDeserializationContext context,
   ) {
