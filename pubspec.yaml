@@ -6,10 +6,9 @@ issue_tracker: https://github.com/kkalass/rdf_mapper/issues
 documentation: https://kkalass.github.io/rdf_mapper/
 topics:
   - rdf
+  - orm
   - linked-data
   - semantic-web
-  - graph
-  - serialization
 readme: README.md
 changelog: CHANGELOG.md
 license: LICENSE
@@ -21,6 +20,7 @@ environment:
   sdk: '^3.7.0'
 dependencies:
   rdf_core: ^0.4.0
+  logging: ^1.2.0
 
 dev_dependencies:
   test: ^1.16.0
