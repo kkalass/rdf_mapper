@@ -47,43 +47,76 @@
       
 <section class="desc markdown">
   <h1 id="rdf-mapper-for-dart">RDF Mapper for Dart</h1>
-<p><a href="https://dart.dev"><img src="https://img.shields.io/badge/Dart-2.17%2B-blue.svg" alt="Dart"></a>
-<a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a></p>
-<p>Eine leistungsstarke Bibliothek für die bidirektionale Abbildung zwischen Dart-Objekten und RDF (Resource Description Framework), basierend auf <a href="https://pub.dev/packages/rdf_core"><code>rdf_core</code></a>.</p>
-<h2 id="bersicht">Übersicht</h2>
-<p><code>rdf_mapper</code> bietet eine elegante Lösung für die Umwandlung zwischen Dart-Objektmodellen und RDF-Graphen, ähnlich wie ein ORM für Datenbanken. Dies ermöglicht es Entwicklern, mit semantischen Daten in einer objektorientierten Weise zu arbeiten, ohne die Komplexität der RDF-Serialisierung und -Deserialisierung manuell zu verwalten.</p>
-<h3 id="hauptmerkmale">Hauptmerkmale</h3>
+<p><a href="https://pub.dev/packages/rdf_mapper"><img src="https://img.shields.io/pub/v/rdf_mapper.svg" alt="pub package"></a>
+<a href="https://github.com/kkalass/rdf_mapper/actions"><img src="https://github.com/kkalass/rdf_mapper/actions/workflows/ci.yml/badge.svg" alt="build"></a>
+<a href="https://codecov.io/gh/kkalass/rdf_mapper"><img src="https://codecov.io/gh/kkalass/rdf_mapper/branch/main/graph/badge.svg" alt="codecov"></a>
+<a href="https://github.com/kkalass/rdf_mapper/blob/main/LICENSE"><img src="https://img.shields.io/github/license/kkalass/rdf_mapper.svg" alt="license"></a></p>
+<p>A powerful library for bidirectional mapping between Dart objects and RDF (Resource Description Framework), built on top of <a href="https://pub.dev/packages/rdf_core"><code>rdf_core</code></a>.</p>
+<h2 id="overview">Overview</h2>
+<p><a href="https://kkalass.github.io/rdf_mapper/">🌐 <strong>Official Homepage</strong></a></p>
+<p><code>rdf_mapper</code> provides an elegant solution for transforming between Dart object models and RDF graphs, similar to an ORM for databases. This enables developers to work with semantic data in an object-oriented manner without manually managing the complexity of RDF serialization and deserialization.</p>
+<h3 id="-key-features">✨ Key Features</h3>
 <ul>
-<li><strong>Bidirektionales Mapping</strong>: Nahtlose Konvertierung zwischen Dart-Objekten und RDF-Repräsentationen</li>
-<li><strong>Typsicher</strong>: Vollständig typisiertes API für sicheres RDF-Mapping</li>
-<li><strong>Erweiterbar</strong>: Einfaches Erstellen eigener Mapper für benutzerdefinierte Typen</li>
-<li><strong>Flexibel</strong>: Unterstützung für alle RDF-Hauptkonzepte: IRI-Knoten, Blank-Knoten und Literale</li>
-<li><strong>String &amp; Graph API</strong>: Arbeiten mit RDF-Strings oder direkt mit Graphen</li>
+<li><strong>Bidirectional Mapping</strong>: Seamless conversion between Dart objects and RDF representations</li>
+<li><strong>Type-Safe</strong>: Fully typed API for safe RDF mapping operations</li>
+<li><strong>Extensible</strong>: Easy creation of custom mappers for domain-specific types</li>
+<li><strong>Flexible</strong>: Support for all core RDF concepts: IRI nodes, blank nodes, and literals</li>
+<li><strong>Dual API</strong>: Work with RDF strings or directly with graph structures</li>
 </ul>
-<h2 id="was-ist-rdf">Was ist RDF?</h2>
-<p>Das Resource Description Framework (RDF) ist ein Standard-Datenmodell für den Datenaustausch im Web. Es erweitert die Linkstruktur des Webs, indem es URIs verwendet, um Beziehungen zwischen Dingen zu benennen.</p>
-<p>RDF basiert auf Aussagen in Form von "Tripeln": Subjekt-Prädikat-Objekt:</p>
+<h2 id="what-is-rdf">What is RDF?</h2>
+<p>Resource Description Framework (RDF) is a standard model for data interchange on the Web. It extends the linking structure of the Web by using URIs to name relationships between things as well as the two ends of the link.</p>
+<p>RDF is built around statements known as "triples" in the form of subject-predicate-object:</p>
 <ul>
-<li><strong>Subjekt</strong>: Die Ressource, die beschrieben wird (identifiziert durch eine IRI oder einen Blank-Knoten)</li>
-<li><strong>Prädikat</strong>: Die Eigenschaft oder Beziehung (immer eine IRI)</li>
-<li><strong>Objekt</strong>: Der Wert oder die verbundene Ressource (eine IRI, ein Blank-Knoten oder ein Literalwert)</li>
+<li><strong>Subject</strong>: The resource being described (identified by an IRI or blank node)</li>
+<li><strong>Predicate</strong>: The property or relationship (always an IRI)</li>
+<li><strong>Object</strong>: The value or related resource (an IRI, blank node, or literal value)</li>
 </ul>
 <h2 id="installation">Installation</h2>
-<p>Füge folgendes zu deiner <code>pubspec.yaml</code> hinzu:</p>
+<p>Add the following to your <code>pubspec.yaml</code>:</p>
 <pre class="language-yaml"><code class="language-yaml">dependencies:
-  rdf_mapper:
-    git:
-      url: https://github.com/yourusername/rdf_mapper.git
+  rdf_mapper: ^0.1.0
 </code></pre>
-<h2 id="schnellstart">Schnellstart</h2>
-<h3 id="basis-setup">Basis-Setup</h3>
+<p>Or use the following command:</p>
+<pre class="language-bash"><code class="language-bash">dart pub add rdf_mapper
+</code></pre>
+<h2 id="-quick-start">🚀 Quick Start</h2>
+<h3 id="basic-setup">Basic Setup</h3>
 <pre class="language-dart"><code class="language-dart">import 'package:rdf_mapper/rdf_mapper.dart';
 
-// Erstelle eine Mapper-Instanz mit Standard-Registrierung
+// Create a mapper instance with default registry
 final rdfMapper = RdfMapper.withDefaultRegistry();
 </code></pre>
-<h3 id="serialisierung">Serialisierung</h3>
-<pre class="language-dart"><code class="language-dart">// Definiere eine einfache Modellklasse
+<h3 id="serialization">Serialization</h3>
+<pre class="language-dart"><code class="language-dart">// Register the mapper
+rdfMapper.registerMapper&lt;Person&gt;(PersonMapper());
+
+// Serialize an object
+final person = Person(
+  id: 'http://example.org/person/1',
+  name: 'John Smith',
+  age: 30,
+);
+
+final turtle = rdfMapper.serialize(person);
+print(turtle);
+</code></pre>
+<h3 id="deserialization">Deserialization</h3>
+<pre class="language-dart"><code class="language-dart">// RDF Turtle input
+final turtleInput = '''
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+
+&lt;http://example.org/person/1&gt; a foaf:Person ;
+  foaf:name "John Smith" ;
+  foaf:age 30 .
+''';
+
+// Deserialize an object
+final person = rdfMapper.deserialize&lt;Person&gt;(turtleInput);
+print('Name: ${person.name}, Age: ${person.age}');
+</code></pre>
+<h3 id="model-and-mapper-classes-for-above-examples">Model and Mapper classes for above examples</h3>
+<pre class="language-dart"><code class="language-dart">// Define a model class.
+// You can define them as you like, there is no requirement for immutability or such
 class Person {
   final String id;
   final String name;
@@ -92,22 +125,19 @@ class Person {
   Person({required this.id, required this.name, required this.age});
 }
 
-// Erstelle einen benutzerdefinierten Mapper
+// Create a custom mapper
 class PersonMapper implements IriNodeMapper&lt;Person&gt; {
   @override
   IriTerm? get typeIri =&gt; IriTerm('http://xmlns.com/foaf/0.1/Person');
   
   @override
   (IriTerm, List&lt;Triple&gt;) toRdfNode(Person value, SerializationContext context, {RdfSubject? parentSubject}) {
-    final subject = IriTerm(value.id);
-    final builder = context.nodeBuilder(subject);
-    
-    // Füge Eigenschaften mit dem fluent API hinzu
-    builder
+
+    // convert dart objects to triples using the fluent builder API
+    return context.nodeBuilder(IriTerm(value.id))
       .literal(IriTerm('http://xmlns.com/foaf/0.1/name'), value.name)
-      .literal(IriTerm('http://xmlns.com/foaf/0.1/age'), value.age);
-    
-    return builder.build();
+      .literal(IriTerm('http://xmlns.com/foaf/0.1/age'), value.age)
+      .build();
   }
   
   @override
@@ -115,87 +145,60 @@ class PersonMapper implements IriNodeMapper&lt;Person&gt; {
     final reader = context.reader(term);
     
     return Person(
-      id: term.lexicalForm,
+      id: term.iri,
       name: reader.require&lt;String&gt;(IriTerm('http://xmlns.com/foaf/0.1/name')),
       age: reader.require&lt;int&gt;(IriTerm('http://xmlns.com/foaf/0.1/age')),
     );
   }
 }
-
-// Registriere den Mapper
-rdfMapper.registerMapper&lt;Person&gt;(PersonMapper());
-
-// Serialisiere ein Objekt
-final person = Person(
-  id: 'http://example.org/person/1',
-  name: 'Max Mustermann',
-  age: 30,
-);
-
-final turtle = rdfMapper.serialize(person);
-print(turtle);
 </code></pre>
-<h3 id="deserialisierung">Deserialisierung</h3>
-<pre class="language-dart"><code class="language-dart">// RDF Turtle-Eingabe
-final turtleInput = '''
-@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
-
-&lt;http://example.org/person/1&gt; a foaf:Person ;
-  foaf:name "Max Mustermann" ;
-  foaf:age 30 .
-''';
-
-// Deserialisiere ein Objekt
-final person = rdfMapper.deserialize&lt;Person&gt;(turtleInput);
-print('Name: ${person.name}, Alter: ${person.age}');
-</code></pre>
-<h2 id="architektur">Architektur</h2>
-<p>Die Bibliothek ist um einige Kernkonzepte herum aufgebaut:</p>
-<h3 id="mapper-hierarchie">Mapper-Hierarchie</h3>
+<h2 id="architecture">Architecture</h2>
+<p>The library is built around several core concepts:</p>
+<h3 id="mapper-hierarchy">Mapper Hierarchy</h3>
 <ul>
 <li>
-<p><strong>Term-Mapper</strong>: Für einfache Werte (IRI-Terme oder Literale)</p>
+<p><strong>Term Mappers</strong>: For simple values (IRI terms or literals)</p>
 <ul>
-<li><code>IriTermMapper</code>: Für IRIs (z.B. URIs, URLs)</li>
-<li><code>LiteralTermMapper</code>: Für Literalwerte (Strings, Zahlen, Daten)</li>
+<li><code>IriTermMapper</code>: For IRIs (e.g., URIs, URLs)</li>
+<li><code>LiteralTermMapper</code>: For literal values (strings, numbers, dates)</li>
 </ul>
 </li>
 <li>
-<p><strong>Knoten-Mapper</strong>: Für komplexe Objekte mit mehreren Eigenschaften</p>
+<p><strong>Node Mappers</strong>: For complex objects with multiple properties</p>
 <ul>
-<li><code>IriNodeMapper</code>: Für Objekte mit global eindeutigen Identifikatoren</li>
-<li><code>BlankNodeMapper</code>: Für anonyme Objekte oder Hilfsstrukturen</li>
+<li><code>IriNodeMapper</code>: For objects with globally unique identifiers</li>
+<li><code>BlankNodeMapper</code>: For anonymous objects or auxiliary structures</li>
 </ul>
 </li>
 </ul>
-<h3 id="kontext-klassen">Kontext-Klassen</h3>
+<h3 id="context-classes">Context Classes</h3>
 <ul>
-<li><code>SerializationContext</code>: Bietet Zugriff auf den NodeBuilder und andere Hilfsmittel</li>
-<li><code>DeserializationContext</code>: Bietet Zugriff auf den NodeReader und den RDF-Graphen</li>
+<li><code>SerializationContext</code>: Provides access to the NodeBuilder</li>
+<li><code>DeserializationContext</code>: Provides access to the NodeReader</li>
 </ul>
-<h3 id="fluent-apis">Fluent-APIs</h3>
+<h3 id="fluent-apis">Fluent APIs</h3>
 <ul>
-<li><code>NodeBuilder</code>: Für die bequeme Erstellung von RDF-Knoten mit einer Fluent-API</li>
-<li><code>NodeReader</code>: Für den einfachen Zugriff auf RDF-Knoteneigenschaften</li>
+<li><code>NodeBuilder</code>: For conveniently creating RDF nodes with a fluent API</li>
+<li><code>NodeReader</code>: For easily accessing RDF node properties</li>
 </ul>
-<h2 id="fortgeschrittene-verwendung">Fortgeschrittene Verwendung</h2>
-<h3 id="arbeiten-mit-graphen">Arbeiten mit Graphen</h3>
-<p>Direktes Arbeiten mit RDF-Graphen (statt Strings):</p>
-<pre class="language-dart"><code class="language-dart">// Graph-basierte Serialisierung
+<h2 id="advanced-usage">Advanced Usage</h2>
+<h3 id="working-with-graphs">Working with Graphs</h3>
+<p>Working directly with RDF graphs (instead of strings):</p>
+<pre class="language-dart"><code class="language-dart">// Graph-based serialization
 final graph = rdfMapper.graph.serialize(person);
 
-// Graph-basierte Deserialisierung
+// Graph-based deserialization
 final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 </code></pre>
-<h3 id="mehrere-objekte-deserialisieren">Mehrere Objekte deserialisieren</h3>
-<pre class="language-dart"><code class="language-dart">// Alle Objekte im Graph deserialisieren
+<h3 id="deserializing-multiple-objects">Deserializing Multiple Objects</h3>
+<pre class="language-dart"><code class="language-dart">// Deserialize all objects in a graph
 final objects = rdfMapper.deserializeAll(turtleInput);
 
-// Nur Objekte eines bestimmten Typs
+// Only objects of a specific type
 final people = rdfMapper.deserializeAllOfType&lt;Person&gt;(turtleInput);
 </code></pre>
-<h3 id="temporre-mapper-registrieren">Temporäre Mapper registrieren</h3>
-<pre class="language-dart"><code class="language-dart">// Temporärer Mapper für eine einzelne Operation
+<h3 id="temporary-mapper-registration">Temporary Mapper Registration</h3>
+<pre class="language-dart"><code class="language-dart">// Temporary mapper for a single operation
 final result = rdfMapper.deserialize&lt;CustomType&gt;(
   input, 
   register: (registry) {
@@ -203,211 +206,324 @@ final result = rdfMapper.deserialize&lt;CustomType&gt;(
   },
 );
 </code></pre>
-<h2 id="komplexes-beispiel">Komplexes Beispiel</h2>
-<p>Das folgende Beispiel zeigt, wie komplexere Modelle mit Beziehungen zwischen Objekten und verschachtelten Strukturen behandelt werden können:</p>
-<pre class="language-dart"><code class="language-dart">import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/rdf_mapper.dart';
-
-// Namespace-Konstanten für bessere Lesbarkeit
+<h3 id="namespace-helper-class">Namespace Helper Class</h3>
+<p>For clean management of IRIs in RDF, you can use <a href="https://kkalass.github.io/rdf_core/api/vocab/">vocab.dart from rdf_core</a> which
+provides constants for the most common predicates of the most common vocabularies.</p>
+<p>But you can also use our Namespace helper class which is more flexible but less discoverable:</p>
+<pre class="language-dart"><code class="language-dart">
+// Example usage:
 final foaf = Namespace('http://xmlns.com/foaf/0.1/');
 final schema = Namespace('http://schema.org/');
 
-// Modellklassen
-class Address {
-  final String street;
-  final String city;
-  final String postalCode;
-  final String country;
-  
-  Address({
-    required this.street, 
-    required this.city, 
-    required this.postalCode, 
-    required this.country
-  });
+// Usage:
+builder.literal(foaf('name'), 'Alice');  // Generates http://xmlns.com/foaf/0.1/name
+</code></pre>
+<h3 id="complex-example">Complex Example</h3>
+<p>The following example demonstrates handling complex models with relationships between objects and nested structures:</p>
+<pre class="language-dart"><code class="language-dart">void main() {
+  final rdf =
+      // Create mapper with default registry
+      RdfMapper.withDefaultRegistry()
+        // Register our custom mappers
+        ..registerMapper&lt;Book&gt;(BookMapper())
+        ..registerMapper&lt;Chapter&gt;(ChapterMapper())
+        ..registerMapper&lt;ISBN&gt;(ISBNMapper())
+        ..registerMapper&lt;Rating&gt;(RatingMapper());
+
+  // Create a book with chapters
+  final book = Book(
+    id: 'hobbit', // Now just the identifier, not the full IRI
+    title: 'The Hobbit',
+    author: 'J.R.R. Tolkien',
+    published: DateTime(1937, 9, 21),
+    isbn: ISBN('9780618260300'),
+    rating: Rating(5),
+    chapters: [
+      Chapter('An Unexpected Party', 1),
+      Chapter('Roast Mutton', 2),
+      Chapter('A Short Rest', 3),
+    ],
+  );
+
+  // Convert the book to RDF Turtle format
+  final turtle = rdf.serialize(book);
+
+  // Print the resulting Turtle representation
+  final expectedTurtle = '''
+  @prefix schema: &lt;https://schema.org/&gt; .
+  @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+  &lt;http://example.org/book/hobbit&gt; a schema:Book;
+    schema:name "The Hobbit";
+    schema:author "J.R.R. Tolkien";
+    schema:datePublished "1937-09-20T23:00:00.000Z"^^xsd:dateTime;
+    schema:isbn &lt;urn:isbn:9780618260300&gt;;
+    schema:aggregateRating "5"^^xsd:integer;
+    schema:hasPart _:b0, _:b1, _:b2 .
+  _:b0 a schema:Chapter;
+    schema:name "An Unexpected Party";
+    schema:position "1"^^xsd:integer .
+  _:b1 a schema:Chapter;
+    schema:name "Roast Mutton";
+    schema:position "2"^^xsd:integer .
+  _:b2 a schema:Chapter;
+    schema:name "A Short Rest";
+    schema:position "3"^^xsd:integer .
+  ''';
+
+  print('Book as RDF Turtle:');
+  print(turtle);
+  assert(turtle == expectedTurtle);
 }
 
-class Person {
+// --- Domain Model ---
+
+// Primary entity with an identifier that will be part of the IRI
+class Book {
   final String id;
-  final String name;
-  final int age;
-  final Address address;
-  final List&lt;Person&gt; friends;
-  
-  Person({
-    required this.id, 
-    required this.name, 
-    required this.age, 
-    required this.address,
-    this.friends = const []
+  final String title;
+  final String author;
+  final DateTime published;
+  final ISBN isbn;
+  final Rating rating;
+  final List&lt;Chapter&gt; chapters;
+
+  Book({
+    required this.id,
+    required this.title,
+    required this.author,
+    required this.published,
+    required this.isbn,
+    required this.rating,
+    required this.chapters,
   });
 }
 
-// Mapper für die Adressklasse - implementiert BlankNodeMapper für anonyme Ressourcen
-class AddressMapper implements BlankNodeMapper&lt;Address&gt; {
+// Value object using blank nodes (no identifier)
+class Chapter {
+  final String title;
+  final int number;
+
+  Chapter(this.title, this.number);
+}
+
+// Custom identifier type using IRI mapping
+class ISBN {
+  final String value;
+
+  ISBN(this.value);
+
   @override
-  IriTerm? get typeIri =&gt; schema('Address');
-  
-  @override
-  (BlankNodeTerm, List&lt;Triple&gt;) toRdfNode(
-    Address value, 
-    SerializationContext context, 
-    {RdfSubject? parentSubject}
-  ) {
-    final subject = BlankNodeTerm();
-    final builder = context.nodeBuilder(subject);
-    
-    builder
-      .literal(schema('streetAddress'), value.street)
-      .literal(schema('addressLocality'), value.city)
-      .literal(schema('postalCode'), value.postalCode)
-      .literal(schema('addressCountry'), value.country);
-      
-    return builder.build();
+  String toString() =&gt; value;
+}
+
+// Custom value type using literal mapping
+class Rating {
+  final int stars;
+
+  Rating(this.stars) {
+    if (stars &lt; 0 || stars &gt; 5) {
+      throw ArgumentError('Rating must be between 0 and 5 stars');
+    }
   }
-  
+
   @override
-  Address fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
-    final reader = context.reader(term);
-    
-    return Address(
-      street: reader.require&lt;String&gt;(schema('streetAddress')),
-      city: reader.require&lt;String&gt;(schema('addressLocality')),
-      postalCode: reader.require&lt;String&gt;(schema('postalCode')),
-      country: reader.require&lt;String&gt;(schema('addressCountry')),
+  String toString() =&gt; '$stars stars';
+}
+
+// --- Mappers ---
+
+// IRI-based entity mapper
+class BookMapper implements IriNodeMapper&lt;Book&gt; {
+  static final titlePredicate = SchemaProperties.name;
+  static final authorPredicate = SchemaProperties.author;
+  static final publishedPredicate = SchemaProperties.datePublished;
+  static final isbnPredicate = IriTerm('https://schema.org/isbn');
+  static final ratingPredicate = IriTerm('https://schema.org/aggregateRating');
+  static final chapterPredicate = IriTerm('https://schema.org/hasPart');
+
+  // Base IRI prefix for book resources
+  static const String bookIriPrefix = 'http://example.org/book/';
+
+  @override
+  final IriTerm typeIri = IriTerm('https://schema.org/Book');
+
+  /// Converts an ID to a full IRI
+  String _createIriFromId(String id) =&gt; '$bookIriPrefix$id';
+
+  /// Extracts the identifier from a full IRI
+  String _extractIdFromIri(String iri) {
+    if (!iri.startsWith(bookIriPrefix)) {
+      throw ArgumentError('Invalid Book IRI format: $iri');
+    }
+    return iri.substring(bookIriPrefix.length);
+  }
+
+  @override
+  Book fromRdfNode(IriTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
+    return Book(
+      // Extract just the identifier part from the IRI
+      id: _extractIdFromIri(subject.iri),
+      title: reader.require&lt;String&gt;(titlePredicate),
+      author: reader.require&lt;String&gt;(authorPredicate),
+      published: reader.require&lt;DateTime&gt;(publishedPredicate),
+      isbn: reader.require&lt;ISBN&gt;(isbnPredicate),
+      rating: reader.require&lt;Rating&gt;(ratingPredicate),
+      chapters: reader.getList&lt;Chapter&gt;(chapterPredicate),
     );
   }
-}
 
-// Mapper für die Person-Klasse
-class PersonMapper implements IriNodeMapper&lt;Person&gt; {
-  @override
-  IriTerm? get typeIri =&gt; foaf('Person');
-  
   @override
   (IriTerm, List&lt;Triple&gt;) toRdfNode(
-    Person value, 
-    SerializationContext context, 
-    {RdfSubject? parentSubject}
-  ) {
-    final subject = IriTerm(value.id);
-    final builder = context.nodeBuilder(subject);
-    
-    // Einfache Eigenschaften
-    builder
-      .literal(foaf('name'), value.name)
-      .literal(foaf('age'), value.age);
-    
-    // Verschachtelte Adresse als BlankNode
-    builder.childNode(schema('address'), value.address);
-    
-    // Liste von Freunden als IRI-Referenzen
-    if (value.friends.isNotEmpty) {
-      builder.childNodeList(foaf('knows'), value.friends);
-    }
-    
-    return builder.build();
+    Book book,
+    SerializationContext context, {
+    RdfSubject? parentSubject,
+  }) {
+    return context
+        .nodeBuilder(IriTerm(_createIriFromId(book.id)))
+        .literal(titlePredicate, book.title)
+        .literal(authorPredicate, book.author)
+        .literal&lt;DateTime&gt;(publishedPredicate, book.published)
+        .iri&lt;ISBN&gt;(isbnPredicate, book.isbn)
+        .literal&lt;Rating&gt;(ratingPredicate, book.rating)
+        .childNodeList(chapterPredicate, book.chapters)
+        .build();
   }
-  
+}
+
+// Blank node-based entity mapper
+class ChapterMapper implements BlankNodeMapper&lt;Chapter&gt; {
+  static final titlePredicate = IriTerm('https://schema.org/name');
+  static final numberPredicate = IriTerm('https://schema.org/position');
+
   @override
-  Person fromRdfNode(IriTerm term, DeserializationContext context) {
+  final IriTerm typeIri = IriTerm('https://schema.org/Chapter');
+
+  @override
+  Chapter fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
     final reader = context.reader(term);
-    
-    return Person(
-      id: term.lexicalForm,
-      name: reader.require&lt;String&gt;(foaf('name')),
-      age: reader.require&lt;int&gt;(foaf('age')),
-      address: reader.require&lt;Address&gt;(schema('address')),
-      friends: reader.getList&lt;Person&gt;(foaf('knows')),
+    return Chapter(
+      reader.require&lt;String&gt;(titlePredicate),
+      reader.require&lt;int&gt;(numberPredicate),
     );
   }
+
+  @override
+  (BlankNodeTerm, List&lt;Triple&gt;) toRdfNode(
+    Chapter chapter,
+    SerializationContext ctxt, {
+    RdfSubject? parentSubject,
+  }) {
+    return ctxt
+        .nodeBuilder(BlankNodeTerm())
+        .literal(titlePredicate, chapter.title)
+        .literal&lt;int&gt;(numberPredicate, chapter.number)
+        .build();
+  }
 }
 
-void main() {
-  // Erstelle RDF-Mapper und registriere unsere benutzerdefinierten Mapper
-  final rdfMapper = RdfMapper.withDefaultRegistry();
-  rdfMapper.registerMapper&lt;Address&gt;(AddressMapper());
-  rdfMapper.registerMapper&lt;Person&gt;(PersonMapper());
+// Custom IRI mapper
+class ISBNMapper implements IriTermMapper&lt;ISBN&gt; {
+  static const String isbnUriPrefix = 'urn:isbn:';
 
-  // Erstelle einige Beispieldaten
-  final alice = Person(
-    id: 'http://example.org/people/alice',
-    name: 'Alice Schmidt',
-    age: 28,
-    address: Address(
-      street: 'Hauptstraße 1',
-      city: 'Berlin',
-      postalCode: '10115',
-      country: 'Deutschland'
-    ),
-    friends: []  // Wird später aktualisiert
-  );
-  
-  final bob = Person(
-    id: 'http://example.org/people/bob',
-    name: 'Bob Meyer',
-    age: 32,
-    address: Address(
-      street: 'Lindenallee 42',
-      city: 'München',
-      postalCode: '80333',
-      country: 'Deutschland'
-    ),
-    friends: []  // Wird später aktualisiert
-  );
-  
-  // Stelle Freundschaftsbeziehungen her (bidirektional)
-  alice.friends.add(bob);
-  bob.friends.add(alice);
+  @override
+  IriTerm toRdfTerm(ISBN isbn, SerializationContext context) {
+    return IriTerm('$isbnUriPrefix${isbn.value}');
+  }
 
-  // Serialisiere zu RDF
-  final turtle = rdfMapper.serialize(alice);
-  print(turtle);
-  
-  // Die Ausgabe wird komplexe Verschachtelungen und Beziehungen zeigen:
-  // - Personen als IRI-Ressourcen
-  // - Adressen als anonyme Blank-Knoten
-  // - Freundschaftsbeziehungen als Verweise zwischen Personen
-  
-  // Deserialisierung funktioniert genauso einfach
-  final deserializedAlice = rdfMapper.deserialize&lt;Person&gt;(turtle);
-  print('Deserialisiert: ${deserializedAlice.name}');
-  print('Freunde: ${deserializedAlice.friends.map((f) =&gt; f.name).join(', ')}');
+  @override
+  ISBN fromRdfTerm(IriTerm term, DeserializationContext context) {
+    final uri = term.iri;
+    if (!uri.startsWith(isbnUriPrefix)) {
+      throw ArgumentError('Invalid ISBN URI format: $uri');
+    }
+    return ISBN(uri.substring(isbnUriPrefix.length));
+  }
+}
+
+// Custom literal mapper
+class RatingMapper implements LiteralTermMapper&lt;Rating&gt; {
+  @override
+  LiteralTerm toRdfTerm(Rating rating, SerializationContext context) {
+    return LiteralTerm.typed(rating.stars.toString(), 'integer');
+  }
+
+  @override
+  Rating fromRdfTerm(LiteralTerm term, DeserializationContext context) {
+    return Rating(int.parse(term.value));
+  }
 }
 </code></pre>
-<p>Im obigen Beispiel haben wir:</p>
-<ol>
-<li>Eine <code>Address</code>-Klasse, die als Blank-Knoten (anonyme Ressource) modelliert ist</li>
-<li>Eine <code>Person</code>-Klasse mit einem IRI-Identifier und einer Beziehung zu Adressen und anderen Personen</li>
-<li>Verwendung des Blank-Node-Mappers für verschachtelte Objekte ohne eigene Identität</li>
-<li>Darstellung von Beziehungen zwischen benannten Ressourcen</li>
-</ol>
-<h3 id="namespace-hilfsklasse">Namespace-Hilfsklasse</h3>
-<p>Um IRIs in RDF sauber zu verwalten, empfiehlt sich die Verwendung einer Namespace-Klasse:</p>
-<pre class="language-dart"><code class="language-dart">/// Hilfsklasse zur Verwaltung von RDF-Namespaces
-class Namespace {
-  final String _base;
-  
-  Namespace(this._base);
-  
-  /// Erstellt eine IRI-Term durch Anhängen des lokalen Namens an die Namespace-Basis
-  IriTerm call(String localName) =&gt; IriTerm('$_base$localName');
-  
-  /// Gibt die Basis-URL des Namespaces zurück
-  String get uri =&gt; _base;
-}
-
-// Beispielverwendung:
-final foaf = Namespace('http://xmlns.com/foaf/0.1/');
-final schema = Namespace('http://schema.org/');
-
-// Verwendung:
-builder.literal(foaf('name'), 'Alice');  // Erzeugt http://xmlns.com/foaf/0.1/name
-</code></pre>
-<h2 id="beitragen">Beitragen</h2>
-<p>Beiträge sind willkommen! Bitte lies die <a href="CONTRIBUTING.md">Beitragsrichtlinien</a> für weitere Informationen.</p>
-<h2 id="lizenz">Lizenz</h2>
-<p>Dieses Projekt steht unter der <a href="LICENSE">MIT-Lizenz</a>.</p>
+<h2 id="supported-rdf-types">Supported RDF Types</h2>
+<p>The library includes built-in mappers for common Dart types:</p>
+<table>
+<thead>
+<tr>
+<th>Dart Type</th>
+<th>RDF Datatype</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>String</code></td>
+<td>xsd:string</td>
+</tr>
+<tr>
+<td><code>int</code></td>
+<td>xsd:integer</td>
+</tr>
+<tr>
+<td><code>double</code></td>
+<td>xsd:decimal</td>
+</tr>
+<tr>
+<td><code>bool</code></td>
+<td>xsd:boolean</td>
+</tr>
+<tr>
+<td><code>DateTime</code></td>
+<td>xsd:dateTime</td>
+</tr>
+<tr>
+<td><code>Uri</code></td>
+<td>IRI</td>
+</tr>
+</tbody>
+</table>
+<h2 id="-error-handling">⚠️ Error Handling</h2>
+<p>RDF Mapper provides specific exceptions to help diagnose mapping issues:</p>
+<ul>
+<li><code>RdfMappingException</code>: Base exception for all mapping errors</li>
+<li><code>SerializationException</code>: Errors during serialization</li>
+<li><code>DeserializationException</code>: Errors during deserialization</li>
+<li><code>SerializerNotFoundException</code>: When no serializer is registered for a type</li>
+<li><code>DeserializerNotFoundException</code>: When no deserializer is registered for a type</li>
+<li><code>PropertyValueNotFoundException</code>: When a required property is missing</li>
+<li><code>TooManyPropertyValuesException</code>: When multiple values exist for a single-valued property</li>
+</ul>
+<h2 id="-performance-considerations">🚦 Performance Considerations</h2>
+<ul>
+<li>RDF Mapper uses efficient traversal algorithms for both serialization and deserialization</li>
+<li>For large graphs, consider using the graph-based API instead of string serialization</li>
+<li>Consider implementing custom mappers for performance-critical types in your application</li>
+</ul>
+<h2 id="-roadmap--next-steps">🛣️ Roadmap / Next Steps</h2>
+<ul>
+<li>Detect cycles, optimally support them.</li>
+<li>Support generating mappers based on annotations</li>
+</ul>
+<h2 id="-contributing">🤝 Contributing</h2>
+<p>Contributions, bug reports, and feature requests are welcome!</p>
+<ul>
+<li>Fork the repo and submit a PR</li>
+<li>See <a href="CONTRIBUTING.md">CONTRIBUTING.md</a> for guidelines</li>
+<li>Join the discussion in <a href="https://github.com/kkalass/rdf_mapper/issues">GitHub Issues</a></li>
+</ul>
+<h2 id="-ai-policy">🤖 AI Policy</h2>
+<p>This project is proudly human-led and human-controlled, with all key decisions, design, and code reviews made by people. At the same time, it stands on the shoulders of LLM giants: generative AI tools are used throughout the development process to accelerate iteration, inspire new ideas, and improve documentation quality. We believe that combining human expertise with the best of AI leads to higher-quality, more innovative open source software.</p>
+<hr>
+<p>© 2025 Klas Kalaß. Licensed under the MIT License.</p>
 </section>
 
 
