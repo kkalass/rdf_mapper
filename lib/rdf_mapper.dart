@@ -75,7 +75,7 @@ export 'src/api/rdf_mapper_service.dart';
 export 'src/api/serialization_context.dart';
 export 'src/api/serialization_service.dart';
 export 'src/api/serializer.dart';
-
+export 'src/util/namespace.dart';
 // Exception exports - essential for error handling
 export 'src/exceptions/deserialization_exception.dart';
 export 'src/exceptions/deserializer_not_found_exception.dart';
