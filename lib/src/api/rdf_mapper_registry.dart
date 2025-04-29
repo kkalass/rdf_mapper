@@ -21,12 +21,46 @@ import 'package:rdf_mapper/src/mappers/literal/string_serializer.dart';
 
 final _log = Logger("rdf_orm.registry");
 
-/// Central registry for RDF type mappers
+/// Central registry for RDF mappers that handles type-to-mapper associations.
 ///
-/// Provides a way to register and retrieve mappers for specific types.
-/// This is the core of the mapping system, managing type-to-mapper associations.
+/// The RdfMapperRegistry is the core component of the RDF mapping system, managing
+/// the registration and lookup of mappers for specific Dart types. It maintains
+/// separate registries for different mapper categories:
+///
+/// 1. Term mappers (IRI and Literal) for simple value conversions
+/// 2. Node mappers (IRI and Blank) for complex objects with associated triples
+///
+/// The registry supports two primary lookup mechanisms:
+/// - Type-based lookup using Dart's generic type system
+/// - RDF type IRI-based lookup for deserialization based on RDF type triples
+///
+/// Key responsibilities:
+/// - Maintaining type-safe registrations of mappers
+/// - Providing efficient lookup of appropriate mappers
+/// - Pre-registering standard mappers for common Dart types
+/// - Supporting both serialization and deserialization paths
+///
+/// Usage example:
+/// ```dart
+/// // Create a registry with standard mappers
+/// final registry = RdfMapperRegistry();
+///
+/// // Register a custom mapper
+/// registry.registerMapper<Person>(PersonMapper());
+///
+/// // Register individual serializer/deserializer
+/// registry.registerSerializer<Book>(BookSerializer());
+/// registry.registerDeserializer<Book>(BookDeserializer());
+/// ```
 final class RdfMapperRegistry {
   /// Returns a deep copy of this registry, including all registered mappers.
+  ///
+  /// Creates a new instance with the same mapper registrations as this one.
+  /// This is useful for creating temporary registries with additional mappers
+  /// for specific serialization/deserialization operations without affecting
+  /// the global registry.
+  ///
+  /// @return A new registry with the same mappers as this one
   RdfMapperRegistry clone() {
     final copy = RdfMapperRegistry._empty();
     copy._nodeSerializers.addAll(_nodeSerializers);
@@ -42,23 +76,33 @@ final class RdfMapperRegistry {
 
   /// Internal empty constructor for cloning
   RdfMapperRegistry._empty();
+
+  // Type-based registries
   final Map<Type, IriTermDeserializer<dynamic>> _iriTermDeserializers = {};
-  final Map<IriTerm, IriNodeDeserializer<dynamic>> _iriNodeDeserializersByType =
-      {};
   final Map<Type, IriNodeDeserializer<dynamic>> _iriNodeDeserializers = {};
   final Map<Type, IriTermSerializer<dynamic>> _iriTermSerializers = {};
   final Map<Type, BlankNodeDeserializer<dynamic>> _blankNodeDeserializers = {};
-  final Map<IriTerm, BlankNodeDeserializer<dynamic>>
-  _blankNodeDeserializersByType = {};
   final Map<Type, LiteralTermDeserializer<dynamic>> _literalTermDeserializers =
       {};
   final Map<Type, LiteralTermSerializer<dynamic>> _literalTermSerializers = {};
   final Map<Type, NodeSerializer<dynamic>> _nodeSerializers = {};
 
-  /// Creates a new RDF mapper registry
+  // RDF type IRI-based registries (for dynamic type resolution during deserialization)
+  final Map<IriTerm, IriNodeDeserializer<dynamic>> _iriNodeDeserializersByType =
+      {};
+  final Map<IriTerm, BlankNodeDeserializer<dynamic>>
+  _blankNodeDeserializersByType = {};
+
+  /// Creates a new RDF mapper registry with standard mappers pre-registered.
   ///
-  /// @param loggerService Optional logger for diagnostic information
+  /// The standard mappers handle common Dart types:
+  /// - String, int, double, bool, DateTime for literal values
+  /// - IriTerm for IRI references
+  ///
+  /// These pre-registered mappers enable out-of-the-box functionality for
+  /// basic data types without requiring custom mappers.
   RdfMapperRegistry() {
+    // Register standard deserializers
     registerDeserializer(IriFullDeserializer());
     registerDeserializer(StringDeserializer());
     registerDeserializer(IntDeserializer());
@@ -66,6 +110,7 @@ final class RdfMapperRegistry {
     registerDeserializer(BoolDeserializer());
     registerDeserializer(DateTimeDeserializer());
 
+    // Register standard serializers
     registerSerializer(IriFullSerializer());
     registerSerializer(StringSerializer());
     registerSerializer(IntSerializer());
@@ -74,6 +119,17 @@ final class RdfMapperRegistry {
     registerSerializer(DateTimeSerializer());
   }
 
+  /// Registers a serializer with the appropriate registry based on its type.
+  ///
+  /// This method determines the correct registry for the serializer based on
+  /// its implementation type and registers it for the appropriate Dart type.
+  ///
+  /// Supported serializer types:
+  /// - IriTermSerializer: For serializing objects to IRI terms
+  /// - LiteralTermSerializer: For serializing objects to literal terms
+  /// - NodeSerializer: For serializing objects to RDF nodes (subjects with triples)
+  ///
+  /// @param serializer The serializer to register
   void registerSerializer<T>(Serializer<T> serializer) {
     switch (serializer) {
       case IriTermSerializer<T>():
@@ -88,6 +144,18 @@ final class RdfMapperRegistry {
     }
   }
 
+  /// Registers a deserializer with the appropriate registry based on its type.
+  ///
+  /// This method determines the correct registry for the deserializer based on
+  /// its implementation type and registers it for the appropriate Dart type.
+  ///
+  /// Supported deserializer types:
+  /// - IriTermDeserializer: For deserializing IRI terms to objects
+  /// - LiteralTermDeserializer: For deserializing literal terms to objects
+  /// - BlankNodeDeserializer: For deserializing blank nodes to objects
+  /// - IriNodeDeserializer: For deserializing IRI subjects with triples to objects
+  ///
+  /// @param deserializer The deserializer to register
   void registerDeserializer<T>(Deserializer<T> deserializer) {
     switch (deserializer) {
       case IriTermDeserializer<T>():
@@ -105,6 +173,19 @@ final class RdfMapperRegistry {
     }
   }
 
+  /// Registers a mapper with all appropriate registries based on its implemented interfaces.
+  ///
+  /// This is a convenience method that handles the registration of combined
+  /// serializer/deserializer mappers. It determines which specific mapper interfaces
+  /// are implemented and registers the mapper with all relevant registries.
+  ///
+  /// Supported mapper types:
+  /// - IriNodeMapper: Combined IriNodeSerializer/IriNodeDeserializer
+  /// - BlankNodeMapper: Combined BlankNodeSerializer/BlankNodeDeserializer
+  /// - LiteralTermMapper: Combined LiteralTermSerializer/LiteralTermDeserializer
+  /// - IriTermMapper: Combined IriTermSerializer/IriTermDeserializer
+  ///
+  /// @param mapper The mapper to register
   void registerMapper<T>(Mapper<T> mapper) {
     switch (mapper) {
       case IriNodeMapper<T>():

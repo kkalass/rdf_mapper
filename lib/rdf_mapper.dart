@@ -1,24 +1,56 @@
-/// RDF ORM Facade Library for Dart
+/// RDF Mapping Library for Dart
 ///
-/// This library provides a simplified and unified entry point for RDF object-relational mapping (ORM)
-/// operations, exposing the core API of the rdf_orm subsystem for convenient and idiomatic use.
+/// This library provides a comprehensive solution for mapping between Dart objects and RDF (Resource Description Framework),
+/// enabling seamless integration of semantic web technologies in Dart applications.
 ///
-/// It is inspired by the structure and philosophy of the rdf.dart facade, but is tailored to the ORM domain.
+/// ## What is RDF?
+///
+/// RDF (Resource Description Framework) is a standard model for data interchange on the Web. It extends the linking
+/// structure of the Web by using URIs to name relationships between things as well as the two ends of the link.
+/// This simple model allows structured and semi-structured data to be mixed, exposed, and shared across different
+/// applications.
+///
+/// RDF is built around three-part statements called "triples" in the form of subject-predicate-object:
+/// - Subject: The resource being described (identified by an IRI or a blank node)
+/// - Predicate: The property or relationship (always an IRI)
+/// - Object: The value or related resource (an IRI, blank node, or literal value)
+///
+/// ## Library Overview
+///
+/// This library provides bidirectional mapping between Dart objects and RDF representations using a registry of mappers.
+/// The API is organized into:
+///
+/// - **Primary API**: String-based operations for typical use cases, allowing serialization to and from RDF string formats
+/// - **Graph API**: Direct graph manipulation for advanced scenarios, working with in-memory graph structures
+/// - **Mapper System**: Extensible system of serializers and deserializers for custom types
+///
+/// ## Key Concepts
+///
+/// - **Terms vs Nodes**: The library distinguishes between RDF Terms (single values like IRIs or Literals) and
+///   Nodes (subjects with their associated triples)
+/// - **Mappers**: Combined serializers and deserializers for bidirectional conversion
+/// - **Context**: Provides access to the current graph and related utilities during (de)serialization
 ///
 /// ## Usage Example
 ///
 /// ```dart
 /// import 'package:rdf_mapper/rdf_mapper.dart';
 ///
-/// final rdfmapper = RdfMapper.withDefaultRegistry();
+/// // Create a mapper instance with default registry
+/// final rdfMapper = RdfMapper.withDefaultRegistry();
 ///
-/// // String-based operations
-/// final turtle = rdfmapper.serialize(myObject);
-/// final obj = rdfmapper.deserialize<MyType>(turtle);
+/// // Register a custom mapper for your class
+/// rdfMapper.registerMapper<Person>(PersonMapper());
+///
+/// // String-based serialization
+/// final turtle = rdfMapper.serialize(myPerson);
+///
+/// // String-based deserialization
+/// final person = rdfMapper.deserialize<Person>(turtle);
 ///
 /// // Graph-based operations
-/// final graph = rdfmapper.graph.serialize(myObject);
-/// final objFromGraph = rdfmapper.graph.deserialize<MyType>(graph);
+/// final graph = rdfMapper.graph.serialize(myPerson);
+/// final personFromGraph = rdfMapper.graph.deserialize<Person>(graph);
 /// ```
 ///
 library rdf_mapper;
@@ -30,11 +62,50 @@ import 'package:rdf_mapper/src/api/mapper.dart';
 import 'src/api/rdf_mapper_registry.dart';
 import 'src/api/rdf_mapper_service.dart';
 
+// Core API exports
 export 'src/api/deserialization_context.dart';
+export 'src/api/deserialization_service.dart';
+export 'src/api/deserializer.dart';
 export 'src/api/graph_operations.dart';
+export 'src/api/mapper.dart';
+export 'src/api/node_builder.dart';
+export 'src/api/node_reader.dart';
 export 'src/api/rdf_mapper_registry.dart';
 export 'src/api/rdf_mapper_service.dart';
 export 'src/api/serialization_context.dart';
+export 'src/api/serialization_service.dart';
+export 'src/api/serializer.dart';
+
+// Exception exports - essential for error handling
+export 'src/exceptions/deserialization_exception.dart';
+export 'src/exceptions/deserializer_not_found_exception.dart';
+export 'src/exceptions/property_value_not_found_exception.dart';
+export 'src/exceptions/rdf_mapping_exception.dart';
+export 'src/exceptions/serialization_exception.dart';
+export 'src/exceptions/serializer_not_found_exception.dart';
+export 'src/exceptions/too_many_property_values_exception.dart';
+
+// Standard mapper exports - useful as examples or for extension
+export 'src/mappers/iri/extracting_iri_term_deserializer.dart';
+export 'src/mappers/iri/iri_full_deserializer.dart';
+export 'src/mappers/iri/iri_full_serializer.dart';
+export 'src/mappers/iri/iri_id_serializer.dart';
+
+// Base classes for literal mappers - essential for custom mapper implementation
+export 'src/mappers/literal/base_rdf_literal_term_deserializer.dart';
+export 'src/mappers/literal/base_rdf_literal_term_serializer.dart';
+
+// Standard literal mappers - useful for reference and extension
+export 'src/mappers/literal/bool_deserializer.dart';
+export 'src/mappers/literal/bool_serializer.dart';
+export 'src/mappers/literal/date_time_deserializer.dart';
+export 'src/mappers/literal/date_time_serializer.dart';
+export 'src/mappers/literal/double_deserializer.dart';
+export 'src/mappers/literal/double_serializer.dart';
+export 'src/mappers/literal/int_deserializer.dart';
+export 'src/mappers/literal/int_serializer.dart';
+export 'src/mappers/literal/string_deserializer.dart';
+export 'src/mappers/literal/string_serializer.dart';
 
 /// Central facade for the RDF Mapper library, providing access to object mapping and registry operations.
 ///

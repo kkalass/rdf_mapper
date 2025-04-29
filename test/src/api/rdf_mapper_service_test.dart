@@ -1,10 +1,6 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_core/vocab.dart';
-import 'package:rdf_mapper/src/api/deserializer.dart';
-import 'package:rdf_mapper/src/api/mapper.dart';
-import 'package:rdf_mapper/src/exceptions/deserialization_exception.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
-import 'package:rdf_mapper/src/exceptions/deserializer_not_found_exception.dart';
 import 'package:test/test.dart';
 
 void main() {

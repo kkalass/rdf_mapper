@@ -1,6 +1,5 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
-import 'package:rdf_mapper/src/api/mapper.dart';
 import 'package:test/test.dart';
 
 void main() {

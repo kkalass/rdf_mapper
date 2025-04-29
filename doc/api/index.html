@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="rdf_mapper API docs, for the Dart programming language.">
+  <title>rdf_mapper - Dart API docs</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="static-assets/github.css?v1">
+  <link rel="stylesheet" href="static-assets/styles.css?v1">
+  <link rel="icon" href="static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="https://kkalass.github.io/rdf_mapper/">rdf_mapper package</a></li>
+  </ol>
+  <div class="self-name">rdf_mapper</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button" title="Toggle brightness">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        dark_mode
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        light_mode
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+  <div id="dartdoc-main-content" class="main-content">
+      
+<section class="desc markdown">
+  <h1 id="rdf-mapper-for-dart">RDF Mapper for Dart</h1>
+<p><a href="https://dart.dev"><img src="https://img.shields.io/badge/Dart-2.17%2B-blue.svg" alt="Dart"></a>
+<a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a></p>
+<p>Eine leistungsstarke Bibliothek für die bidirektionale Abbildung zwischen Dart-Objekten und RDF (Resource Description Framework), basierend auf <a href="https://pub.dev/packages/rdf_core"><code>rdf_core</code></a>.</p>
+<h2 id="bersicht">Übersicht</h2>
+<p><code>rdf_mapper</code> bietet eine elegante Lösung für die Umwandlung zwischen Dart-Objektmodellen und RDF-Graphen, ähnlich wie ein ORM für Datenbanken. Dies ermöglicht es Entwicklern, mit semantischen Daten in einer objektorientierten Weise zu arbeiten, ohne die Komplexität der RDF-Serialisierung und -Deserialisierung manuell zu verwalten.</p>
+<h3 id="hauptmerkmale">Hauptmerkmale</h3>
+<ul>
+<li><strong>Bidirektionales Mapping</strong>: Nahtlose Konvertierung zwischen Dart-Objekten und RDF-Repräsentationen</li>
+<li><strong>Typsicher</strong>: Vollständig typisiertes API für sicheres RDF-Mapping</li>
+<li><strong>Erweiterbar</strong>: Einfaches Erstellen eigener Mapper für benutzerdefinierte Typen</li>
+<li><strong>Flexibel</strong>: Unterstützung für alle RDF-Hauptkonzepte: IRI-Knoten, Blank-Knoten und Literale</li>
+<li><strong>String &amp; Graph API</strong>: Arbeiten mit RDF-Strings oder direkt mit Graphen</li>
+</ul>
+<h2 id="was-ist-rdf">Was ist RDF?</h2>
+<p>Das Resource Description Framework (RDF) ist ein Standard-Datenmodell für den Datenaustausch im Web. Es erweitert die Linkstruktur des Webs, indem es URIs verwendet, um Beziehungen zwischen Dingen zu benennen.</p>
+<p>RDF basiert auf Aussagen in Form von "Tripeln": Subjekt-Prädikat-Objekt:</p>
+<ul>
+<li><strong>Subjekt</strong>: Die Ressource, die beschrieben wird (identifiziert durch eine IRI oder einen Blank-Knoten)</li>
+<li><strong>Prädikat</strong>: Die Eigenschaft oder Beziehung (immer eine IRI)</li>
+<li><strong>Objekt</strong>: Der Wert oder die verbundene Ressource (eine IRI, ein Blank-Knoten oder ein Literalwert)</li>
+</ul>
+<h2 id="installation">Installation</h2>
+<p>Füge folgendes zu deiner <code>pubspec.yaml</code> hinzu:</p>
+<pre class="language-yaml"><code class="language-yaml">dependencies:
+  rdf_mapper:
+    git:
+      url: https://github.com/yourusername/rdf_mapper.git
+</code></pre>
+<h2 id="schnellstart">Schnellstart</h2>
+<h3 id="basis-setup">Basis-Setup</h3>
+<pre class="language-dart"><code class="language-dart">import 'package:rdf_mapper/rdf_mapper.dart';
+
+// Erstelle eine Mapper-Instanz mit Standard-Registrierung
+final rdfMapper = RdfMapper.withDefaultRegistry();
+</code></pre>
+<h3 id="serialisierung">Serialisierung</h3>
+<pre class="language-dart"><code class="language-dart">// Definiere eine einfache Modellklasse
+class Person {
+  final String id;
+  final String name;
+  final int age;
+  
+  Person({required this.id, required this.name, required this.age});
+}
+
+// Erstelle einen benutzerdefinierten Mapper
+class PersonMapper implements IriNodeMapper&lt;Person&gt; {
+  @override
+  IriTerm? get typeIri =&gt; IriTerm('http://xmlns.com/foaf/0.1/Person');
+  
+  @override
+  (IriTerm, List&lt;Triple&gt;) toRdfNode(Person value, SerializationContext context, {RdfSubject? parentSubject}) {
+    final subject = IriTerm(value.id);
+    final builder = context.nodeBuilder(subject);
+    
+    // Füge Eigenschaften mit dem fluent API hinzu
+    builder
+      .literal(IriTerm('http://xmlns.com/foaf/0.1/name'), value.name)
+      .literal(IriTerm('http://xmlns.com/foaf/0.1/age'), value.age);
+    
+    return builder.build();
+  }
+  
+  @override
+  Person fromRdfNode(IriTerm term, DeserializationContext context) {
+    final reader = context.reader(term);
+    
+    return Person(
+      id: term.lexicalForm,
+      name: reader.require&lt;String&gt;(IriTerm('http://xmlns.com/foaf/0.1/name')),
+      age: reader.require&lt;int&gt;(IriTerm('http://xmlns.com/foaf/0.1/age')),
+    );
+  }
+}
+
+// Registriere den Mapper
+rdfMapper.registerMapper&lt;Person&gt;(PersonMapper());
+
+// Serialisiere ein Objekt
+final person = Person(
+  id: 'http://example.org/person/1',
+  name: 'Max Mustermann',
+  age: 30,
+);
+
+final turtle = rdfMapper.serialize(person);
+print(turtle);
+</code></pre>
+<h3 id="deserialisierung">Deserialisierung</h3>
+<pre class="language-dart"><code class="language-dart">// RDF Turtle-Eingabe
+final turtleInput = '''
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+
+&lt;http://example.org/person/1&gt; a foaf:Person ;
+  foaf:name "Max Mustermann" ;
+  foaf:age 30 .
+''';
+
+// Deserialisiere ein Objekt
+final person = rdfMapper.deserialize&lt;Person&gt;(turtleInput);
+print('Name: ${person.name}, Alter: ${person.age}');
+</code></pre>
+<h2 id="architektur">Architektur</h2>
+<p>Die Bibliothek ist um einige Kernkonzepte herum aufgebaut:</p>
+<h3 id="mapper-hierarchie">Mapper-Hierarchie</h3>
+<ul>
+<li>
+<p><strong>Term-Mapper</strong>: Für einfache Werte (IRI-Terme oder Literale)</p>
+<ul>
+<li><code>IriTermMapper</code>: Für IRIs (z.B. URIs, URLs)</li>
+<li><code>LiteralTermMapper</code>: Für Literalwerte (Strings, Zahlen, Daten)</li>
+</ul>
+</li>
+<li>
+<p><strong>Knoten-Mapper</strong>: Für komplexe Objekte mit mehreren Eigenschaften</p>
+<ul>
+<li><code>IriNodeMapper</code>: Für Objekte mit global eindeutigen Identifikatoren</li>
+<li><code>BlankNodeMapper</code>: Für anonyme Objekte oder Hilfsstrukturen</li>
+</ul>
+</li>
+</ul>
+<h3 id="kontext-klassen">Kontext-Klassen</h3>
+<ul>
+<li><code>SerializationContext</code>: Bietet Zugriff auf den NodeBuilder und andere Hilfsmittel</li>
+<li><code>DeserializationContext</code>: Bietet Zugriff auf den NodeReader und den RDF-Graphen</li>
+</ul>
+<h3 id="fluent-apis">Fluent-APIs</h3>
+<ul>
+<li><code>NodeBuilder</code>: Für die bequeme Erstellung von RDF-Knoten mit einer Fluent-API</li>
+<li><code>NodeReader</code>: Für den einfachen Zugriff auf RDF-Knoteneigenschaften</li>
+</ul>
+<h2 id="fortgeschrittene-verwendung">Fortgeschrittene Verwendung</h2>
+<h3 id="arbeiten-mit-graphen">Arbeiten mit Graphen</h3>
+<p>Direktes Arbeiten mit RDF-Graphen (statt Strings):</p>
+<pre class="language-dart"><code class="language-dart">// Graph-basierte Serialisierung
+final graph = rdfMapper.graph.serialize(person);
+
+// Graph-basierte Deserialisierung
+final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
+</code></pre>
+<h3 id="mehrere-objekte-deserialisieren">Mehrere Objekte deserialisieren</h3>
+<pre class="language-dart"><code class="language-dart">// Alle Objekte im Graph deserialisieren
+final objects = rdfMapper.deserializeAll(turtleInput);
+
+// Nur Objekte eines bestimmten Typs
+final people = rdfMapper.deserializeAllOfType&lt;Person&gt;(turtleInput);
+</code></pre>
+<h3 id="temporre-mapper-registrieren">Temporäre Mapper registrieren</h3>
+<pre class="language-dart"><code class="language-dart">// Temporärer Mapper für eine einzelne Operation
+final result = rdfMapper.deserialize&lt;CustomType&gt;(
+  input, 
+  register: (registry) {
+    registry.registerMapper&lt;CustomType&gt;(CustomTypeMapper());
+  },
+);
+</code></pre>
+<h2 id="komplexes-beispiel">Komplexes Beispiel</h2>
+<p>Das folgende Beispiel zeigt, wie komplexere Modelle mit Beziehungen zwischen Objekten und verschachtelten Strukturen behandelt werden können:</p>
+<pre class="language-dart"><code class="language-dart">import 'package:rdf_core/rdf_core.dart';
+import 'package:rdf_mapper/rdf_mapper.dart';
+
+// Namespace-Konstanten für bessere Lesbarkeit
+final foaf = Namespace('http://xmlns.com/foaf/0.1/');
+final schema = Namespace('http://schema.org/');
+
+// Modellklassen
+class Address {
+  final String street;
+  final String city;
+  final String postalCode;
+  final String country;
+  
+  Address({
+    required this.street, 
+    required this.city, 
+    required this.postalCode, 
+    required this.country
+  });
+}
+
+class Person {
+  final String id;
+  final String name;
+  final int age;
+  final Address address;
+  final List&lt;Person&gt; friends;
+  
+  Person({
+    required this.id, 
+    required this.name, 
+    required this.age, 
+    required this.address,
+    this.friends = const []
+  });
+}
+
+// Mapper für die Adressklasse - implementiert BlankNodeMapper für anonyme Ressourcen
+class AddressMapper implements BlankNodeMapper&lt;Address&gt; {
+  @override
+  IriTerm? get typeIri =&gt; schema('Address');
+  
+  @override
+  (BlankNodeTerm, List&lt;Triple&gt;) toRdfNode(
+    Address value, 
+    SerializationContext context, 
+    {RdfSubject? parentSubject}
+  ) {
+    final subject = BlankNodeTerm();
+    final builder = context.nodeBuilder(subject);
+    
+    builder
+      .literal(schema('streetAddress'), value.street)
+      .literal(schema('addressLocality'), value.city)
+      .literal(schema('postalCode'), value.postalCode)
+      .literal(schema('addressCountry'), value.country);
+      
+    return builder.build();
+  }
+  
+  @override
+  Address fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
+    final reader = context.reader(term);
+    
+    return Address(
+      street: reader.require&lt;String&gt;(schema('streetAddress')),
+      city: reader.require&lt;String&gt;(schema('addressLocality')),
+      postalCode: reader.require&lt;String&gt;(schema('postalCode')),
+      country: reader.require&lt;String&gt;(schema('addressCountry')),
+    );
+  }
+}
+
+// Mapper für die Person-Klasse
+class PersonMapper implements IriNodeMapper&lt;Person&gt; {
+  @override
+  IriTerm? get typeIri =&gt; foaf('Person');
+  
+  @override
+  (IriTerm, List&lt;Triple&gt;) toRdfNode(
+    Person value, 
+    SerializationContext context, 
+    {RdfSubject? parentSubject}
+  ) {
+    final subject = IriTerm(value.id);
+    final builder = context.nodeBuilder(subject);
+    
+    // Einfache Eigenschaften
+    builder
+      .literal(foaf('name'), value.name)
+      .literal(foaf('age'), value.age);
+    
+    // Verschachtelte Adresse als BlankNode
+    builder.childNode(schema('address'), value.address);
+    
+    // Liste von Freunden als IRI-Referenzen
+    if (value.friends.isNotEmpty) {
+      builder.childNodeList(foaf('knows'), value.friends);
+    }
+    
+    return builder.build();
+  }
+  
+  @override
+  Person fromRdfNode(IriTerm term, DeserializationContext context) {
+    final reader = context.reader(term);
+    
+    return Person(
+      id: term.lexicalForm,
+      name: reader.require&lt;String&gt;(foaf('name')),
+      age: reader.require&lt;int&gt;(foaf('age')),
+      address: reader.require&lt;Address&gt;(schema('address')),
+      friends: reader.getList&lt;Person&gt;(foaf('knows')),
+    );
+  }
+}
+
+void main() {
+  // Erstelle RDF-Mapper und registriere unsere benutzerdefinierten Mapper
+  final rdfMapper = RdfMapper.withDefaultRegistry();
+  rdfMapper.registerMapper&lt;Address&gt;(AddressMapper());
+  rdfMapper.registerMapper&lt;Person&gt;(PersonMapper());
+
+  // Erstelle einige Beispieldaten
+  final alice = Person(
+    id: 'http://example.org/people/alice',
+    name: 'Alice Schmidt',
+    age: 28,
+    address: Address(
+      street: 'Hauptstraße 1',
+      city: 'Berlin',
+      postalCode: '10115',
+      country: 'Deutschland'
+    ),
+    friends: []  // Wird später aktualisiert
+  );
+  
+  final bob = Person(
+    id: 'http://example.org/people/bob',
+    name: 'Bob Meyer',
+    age: 32,
+    address: Address(
+      street: 'Lindenallee 42',
+      city: 'München',
+      postalCode: '80333',
+      country: 'Deutschland'
+    ),
+    friends: []  // Wird später aktualisiert
+  );
+  
+  // Stelle Freundschaftsbeziehungen her (bidirektional)
+  alice.friends.add(bob);
+  bob.friends.add(alice);
+
+  // Serialisiere zu RDF
+  final turtle = rdfMapper.serialize(alice);
+  print(turtle);
+  
+  // Die Ausgabe wird komplexe Verschachtelungen und Beziehungen zeigen:
+  // - Personen als IRI-Ressourcen
+  // - Adressen als anonyme Blank-Knoten
+  // - Freundschaftsbeziehungen als Verweise zwischen Personen
+  
+  // Deserialisierung funktioniert genauso einfach
+  final deserializedAlice = rdfMapper.deserialize&lt;Person&gt;(turtle);
+  print('Deserialisiert: ${deserializedAlice.name}');
+  print('Freunde: ${deserializedAlice.friends.map((f) =&gt; f.name).join(', ')}');
+}
+</code></pre>
+<p>Im obigen Beispiel haben wir:</p>
+<ol>
+<li>Eine <code>Address</code>-Klasse, die als Blank-Knoten (anonyme Ressource) modelliert ist</li>
+<li>Eine <code>Person</code>-Klasse mit einem IRI-Identifier und einer Beziehung zu Adressen und anderen Personen</li>
+<li>Verwendung des Blank-Node-Mappers für verschachtelte Objekte ohne eigene Identität</li>
+<li>Darstellung von Beziehungen zwischen benannten Ressourcen</li>
+</ol>
+<h3 id="namespace-hilfsklasse">Namespace-Hilfsklasse</h3>
+<p>Um IRIs in RDF sauber zu verwalten, empfiehlt sich die Verwendung einer Namespace-Klasse:</p>
+<pre class="language-dart"><code class="language-dart">/// Hilfsklasse zur Verwaltung von RDF-Namespaces
+class Namespace {
+  final String _base;
+  
+  Namespace(this._base);
+  
+  /// Erstellt eine IRI-Term durch Anhängen des lokalen Namens an die Namespace-Basis
+  IriTerm call(String localName) =&gt; IriTerm('$_base$localName');
+  
+  /// Gibt die Basis-URL des Namespaces zurück
+  String get uri =&gt; _base;
+}
+
+// Beispielverwendung:
+final foaf = Namespace('http://xmlns.com/foaf/0.1/');
+final schema = Namespace('http://schema.org/');
+
+// Verwendung:
+builder.literal(foaf('name'), 'Alice');  // Erzeugt http://xmlns.com/foaf/0.1/name
+</code></pre>
+<h2 id="beitragen">Beitragen</h2>
+<p>Beiträge sind willkommen! Bitte lies die <a href="CONTRIBUTING.md">Beitragsrichtlinien</a> für weitere Informationen.</p>
+<h2 id="lizenz">Lizenz</h2>
+<p>Dieses Projekt steht unter der <a href="LICENSE">MIT-Lizenz</a>.</p>
+</section>
+
+
+      <section class="summary">
+          <h2>Libraries</h2>
+        <dl>
+          <dt id="rdf_mapper">
+  <span class="name"><a href="rdf_mapper">rdf_mapper</a></span> 
+
+</dt>
+<dd>RDF Mapping Library for Dart
+</dd>
+
+        </dl>
+      </section>
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="https://kkalass.github.io/rdf_mapper/">rdf_mapper package</a></li>
+</ol>
+
+    <h5 class="hidden-xs"><span class="package-name">rdf_mapper</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="rdf_mapper">rdf_mapper</a></li>
+</ol>
+
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div>
+</main>
+<footer>
+  <span class="no-break">
+    rdf_mapper
+      0.1.0
+  </span>
+  
+</footer>
+
+
+<script src="static-assets/highlight.pack.js?v1"></script>
+<script src="static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

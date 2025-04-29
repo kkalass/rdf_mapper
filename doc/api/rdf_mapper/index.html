@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="rdf_mapper library API docs, for the Dart programming language.">
+  <title>rdf_mapper library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">rdf_mapper</a></li>
+    <li class="self-crumb">rdf_mapper.dart</li>
+  </ol>
+  <div class="self-name">rdf_mapper</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button" title="Toggle brightness">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        dark_mode
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        light_mode
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar=""
+    data-below-sidebar="rdf_mapper&#47;rdf_mapper-library-sidebar.html">
+  
+    <div>
+      
+
+      <h1>
+        <span class="kind-library">rdf_mapper</span>
+        library 
+ 
+
+      </h1>
+    </div>
+
+    
+<section class="desc markdown">
+  <p>RDF Mapping Library for Dart</p>
+<p>This library provides a comprehensive solution for mapping between Dart objects and RDF (Resource Description Framework),
+enabling seamless integration of semantic web technologies in Dart applications.</p>
+<h2 id="what-is-rdf">What is RDF?</h2>
+<p>RDF (Resource Description Framework) is a standard model for data interchange on the Web. It extends the linking
+structure of the Web by using URIs to name relationships between things as well as the two ends of the link.
+This simple model allows structured and semi-structured data to be mixed, exposed, and shared across different
+applications.</p>
+<p>RDF is built around three-part statements called "triples" in the form of subject-predicate-object:</p>
+<ul>
+<li>Subject: The resource being described (identified by an IRI or a blank node)</li>
+<li>Predicate: The property or relationship (always an IRI)</li>
+<li>Object: The value or related resource (an IRI, blank node, or literal value)</li>
+</ul>
+<h2 id="library-overview">Library Overview</h2>
+<p>This library provides bidirectional mapping between Dart objects and RDF representations using a registry of mappers.
+The API is organized into:</p>
+<ul>
+<li><strong>Primary API</strong>: String-based operations for typical use cases, allowing serialization to and from RDF string formats</li>
+<li><strong>Graph API</strong>: Direct graph manipulation for advanced scenarios, working with in-memory graph structures</li>
+<li><strong>Mapper System</strong>: Extensible system of serializers and deserializers for custom types</li>
+</ul>
+<h2 id="key-concepts">Key Concepts</h2>
+<ul>
+<li><strong>Terms vs Nodes</strong>: The library distinguishes between RDF Terms (single values like IRIs or Literals) and
+Nodes (subjects with their associated triples)</li>
+<li><strong>Mappers</strong>: Combined serializers and deserializers for bidirectional conversion</li>
+<li><strong>Context</strong>: Provides access to the current graph and related utilities during (de)serialization</li>
+</ul>
+<h2 id="usage-example">Usage Example</h2>
+<pre class="language-dart"><code class="language-dart">import 'package:rdf_mapper/rdf_mapper.dart';
+
+// Create a mapper instance with default registry
+final rdfMapper = RdfMapper.withDefaultRegistry();
+
+// Register a custom mapper for your class
+rdfMapper.registerMapper&lt;Person&gt;(PersonMapper());
+
+// String-based serialization
+final turtle = rdfMapper.serialize(myPerson);
+
+// String-based deserialization
+final person = rdfMapper.deserialize&lt;Person&gt;(turtle);
+
+// Graph-based operations
+final graph = rdfMapper.graph.serialize(myPerson);
+final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
+</code></pre>
+</section>
+
+
+    <section class="summary offset-anchor" id="classes">
+      <h2>Classes</h2>
+      <dl>
+          <dt id="BaseRdfLiteralTermDeserializer">
+  <span class="name "><a href="../rdf_mapper/BaseRdfLiteralTermDeserializer-class.html">BaseRdfLiteralTermDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Base implementation for literal term deserializers that simplifies the creation of custom deserializers.
+</dd>
+
+          <dt id="BaseRdfLiteralTermSerializer">
+  <span class="name "><a href="../rdf_mapper/BaseRdfLiteralTermSerializer-class.html">BaseRdfLiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Base implementation for literal term serializers that simplifies the creation of custom serializers.
+</dd>
+
+          <dt id="BlankNodeDeserializer">
+  <span class="name "><a href="../rdf_mapper/BlankNodeDeserializer-class.html">BlankNodeDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Deserializes an RDF blank node to a Dart object.
+</dd>
+
+          <dt id="BlankNodeMapper">
+  <span class="name "><a href="../rdf_mapper/BlankNodeMapper-class.html">BlankNodeMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Bidirectional mapper between Dart objects and RDF blank node subjects.
+</dd>
+
+          <dt id="BlankNodeSerializer">
+  <span class="name "><a href="../rdf_mapper/BlankNodeSerializer-class.html">BlankNodeSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Serializes Dart objects to RDF blank nodes with associated triples.
+</dd>
+
+          <dt id="BoolDeserializer">
+  <span class="name "><a href="../rdf_mapper/BoolDeserializer-class.html">BoolDeserializer</a></span> 
+
+</dt>
+<dd>
+  Standard deserializer for converting RDF boolean literals to Dart boolean values.
+</dd>
+
+          <dt id="BoolSerializer">
+  <span class="name "><a href="../rdf_mapper/BoolSerializer-class.html">BoolSerializer</a></span> 
+
+</dt>
+<dd>
+  Standard serializer for converting Dart boolean values to RDF boolean literals.
+</dd>
+
+          <dt id="DateTimeDeserializer">
+  <span class="name "><a href="../rdf_mapper/DateTimeDeserializer-class.html">DateTimeDeserializer</a></span> 
+
+</dt>
+<dd>
+  Standard deserializer for converting RDF dateTime literals to Dart DateTime objects.
+</dd>
+
+          <dt id="DateTimeSerializer">
+  <span class="name "><a href="../rdf_mapper/DateTimeSerializer-class.html">DateTimeSerializer</a></span> 
+
+</dt>
+<dd>
+  Standard serializer for converting Dart DateTime objects to RDF dateTime literals.
+</dd>
+
+          <dt id="DeserializationContext">
+  <span class="name "><a href="../rdf_mapper/DeserializationContext-class.html">DeserializationContext</a></span> 
+
+</dt>
+<dd>
+  Context for deserialization operations in the RDF mapping process.
+</dd>
+
+          <dt id="DeserializationService">
+  <span class="name "><a href="../rdf_mapper/DeserializationService-class.html">DeserializationService</a></span> 
+
+</dt>
+<dd>
+  Core service for RDF deserialization operations.
+</dd>
+
+          <dt id="Deserializer">
+  <span class="name "><a href="../rdf_mapper/Deserializer-class.html">Deserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Base marker interface for all RDF deserializers.
+</dd>
+
+          <dt id="DoubleDeserializer">
+  <span class="name "><a href="../rdf_mapper/DoubleDeserializer-class.html">DoubleDeserializer</a></span> 
+
+</dt>
+<dd>
+  Standard deserializer for converting RDF decimal/double literals to Dart double values.
+</dd>
+
+          <dt id="DoubleSerializer">
+  <span class="name "><a href="../rdf_mapper/DoubleSerializer-class.html">DoubleSerializer</a></span> 
+
+</dt>
+<dd>
+  Standard serializer for converting Dart double values to RDF decimal literals.
+</dd>
+
+          <dt id="ExtractingIriTermDeserializer">
+  <span class="name "><a href="../rdf_mapper/ExtractingIriTermDeserializer-class.html">ExtractingIriTermDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  A flexible IRI term deserializer that uses a custom extraction function.
+</dd>
+
+          <dt id="GraphOperations">
+  <span class="name "><a href="../rdf_mapper/GraphOperations-class.html">GraphOperations</a></span> 
+
+</dt>
+<dd>
+  Provides direct graph-based operations for RDF object mapping.
+</dd>
+
+          <dt id="IntDeserializer">
+  <span class="name "><a href="../rdf_mapper/IntDeserializer-class.html">IntDeserializer</a></span> 
+
+</dt>
+<dd>
+  Standard deserializer for converting RDF integer literals to Dart integers.
+</dd>
+
+          <dt id="IntSerializer">
+  <span class="name "><a href="../rdf_mapper/IntSerializer-class.html">IntSerializer</a></span> 
+
+</dt>
+<dd>
+  Standard serializer for converting Dart integers to RDF integer literals.
+</dd>
+
+          <dt id="IriFullDeserializer">
+  <span class="name "><a href="../rdf_mapper/IriFullDeserializer-class.html">IriFullDeserializer</a></span> 
+
+</dt>
+<dd>
+  Standard deserializer that extracts the full IRI string from an IRI term.
+</dd>
+
+          <dt id="IriFullSerializer">
+  <span class="name "><a href="../rdf_mapper/IriFullSerializer-class.html">IriFullSerializer</a></span> 
+
+</dt>
+<dd>
+  Standard serializer that converts a string to an IRI term.
+</dd>
+
+          <dt id="IriIdSerializer">
+  <span class="name "><a href="../rdf_mapper/IriIdSerializer-class.html">IriIdSerializer</a></span> 
+
+</dt>
+<dd>
+  Serializer that converts a local identifier to a complete IRI term.
+</dd>
+
+          <dt id="IriNodeDeserializer">
+  <span class="name "><a href="../rdf_mapper/IriNodeDeserializer-class.html">IriNodeDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Deserializes an RDF IRI-identified subject to a Dart object.
+</dd>
+
+          <dt id="IriNodeMapper">
+  <span class="name "><a href="../rdf_mapper/IriNodeMapper-class.html">IriNodeMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Bidirectional mapper between Dart objects and RDF subjects with associated triples.
+</dd>
+
+          <dt id="IriNodeSerializer">
+  <span class="name "><a href="../rdf_mapper/IriNodeSerializer-class.html">IriNodeSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Serializes Dart objects to RDF resources with IRI identifiers and associated triples.
+</dd>
+
+          <dt id="IriTermDeserializer">
+  <span class="name "><a href="../rdf_mapper/IriTermDeserializer-class.html">IriTermDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Deserializes an RDF IRI term to a Dart object.
+</dd>
+
+          <dt id="IriTermMapper">
+  <span class="name "><a href="../rdf_mapper/IriTermMapper-class.html">IriTermMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Bidirectional mapper between Dart objects and RDF IRI terms.
+</dd>
+
+          <dt id="IriTermSerializer">
+  <span class="name "><a href="../rdf_mapper/IriTermSerializer-class.html">IriTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Serializes a Dart object to an RDF IRI term.
+</dd>
+
+          <dt id="LiteralTermDeserializer">
+  <span class="name "><a href="../rdf_mapper/LiteralTermDeserializer-class.html">LiteralTermDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Deserializes an RDF literal term to a Dart object.
+</dd>
+
+          <dt id="LiteralTermMapper">
+  <span class="name "><a href="../rdf_mapper/LiteralTermMapper-class.html">LiteralTermMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Bidirectional mapper between Dart objects and RDF literal terms.
+</dd>
+
+          <dt id="LiteralTermSerializer">
+  <span class="name "><a href="../rdf_mapper/LiteralTermSerializer-class.html">LiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Serializes a Dart object to an RDF literal term.
+</dd>
+
+          <dt id="Mapper">
+  <span class="name "><a href="../rdf_mapper/Mapper-class.html">Mapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Base marker interface for bidirectional RDF mappers.
+</dd>
+
+          <dt id="NodeBuilder">
+  <span class="name "><a href="../rdf_mapper/NodeBuilder-class.html">NodeBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S extends <a href="https://pub.dev/documentation/rdf_core/0.4.0/rdf/RdfSubject-class.html">RdfSubject</a></span>, <span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Builder for fluent RDF node serialization.
+</dd>
+
+          <dt id="NodeDeserializer">
+  <span class="name "><a href="../rdf_mapper/NodeDeserializer-class.html">NodeDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Base class for deserializers that convert RDF subjects with associated triples to Dart objects.
+</dd>
+
+          <dt id="NodeReader">
+  <span class="name "><a href="../rdf_mapper/NodeReader-class.html">NodeReader</a></span> 
+
+</dt>
+<dd>
+  Reader for fluent RDF node deserialization.
+</dd>
+
+          <dt id="NodeSerializer">
+  <span class="name "><a href="../rdf_mapper/NodeSerializer-class.html">NodeSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Base class for serializers that convert objects to RDF nodes (subjects with triples).
+</dd>
+
+          <dt id="RdfMapper">
+  <span class="name "><a href="../rdf_mapper/RdfMapper-class.html">RdfMapper</a></span> 
+
+</dt>
+<dd>
+  Central facade for the RDF Mapper library, providing access to object mapping and registry operations.
+</dd>
+
+          <dt id="RdfMapperRegistry">
+  <span class="name "><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> 
+
+</dt>
+<dd>
+  Central registry for RDF mappers that handles type-to-mapper associations.
+</dd>
+
+          <dt id="RdfMapperService">
+  <span class="name "><a href="../rdf_mapper/RdfMapperService-class.html">RdfMapperService</a></span> 
+
+</dt>
+<dd>
+  Core service for mapping between Dart objects and RDF representations.
+</dd>
+
+          <dt id="SerializationContext">
+  <span class="name "><a href="../rdf_mapper/SerializationContext-class.html">SerializationContext</a></span> 
+
+</dt>
+<dd>
+  Context for serialization operations in the RDF mapping process.
+</dd>
+
+          <dt id="SerializationService">
+  <span class="name "><a href="../rdf_mapper/SerializationService-class.html">SerializationService</a></span> 
+
+</dt>
+<dd>
+  Core service for RDF serialization operations.
+</dd>
+
+          <dt id="Serializer">
+  <span class="name "><a href="../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Base marker interface for all RDF serializers.
+</dd>
+
+          <dt id="StringDeserializer">
+  <span class="name "><a href="../rdf_mapper/StringDeserializer-class.html">StringDeserializer</a></span> 
+
+</dt>
+<dd>
+  Standard deserializer for converting RDF string literals to Dart strings.
+</dd>
+
+          <dt id="StringSerializer">
+  <span class="name "><a href="../rdf_mapper/StringSerializer-class.html">StringSerializer</a></span> 
+
+</dt>
+<dd>
+  Standard serializer for converting Dart strings to RDF string literals.
+</dd>
+
+          <dt id="TermDeserializer">
+  <span class="name "><a href="../rdf_mapper/TermDeserializer-class.html">TermDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Base class for deserializers that convert RDF terms to Dart objects.
+</dd>
+
+          <dt id="TermSerializer">
+  <span class="name "><a href="../rdf_mapper/TermSerializer-class.html">TermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Groups those serializers that serialize a Dart object to an RDF term
+(i.e. IriTerm or LiteralTerm) and not to a list of Triples.
+</dd>
+
+      </dl>
+    </section>
+
+
+
+
+
+
+
+
+
+    <section class="summary offset-anchor" id="exceptions">
+      <h2>Exceptions / Errors</h2>
+      <dl>
+          <dt id="DeserializationException">
+  <span class="name "><a href="../rdf_mapper/DeserializationException-class.html">DeserializationException</a></span> 
+
+</dt>
+<dd>
+  Exception thrown when errors occur during the RDF deserialization process.
+</dd>
+
+          <dt id="DeserializerNotFoundException">
+  <span class="name "><a href="../rdf_mapper/DeserializerNotFoundException-class.html">DeserializerNotFoundException</a></span> 
+
+</dt>
+<dd>
+  Exception thrown when no deserializer is registered for a specific type or RDF type IRI.
+</dd>
+
+          <dt id="PropertyValueNotFoundException">
+  <span class="name "><a href="../rdf_mapper/PropertyValueNotFoundException-class.html">PropertyValueNotFoundException</a></span> 
+
+</dt>
+<dd>
+  Exception thrown when a required property value is not found in the RDF graph
+</dd>
+
+          <dt id="RdfMappingException">
+  <span class="name "><a href="../rdf_mapper/RdfMappingException-class.html">RdfMappingException</a></span> 
+
+</dt>
+<dd>
+  Base exception class for all RDF mapping related errors.
+</dd>
+
+          <dt id="SerializationException">
+  <span class="name "><a href="../rdf_mapper/SerializationException-class.html">SerializationException</a></span> 
+
+</dt>
+<dd>
+  Exception thrown when errors occur during the RDF serialization process.
+</dd>
+
+          <dt id="SerializerNotFoundException">
+  <span class="name "><a href="../rdf_mapper/SerializerNotFoundException-class.html">SerializerNotFoundException</a></span> 
+
+</dt>
+<dd>
+  Exception thrown when no serializer is registered for a specific Dart type.
+</dd>
+
+          <dt id="TooManyPropertyValuesException">
+  <span class="name "><a href="../rdf_mapper/TooManyPropertyValuesException-class.html">TooManyPropertyValuesException</a></span> 
+
+</dt>
+<dd>
+  Exception thrown when multiple values are found for a single-valued property.
+</dd>
+
+      </dl>
+    </section>
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">rdf_mapper</a></li>
+    <li class="self-crumb">rdf_mapper.dart</li>
+</ol>
+
+    <h5><span class="package-name">rdf_mapper</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="../rdf_mapper">rdf_mapper</a></li>
+</ol>
+
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+    <h5>rdf_mapper library</h5>
+  </div><!--/sidebar-offcanvas-right-->
+</main>
+<footer>
+  <span class="no-break">
+    rdf_mapper
+      0.1.0
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

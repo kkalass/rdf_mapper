@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the deserialize method from the RdfMapperService class, for the Dart programming language.">
+  <title>deserialize method - RdfMapperService class - rdf_mapper library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper">rdf_mapper.dart</a></li>
+    <li><a href="../../rdf_mapper/RdfMapperService-class.html">RdfMapperService</a></li>
+    <li class="self-crumb">deserialize&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
+  </ol>
+  <div class="self-name">deserialize</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button" title="Toggle brightness">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        dark_mode
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        light_mode
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="rdf_mapper&#47;RdfMapperService-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">deserialize&lt;<wbr><span class="type-parameter">T</span>&gt;</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype">T</span>
+<span class="name ">deserialize</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="deserialize-param-graph"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.4.0/rdf/RdfGraph-class.html">RdfGraph</a></span> <span class="parameter-name">graph</span>, {</span></li>
+<li><span class="parameter" id="deserialize-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-registry"><span class="type-annotation"><a href="../../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span></li>
+</ol>)?, </span></li>
+</ol>})
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Deserializes the single subject of type <code>T</code> from an RDF graph.</p>
+<p>This method is a convenience wrapper that expects the graph to contain
+exactly one deserializable subject of the specified type. It's the simplest
+way to deserialize a single object when you don't need to specify which
+subject to target.</p>
+<p>If the graph contains no subjects or multiple subjects, an exception is thrown.
+For graphs with multiple subjects, use <a href="../../rdf_mapper/RdfMapperService/deserializeBySubject.html">deserializeBySubject</a> or <a href="../../rdf_mapper/RdfMapperService/deserializeAll.html">deserializeAll</a> instead.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">// Deserialize a single person from a graph
+final person = service.deserialize&lt;Person&gt;(graph);
+</code></pre>
+<p>@param graph The RDF graph to deserialize from
+@param register Optional callback to register temporary mappers
+@return The deserialized object of type T
+@throws DeserializationException if no subject or multiple subjects are found
+@throws DeserializerNotFoundException if no deserializer is found for the subject</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">T deserialize&lt;T&gt;(
+  RdfGraph graph, {
+  void Function(RdfMapperRegistry registry)? register,
+}) {
+  var result = deserializeAll(graph, register: register);
+  if (result.isEmpty) {
+    throw DeserializationException(&#39;No subject found in graph&#39;);
+  }
+  if (result.length &gt; 1) {
+    throw DeserializationException(
+      &#39;More than one subject found in graph: ${result.map((e) =&gt; e.toString()).join(&#39;, &#39;)}&#39;,
+    );
+  }
+  return result[0] as T;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/RdfMapperService-class.html">RdfMapperService</a></li>
+    <li class="self-crumb">deserialize&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
+</ol>
+
+    <h5>RdfMapperService class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    rdf_mapper
+      0.1.0
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

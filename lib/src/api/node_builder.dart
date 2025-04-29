@@ -4,13 +4,37 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 
 /// Builder for fluent RDF node serialization.
 ///
-/// Enables creating RDF graphs in a chained API pattern.
+/// The NodeBuilder provides a convenient fluent API for constructing RDF nodes
+/// with their associated triples. It simplifies the process of building complex
+/// RDF structures by maintaining the current subject context and offering methods
+/// to add various types of predicates and objects.
 ///
+/// This class implements the Builder pattern to enable method chaining, making
+/// the code for creating RDF structures more readable and maintainable.
+///
+/// Key features:
+/// - Fluent API for adding properties to RDF subjects
+/// - Support for literals, IRIs, and nested node structures
+/// - Conditional methods for handling null or empty values
+/// - Type-safe serialization of Dart objects to RDF
+///
+/// Basic example:
 /// ```dart
 /// final (subject, triples) = context
 ///     .nodeBuilder(IriTerm('http://example.org/resource'))
-///     .literal(titlePredicate, 'The Title')
-///     .literal(authorPredicate, 'The Author')
+///     .literal(dc.title, 'The Title')
+///     .literal(dc.creator, 'The Author')
+///     .build();
+/// ```
+///
+/// More complex example with nested objects:
+/// ```dart
+/// final (person, triples) = context
+///     .nodeBuilder(IriTerm('http://example.org/person/1'))
+///     .literal(foaf.name, 'John Doe')
+///     .literal(foaf.age, 30)
+///     .childNode(foaf.address, address)
+///     .childNodeList(foaf.knows, friends)
 ///     .build();
 /// ```
 class NodeBuilder<S extends RdfSubject, T> {
@@ -20,18 +44,31 @@ class NodeBuilder<S extends RdfSubject, T> {
 
   /// Creates a new NodeBuilder for the fluent API.
   ///
+  /// This constructor is typically not called directly. Instead, create a
+  /// builder through the [SerializationContext.nodeBuilder] method.
+  ///
   /// @param subject The RDF subject to build properties for
-  /// @param context The serialization context
-  /// @param initialTriples Optional list of initial triples
-  /// @param serializer Optional serializer for the node type
+  /// @param service The serialization service for converting objects to RDF
+  /// @param initialTriples Optional list of initial triples to include
   NodeBuilder(this._subject, this._service, {List<Triple>? initialTriples})
     : _triples = initialTriples ?? [];
 
   /// Adds a literal property to the node.
   ///
-  /// @param predicate The predicate for the property
-  /// @param value The literal value
-  /// @param serializer Optional serializer for the value type
+  /// Use this method to add a property with a literal value (strings, numbers,
+  /// dates, etc.) to the current subject. The value will be serialized to an
+  /// RDF literal term using the appropriate serializer.
+  ///
+  /// Example:
+  /// ```dart
+  /// builder.literal(dc.title, 'The Title');
+  /// builder.literal(foaf.age, 30);
+  /// ```
+  ///
+  /// @param predicate The predicate IRI for the property
+  /// @param value The literal value to add
+  /// @param serializer Optional custom serializer for the value type
+  /// @return This builder for method chaining
   NodeBuilder<S, T> literal<V>(
     RdfPredicate predicate,
     V value, {
@@ -45,9 +82,20 @@ class NodeBuilder<S extends RdfSubject, T> {
 
   /// Adds an IRI property to the node.
   ///
-  /// @param predicate The predicate for the property
+  /// Use this method to add a property with an IRI value (referring to another
+  /// resource) to the current subject. The value will be serialized to an
+  /// RDF IRI term using the appropriate serializer.
+  ///
+  /// Example:
+  /// ```dart
+  /// builder.iri(rdf.type, foaf.Person);
+  /// builder.iri(dc.relation, document);
+  /// ```
+  ///
+  /// @param predicate The predicate IRI for the property
   /// @param value The value to be serialized as an IRI
-  /// @param serializer Optional serializer for the value type
+  /// @param serializer Optional custom serializer for the value type
+  /// @return This builder for method chaining
   NodeBuilder<S, T> iri<V>(
     RdfPredicate predicate,
     V value, {
@@ -61,9 +109,22 @@ class NodeBuilder<S extends RdfSubject, T> {
 
   /// Adds a child node to this node.
   ///
-  /// @param predicate The predicate for the relationship
-  /// @param value The child node value
-  /// @param serializer Optional serializer for the child node type
+  /// Use this method to add a nested object as a property value. The child object
+  /// will be serialized to its own set of RDF triples, and connected to this
+  /// subject via the specified predicate.
+  ///
+  /// This is ideal for complex object structures and relationships between entities.
+  ///
+  /// Example:
+  /// ```dart
+  /// builder.childNode(foaf.address, address);
+  /// builder.childNode(schema.author, person);
+  /// ```
+  ///
+  /// @param predicate The predicate IRI for the relationship
+  /// @param value The child node object to serialize
+  /// @param serializer Optional custom serializer for the child object type
+  /// @return This builder for method chaining
   NodeBuilder<S, T> childNode<V>(
     RdfPredicate predicate,
     V value, {
