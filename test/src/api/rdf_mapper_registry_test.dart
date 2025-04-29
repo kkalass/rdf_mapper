@@ -92,24 +92,19 @@ void main() {
         registry.registerDeserializer<CustomType>(deserializer);
 
         // Verify registration by type
+        expect(registry.hasIriNodeDeserializerFor<CustomType>(), isTrue);
         expect(
-          registry.hasIriSubjectGraphDeserializerFor<CustomType>(),
-          isTrue,
-        );
-        expect(
-          registry.getIriSubjectGraphDeserializer<CustomType>(),
+          registry.getIriNodeDeserializer<CustomType>(),
           equals(deserializer),
         );
 
         // Verify registration by typeIri
         expect(
-          registry.hasIriSubjectGraphDeserializerForType(deserializer.typeIri),
+          registry.hasIriNodeDeserializerForType(deserializer.typeIri),
           isTrue,
         );
         expect(
-          registry.getIriSubjectGraphDeserializerByTypeIri(
-            deserializer.typeIri,
-          ),
+          registry.getIriNodeDeserializerByType(deserializer.typeIri),
           equals(deserializer),
         );
       },
@@ -120,13 +115,10 @@ void main() {
       registry.registerSerializer<CustomType>(serializer);
 
       // Verify registration
-      expect(registry.hasSubjectGraphSerializerFor<CustomType>(), isTrue);
+      expect(registry.hasNodeSerializerFor<CustomType>(), isTrue);
 
       // Verify retrieval works
-      expect(
-        registry.getSubjectGraphSerializer<CustomType>(),
-        equals(serializer),
-      );
+      expect(registry.getNodeSerializer<CustomType>(), equals(serializer));
     });
 
     test('registerMapper registers both serializer and deserializer', () {
@@ -134,23 +126,17 @@ void main() {
       registry.registerMapper<CustomType>(mapper);
 
       // Verify serializer registration
-      expect(registry.hasSubjectGraphSerializerFor<CustomType>(), isTrue);
-      expect(registry.getSubjectGraphSerializer<CustomType>(), equals(mapper));
+      expect(registry.hasNodeSerializerFor<CustomType>(), isTrue);
+      expect(registry.getNodeSerializer<CustomType>(), equals(mapper));
 
       // Verify deserializer registration
-      expect(registry.hasIriSubjectGraphDeserializerFor<CustomType>(), isTrue);
-      expect(
-        registry.getIriSubjectGraphDeserializer<CustomType>(),
-        equals(mapper),
-      );
+      expect(registry.hasIriNodeDeserializerFor<CustomType>(), isTrue);
+      expect(registry.getIriNodeDeserializer<CustomType>(), equals(mapper));
 
       // Verify typeIri registration
+      expect(registry.hasIriNodeDeserializerForType(mapper.typeIri), isTrue);
       expect(
-        registry.hasIriSubjectGraphDeserializerForType(mapper.typeIri),
-        isTrue,
-      );
-      expect(
-        registry.getIriSubjectGraphDeserializerByTypeIri(mapper.typeIri),
+        registry.getIriNodeDeserializerByType(mapper.typeIri),
         equals(mapper),
       );
     });
@@ -164,22 +150,19 @@ void main() {
 
     test('getSubjectDeserializer throws when deserializer not found', () {
       expect(
-        () => registry.getIriSubjectGraphDeserializer<CustomType>(),
+        () => registry.getIriNodeDeserializer<CustomType>(),
         throwsA(isA<DeserializerNotFoundException>()),
       );
     });
 
-    test(
-      'getSubjectDeserializerByTypeIri throws when deserializer not found',
-      () {
-        expect(
-          () => registry.getIriSubjectGraphDeserializerByTypeIri(
-            IriTerm('http://example.org/UnknownType'),
-          ),
-          throwsA(isA<DeserializerNotFoundException>()),
-        );
-      },
-    );
+    test('getSubjectDeserializerByType throws when deserializer not found', () {
+      expect(
+        () => registry.getIriNodeDeserializerByType(
+          IriTerm('http://example.org/UnknownType'),
+        ),
+        throwsA(isA<DeserializerNotFoundException>()),
+      );
+    });
 
     test('getIriTermSerializer throws when serializer not found', () {
       expect(
@@ -204,14 +187,14 @@ void main() {
 
     test('getBlankNodeTermDeserializer throws when deserializer not found', () {
       expect(
-        () => registry.getBlankNodeSubjectGraphDeserializer<CustomType>(),
+        () => registry.getBlankNodeDeserializer<CustomType>(),
         throwsA(isA<DeserializerNotFoundException>()),
       );
     });
 
     test('getSubjectSerializer throws when serializer not found', () {
       expect(
-        () => registry.getSubjectGraphSerializer<CustomType>(),
+        () => registry.getNodeSerializer<CustomType>(),
         throwsA(isA<SerializerNotFoundException>()),
       );
     });
@@ -226,11 +209,8 @@ void main() {
       final clonedRegistry = registry.clone();
 
       // Verify all mappers were copied
-      expect(clonedRegistry.hasSubjectGraphSerializerFor<CustomType>(), isTrue);
-      expect(
-        clonedRegistry.hasIriSubjectGraphDeserializerFor<CustomType>(),
-        isTrue,
-      );
+      expect(clonedRegistry.hasNodeSerializerFor<CustomType>(), isTrue);
+      expect(clonedRegistry.hasIriNodeDeserializerFor<CustomType>(), isTrue);
       expect(clonedRegistry.hasLiteralTermSerializerFor<CustomType>(), isTrue);
       expect(
         clonedRegistry.hasLiteralTermDeserializerFor<CustomType>(),
@@ -241,14 +221,8 @@ void main() {
       final newMapper = AnotherTestSubjectMapper();
       clonedRegistry.registerMapper<AnotherCustomType>(newMapper);
 
-      expect(
-        clonedRegistry.hasSubjectGraphSerializerFor<AnotherCustomType>(),
-        isTrue,
-      );
-      expect(
-        registry.hasSubjectGraphSerializerFor<AnotherCustomType>(),
-        isFalse,
-      );
+      expect(clonedRegistry.hasNodeSerializerFor<AnotherCustomType>(), isTrue);
+      expect(registry.hasNodeSerializerFor<AnotherCustomType>(), isFalse);
     });
   });
 }
@@ -293,23 +267,22 @@ class TestLiteralSerializer implements LiteralTermSerializer<CustomType> {
   }
 }
 
-class TestSubjectDeserializer
-    implements IriSubjectGraphDeserializer<CustomType> {
+class TestSubjectDeserializer implements IriNodeDeserializer<CustomType> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/CustomType');
 
   @override
-  CustomType fromRdfSubjectGraph(IriTerm term, DeserializationContext context) {
+  CustomType fromRdfNode(IriTerm term, DeserializationContext context) {
     return CustomType(term.iri);
   }
 }
 
-class TestSubjectSerializer implements SubjectGraphSerializer<CustomType> {
+class TestSubjectSerializer implements NodeSerializer<CustomType> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/CustomType');
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubjectGraph(
+  (RdfSubject, List<Triple>) toRdfNode(
     CustomType value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -326,17 +299,17 @@ class TestSubjectSerializer implements SubjectGraphSerializer<CustomType> {
   }
 }
 
-class TestSubjectMapper implements IriSubjectGraphMapper<CustomType> {
+class TestSubjectMapper implements IriNodeMapper<CustomType> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/CustomType');
 
   @override
-  CustomType fromRdfSubjectGraph(IriTerm term, DeserializationContext context) {
+  CustomType fromRdfNode(IriTerm term, DeserializationContext context) {
     return CustomType(term.iri);
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubjectGraph(
+  (RdfSubject, List<Triple>) toRdfNode(
     CustomType value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -353,21 +326,17 @@ class TestSubjectMapper implements IriSubjectGraphMapper<CustomType> {
   }
 }
 
-class AnotherTestSubjectMapper
-    implements IriSubjectGraphMapper<AnotherCustomType> {
+class AnotherTestSubjectMapper implements IriNodeMapper<AnotherCustomType> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/AnotherCustomType');
 
   @override
-  AnotherCustomType fromRdfSubjectGraph(
-    IriTerm term,
-    DeserializationContext context,
-  ) {
+  AnotherCustomType fromRdfNode(IriTerm term, DeserializationContext context) {
     return AnotherCustomType(term.iri);
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubjectGraph(
+  (RdfSubject, List<Triple>) toRdfNode(
     AnotherCustomType value,
     SerializationContext context, {
     RdfSubject? parentSubject,

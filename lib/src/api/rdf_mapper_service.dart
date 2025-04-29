@@ -120,7 +120,7 @@ final class RdfMapperService {
 
       try {
         // Deserialize the object and track it by subject
-        final obj = context.deserializeSubjectGraph(subject, type);
+        final obj = context.deserializeNode(subject, type);
         deserializedObjects[subject] = obj;
       } on DeserializerNotFoundException {
         // Propagate deserializer not found exceptions - we don't want to silently ignore them
@@ -175,7 +175,7 @@ final class RdfMapperService {
     }
     final context = SerializationContextImpl(registry: registry);
 
-    var (_, triples) = context.subjectGraph<T>(instance);
+    var (_, triples) = context.node<T>(instance);
 
     return RdfGraph(triples: triples);
   }
@@ -199,7 +199,7 @@ final class RdfMapperService {
     final context = SerializationContextImpl(registry: registry);
     var triples =
         instances.expand((instance) {
-          var (_, triples) = context.subjectGraph(instance);
+          var (_, triples) = context.node(instance);
           return triples;
         }).toList();
 

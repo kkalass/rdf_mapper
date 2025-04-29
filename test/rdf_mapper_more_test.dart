@@ -138,7 +138,7 @@ class TestItem {
   TestItem({required this.name, required this.age});
 }
 
-final class TestItemRdfMapper implements IriSubjectGraphMapper<TestItem> {
+final class TestItemRdfMapper implements IriNodeMapper<TestItem> {
   final String storageRoot;
 
   TestItemRdfMapper({required this.storageRoot});
@@ -149,7 +149,7 @@ final class TestItemRdfMapper implements IriSubjectGraphMapper<TestItem> {
   );
 
   @override
-  TestItem fromRdfSubjectGraph(IriTerm iri, DeserializationContext context) {
+  TestItem fromRdfNode(IriTerm iri, DeserializationContext context) {
     return TestItem(
       name: context.require(
         iri,
@@ -163,7 +163,7 @@ final class TestItemRdfMapper implements IriSubjectGraphMapper<TestItem> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubjectGraph(
+  (RdfSubject, List<Triple>) toRdfNode(
     TestItem instance,
     SerializationContext context, {
     RdfSubject? parentSubject,

@@ -50,24 +50,24 @@ class SerializationContextImpl extends SerializationContext {
   }
 
   @override
-  List<Triple> childSubjectGraph<T>(
+  List<Triple> childNode<T>(
     RdfSubject subject,
     RdfPredicate predicate,
     T instance, {
-    SubjectGraphSerializer<T>? serializer,
+    NodeSerializer<T>? serializer,
   }) {
     // Try to get serializer directly for type T if provided or available
-    SubjectGraphSerializer<T>? ser = _getSerializerFallbackToRuntimeType(
+    NodeSerializer<T>? ser = _getSerializerFallbackToRuntimeType(
       serializer,
       instance,
-      _registry.getSubjectGraphSerializer,
-      _registry.getSubjectGraphSerializerByType,
+      _registry.getNodeSerializer,
+      _registry.getNodeSerializerByType,
     );
     if (ser == null) {
       return [];
     }
 
-    var (childIri, childTriples) = ser.toRdfSubjectGraph(
+    var (childIri, childTriples) = ser.toRdfNode(
       instance,
       this,
       parentSubject: subject,
@@ -154,9 +154,9 @@ class SerializationContextImpl extends SerializationContext {
   }
 
   @override
-  (RdfSubject, List<Triple>) subjectGraph<T>(
+  (RdfSubject, List<Triple>) node<T>(
     T instance, {
-    SubjectGraphSerializer<T>? serializer,
+    NodeSerializer<T>? serializer,
   }) {
     if (instance == null) {
       throw ArgumentError('Cannot serialize null instance');
@@ -166,15 +166,15 @@ class SerializationContextImpl extends SerializationContext {
     final ser = _getSerializerFallbackToRuntimeType(
       serializer,
       instance,
-      _registry.getSubjectGraphSerializer<T>,
-      _registry.getSubjectGraphSerializerByType<T>,
+      _registry.getNodeSerializer<T>,
+      _registry.getNodeSerializerByType<T>,
     );
 
     if (ser == null) {
       throw SerializerNotFoundException('SubjectSerializer', T);
     }
 
-    var (iri, triples) = ser.toRdfSubjectGraph(instance, this);
+    var (iri, triples) = ser.toRdfNode(instance, this);
 
     // Check if a type triple already exists
     final hasTypeTriple = triples.any(

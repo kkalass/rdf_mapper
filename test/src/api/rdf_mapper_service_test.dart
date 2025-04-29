@@ -333,10 +333,7 @@ void main() {
       );
 
       // And verify the main registry wasn't affected
-      expect(
-        service.registry.hasSubjectGraphSerializerFor<TestPerson>(),
-        isFalse,
-      );
+      expect(service.registry.hasNodeSerializerFor<TestPerson>(), isFalse);
     });
 
     test('toGraphFromList serializes a list of objects to a graph', () {
@@ -727,15 +724,12 @@ class Tag {
   Tag({required this.id, required this.name});
 }
 
-class DocumentDeserializer implements IriSubjectGraphDeserializer<Document> {
+class DocumentDeserializer implements IriNodeDeserializer<Document> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Document');
 
   @override
-  Document fromRdfSubjectGraph(
-    IriTerm subject,
-    DeserializationContext context,
-  ) {
+  Document fromRdfNode(IriTerm subject, DeserializationContext context) {
     final title = context.require<String>(
       subject,
       IriTerm('http://example.org/title'),
@@ -752,15 +746,12 @@ class DocumentDeserializer implements IriSubjectGraphDeserializer<Document> {
 }
 
 class DocumentWithTagReferencesDeserializer
-    implements IriSubjectGraphDeserializer<Document> {
+    implements IriNodeDeserializer<Document> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Document');
 
   @override
-  Document fromRdfSubjectGraph(
-    IriTerm subject,
-    DeserializationContext context,
-  ) {
+  Document fromRdfNode(IriTerm subject, DeserializationContext context) {
     final title = context.require<String>(
       subject,
       IriTerm('http://example.org/title'),
@@ -776,12 +767,12 @@ class DocumentWithTagReferencesDeserializer
   }
 }
 
-class TagDeserializer implements IriSubjectGraphDeserializer<Tag> {
+class TagDeserializer implements IriNodeDeserializer<Tag> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Tag');
 
   @override
-  Tag fromRdfSubjectGraph(IriTerm subject, DeserializationContext context) {
+  Tag fromRdfNode(IriTerm subject, DeserializationContext context) {
     final name = context.require<String>(
       subject,
       IriTerm('http://example.org/name'),
@@ -819,12 +810,12 @@ class Person {
   String toString() => 'Person($id, $name)';
 }
 
-class AddressMapper implements IriSubjectGraphMapper<Address> {
+class AddressMapper implements IriNodeMapper<Address> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Address');
 
   @override
-  Address fromRdfSubjectGraph(IriTerm subject, DeserializationContext context) {
+  Address fromRdfNode(IriTerm subject, DeserializationContext context) {
     final city = context.require<String>(
       subject,
       IriTerm('http://example.org/city'),
@@ -833,7 +824,7 @@ class AddressMapper implements IriSubjectGraphMapper<Address> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubjectGraph(
+  (RdfSubject, List<Triple>) toRdfNode(
     Address value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -850,12 +841,12 @@ class AddressMapper implements IriSubjectGraphMapper<Address> {
   }
 }
 
-class PersonMapper implements IriSubjectGraphMapper<Person> {
+class PersonMapper implements IriNodeMapper<Person> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
   @override
-  Person fromRdfSubjectGraph(IriTerm subject, DeserializationContext context) {
+  Person fromRdfNode(IriTerm subject, DeserializationContext context) {
     final name = context.require<String>(
       subject,
       IriTerm('http://example.org/name'),
@@ -868,7 +859,7 @@ class PersonMapper implements IriSubjectGraphMapper<Person> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubjectGraph(
+  (RdfSubject, List<Triple>) toRdfNode(
     Person value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -906,12 +897,12 @@ class TestPerson {
   TestPerson({required this.id, required this.name, required this.age});
 }
 
-class TestPersonMapper implements IriSubjectGraphMapper<TestPerson> {
+class TestPersonMapper implements IriNodeMapper<TestPerson> {
   @override
   final IriTerm typeIri = IriTerm('http://xmlns.com/foaf/0.1/Person');
 
   @override
-  TestPerson fromRdfSubjectGraph(IriTerm term, DeserializationContext context) {
+  TestPerson fromRdfNode(IriTerm term, DeserializationContext context) {
     final id = term.iri;
 
     // Get name property
@@ -929,7 +920,7 @@ class TestPersonMapper implements IriSubjectGraphMapper<TestPerson> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubjectGraph(
+  (RdfSubject, List<Triple>) toRdfNode(
     TestPerson value,
     SerializationContext context, {
     RdfSubject? parentSubject,

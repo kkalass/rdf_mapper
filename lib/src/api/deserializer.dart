@@ -36,7 +36,7 @@ abstract interface class LiteralTermDeserializer<T>
   T fromRdfTerm(LiteralTerm term, DeserializationContext context);
 }
 
-sealed class SubjectGraphDeserializer<T> extends Deserializer<T> {
+sealed class NodeDeserializer<T> extends Deserializer<T> {
   /// The IRI of the RDF type this deserializer can handle.
   /// This is used for type-based lookup of deserializers.
   /// Note that this is optional since it is legal (but not adviced)
@@ -52,21 +52,20 @@ sealed class SubjectGraphDeserializer<T> extends Deserializer<T> {
 ///
 /// Implementations convert blank node terms to specific Dart types,
 /// enabling the transformation of anonymous RDF resources into domain objects.
-abstract interface class BlankNodeSubjectGraphDeserializer<T>
-    implements SubjectGraphDeserializer<T> {
+abstract interface class BlankNodeDeserializer<T>
+    implements NodeDeserializer<T> {
   /// Converts a blank node term to a value.
   ///
   /// @param term The blank node term to convert
   /// @param context The deserialization context, providing access to the graph
   /// @return The resulting value
-  T fromRdfSubjectGraph(BlankNodeTerm term, DeserializationContext context);
+  T fromRdfNode(BlankNodeTerm term, DeserializationContext context);
 }
 
-abstract interface class IriSubjectGraphDeserializer<T>
-    implements SubjectGraphDeserializer<T> {
+abstract interface class IriNodeDeserializer<T> implements NodeDeserializer<T> {
   /// Converts an IRI term to an object of type T.
   /// @param term The IRI term to convert
   /// @param context The deserialization context providing access to the graph
   /// @return The resulting object
-  T fromRdfSubjectGraph(IriTerm term, DeserializationContext context);
+  T fromRdfNode(IriTerm term, DeserializationContext context);
 }

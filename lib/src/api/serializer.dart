@@ -9,6 +9,8 @@ import 'package:rdf_mapper/src/api/serialization_context.dart';
 /// This allows for type-safety when managing collections of serializers.
 sealed class Serializer<T> {}
 
+/// Groups those serializers that serialize a Dart object to an RDF term
+/// (i.e. IriTerm or LiteralTerm) and not to a list of Triples.
 sealed class TermSerializer<T> extends Serializer<T> {}
 
 /// Serializes a Dart object to an RDF IRI term.
@@ -35,7 +37,7 @@ abstract interface class LiteralTermSerializer<T> implements TermSerializer<T> {
   LiteralTerm toRdfTerm(T value, SerializationContext context);
 }
 
-abstract interface class SubjectGraphSerializer<T> implements Serializer<T> {
+abstract interface class NodeSerializer<T> implements Serializer<T> {
   /// The IRI of the type of the subject.
   /// This is used to determine the type of the subject when serializing it to RDF.
   /// If you want to not associate a type with the subject, return null - you
@@ -44,7 +46,7 @@ abstract interface class SubjectGraphSerializer<T> implements Serializer<T> {
   /// But it is considered a good practice to always provide a type IRI.
   IriTerm? get typeIri;
 
-  (RdfSubject, List<Triple>) toRdfSubjectGraph(
+  (RdfSubject, List<Triple>) toRdfNode(
     T value,
     SerializationContext context, {
     RdfSubject? parentSubject,

@@ -74,7 +74,7 @@ class Contact {
 }
 
 // Mappers
-class PersonMapper implements IriSubjectGraphMapper<Person> {
+class PersonMapper implements IriNodeMapper<Person> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
@@ -83,7 +83,7 @@ class PersonMapper implements IriSubjectGraphMapper<Person> {
   static final contactPredicate = IriTerm('http://example.org/contact');
 
   @override
-  Person fromRdfSubjectGraph(IriTerm subject, DeserializationContext context) {
+  Person fromRdfNode(IriTerm subject, DeserializationContext context) {
     final name = context.require<String>(subject, namePredicate);
     final address = context.get<Address>(subject, addressPredicate);
     final contacts = context.getList<Contact>(subject, contactPredicate);
@@ -97,7 +97,7 @@ class PersonMapper implements IriSubjectGraphMapper<Person> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubjectGraph(
+  (RdfSubject, List<Triple>) toRdfNode(
     Person value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -107,11 +107,10 @@ class PersonMapper implements IriSubjectGraphMapper<Person> {
       context.literal(subject, namePredicate, value.name),
 
       if (value.address != null)
-        ...context.childSubjectGraph(subject, addressPredicate, value.address),
+        ...context.childNode(subject, addressPredicate, value.address),
 
       ...value.contacts.expand(
-        (contact) =>
-            context.childSubjectGraph(subject, contactPredicate, contact),
+        (contact) => context.childNode(subject, contactPredicate, contact),
       ),
     ];
 
@@ -119,7 +118,7 @@ class PersonMapper implements IriSubjectGraphMapper<Person> {
   }
 }
 
-class AddressMapper implements BlankNodeSubjectGraphMapper<Address> {
+class AddressMapper implements BlankNodeMapper<Address> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Address');
 
@@ -127,10 +126,7 @@ class AddressMapper implements BlankNodeSubjectGraphMapper<Address> {
   static final cityPredicate = IriTerm('http://example.org/city');
 
   @override
-  Address fromRdfSubjectGraph(
-    BlankNodeTerm subject,
-    DeserializationContext context,
-  ) {
+  Address fromRdfNode(BlankNodeTerm subject, DeserializationContext context) {
     final street = context.require<String>(subject, streetPredicate);
     final city = context.require<String>(subject, cityPredicate);
 
@@ -138,7 +134,7 @@ class AddressMapper implements BlankNodeSubjectGraphMapper<Address> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubjectGraph(
+  (RdfSubject, List<Triple>) toRdfNode(
     Address value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -153,7 +149,7 @@ class AddressMapper implements BlankNodeSubjectGraphMapper<Address> {
   }
 }
 
-class ContactMapper implements IriSubjectGraphMapper<Contact> {
+class ContactMapper implements IriNodeMapper<Contact> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Contact');
 
@@ -161,7 +157,7 @@ class ContactMapper implements IriSubjectGraphMapper<Contact> {
   static final valuePredicate = IriTerm('http://example.org/contactValue');
 
   @override
-  Contact fromRdfSubjectGraph(IriTerm subject, DeserializationContext context) {
+  Contact fromRdfNode(IriTerm subject, DeserializationContext context) {
     final type = context.require<String>(subject, typePredicate);
     final value = context.require<String>(subject, valuePredicate);
 
@@ -169,7 +165,7 @@ class ContactMapper implements IriSubjectGraphMapper<Contact> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubjectGraph(
+  (RdfSubject, List<Triple>) toRdfNode(
     Contact value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -185,7 +181,7 @@ class ContactMapper implements IriSubjectGraphMapper<Contact> {
 }
 
 // Standalone address mapper for IRI-based addresses (not blank nodes)
-class StandaloneAddressMapper implements IriSubjectGraphMapper<Address> {
+class StandaloneAddressMapper implements IriNodeMapper<Address> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Address');
 
@@ -193,7 +189,7 @@ class StandaloneAddressMapper implements IriSubjectGraphMapper<Address> {
   static final cityPredicate = IriTerm('http://example.org/city');
 
   @override
-  Address fromRdfSubjectGraph(IriTerm subject, DeserializationContext context) {
+  Address fromRdfNode(IriTerm subject, DeserializationContext context) {
     final street = context.require<String>(subject, streetPredicate);
     final city = context.require<String>(subject, cityPredicate);
 
@@ -201,7 +197,7 @@ class StandaloneAddressMapper implements IriSubjectGraphMapper<Address> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubjectGraph(
+  (RdfSubject, List<Triple>) toRdfNode(
     Address value,
     SerializationContext context, {
     RdfSubject? parentSubject,

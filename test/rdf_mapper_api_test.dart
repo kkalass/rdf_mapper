@@ -143,7 +143,7 @@ class TestEntity {
   TestEntity({required this.id, required this.name, required this.value});
 }
 
-class TestEntityMapper implements IriSubjectGraphMapper<TestEntity> {
+class TestEntityMapper implements IriNodeMapper<TestEntity> {
   static final namePredicate = IriTerm('http://schema.org/name');
   static final valuePredicate = IriTerm('http://schema.org/value');
 
@@ -151,10 +151,7 @@ class TestEntityMapper implements IriSubjectGraphMapper<TestEntity> {
   final IriTerm typeIri = IriTerm('http://schema.org/TestEntity');
 
   @override
-  TestEntity fromRdfSubjectGraph(
-    IriTerm subject,
-    DeserializationContext context,
-  ) {
+  TestEntity fromRdfNode(IriTerm subject, DeserializationContext context) {
     return TestEntity(
       id: subject.iri,
       name: context.require<String>(subject, namePredicate),
@@ -163,7 +160,7 @@ class TestEntityMapper implements IriSubjectGraphMapper<TestEntity> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubjectGraph(
+  (RdfSubject, List<Triple>) toRdfNode(
     TestEntity entity,
     SerializationContext context, {
     RdfSubject? parentSubject,

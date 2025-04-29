@@ -192,13 +192,13 @@ void main() {
       },
     );
 
-    test('fromRdfByTypeIri deserializes objects by type IRI', () {
+    test('fromRdfByType deserializes objects by type IRI', () {
       // Register a subject deserializer
       final deserializer = TestPersonDeserializer();
       registry.registerDeserializer<TestPerson>(deserializer);
 
-      // Call fromRdfByTypeIri directly
-      final person = context.deserializeSubjectGraph(
+      // Call fromRdfByType directly
+      final person = context.deserializeNode(
         IriTerm('http://example.org/subject'),
         IriTerm('http://example.org/Person'),
       );
@@ -238,13 +238,12 @@ class TestAddress {
   TestAddress({required this.city});
 }
 
-class TestPersonDeserializer
-    implements IriSubjectGraphDeserializer<TestPerson> {
+class TestPersonDeserializer implements IriNodeDeserializer<TestPerson> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
   @override
-  TestPerson fromRdfSubjectGraph(IriTerm term, DeserializationContext context) {
+  TestPerson fromRdfNode(IriTerm term, DeserializationContext context) {
     return TestPerson(term.iri);
   }
 }
@@ -264,14 +263,11 @@ class CustomStringDeserializer implements LiteralTermDeserializer<String> {
 }
 
 class CustomBlankNodeDeserializer
-    implements BlankNodeSubjectGraphDeserializer<TestAddress> {
+    implements BlankNodeDeserializer<TestAddress> {
   @override
   IriTerm? get typeIri => null;
   @override
-  TestAddress fromRdfSubjectGraph(
-    BlankNodeTerm term,
-    DeserializationContext context,
-  ) {
+  TestAddress fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
     var city = context.require<String>(term, VcardPredicates.locality);
     return TestAddress(city: city);
   }

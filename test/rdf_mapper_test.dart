@@ -354,10 +354,7 @@ void main() {
       expect(nameTriples.isNotEmpty, isTrue);
 
       // Verify the temporary registration didn't affect the original registry
-      expect(
-        rdfMapper.registry.hasSubjectGraphSerializerFor<TestPerson>(),
-        isFalse,
-      );
+      expect(rdfMapper.registry.hasNodeSerializerFor<TestPerson>(), isFalse);
     });
 
     test(
@@ -636,12 +633,9 @@ _:b0 a schema:PostalAddress;
         final mapper = TestPersonMapper();
 
         // Verify mapper is not registered initially
+        expect(rdfMapper.registry.hasNodeSerializerFor<TestPerson>(), isFalse);
         expect(
-          rdfMapper.registry.hasSubjectGraphSerializerFor<TestPerson>(),
-          isFalse,
-        );
-        expect(
-          rdfMapper.registry.hasIriSubjectGraphDeserializerFor<TestPerson>(),
+          rdfMapper.registry.hasIriNodeDeserializerFor<TestPerson>(),
           isFalse,
         );
 
@@ -649,12 +643,9 @@ _:b0 a schema:PostalAddress;
         rdfMapper.registerMapper<TestPerson>(mapper);
 
         // Verify mapper is now registered
+        expect(rdfMapper.registry.hasNodeSerializerFor<TestPerson>(), isTrue);
         expect(
-          rdfMapper.registry.hasSubjectGraphSerializerFor<TestPerson>(),
-          isTrue,
-        );
-        expect(
-          rdfMapper.registry.hasIriSubjectGraphDeserializerFor<TestPerson>(),
+          rdfMapper.registry.hasIriNodeDeserializerFor<TestPerson>(),
           isTrue,
         );
 
@@ -732,26 +723,20 @@ _:b0 a schema:PostalAddress;
 
         // Verify deserializer is not registered initially
         expect(
-          rdfMapper.registry.hasBlankNodeSubjectGraphDeserializerFor<Address>(),
+          rdfMapper.registry.hasBlankNodeDeserializerFor<Address>(),
           isFalse,
         );
-        expect(
-          rdfMapper.registry.hasSubjectGraphSerializerFor<Address>(),
-          isFalse,
-        );
+        expect(rdfMapper.registry.hasNodeSerializerFor<Address>(), isFalse);
 
         // Register deserializer through convenience method
         rdfMapper.registerMapper<Address>(mapper);
 
         // Verify deserializer is now registered
         expect(
-          rdfMapper.registry.hasBlankNodeSubjectGraphDeserializerFor<Address>(),
+          rdfMapper.registry.hasBlankNodeDeserializerFor<Address>(),
           isTrue,
         );
-        expect(
-          rdfMapper.registry.hasSubjectGraphSerializerFor<Address>(),
-          isTrue,
-        );
+        expect(rdfMapper.registry.hasNodeSerializerFor<Address>(), isTrue);
       },
     );
   });
@@ -1046,7 +1031,7 @@ class CompanyReferenceMapper implements IriTermMapper<CompanyReference> {
 }
 
 // Test mapper for Company class
-class CompanyMapper implements IriSubjectGraphMapper<Company> {
+class CompanyMapper implements IriNodeMapper<Company> {
   static final namePredicate = SchemaProperties.name;
   static final addressPredicate = SchemaPersonProperties.address;
 
@@ -1054,7 +1039,7 @@ class CompanyMapper implements IriSubjectGraphMapper<Company> {
   final IriTerm typeIri = SchemaClasses.organization;
 
   @override
-  Company fromRdfSubjectGraph(IriTerm subject, DeserializationContext context) {
+  Company fromRdfNode(IriTerm subject, DeserializationContext context) {
     final id = subject.iri;
     final name = context.require<String>(subject, namePredicate);
     final address = context.get<Address>(subject, addressPredicate);
@@ -1063,7 +1048,7 @@ class CompanyMapper implements IriSubjectGraphMapper<Company> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubjectGraph(
+  (RdfSubject, List<Triple>) toRdfNode(
     Company company,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -1073,11 +1058,7 @@ class CompanyMapper implements IriSubjectGraphMapper<Company> {
       Triple(subject, namePredicate, LiteralTerm.string(company.name)),
 
       if (company.address != null)
-        ...context.childSubjectGraph(
-          subject,
-          addressPredicate,
-          company.address,
-        ),
+        ...context.childNode(subject, addressPredicate, company.address),
     ];
 
     return (subject, triples);
@@ -1085,7 +1066,7 @@ class CompanyMapper implements IriSubjectGraphMapper<Company> {
 }
 
 // Update TestPersonMapper to include employer
-class EmployeeMapper implements IriSubjectGraphMapper<Employee> {
+class EmployeeMapper implements IriNodeMapper<Employee> {
   static final addressPredicate = SchemaPersonProperties.address;
   static final employerPredicate = worksForPredicate;
   static final givenNamePredicate = SchemaPersonProperties.givenName;
@@ -1095,10 +1076,7 @@ class EmployeeMapper implements IriSubjectGraphMapper<Employee> {
   final IriTerm typeIri = SchemaClasses.person;
 
   @override
-  Employee fromRdfSubjectGraph(
-    IriTerm subject,
-    DeserializationContext context,
-  ) {
+  Employee fromRdfNode(IriTerm subject, DeserializationContext context) {
     final id = subject.iri;
     final name = context.require<String>(subject, givenNamePredicate);
     final age = context.require<int>(subject, agePredicate);
@@ -1115,7 +1093,7 @@ class EmployeeMapper implements IriSubjectGraphMapper<Employee> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubjectGraph(
+  (RdfSubject, List<Triple>) toRdfNode(
     Employee person,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -1130,14 +1108,10 @@ class EmployeeMapper implements IriSubjectGraphMapper<Employee> {
       ),
 
       if (person.address != null)
-        ...context.childSubjectGraph(subject, addressPredicate, person.address),
+        ...context.childNode(subject, addressPredicate, person.address),
 
       if (person.employer != null)
-        ...context.childSubjectGraph(
-          subject,
-          employerPredicate,
-          person.employer,
-        ),
+        ...context.childNode(subject, employerPredicate, person.employer),
     ];
 
     return (subject, triples);
@@ -1145,7 +1119,7 @@ class EmployeeMapper implements IriSubjectGraphMapper<Employee> {
 }
 
 class EmployeeWithCompanyReferenceMapper
-    implements IriSubjectGraphMapper<EmployeeWithCompanyReference> {
+    implements IriNodeMapper<EmployeeWithCompanyReference> {
   static final addressPredicate = SchemaPersonProperties.address;
   static final employerPredicate = worksForPredicate;
   static final givenNamePredicate = SchemaPersonProperties.givenName;
@@ -1155,7 +1129,7 @@ class EmployeeWithCompanyReferenceMapper
   final IriTerm typeIri = SchemaClasses.person;
 
   @override
-  EmployeeWithCompanyReference fromRdfSubjectGraph(
+  EmployeeWithCompanyReference fromRdfNode(
     IriTerm subject,
     DeserializationContext context,
   ) {
@@ -1175,7 +1149,7 @@ class EmployeeWithCompanyReferenceMapper
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubjectGraph(
+  (RdfSubject, List<Triple>) toRdfNode(
     EmployeeWithCompanyReference person,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -1190,7 +1164,7 @@ class EmployeeWithCompanyReferenceMapper
       ),
 
       if (person.address != null)
-        ...context.childSubjectGraph(subject, addressPredicate, person.address),
+        ...context.childNode(subject, addressPredicate, person.address),
 
       if (person.employer != null)
         context.iri(subject, employerPredicate, person.employer),
@@ -1298,7 +1272,7 @@ class TestPerson {
 }
 
 // Test mapper implementation
-class TestPersonMapper implements IriSubjectGraphMapper<TestPerson> {
+class TestPersonMapper implements IriNodeMapper<TestPerson> {
   static final addressPredicate = SchemaPersonProperties.address;
   static final employerPredicate = worksForPredicate;
   static final givenNamePredicate = SchemaPersonProperties.givenName;
@@ -1308,10 +1282,7 @@ class TestPersonMapper implements IriSubjectGraphMapper<TestPerson> {
   final IriTerm typeIri = SchemaClasses.person;
 
   @override
-  TestPerson fromRdfSubjectGraph(
-    IriTerm subject,
-    DeserializationContext context,
-  ) {
+  TestPerson fromRdfNode(IriTerm subject, DeserializationContext context) {
     final id = subject.iri;
 
     // Get name property
@@ -1337,7 +1308,7 @@ class TestPersonMapper implements IriSubjectGraphMapper<TestPerson> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubjectGraph(
+  (RdfSubject, List<Triple>) toRdfNode(
     TestPerson person,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -1355,14 +1326,10 @@ class TestPersonMapper implements IriSubjectGraphMapper<TestPerson> {
       ),
 
       if (person.address != null)
-        ...context.childSubjectGraph(subject, addressPredicate, person.address),
+        ...context.childNode(subject, addressPredicate, person.address),
 
       if (person.employer != null)
-        ...context.childSubjectGraph(
-          subject,
-          employerPredicate,
-          person.employer,
-        ),
+        ...context.childNode(subject, employerPredicate, person.employer),
     ];
 
     return (subject, triples);
@@ -1370,7 +1337,7 @@ class TestPersonMapper implements IriSubjectGraphMapper<TestPerson> {
 }
 
 // Implementation des Address-Mappers für Blank Nodes
-class AddressMapper implements BlankNodeSubjectGraphMapper<Address> {
+class AddressMapper implements BlankNodeMapper<Address> {
   static final streetAddressPredicate = SchemaAddressProperties.streetAddress;
   static final addressLocalityPredicate =
       SchemaAddressProperties.addressLocality;
@@ -1381,10 +1348,7 @@ class AddressMapper implements BlankNodeSubjectGraphMapper<Address> {
   final IriTerm typeIri = SchemaClasses.postalAddress;
 
   @override
-  Address fromRdfSubjectGraph(
-    BlankNodeTerm term,
-    DeserializationContext context,
-  ) {
+  Address fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
     // Get address properties
     final street = context.require<String>(term, streetAddressPredicate);
 
@@ -1403,7 +1367,7 @@ class AddressMapper implements BlankNodeSubjectGraphMapper<Address> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubjectGraph(
+  (RdfSubject, List<Triple>) toRdfNode(
     Address value,
     SerializationContext context, {
     RdfSubject? parentSubject,

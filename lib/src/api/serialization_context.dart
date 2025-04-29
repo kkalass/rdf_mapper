@@ -6,9 +6,9 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 /// Provides access to services and state needed during RDF serialization.
 /// Used to delegate complex type mapping to the parent service.
 abstract class SerializationContext {
-  (RdfSubject, List<Triple>) subjectGraph<T>(
+  (RdfSubject, List<Triple>) node<T>(
     T instance, {
-    SubjectGraphSerializer<T>? serializer,
+    NodeSerializer<T>? serializer,
   });
 
   Triple constant(RdfSubject subject, RdfPredicate predicate, RdfObject object);
@@ -77,37 +77,33 @@ abstract class SerializationContext {
     serializer: serializer,
   );
 
-  List<Triple> childSubjectGraph<T>(
+  List<Triple> childNode<T>(
     RdfSubject subject,
     RdfPredicate predicate,
     T instance, {
-    SubjectGraphSerializer<T>? serializer,
+    NodeSerializer<T>? serializer,
   });
 
-  List<Triple> childSubjectGraphs<A, T>(
+  List<Triple> childNodes<A, T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> Function(A p1) toIterable,
     A instance, {
-    SubjectGraphSerializer<T>? serializer,
+    NodeSerializer<T>? serializer,
   }) =>
       toIterable(instance)
           .expand<Triple>(
-            (item) => childSubjectGraph(
-              subject,
-              predicate,
-              item,
-              serializer: serializer,
-            ),
+            (item) =>
+                childNode(subject, predicate, item, serializer: serializer),
           )
           .toList();
 
-  List<Triple> childSubjectGraphList<T>(
+  List<Triple> childNodeList<T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> instance, {
-    SubjectGraphSerializer<T>? serializer,
-  }) => childSubjectGraphs(
+    NodeSerializer<T>? serializer,
+  }) => childNodes(
     subject,
     predicate,
     (it) => it,
@@ -115,12 +111,12 @@ abstract class SerializationContext {
     serializer: serializer,
   );
 
-  List<Triple> childSubjectGraphMap<K, V>(
+  List<Triple> childNodeMap<K, V>(
     RdfSubject subject,
     RdfPredicate predicate,
     Map<K, V> instance,
-    SubjectGraphSerializer<MapEntry<K, V>> entrySerializer,
-  ) => childSubjectGraphs<Map<K, V>, MapEntry<K, V>>(
+    NodeSerializer<MapEntry<K, V>> entrySerializer,
+  ) => childNodes<Map<K, V>, MapEntry<K, V>>(
     subject,
     predicate,
     (it) => it.entries,

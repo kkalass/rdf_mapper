@@ -196,7 +196,7 @@ class Rating {
 // --- Mappers ---
 
 // IRI-based entity mapper
-class BookMapper implements IriSubjectGraphMapper<Book> {
+class BookMapper implements IriNodeMapper<Book> {
   static final titlePredicate = SchemaProperties.name;
   static final authorPredicate = SchemaProperties.author;
   static final publishedPredicate = SchemaProperties.datePublished;
@@ -222,7 +222,7 @@ class BookMapper implements IriSubjectGraphMapper<Book> {
   }
 
   @override
-  Book fromRdfSubjectGraph(IriTerm subject, DeserializationContext context) {
+  Book fromRdfNode(IriTerm subject, DeserializationContext context) {
     return Book(
       // Extract just the identifier part from the IRI
       id: _extractIdFromIri(subject.iri),
@@ -236,7 +236,7 @@ class BookMapper implements IriSubjectGraphMapper<Book> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubjectGraph(
+  (RdfSubject, List<Triple>) toRdfNode(
     Book book,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -250,8 +250,7 @@ class BookMapper implements IriSubjectGraphMapper<Book> {
       context.iri<ISBN>(subject, isbnPredicate, book.isbn),
       context.literal<Rating>(subject, ratingPredicate, book.rating),
       ...book.chapters.expand(
-        (chapter) =>
-            context.childSubjectGraph(subject, chapterPredicate, chapter),
+        (chapter) => context.childNode(subject, chapterPredicate, chapter),
       ),
     ];
     return (subject, triples);
@@ -259,7 +258,7 @@ class BookMapper implements IriSubjectGraphMapper<Book> {
 }
 
 // Blank node-based entity mapper
-class ChapterMapper implements BlankNodeSubjectGraphMapper<Chapter> {
+class ChapterMapper implements BlankNodeMapper<Chapter> {
   static final titlePredicate = IriTerm('https://schema.org/name');
   static final numberPredicate = IriTerm('https://schema.org/position');
 
@@ -267,17 +266,14 @@ class ChapterMapper implements BlankNodeSubjectGraphMapper<Chapter> {
   final IriTerm typeIri = IriTerm('https://schema.org/Chapter');
 
   @override
-  Chapter fromRdfSubjectGraph(
-    BlankNodeTerm term,
-    DeserializationContext context,
-  ) {
+  Chapter fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
     final title = context.require<String>(term, titlePredicate);
     final number = context.require<int>(term, numberPredicate);
     return Chapter(title, number);
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubjectGraph(
+  (RdfSubject, List<Triple>) toRdfNode(
     Chapter chapter,
     SerializationContext ctxt, {
     RdfSubject? parentSubject,

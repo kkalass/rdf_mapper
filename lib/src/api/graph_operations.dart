@@ -96,7 +96,7 @@ final class GraphOperations {
     }
 
     final Iterable instances =
-        instance is Iterable && !registry.hasSubjectGraphSerializerFor<T>()
+        instance is Iterable && !registry.hasNodeSerializerFor<T>()
             ? instance
             : [instance];
     final allTriples = <Triple>[];
@@ -108,7 +108,7 @@ final class GraphOperations {
       // we rely on the context.subject method without an explicit serializer.
       // The SerializationContextImpl class will internally select the correct
       // serializer based on the runtime type of the instance object.
-      final (_, triples) = context.subjectGraph(instance);
+      final (_, triples) = context.node(instance);
       allTriples.addAll(triples);
     }
 

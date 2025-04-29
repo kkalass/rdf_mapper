@@ -31,7 +31,7 @@ void main() {
         );
 
         // Serialize the person to RDF triples
-        final (_, triples) = context.subjectGraph(person);
+        final (_, triples) = context.node(person);
 
         // Count the number of type triples
         final typeTriples =
@@ -61,7 +61,7 @@ void main() {
       );
 
       // Serialize the person to RDF triples
-      final (_, triples) = context.subjectGraph(person);
+      final (_, triples) = context.node(person);
 
       // Count the number of type triples
       final typeTriples =
@@ -92,11 +92,7 @@ void main() {
       // Use childSubject to serialize the person as a child of another subject
       final parentSubject = IriTerm('http://example.org/container/1');
       final predicate = IriTerm('http://example.org/contains');
-      final triples = context.childSubjectGraph(
-        parentSubject,
-        predicate,
-        person,
-      );
+      final triples = context.childNode(parentSubject, predicate, person);
 
       // Count the number of type triples for the person
       final typeTriples =
@@ -123,13 +119,12 @@ class TestPerson {
 }
 
 // Test serializer that explicitly adds a type triple
-class TestPersonSerializerWithTypeTriple
-    implements SubjectGraphSerializer<TestPerson> {
+class TestPersonSerializerWithTypeTriple implements NodeSerializer<TestPerson> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubjectGraph(
+  (RdfSubject, List<Triple>) toRdfNode(
     TestPerson value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -153,12 +148,12 @@ class TestPersonSerializerWithTypeTriple
 
 // Test serializer that doesn't add a type triple
 class TestPersonSerializerWithoutTypeTriple
-    implements SubjectGraphSerializer<TestPerson> {
+    implements NodeSerializer<TestPerson> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubjectGraph(
+  (RdfSubject, List<Triple>) toRdfNode(
     TestPerson value,
     SerializationContext context, {
     RdfSubject? parentSubject,
