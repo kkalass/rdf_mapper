@@ -22,7 +22,7 @@ final class GraphOperations {
     RdfGraph graph, {
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    return _service.fromGraphSingleSubject(graph, register: register);
+    return _service.deserialize(graph, register: register);
   }
 
   /// Deserializes an object of type [T] from an RDF graph, identified by the subject.
@@ -34,7 +34,11 @@ final class GraphOperations {
     RdfSubject subjectId, {
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    return _service.fromGraphBySubject<T>(graph, subjectId, register: register);
+    return _service.deserializeBySubject<T>(
+      graph,
+      subjectId,
+      register: register,
+    );
   }
 
   /// Deserializes all subjects from an RDF graph into a list of objects.
@@ -45,7 +49,7 @@ final class GraphOperations {
     RdfGraph graph, {
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    return _service.fromGraph(graph, register: register);
+    return _service.deserializeAll(graph, register: register);
   }
 
   /// Deserializes all subjects of type [T] from an RDF graph.
@@ -66,7 +70,7 @@ final class GraphOperations {
     T instance, {
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    return _service.toGraph<T>(instance, register: register);
+    return _service.serialize<T>(instance, register: register);
   }
 
   /// Converts a list of objects to an RDF graph.
@@ -77,6 +81,6 @@ final class GraphOperations {
     List<T> instances, {
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    return _service.toGraphFromList<T>(instances, register: register);
+    return _service.serializeList<T>(instances, register: register);
   }
 }

@@ -201,7 +201,7 @@ void main() {
       registry.registerSubjectDeserializer<TestPerson>(deserializer);
 
       // Call fromRdfByTypeIri directly
-      final person = context.fromRdfByTypeIri(
+      final person = context.deserializeSubject(
         IriTerm('http://example.org/subject'),
         IriTerm('http://example.org/Person'),
       );

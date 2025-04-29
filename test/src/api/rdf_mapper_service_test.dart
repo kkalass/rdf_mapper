@@ -39,8 +39,8 @@ void main() {
       ];
 
       // Deserialize the object
-      final person = service.fromTriplesByRdfSubjectId<TestPerson>(
-        triples,
+      final person = service.deserializeBySubject<TestPerson>(
+        RdfGraph(triples: triples),
         subject,
       );
 
@@ -77,7 +77,7 @@ void main() {
       );
 
       // Deserialize the object
-      final person = service.fromGraphBySubject<TestPerson>(graph, subject);
+      final person = service.deserializeBySubject<TestPerson>(graph, subject);
 
       // Verify the deserialized object
       expect(person.id, equals('http://example.org/person/1'));
@@ -112,7 +112,7 @@ void main() {
       );
 
       // Deserialize the object
-      final person = service.fromGraphSingleSubject<TestPerson>(graph);
+      final person = service.deserialize<TestPerson>(graph);
 
       // Verify the deserialized object
       expect(person.id, equals('http://example.org/person/1'));
@@ -122,7 +122,7 @@ void main() {
 
     test('fromGraph throws for empty graph', () {
       expect(
-        () => service.fromGraphSingleSubject<TestPerson>(RdfGraph()),
+        () => service.deserialize<TestPerson>(RdfGraph()),
         throwsA(isA<DeserializationException>()),
       );
     });
@@ -149,7 +149,7 @@ void main() {
 
       // Attempt to deserialize should throw
       expect(
-        () => service.fromGraphSingleSubject<TestPerson>(graph),
+        () => service.deserialize<TestPerson>(graph),
         throwsA(isA<DeserializationException>()),
       );
     });
@@ -200,7 +200,7 @@ void main() {
         );
 
         // Deserialize all subjects
-        final objects = service.fromGraph(graph);
+        final objects = service.deserializeAll(graph);
 
         // Verify the deserialized objects
         expect(objects.length, equals(2));
@@ -258,7 +258,7 @@ void main() {
       );
 
       // Deserialize all subjects
-      final objects = service.fromGraph(graph);
+      final objects = service.deserializeAll(graph);
 
       // Only the Person should be deserialized, the Address should be ignored
       expect(objects.length, equals(1));
@@ -281,7 +281,7 @@ void main() {
       );
 
       // Serialize to graph
-      final graph = service.toGraph(person);
+      final graph = service.serialize(person);
 
       // Verify the serialized graph
       expect(graph.size, greaterThan(0));
@@ -315,7 +315,7 @@ void main() {
       );
 
       // Serialize with temporary mapper registration
-      final graph = service.toGraph(
+      final graph = service.serialize(
         person,
         register: (registry) {
           registry.registerSubjectMapper<TestPerson>(TestPersonMapper());
@@ -357,7 +357,7 @@ void main() {
       ];
 
       // Serialize to graph
-      final graph = service.toGraphFromList(people);
+      final graph = service.serializeList(people);
 
       // Verify the graph contains triples for both people
       final person1Triples = graph.findTriples(

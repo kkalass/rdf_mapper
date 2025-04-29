@@ -18,13 +18,13 @@ class DeserializationContextImpl extends DeserializationContext {
   }) : _graph = graph,
        _registry = registry;
 
-  Object fromRdfByTypeIri(IriTerm subjectIri, IriTerm typeIri) {
+  Object deserializeSubject(IriTerm subjectIri, IriTerm typeIri) {
     var context = this;
     var ser = _registry.getSubjectDeserializerByTypeIri(typeIri);
     return ser.fromIriTerm(subjectIri, context);
   }
 
-  T fromRdf<T>(
+  T deserialize<T>(
     RdfTerm term,
     RdfIriTermDeserializer<T>? iriDeserializer,
     RdfSubjectDeserializer<T>? subjectDeserializer,
@@ -75,7 +75,7 @@ class DeserializationContextImpl extends DeserializationContext {
     }
 
     final rdfObject = triples.first.object;
-    return fromRdf<T>(
+    return deserialize<T>(
       rdfObject,
       iriDeserializer,
       subjectDeserializer,
@@ -96,7 +96,7 @@ class DeserializationContextImpl extends DeserializationContext {
   }) {
     final triples = _graph.findTriples(subject: subject, predicate: predicate);
     final convertedTriples = triples.map(
-      (triple) => fromRdf(
+      (triple) => deserialize(
         triple.object,
         iriDeserializer,
         subjectDeserializer,

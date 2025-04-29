@@ -23,22 +23,6 @@ final class RdfMapperService {
   /// Access to the registry for registering custom mappers
   RdfMapperRegistry get registry => _registry;
 
-  /// Deserialize an object of type [T] from a list of triples.
-  ///
-  /// Optionally, a [register] callback can be provided to temporarily register
-  /// custom mappers for this operation. The callback receives a clone of the registry.
-  T fromTriplesByRdfSubjectId<T>(
-    List<Triple> triples,
-    RdfSubject rdfSubjectId, {
-    void Function(RdfMapperRegistry registry)? register,
-  }) {
-    return fromGraphBySubject(
-      RdfGraph(triples: triples),
-      rdfSubjectId,
-      register: register,
-    );
-  }
-
   /// Deserialize an object of type [T] from an RDF graph which is identified by [rdfSubject] parameter.
   ///
   /// Optionally, a [register] callback can be provided to temporarily register
@@ -50,7 +34,7 @@ final class RdfMapperService {
   ///   registry.registerSubjectMapper(ItemMapper(baseUrl));
   /// });
   /// ```
-  T fromGraphBySubject<T>(
+  T deserializeBySubject<T>(
     RdfGraph graph,
     RdfSubject rdfSubjectId, {
     void Function(RdfMapperRegistry registry)? register,
@@ -64,15 +48,15 @@ final class RdfMapperService {
     }
     var context = DeserializationContextImpl(graph: graph, registry: registry);
 
-    return context.fromRdf<T>(rdfSubjectId, null, null, null, null);
+    return context.deserialize<T>(rdfSubjectId, null, null, null, null);
   }
 
   /// Convenience method to deserialize the single subject [T] from an RDF graph
-  T fromGraphSingleSubject<T>(
+  T deserialize<T>(
     RdfGraph graph, {
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    var result = fromGraph(graph, register: register);
+    var result = deserializeAll(graph, register: register);
     if (result.isEmpty) {
       throw DeserializationException('No subject found in graph');
     }
@@ -88,7 +72,7 @@ final class RdfMapperService {
   ///
   /// Optionally, a [register] callback can be provided to temporarily register
   /// custom mappers for this operation. The callback receives a clone of the registry.
-  List<Object> fromGraph(
+  List<Object> deserializeAll(
     RdfGraph graph, {
     void Function(RdfMapperRegistry registry)? register,
   }) {
@@ -114,7 +98,7 @@ final class RdfMapperService {
             return null;
           }
           try {
-            return context.fromRdfByTypeIri(subject, object);
+            return context.deserializeSubject(subject, object);
           } on DeserializerNotFoundException {
             _log.warning(
               "Will skip deserialization of subject $subject with type $object because there is no Deserializer available in the registry.",
@@ -142,7 +126,7 @@ final class RdfMapperService {
   /// @param uri Optional URI to use as the subject
   /// @return RDF graph representing the object
   /// @throws StateError if no mapper is registered for type T
-  RdfGraph toGraph<T>(
+  RdfGraph serialize<T>(
     T instance, {
     void Function(RdfMapperRegistry registry)? register,
   }) {
@@ -171,7 +155,7 @@ final class RdfMapperService {
   ///   registry.registerSubjectMapper(ItemMapper(baseUrl));
   /// });
   /// ```
-  RdfGraph toGraphFromList<T>(
+  RdfGraph serializeList<T>(
     List<T> instances, {
     void Function(RdfMapperRegistry registry)? register,
   }) {
