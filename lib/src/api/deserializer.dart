@@ -1,5 +1,5 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/src/api/deserialization_context.dart';
+import 'package:rdf_mapper/rdf_mapper.dart';
 
 /// Base marker interface for all RDF deserializers.
 ///
@@ -44,7 +44,7 @@ sealed class NodeDeserializer<T> extends Deserializer<T> {
   ///
   /// Beware though, that deserialization from a graph without a type
   /// will only work if you deserialize explicitly a specific IriTerm or
-  /// BlankNodeTerm to a specific dart type, not if you use the generic deserialization.
+  /// BlankNodeTerm to a specific dart type, not if you use the generic deserialization [RdfMapper.deserializeAll].
   IriTerm? get typeIri;
 }
 

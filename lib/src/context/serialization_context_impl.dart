@@ -4,6 +4,7 @@ import 'package:rdf_core/vocab.dart';
 import 'package:rdf_mapper/src/api/serializer.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
+import 'package:rdf_mapper/src/exceptions/serializer_not_found_exception.dart';
 
 final _log = Logger("rdf_orm.serialization");
 
@@ -19,7 +20,7 @@ class SerializationContextImpl extends SerializationContext {
   /// for the runtime type of the instance.
   /// If the instance is null, it returns null.
   /// This is useful for handling nullable types in Dart.
-  R? _nullTrimmingLookup<T, R>(
+  R? _getSerializerFallbackToRuntimeType<T, R>(
     R? serializer,
     T instance,
     R Function() lookup,
@@ -56,7 +57,7 @@ class SerializationContextImpl extends SerializationContext {
     SubjectSerializer<T>? serializer,
   }) {
     // Try to get serializer directly for type T if provided or available
-    SubjectSerializer<T>? ser = _nullTrimmingLookup(
+    SubjectSerializer<T>? ser = _getSerializerFallbackToRuntimeType(
       serializer,
       instance,
       _registry.getSubjectSerializer,
@@ -117,7 +118,7 @@ class SerializationContextImpl extends SerializationContext {
     }
     // Try to get serializer directly for type T if provided or available
     final ser =
-        _nullTrimmingLookup(
+        _getSerializerFallbackToRuntimeType(
           serializer,
           instance,
           _registry.getIriTermSerializer,
@@ -141,7 +142,7 @@ class SerializationContextImpl extends SerializationContext {
       );
     }
     final ser =
-        _nullTrimmingLookup(
+        _getSerializerFallbackToRuntimeType(
           serializer,
           instance,
           _registry.getLiteralTermSerializer,
@@ -157,7 +158,22 @@ class SerializationContextImpl extends SerializationContext {
     T instance, {
     SubjectSerializer<T>? serializer,
   }) {
-    var ser = (serializer ?? _registry.getSubjectSerializer<T>());
+    if (instance == null) {
+      throw ArgumentError('Cannot serialize null instance');
+    }
+
+    // Use the existing _getSerializerFallbackToRuntimeType method to find the appropriate serializer
+    final ser = _getSerializerFallbackToRuntimeType(
+      serializer,
+      instance,
+      _registry.getSubjectSerializer<T>,
+      _registry.getSubjectSerializerByType<T>,
+    );
+
+    if (ser == null) {
+      throw SerializerNotFoundException('SubjectSerializer', T);
+    }
+
     var (iri, triples) = ser.toRdfSubject(instance, this);
 
     // Check if a type triple already exists

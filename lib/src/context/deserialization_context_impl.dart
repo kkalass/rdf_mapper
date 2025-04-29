@@ -5,6 +5,7 @@ import 'package:rdf_mapper/src/exceptions/property_value_not_found_exception.dar
 import 'package:rdf_mapper/src/exceptions/too_many_property_values_exception.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
 
+/// Standard implementation of deserialization context
 class DeserializationContextImpl extends DeserializationContext {
   final RdfGraph _graph;
   final RdfMapperRegistry _registry;
@@ -27,6 +28,9 @@ class DeserializationContextImpl extends DeserializationContext {
     }
   }
 
+  // Hook for the Tracking implementation to track deserialized nodes.
+  void _deserializeNode(RdfTerm term) {}
+
   T deserialize<T>(
     RdfTerm term,
     IriTermDeserializer<T>? iriDeserializer,
@@ -41,6 +45,7 @@ class DeserializationContextImpl extends DeserializationContext {
             _registry.hasIriNodeDeserializerFor<T>()) {
           var ser =
               subjectDeserializer ?? _registry.getIriNodeDeserializer<T>();
+          _deserializeNode(term);
           return ser.fromRdfNode(term, context);
         }
         var ser = iriDeserializer ?? _registry.getIriTermDeserializer<T>();
@@ -52,6 +57,7 @@ class DeserializationContextImpl extends DeserializationContext {
       case BlankNodeTerm _:
         var ser =
             blankNodeDeserializer ?? _registry.getBlankNodeDeserializer<T>();
+        _deserializeNode(term);
         return ser.fromRdfNode(term, context);
     }
   }
@@ -138,4 +144,31 @@ class DeserializationContextImpl extends DeserializationContext {
     }
     return result;
   }
+}
+
+/// A specialized deserialization context that tracks subject processing order.
+///
+/// This context extends the standard implementation to maintain a record of when
+/// each subject was first processed. This allows determining which subjects were
+/// processed as part of other objects' deserialization and which were root objects.
+class TrackingDeserializationContext extends DeserializationContextImpl {
+  // Maps subjects to their first processing index
+  final Set<RdfSubject> _processedSubjects = {};
+
+  TrackingDeserializationContext({
+    required RdfGraph graph,
+    required RdfMapperRegistry registry,
+  }) : super(graph: graph, registry: registry);
+
+  @override
+  void _deserializeNode(RdfTerm term) {
+    super._deserializeNode(term);
+    // Track processing of subject terms
+    if (term is RdfSubject) {
+      _processedSubjects.add(term);
+    }
+  }
+
+  /// Returns the map of processed subjects with their first processing index
+  Set<RdfSubject> getProcessedSubjects() => _processedSubjects;
 }

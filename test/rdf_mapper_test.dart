@@ -746,6 +746,438 @@ _:b0 a schema:PostalAddress;
       },
     );
   });
+
+  group('Advanced deserialization cases', () {
+    test(
+      'deserializeAll should only return root objects, not nested entities - Employee with full Company',
+      () {
+        // Register mappers for our test classes
+        rdfMapper.registerMapper<Employee>(EmployeeMapper());
+        rdfMapper.registerMapper<Address>(AddressMapper());
+        rdfMapper.registerMapper<Company>(CompanyMapper());
+
+        // Create a test Turtle string with nested objects
+        // The graph describes:
+        // 1. A person (John) with an address and an employer (company)
+        // 2. A company with an address
+        // 3. The company appears both as direct subjects
+        //    and as nested object within other entities
+        // 3. The address objects are blank
+        final turtle = '''
+        @prefix schema: <https://schema.org/> .
+        @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+        @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+        
+        <http://example.org/person/1> a schema:Person ;
+          schema:givenName "John Doe" ;
+          foaf:age "30"^^xsd:integer ;
+          schema:address _:address1 ;
+          schema:worksFor <http://example.org/company/1> .
+        
+        <http://example.org/company/1> a schema:Organization ;
+          schema:name "ACME Corporation" ;
+          schema:address _:address2 .
+        
+        _:address1 a schema:PostalAddress ;
+          schema:streetAddress "123 Home St" ;
+          schema:addressLocality "Hometown" ;
+          schema:postalCode "12345" ;
+          schema:addressCountry "USA" .
+          
+        _:address2 a schema:PostalAddress ;
+          schema:streetAddress "456 Business Ave" ;
+          schema:addressLocality "Commerce City" ;
+          schema:postalCode "67890" ;
+          schema:addressCountry "USA" .
+      ''';
+
+        // Deserialize all subjects from the graph
+        final objects = rdfMapper.deserializeAll(
+          turtle,
+          contentType: 'text/turtle',
+        );
+
+        // We should only get one root-level object (person), because the company is
+        // fully included by person and the address is a blank node
+        expect(objects.length, equals(1));
+
+        // Check the types of objects we got
+        final people = objects.whereType<Employee>().toList();
+        final companies = objects.whereType<Company>().toList();
+        final addresses = objects.whereType<Address>().toList();
+
+        expect(people.length, equals(1));
+        expect(companies.length, equals(0));
+        expect(
+          addresses.length,
+          equals(0),
+        ); // Only the person should be considered a root object
+
+        // Verify the person has the correct properties
+        final person = people.first;
+        expect(person.id, equals('http://example.org/person/1'));
+        expect(person.name, equals('John Doe'));
+        expect(person.age, equals(30));
+
+        // The person should have a reference to both the address and company
+        expect(person.address, isNotNull);
+        if (person.employer != null) {
+          expect(person.employer!.name, equals('ACME Corporation'));
+          final company = person.employer!;
+          expect(company.id, equals('http://example.org/company/1'));
+          expect(company.name, equals('ACME Corporation'));
+          expect(company.address, isNotNull);
+        } else {
+          fail('Person should have an employer');
+        }
+      },
+    );
+
+    test(
+      'deserializeAll should only return root objects, not nested entities - Employee with referenced Company',
+      () {
+        // Register mappers for our test classes
+        rdfMapper.registerMapper<EmployeeWithCompanyReference>(
+          EmployeeWithCompanyReferenceMapper(),
+        );
+        rdfMapper.registerMapper<Address>(AddressMapper());
+        rdfMapper.registerMapper<CompanyReference>(CompanyReferenceMapper());
+        rdfMapper.registerMapper<Company>(CompanyMapper());
+
+        // Create a test Turtle string with nested objects
+        // The graph describes:
+        // 1. A person (John) with an address and an employer (company)
+        // 2. A company with an address
+        // 3. The company appears both as direct subjects
+        //    and as nested object within other entities
+        // 3. The address objects are blank
+        final turtle = '''
+        @prefix schema: <https://schema.org/> .
+        @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+        @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+        
+        <http://example.org/person/1> a schema:Person ;
+          schema:givenName "John Doe" ;
+          foaf:age "30"^^xsd:integer ;
+          schema:address _:address1 ;
+          schema:worksFor <http://example.org/company/1> .
+        
+        <http://example.org/company/1> a schema:Organization ;
+          schema:name "ACME Corporation" ;
+          schema:address _:address2 .
+        
+        _:address1 a schema:PostalAddress ;
+          schema:streetAddress "123 Home St" ;
+          schema:addressLocality "Hometown" ;
+          schema:postalCode "12345" ;
+          schema:addressCountry "USA" .
+          
+        _:address2 a schema:PostalAddress ;
+          schema:streetAddress "456 Business Ave" ;
+          schema:addressLocality "Commerce City" ;
+          schema:postalCode "67890" ;
+          schema:addressCountry "USA" .
+      ''';
+
+        // Deserialize all subjects from the graph
+        final objects = rdfMapper.deserializeAll(
+          turtle,
+          contentType: 'text/turtle',
+        );
+
+        // We should get two root-level objects (person and company), because the company is
+        // only referenced by person and the address is a blank node
+        expect(objects.length, equals(2));
+
+        // Check the types of objects we got
+        final people =
+            objects.whereType<EmployeeWithCompanyReference>().toList();
+        final companies = objects.whereType<Company>().toList();
+        final addresses = objects.whereType<Address>().toList();
+
+        expect(people.length, equals(1));
+        expect(companies.length, equals(1));
+        expect(addresses.length, equals(0));
+
+        // Verify the person has the correct properties
+        final person = people.first;
+        expect(person.id, equals('http://example.org/person/1'));
+        expect(person.name, equals('John Doe'));
+        expect(person.age, equals(30));
+
+        // The person should have a reference to both the address and company
+        expect(person.address, isNotNull);
+        if (person.employer != null) {
+          expect(person.employer!.iri, equals('http://example.org/company/1'));
+        } else {
+          fail('Person should have an employer');
+        }
+
+        // Verify the company has the correct properties
+        final company = companies.first;
+        expect(company.id, equals('http://example.org/company/1'));
+        expect(company.name, equals('ACME Corporation'));
+        expect(company.address, isNotNull);
+      },
+    );
+  });
+}
+
+// Test model classes
+// Add company class for testing nested objects
+class Company {
+  final String id;
+  final String name;
+  final Address? address;
+
+  Company({required this.id, required this.name, this.address});
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Company &&
+          id == other.id &&
+          name == other.name &&
+          address == other.address;
+
+  @override
+  int get hashCode => id.hashCode ^ name.hashCode ^ address.hashCode;
+}
+
+const worksForPredicate = IriTerm.prevalidated('https://schema.org/worksFor');
+
+// Update TestPerson to include employer
+class Employee {
+  final String id;
+  final String name;
+  final int age;
+  final Address? address;
+  final Company? employer;
+
+  Employee({
+    required this.id,
+    required this.name,
+    required this.age,
+    this.address,
+    this.employer,
+  });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Employee &&
+          id == other.id &&
+          name == other.name &&
+          age == other.age &&
+          address == other.address &&
+          employer == other.employer;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      name.hashCode ^
+      age.hashCode ^
+      address.hashCode ^
+      (employer?.hashCode ?? 0);
+}
+
+class CompanyReference {
+  final String iri;
+
+  CompanyReference({required this.iri});
+}
+
+class EmployeeWithCompanyReference {
+  final String id;
+  final String name;
+  final int age;
+  final Address? address;
+  final CompanyReference? employer;
+
+  EmployeeWithCompanyReference({
+    required this.id,
+    required this.name,
+    required this.age,
+    this.address,
+    this.employer,
+  });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Employee &&
+          id == other.id &&
+          name == other.name &&
+          age == other.age &&
+          address == other.address &&
+          employer == other.employer;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      name.hashCode ^
+      age.hashCode ^
+      address.hashCode ^
+      (employer?.hashCode ?? 0);
+}
+
+class CompanyReferenceMapper implements IriTermMapper<CompanyReference> {
+  @override
+  CompanyReference fromRdfTerm(
+    IriTerm subject,
+    DeserializationContext context,
+  ) {
+    return CompanyReference(iri: subject.iri);
+  }
+
+  @override
+  IriTerm toRdfTerm(CompanyReference company, SerializationContext context) {
+    return IriTerm(company.iri);
+  }
+}
+
+// Test mapper for Company class
+class CompanyMapper implements SubjectMapper<Company> {
+  static final namePredicate = SchemaProperties.name;
+  static final addressPredicate = SchemaPersonProperties.address;
+
+  @override
+  final IriTerm typeIri = SchemaClasses.organization;
+
+  @override
+  Company fromRdfNode(IriTerm subject, DeserializationContext context) {
+    final id = subject.iri;
+    final name = context.require<String>(subject, namePredicate);
+    final address = context.get<Address>(subject, addressPredicate);
+
+    return Company(id: id, name: name, address: address);
+  }
+
+  @override
+  (RdfSubject, List<Triple>) toRdfSubject(
+    Company company,
+    SerializationContext context, {
+    RdfSubject? parentSubject,
+  }) {
+    final subject = IriTerm(company.id);
+    final triples = <Triple>[
+      Triple(subject, namePredicate, LiteralTerm.string(company.name)),
+
+      if (company.address != null)
+        ...context.childSubject(subject, addressPredicate, company.address),
+    ];
+
+    return (subject, triples);
+  }
+}
+
+// Update TestPersonMapper to include employer
+class EmployeeMapper implements SubjectMapper<Employee> {
+  static final addressPredicate = SchemaPersonProperties.address;
+  static final employerPredicate = worksForPredicate;
+  static final givenNamePredicate = SchemaPersonProperties.givenName;
+  static final agePredicate = IriTerm('http://xmlns.com/foaf/0.1/age');
+
+  @override
+  final IriTerm typeIri = SchemaClasses.person;
+
+  @override
+  Employee fromRdfNode(IriTerm subject, DeserializationContext context) {
+    final id = subject.iri;
+    final name = context.require<String>(subject, givenNamePredicate);
+    final age = context.require<int>(subject, agePredicate);
+    final address = context.get<Address>(subject, addressPredicate);
+    final employer = context.get<Company>(subject, employerPredicate);
+
+    return Employee(
+      id: id,
+      name: name,
+      age: age,
+      address: address,
+      employer: employer,
+    );
+  }
+
+  @override
+  (RdfSubject, List<Triple>) toRdfSubject(
+    Employee person,
+    SerializationContext context, {
+    RdfSubject? parentSubject,
+  }) {
+    final subject = IriTerm(person.id);
+    final triples = <Triple>[
+      Triple(subject, givenNamePredicate, LiteralTerm.string(person.name)),
+      Triple(
+        subject,
+        agePredicate,
+        LiteralTerm.typed(person.age.toString(), 'integer'),
+      ),
+
+      if (person.address != null)
+        ...context.childSubject(subject, addressPredicate, person.address),
+
+      if (person.employer != null)
+        ...context.childSubject(subject, employerPredicate, person.employer),
+    ];
+
+    return (subject, triples);
+  }
+}
+
+class EmployeeWithCompanyReferenceMapper
+    implements SubjectMapper<EmployeeWithCompanyReference> {
+  static final addressPredicate = SchemaPersonProperties.address;
+  static final employerPredicate = worksForPredicate;
+  static final givenNamePredicate = SchemaPersonProperties.givenName;
+  static final agePredicate = IriTerm('http://xmlns.com/foaf/0.1/age');
+
+  @override
+  final IriTerm typeIri = SchemaClasses.person;
+
+  @override
+  EmployeeWithCompanyReference fromRdfNode(
+    IriTerm subject,
+    DeserializationContext context,
+  ) {
+    final id = subject.iri;
+    final name = context.require<String>(subject, givenNamePredicate);
+    final age = context.require<int>(subject, agePredicate);
+    final address = context.get<Address>(subject, addressPredicate);
+    final employer = context.get<CompanyReference>(subject, employerPredicate);
+
+    return EmployeeWithCompanyReference(
+      id: id,
+      name: name,
+      age: age,
+      address: address,
+      employer: employer,
+    );
+  }
+
+  @override
+  (RdfSubject, List<Triple>) toRdfSubject(
+    EmployeeWithCompanyReference person,
+    SerializationContext context, {
+    RdfSubject? parentSubject,
+  }) {
+    final subject = IriTerm(person.id);
+    final triples = <Triple>[
+      Triple(subject, givenNamePredicate, LiteralTerm.string(person.name)),
+      Triple(
+        subject,
+        agePredicate,
+        LiteralTerm.typed(person.age.toString(), 'integer'),
+      ),
+
+      if (person.address != null)
+        ...context.childSubject(subject, addressPredicate, person.address),
+
+      if (person.employer != null)
+        context.iri(subject, employerPredicate, person.employer),
+    ];
+
+    return (subject, triples);
+  }
 }
 
 class _PredefinedResultsParser implements RdfParser {
@@ -816,12 +1248,14 @@ class TestPerson {
   final String name;
   final int age;
   final Address? address;
+  final Company? employer;
 
   TestPerson({
     required this.id,
     required this.name,
     required this.age,
     this.address,
+    this.employer,
   });
 
   @override
@@ -831,16 +1265,22 @@ class TestPerson {
           id == other.id &&
           name == other.name &&
           age == other.age &&
-          address == other.address;
+          address == other.address &&
+          employer == other.employer;
 
   @override
   int get hashCode =>
-      id.hashCode ^ name.hashCode ^ age.hashCode ^ address.hashCode;
+      id.hashCode ^
+      name.hashCode ^
+      age.hashCode ^
+      address.hashCode ^
+      (employer?.hashCode ?? 0);
 }
 
 // Test mapper implementation
 class TestPersonMapper implements SubjectMapper<TestPerson> {
   static final addressPredicate = SchemaPersonProperties.address;
+  static final employerPredicate = worksForPredicate;
   static final givenNamePredicate = SchemaPersonProperties.givenName;
   static final agePredicate = IriTerm('http://xmlns.com/foaf/0.1/age');
 
@@ -863,7 +1303,14 @@ class TestPersonMapper implements SubjectMapper<TestPerson> {
     );
 
     final address = context.get<Address>(subject, addressPredicate);
-    return TestPerson(id: id, name: name, age: age, address: address);
+    final employer = context.get<Company>(subject, employerPredicate);
+    return TestPerson(
+      id: id,
+      name: name,
+      age: age,
+      address: address,
+      employer: employer,
+    );
   }
 
   @override
@@ -886,6 +1333,9 @@ class TestPersonMapper implements SubjectMapper<TestPerson> {
 
       if (person.address != null)
         ...context.childSubject(subject, addressPredicate, person.address),
+
+      if (person.employer != null)
+        ...context.childSubject(subject, employerPredicate, person.employer),
     ];
 
     return (subject, triples);

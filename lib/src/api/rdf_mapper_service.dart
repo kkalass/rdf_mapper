@@ -70,44 +70,86 @@ final class RdfMapperService {
 
   /// Deserialize a list of objects from all subjects in the RDF graph.
   ///
+  /// This implementation ensures that each unique subject is only deserialized once,
+  /// regardless of how mappers handle referenced subjects. It tracks which subjects
+  /// have already been deserialized during the process to prevent duplicates.
+  ///
+  /// Root objects are defined as those that aren't primarily referenced as properties
+  /// of other objects. Only these root objects are returned.
+  ///
+  /// If any subject cannot be deserialized because a deserializer is not found for its type,
+  /// a [DeserializerNotFoundException] will be thrown.
+  ///
   /// Optionally, a [register] callback can be provided to temporarily register
   /// custom mappers for this operation. The callback receives a clone of the registry.
   List<Object> deserializeAll(
     RdfGraph graph, {
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    var deserializationSubjects = graph.findTriples(
-      predicate: RdfPredicates.type,
-    );
+    // Find all subjects with a type
+    final typedSubjects = graph.findTriples(predicate: RdfPredicates.type);
+
+    if (typedSubjects.isEmpty) {
+      return [];
+    }
 
     // Clone registry if registration callback is provided
     final registry = register != null ? _registry.clone() : _registry;
     if (register != null) {
       register(registry);
     }
-    var context = DeserializationContextImpl(graph: graph, registry: registry);
 
-    return deserializationSubjects
-        .map((triple) {
-          final subject = triple.subject;
-          final type = triple.object;
-          if (type is! IriTerm) {
-            _log.warning(
-              "Will skip deserialization of subject $subject with type $type because both subject and type need to be IRIs in order to be able to deserialize.",
-            );
-            return null;
-          }
-          try {
-            return context.deserializeSubject(subject, type);
-          } on DeserializerNotFoundException {
-            _log.warning(
-              "Will skip deserialization of subject $subject with type $type because there is no Deserializer available in the registry.",
-            );
-            return null;
-          }
-        })
-        .whereType<Object>()
-        .toList();
+    // Create a specialized context that tracks processed subjects
+    final context = TrackingDeserializationContext(
+      graph: graph,
+      registry: registry,
+    );
+
+    // Map to store deserialized objects by subject
+    final Map<RdfSubject, Object> deserializedObjects = {};
+
+    // First pass: deserialize all typed subjects
+    for (final triple in typedSubjects) {
+      final subject = triple.subject;
+      final type = triple.object;
+
+      // Skip if not an IRI type or already processed
+      if (type is! IriTerm || deserializedObjects.containsKey(subject)) {
+        continue;
+      }
+
+      try {
+        // Deserialize the object and track it by subject
+        final obj = context.deserializeSubject(subject, type);
+        deserializedObjects[subject] = obj;
+      } on DeserializerNotFoundException {
+        // Propagate deserializer not found exceptions - we don't want to silently ignore them
+        _log.warning(
+          "No deserializer found for subject $subject with type $type",
+        );
+        rethrow;
+      }
+    }
+
+    // Second pass: identify subjects that are primarily referenced as properties
+    final subjectReferences = context.getProcessedSubjects();
+
+    // Third pass: filter out subjects that are primarily referenced by others
+    final rootObjects = <Object>[];
+
+    for (final entry in deserializedObjects.entries) {
+      final subject = entry.key;
+      final object = entry.value;
+
+      // A subject is considered a root object if:
+      // 1. It has a type triple (which we've guaranteed above)
+      // 2. It is not primarily referenced by other subjects
+      if (!subjectReferences.contains(subject)) {
+        rootObjects.add(object);
+      }
+    }
+
+    return rootObjects;
   }
 
   /// Serialize an object of type [T] to an RDF graph.

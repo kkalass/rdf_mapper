@@ -35,8 +35,6 @@ export 'src/api/graph_operations.dart';
 export 'src/api/rdf_mapper_registry.dart';
 export 'src/api/rdf_mapper_service.dart';
 export 'src/api/serialization_context.dart';
-export 'src/context/deserialization_context_impl.dart';
-export 'src/context/serialization_context_impl.dart';
 
 /// Central facade for the RDF Mapper library, providing access to object mapping and registry operations.
 ///

@@ -104,6 +104,10 @@ final class GraphOperations {
     final context = SerializationContextImpl(registry: registry);
 
     for (final instance in instances) {
+      // Since we can't use a generic type parameter based on runtime type,
+      // we rely on the context.subject method without an explicit serializer.
+      // The SerializationContextImpl class will internally select the correct
+      // serializer based on the runtime type of the instance object.
       final (_, triples) = context.subject(instance);
       allTriples.addAll(triples);
     }
