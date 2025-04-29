@@ -160,7 +160,7 @@ class TestEntityMapper implements IriNodeMapper<TestEntity> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfNode(
     TestEntity entity,
     SerializationContext context, {
     RdfSubject? parentSubject,

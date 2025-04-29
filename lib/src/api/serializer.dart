@@ -37,7 +37,7 @@ abstract interface class LiteralTermSerializer<T> implements TermSerializer<T> {
   LiteralTerm toRdfTerm(T value, SerializationContext context);
 }
 
-abstract interface class NodeSerializer<T> implements Serializer<T> {
+sealed class NodeSerializer<T> extends Serializer<T> {
   /// The IRI of the type of the subject.
   /// This is used to determine the type of the subject when serializing it to RDF.
   /// If you want to not associate a type with the subject, return null - you
@@ -47,6 +47,24 @@ abstract interface class NodeSerializer<T> implements Serializer<T> {
   IriTerm? get typeIri;
 
   (RdfSubject, List<Triple>) toRdfNode(
+    T value,
+    SerializationContext context, {
+    RdfSubject? parentSubject,
+  });
+}
+
+abstract interface class BlankNodeSerializer<T> implements NodeSerializer<T> {
+  @override
+  (BlankNodeTerm, List<Triple>) toRdfNode(
+    T value,
+    SerializationContext context, {
+    RdfSubject? parentSubject,
+  });
+}
+
+abstract interface class IriNodeSerializer<T> implements NodeSerializer<T> {
+  @override
+  (IriTerm, List<Triple>) toRdfNode(
     T value,
     SerializationContext context, {
     RdfSubject? parentSubject,

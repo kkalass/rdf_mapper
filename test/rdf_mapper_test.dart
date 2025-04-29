@@ -1048,7 +1048,7 @@ class CompanyMapper implements IriNodeMapper<Company> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfNode(
     Company company,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -1093,7 +1093,7 @@ class EmployeeMapper implements IriNodeMapper<Employee> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfNode(
     Employee person,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -1149,7 +1149,7 @@ class EmployeeWithCompanyReferenceMapper
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfNode(
     EmployeeWithCompanyReference person,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -1308,7 +1308,7 @@ class TestPersonMapper implements IriNodeMapper<TestPerson> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfNode(
     TestPerson person,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -1367,7 +1367,7 @@ class AddressMapper implements BlankNodeMapper<Address> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfNode(
+  (BlankNodeTerm, List<Triple>) toRdfNode(
     Address value,
     SerializationContext context, {
     RdfSubject? parentSubject,

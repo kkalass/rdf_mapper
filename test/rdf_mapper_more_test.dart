@@ -163,7 +163,7 @@ final class TestItemRdfMapper implements IriNodeMapper<TestItem> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfNode(
     TestItem instance,
     SerializationContext context, {
     RdfSubject? parentSubject,

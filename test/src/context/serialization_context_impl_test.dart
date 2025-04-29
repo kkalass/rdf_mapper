@@ -119,12 +119,13 @@ class TestPerson {
 }
 
 // Test serializer that explicitly adds a type triple
-class TestPersonSerializerWithTypeTriple implements NodeSerializer<TestPerson> {
+class TestPersonSerializerWithTypeTriple
+    implements IriNodeSerializer<TestPerson> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
   @override
-  (RdfSubject, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfNode(
     TestPerson value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -148,12 +149,12 @@ class TestPersonSerializerWithTypeTriple implements NodeSerializer<TestPerson> {
 
 // Test serializer that doesn't add a type triple
 class TestPersonSerializerWithoutTypeTriple
-    implements NodeSerializer<TestPerson> {
+    implements IriNodeSerializer<TestPerson> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
   @override
-  (RdfSubject, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfNode(
     TestPerson value,
     SerializationContext context, {
     RdfSubject? parentSubject,

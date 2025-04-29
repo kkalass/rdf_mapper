@@ -277,12 +277,12 @@ class TestSubjectDeserializer implements IriNodeDeserializer<CustomType> {
   }
 }
 
-class TestSubjectSerializer implements NodeSerializer<CustomType> {
+class TestSubjectSerializer implements IriNodeSerializer<CustomType> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/CustomType');
 
   @override
-  (RdfSubject, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfNode(
     CustomType value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -309,7 +309,7 @@ class TestSubjectMapper implements IriNodeMapper<CustomType> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfNode(
     CustomType value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -336,7 +336,7 @@ class AnotherTestSubjectMapper implements IriNodeMapper<AnotherCustomType> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfNode(
     AnotherCustomType value,
     SerializationContext context, {
     RdfSubject? parentSubject,

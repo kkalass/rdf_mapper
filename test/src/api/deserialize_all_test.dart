@@ -97,7 +97,7 @@ class PersonMapper implements IriNodeMapper<Person> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfNode(
     Person value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -134,7 +134,7 @@ class AddressMapper implements BlankNodeMapper<Address> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfNode(
+  (BlankNodeTerm, List<Triple>) toRdfNode(
     Address value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -165,7 +165,7 @@ class ContactMapper implements IriNodeMapper<Contact> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfNode(
     Contact value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -197,7 +197,7 @@ class StandaloneAddressMapper implements IriNodeMapper<Address> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfNode(
     Address value,
     SerializationContext context, {
     RdfSubject? parentSubject,

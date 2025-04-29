@@ -69,12 +69,12 @@ class TestItem {
 }
 
 // Test serializer
-class TestItemSerializer implements NodeSerializer<TestItem> {
+class TestItemSerializer implements IriNodeSerializer<TestItem> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/TestItem');
 
   @override
-  (RdfSubject, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfNode(
     TestItem value,
     SerializationContext context, {
     RdfSubject? parentSubject,

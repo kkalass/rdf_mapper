@@ -236,7 +236,7 @@ class BookMapper implements IriNodeMapper<Book> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfNode(
     Book book,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -273,7 +273,7 @@ class ChapterMapper implements BlankNodeMapper<Chapter> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfNode(
+  (BlankNodeTerm, List<Triple>) toRdfNode(
     Chapter chapter,
     SerializationContext ctxt, {
     RdfSubject? parentSubject,
