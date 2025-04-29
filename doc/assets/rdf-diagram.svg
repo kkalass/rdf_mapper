@@ -1,62 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="600" height="400" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+<svg width="600" height="440" viewBox="0 0 600 440" xmlns="http://www.w3.org/2000/svg">
 	<defs>
 		<marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
 			<polygon points="0 0, 10 3.5, 0 7" fill="#5468ff" />
 		</marker>
 	</defs>
 
-	<!-- Nodes -->
-	<g>
-		<!-- Subject Node -->
-		<circle cx="150" cy="200" r="70" fill="#f8f9fa" stroke="#5468ff" stroke-width="3" />
-		<text x="150" y="190" text-anchor="middle" font-family="Inter, sans-serif" font-size="18"
-			font-weight="bold">Subject</text>
-		<text x="150" y="220" text-anchor="middle" font-family="Inter, sans-serif" font-size="16">
-			(Resource)</text>
-
-		<!-- Predicate (arrow and label) -->
-		<line x1="220" y1="200" x2="380" y2="200" stroke="#5468ff" stroke-width="3"
-			marker-end="url(#arrowhead)" />
-		<rect x="270" y="170" width="100" height="40" rx="20" fill="#5468ff" />
-		<text x="320" y="195" text-anchor="middle" font-family="Inter, sans-serif" font-size="15"
-			font-weight="bold" fill="white">Predicate</text>
-
-		<!-- Object Node -->
-		<circle cx="450" cy="200" r="70" fill="#f8f9fa" stroke="#ff9100" stroke-width="3" />
-		<text x="450" y="190" text-anchor="middle" font-family="Inter, sans-serif" font-size="18"
-			font-weight="bold">Object</text>
-		<text x="450" y="220" text-anchor="middle" font-family="Inter, sans-serif" font-size="16">
-			(Value)</text>
-	</g>
-
-	<!-- Examples -->
-	<g>
-		<!-- Subject Example -->
-		<text x="150" y="320" text-anchor="middle" font-family="Inter, sans-serif" font-size="14"
-			fill="#666">
-			<tspan x="150" dy="0">http://example.org/john</tspan>
-			<tspan x="150" dy="25">(IRI or Blank Node)</tspan>
-		</text>
-
-		<!-- Predicate Example -->
-		<text x="320" y="320" text-anchor="middle" font-family="Inter, sans-serif" font-size="14"
-			fill="#666">
-			<tspan x="320" dy="0">http://xmlns.com/foaf/0.1/name</tspan>
-			<tspan x="320" dy="25">(Always IRI)</tspan>
-		</text>
-
-		<!-- Object Example -->
-		<text x="450" y="320" text-anchor="middle" font-family="Inter, sans-serif" font-size="14"
-			fill="#666">
-			<tspan x="450" dy="0">"John Smith"</tspan>
-			<tspan x="450" dy="25">(IRI, Blank Node, or Literal)</tspan>
-		</text>
-	</g>
-
 	<!-- Title -->
 	<text x="300" y="50" text-anchor="middle" font-family="Inter, sans-serif" font-size="24"
 		font-weight="bold">RDF Triple Structure</text>
 	<text x="300" y="80" text-anchor="middle" font-family="Inter, sans-serif" font-size="18">(Subject
 		- Predicate - Object)</text>
+
+	<!-- Nodes -->
+	<g>
+		<!-- Subject Node -->
+		<circle cx="150" cy="200" r="80" fill="white" stroke="#5468ff" stroke-width="3" />
+		<text x="150" y="195" text-anchor="middle" font-family="Inter, sans-serif" font-size="22"
+			font-weight="bold">Subject</text>
+		<text x="150" y="225" text-anchor="middle" font-family="Inter, sans-serif" font-size="16">
+			(Resource)</text>
+
+		<!-- Predicate (improved oval shape) -->
+		<line x1="230" y1="200" x2="370" y2="200" stroke="#5468ff" stroke-width="2.5" />
+		<ellipse cx="300" cy="200" rx="50" ry="28" fill="#5468ff" />
+		<text x="300" y="207" text-anchor="middle" font-family="Inter, sans-serif" font-size="16"
+			font-weight="bold" fill="white">Predicate</text>
+
+		<!-- Object Node -->
+		<circle cx="450" cy="200" r="80" fill="white" stroke="#ff9100" stroke-width="3" />
+		<text x="450" y="195" text-anchor="middle" font-family="Inter, sans-serif" font-size="22"
+			font-weight="bold">Object</text>
+		<text x="450" y="225" text-anchor="middle" font-family="Inter, sans-serif" font-size="16">
+			(Value)</text>
+	</g>
+
+	<!-- Examples - Improved positioning and formatting -->
+	<g>
+		<!-- Subject Example (left-aligned) -->
+		<text x="80" y="320" text-anchor="middle" font-family="Inter, sans-serif" font-size="14"
+			fill="#666">
+			<tspan x="80" dy="0">http://example.org/john</tspan>
+		</text>
+		<text x="80" y="345" text-anchor="middle" font-family="Inter, sans-serif" font-size="14"
+			fill="#666">
+			<tspan x="80" dy="0">(IRI or Blank Node)</tspan>
+		</text>
+
+		<!-- Predicate Example (center-aligned) -->
+		<text x="300" y="320" text-anchor="middle" font-family="Inter, sans-serif" font-size="14"
+			fill="#666">
+			<tspan x="300" dy="0">http://xmlns.com/foaf/0.1/name</tspan>
+		</text>
+		<text x="300" y="345" text-anchor="middle" font-family="Inter, sans-serif" font-size="14"
+			fill="#666">
+			<tspan x="300" dy="0">(Always IRI)</tspan>
+		</text>
+
+		<!-- Object Example (right-aligned) -->
+		<text x="520" y="320" text-anchor="middle" font-family="Inter, sans-serif" font-size="14"
+			fill="#666">
+			<tspan x="520" dy="0">"John Smith"</tspan>
+		</text>
+		<text x="520" y="345" text-anchor="middle" font-family="Inter, sans-serif" font-size="14"
+			fill="#666">
+			<tspan x="520" dy="0">(IRI, Blank Node, or Literal)</tspan>
+		</text>
+
+		<!-- Adding visual guides to connect examples to their nodes -->
+		<line x1="150" y1="280" x2="80" y2="305" stroke="#5468ff" stroke-width="1.5"
+			stroke-dasharray="3,3" />
+		<line x1="300" y1="228" x2="300" y2="305" stroke="#5468ff" stroke-width="1.5"
+			stroke-dasharray="3,3" />
+		<line x1="450" y1="280" x2="520" y2="305" stroke="#ff9100" stroke-width="1.5"
+			stroke-dasharray="3,3" />
+	</g>
 </svg>

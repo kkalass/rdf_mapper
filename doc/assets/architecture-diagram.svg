@@ -1,120 +1,154 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="700" height="550" viewBox="0 0 700 550" xmlns="http://www.w3.org/2000/svg">
+<svg width="860" height="660" viewBox="0 0 860 660" xmlns="http://www.w3.org/2000/svg">
 	<defs>
-		<marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-			<polygon points="0 0, 10 3.5, 0 7" fill="#666" />
+		<marker id="blueArrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+			<polygon points="0 0, 10 3.5, 0 7" fill="#01579B" />
+		</marker>
+		<marker id="orangeArrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+			<polygon points="0 0, 10 3.5, 0 7" fill="#ff7600" />
 		</marker>
 		<linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
 			<stop offset="0%" stop-color="#7579E7" />
 			<stop offset="100%" stop-color="#5468ff" />
 		</linearGradient>
-		<linearGradient id="secondaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-			<stop offset="0%" stop-color="#ff9e4f" />
-			<stop offset="100%" stop-color="#ff9100" />
-		</linearGradient>
 	</defs>
 
 	<!-- Title -->
-	<text x="350" y="40" text-anchor="middle" font-family="Inter, sans-serif" font-size="24"
+	<text x="430" y="60" text-anchor="middle" font-family="Inter, sans-serif" font-size="28"
 		font-weight="bold">RDF Mapper Architecture</text>
 
-	<!-- Main RdfMapper class -->
-	<rect x="250" y="70" width="200" height="60" rx="8" fill="url(#primaryGradient)" />
-	<text x="350" y="105" text-anchor="middle" font-family="Inter, sans-serif" font-size="18"
-		font-weight="bold" fill="white">RdfMapper</text>
+	<!-- Main diagram section -->
+	<g>
+		<!-- Dart Objects Section -->
+		<rect x="30" y="120" width="230" height="380" rx="10" fill="#ffffff" stroke="#01579B"
+			stroke-width="2" stroke-dasharray="5,5" />
+		<text x="145" y="155" text-anchor="middle" font-family="Inter, sans-serif" font-size="22"
+			font-weight="bold">Dart Objects</text>
 
-	<!-- Mappers Section -->
-	<rect x="50" y="170" width="200" height="50" rx="8" fill="#f8f9fa" stroke="#5468ff"
-		stroke-width="2" />
-	<text x="150" y="200" text-anchor="middle" font-family="Inter, sans-serif" font-size="16"
-		font-weight="bold">Mapper Registry</text>
+		<!-- Person Object -->
+		<rect x="65" y="190" width="160" height="150" rx="8" fill="#ffffff" stroke="#01579B"
+			stroke-width="2" />
+		<text x="145" y="220" text-anchor="middle" font-family="Inter, sans-serif" font-size="18"
+			font-weight="bold">Person</text>
+		<line x1="85" y1="235" x2="205" y2="235" stroke="#01579B" stroke-width="1" />
+		<text x="95" y="265" text-anchor="start" font-family="Inter, sans-serif" font-size="16">id:
+			String</text>
+		<text x="95" y="295" text-anchor="start" font-family="Inter, sans-serif" font-size="16">name:
+			String</text>
+		<text x="95" y="325" text-anchor="start" font-family="Inter, sans-serif" font-size="16">age: int</text>
 
-	<!-- Connection lines -->
-	<line x1="350" y1="130" x2="150" y2="170" stroke="#666" stroke-width="2" stroke-dasharray="5,5"
-		marker-end="url(#arrow)" />
-	<line x1="350" y1="130" x2="550" y2="170" stroke="#666" stroke-width="2" stroke-dasharray="5,5"
-		marker-end="url(#arrow)" />
+		<!-- RDF Graph Section -->
+		<rect x="600" y="120" width="230" height="380" rx="10" fill="#ffffff" stroke="#ff7600"
+			stroke-width="2" stroke-dasharray="5,5" />
+		<text x="715" y="155" text-anchor="middle" font-family="Inter, sans-serif" font-size="22"
+			font-weight="bold">RDF Graph</text>
 
-	<!-- Mapper Hierarchy -->
-	<rect x="50" y="250" width="200" height="280" rx="8" fill="#f8f9fa" stroke="#5468ff"
-		stroke-width="2" />
-	<text x="150" y="280" text-anchor="middle" font-family="Inter, sans-serif" font-size="18"
-		font-weight="bold">Mapper Hierarchy</text>
+		<!-- RDF Triple Example -->
+		<rect x="625" y="190" width="180" height="180" rx="8" fill="#ffffff" stroke="#ff7600"
+			stroke-width="2" />
+		<text x="715" y="220" text-anchor="middle" font-family="Inter, sans-serif" font-size="14">subject:
+			&lt;/john&gt;</text>
+		<line x1="645" y1="230" x2="785" y2="230" stroke="#ff7600" stroke-width="1" />
+		<text x="645" y="255" text-anchor="start" font-family="Inter, sans-serif" font-size="14">predicate:
+			foaf:name</text>
+		<text x="645" y="280" text-anchor="start" font-family="Inter, sans-serif" font-size="14">object:
+			"John Smith"</text>
+		<line x1="645" y1="295" x2="785" y2="295" stroke="#ff7600" stroke-width="1" />
+		<text x="645" y="320" text-anchor="start" font-family="Inter, sans-serif" font-size="14">predicate:
+			foaf:age</text>
+		<text x="645" y="345" text-anchor="start" font-family="Inter, sans-serif" font-size="14">object:
+			"30"^^xsd:int</text>
 
-	<!-- Term Mappers -->
-	<rect x="70" y="300" width="160" height="100" rx="8" fill="#fff" stroke="#5468ff" stroke-width="1" />
-	<text x="150" y="325" text-anchor="middle" font-family="Inter, sans-serif" font-size="16"
-		font-weight="bold">Term Mappers</text>
-	<text x="150" y="350" text-anchor="middle" font-family="Inter, sans-serif" font-size="14">•
-		IriTermMapper</text>
-	<text x="150" y="375" text-anchor="middle" font-family="Inter, sans-serif" font-size="14">•
-		LiteralTermMapper</text>
+		<!-- Mapper System -->
+		<rect x="315" y="120" width="230" height="440" rx="10" fill="#f8f9fa" stroke="#5468ff"
+			stroke-width="2" />
 
-	<!-- Node Mappers -->
-	<rect x="70" y="410" width="160" height="100" rx="8" fill="#fff" stroke="#5468ff" stroke-width="1" />
-	<text x="150" y="435" text-anchor="middle" font-family="Inter, sans-serif" font-size="16"
-		font-weight="bold">Node Mappers</text>
-	<text x="150" y="460" text-anchor="middle" font-family="Inter, sans-serif" font-size="14">•
-		IriNodeMapper</text>
-	<text x="150" y="485" text-anchor="middle" font-family="Inter, sans-serif" font-size="14">•
-		BlankNodeMapper</text>
+		<!-- RdfMapper Box -->
+		<rect x="355" y="85" width="150" height="50" rx="8" fill="url(#primaryGradient)" />
+		<text x="430" y="118" text-anchor="middle" font-family="Inter, sans-serif" font-size="20"
+			font-weight="bold" fill="white">RdfMapper</text>
 
-	<!-- Connection line -->
-	<line x1="150" y1="220" x2="150" y2="250" stroke="#666" stroke-width="2" marker-end="url(#arrow)" />
+		<!-- Mapper System Title -->
+		<text x="430" y="160" text-anchor="middle" font-family="Inter, sans-serif" font-size="20"
+			font-weight="bold">Mapper System</text>
 
-	<!-- Graph Operations -->
-	<rect x="450" y="170" width="200" height="50" rx="8" fill="#f8f9fa" stroke="#5468ff"
-		stroke-width="2" />
-	<text x="550" y="200" text-anchor="middle" font-family="Inter, sans-serif" font-size="16"
-		font-weight="bold">Graph Operations</text>
+		<!-- Serialization Section -->
+		<text x="430" y="200" text-anchor="middle" font-family="Inter, sans-serif" font-size="18"
+			font-weight="bold">Serialization</text>
 
-	<!-- Context Classes -->
-	<rect x="450" y="250" width="200" height="130" rx="8" fill="#f8f9fa" stroke="#5468ff"
-		stroke-width="2" />
-	<text x="550" y="280" text-anchor="middle" font-family="Inter, sans-serif" font-size="18"
-		font-weight="bold">Context Classes</text>
+		<!-- SerializationContext -->
+		<rect x="340" y="220" width="180" height="40" rx="8" fill="#ffffff" stroke="#5468ff"
+			stroke-width="1" />
+		<text x="430" y="245" text-anchor="middle" font-family="Inter, sans-serif" font-size="16">
+			SerializationContext</text>
 
-	<!-- Serialization Context -->
-	<rect x="470" y="300" width="160" height="30" rx="8" fill="#fff" stroke="#5468ff" stroke-width="1" />
-	<text x="550" y="320" text-anchor="middle" font-family="Inter, sans-serif" font-size="14">
-		SerializationContext</text>
+		<!-- Deserialization Section with increased vertical spacing -->
+		<text x="430" y="310" text-anchor="middle" font-family="Inter, sans-serif" font-size="18"
+			font-weight="bold">Deserialization</text>
 
-	<!-- Deserialization Context -->
-	<rect x="470" y="340" width="160" height="30" rx="8" fill="#fff" stroke="#5468ff" stroke-width="1" />
-	<text x="550" y="360" text-anchor="middle" font-family="Inter, sans-serif" font-size="14">
-		DeserializationContext</text>
+		<!-- DeserializationContext -->
+		<rect x="340" y="330" width="180" height="40" rx="8" fill="#ffffff" stroke="#5468ff"
+			stroke-width="1" />
+		<text x="430" y="355" text-anchor="middle" font-family="Inter, sans-serif" font-size="16">
+			DeserializationContext</text>
 
-	<!-- Connection line -->
-	<line x1="550" y1="220" x2="550" y2="250" stroke="#666" stroke-width="2" marker-end="url(#arrow)" />
+		<!-- Mapper Registry with increased vertical spacing -->
+		<rect x="340" y="410" width="180" height="40" rx="8" fill="#ffffff" stroke="#5468ff"
+			stroke-width="1" />
+		<text x="430" y="435" text-anchor="middle" font-family="Inter, sans-serif" font-size="16"
+			font-weight="bold">Mapper Registry</text>
 
-	<!-- Fluent APIs -->
-	<rect x="450" y="400" width="200" height="130" rx="8" fill="#f8f9fa" stroke="#5468ff"
-		stroke-width="2" />
-	<text x="550" y="430" text-anchor="middle" font-family="Inter, sans-serif" font-size="18"
-		font-weight="bold">Fluent APIs</text>
+		<!-- Mappers Legend mit deutlich erhöhter Breite und Höhe -->
+		<rect x="325" y="480" width="210" height="70" rx="8" fill="#ffffff" stroke="#666666"
+			stroke-width="1" stroke-dasharray="3,3" />
+		<text x="430" y="500" text-anchor="middle" font-family="Inter, sans-serif" font-size="16"
+			font-weight="bold">Mappers</text>
 
-	<!-- NodeBuilder -->
-	<rect x="470" y="450" width="160" height="30" rx="8" fill="#fff" stroke="#5468ff" stroke-width="1" />
-	<text x="550" y="470" text-anchor="middle" font-family="Inter, sans-serif" font-size="14">
-		NodeBuilder</text>
+		<!-- Term Mapper mit Zeilenumbruch für bessere Lesbarkeit -->
+		<text x="340" y="520" text-anchor="start" font-family="Inter, sans-serif" font-size="12">• Term
+			(IriTerm, LiteralTerm)</text>
 
-	<!-- NodeReader -->
-	<rect x="470" y="490" width="160" height="30" rx="8" fill="#fff" stroke="#5468ff" stroke-width="1" />
-	<text x="550" y="510" text-anchor="middle" font-family="Inter, sans-serif" font-size="14">
-		NodeReader</text>
+		<!-- Node Mapper mit Zeilenumbruch für bessere Lesbarkeit -->
+		<text x="340" y="540" text-anchor="start" font-family="Inter, sans-serif" font-size="12">• Node
+			(IriNode, BlankNode)</text>
 
-	<!-- Connection line -->
-	<line x1="550" y1="380" x2="550" y2="400" stroke="#666" stroke-width="2" marker-end="url(#arrow)" />
+		<!-- Arrows and Flow Labels with background for better visibility -->
+		<!-- Serialization Flow (Dart to RDF) -->
+		<!-- Blue arrow from Dart to SerializationContext with increased distance -->
+		<path d="M 260 240 L 340 240" stroke="#01579B" stroke-width="2" fill="none"
+			marker-end="url(#blueArrow)" />
 
-	<!-- RDF Graph Representation -->
-	<rect x="250" y="340" width="200" height="60" rx="8" fill="url(#secondaryGradient)" />
-	<text x="350" y="375" text-anchor="middle" font-family="Inter, sans-serif" font-size="16"
-		font-weight="bold" fill="white">RDF Graph</text>
+		<!-- Background rectangle for "Objects" label -->
+		<rect x="263" y="215" width="50" height="20" fill="white" fill-opacity="0.9" rx="4" />
+		<text x="288" y="230" text-anchor="middle" font-family="Inter, sans-serif" font-size="14"
+			fill="#01579B" font-weight="500">Objects</text>
 
-	<!-- Connection lines -->
-	<line x1="250" y1="370" x2="230" y2="370" stroke="#666" stroke-width="2" />
-	<line x1="230" y1="370" x2="230" y2="350" stroke="#666" stroke-width="2" marker-end="url(#arrow)" />
+		<!-- Orange arrow from SerializationContext to RDF with increased distance -->
+		<path d="M 520 240 L 625 240" stroke="#ff7600" stroke-width="2" fill="none"
+			marker-end="url(#orangeArrow)" />
 
-	<line x1="450" y1="370" x2="470" y2="370" stroke="#666" stroke-width="2" />
-	<line x1="470" y1="370" x2="470" y2="350" stroke="#666" stroke-width="2" marker-end="url(#arrow)" />
+		<!-- Background rectangle for "Triples" label -->
+		<rect x="547" y="215" width="50" height="20" fill="white" fill-opacity="0.9" rx="4" />
+		<text x="572" y="230" text-anchor="middle" font-family="Inter, sans-serif" font-size="14"
+			fill="#ff7600" font-weight="500">Triples</text>
+
+		<!-- Deserialization Flow (RDF to Dart) -->
+		<!-- Orange arrow from RDF to DeserializationContext with increased distance -->
+		<path d="M 625 350 L 520 350" stroke="#ff7600" stroke-width="2" fill="none"
+			marker-end="url(#orangeArrow)" />
+
+		<!-- Background rectangle for "Triples" label -->
+		<rect x="547" y="365" width="50" height="20" fill="white" fill-opacity="0.9" rx="4" />
+		<text x="572" y="380" text-anchor="middle" font-family="Inter, sans-serif" font-size="14"
+			fill="#ff7600" font-weight="500">Triples</text>
+
+		<!-- Blue arrow from DeserializationContext to Dart with increased distance -->
+		<path d="M 340 350 L 260 350" stroke="#01579B" stroke-width="2" fill="none"
+			marker-end="url(#blueArrow)" />
+
+		<!-- Background rectangle for "Objects" label -->
+		<rect x="263" y="365" width="50" height="20" fill="white" fill-opacity="0.9" rx="4" />
+		<text x="288" y="380" text-anchor="middle" font-family="Inter, sans-serif" font-size="14"
+			fill="#01579B" font-weight="500">Objects</text>
+	</g>
 </svg>
