@@ -1,17 +1,19 @@
 # RDF Mapper for Dart
 
-[![Dart](https://img.shields.io/badge/Dart-2.17%2B-blue.svg)](https://dart.dev)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![pub package](https://img.shields.io/pub/v/rdf_mapper.svg)](https://pub.dev/packages/rdf_mapper)
-[![codecov](https://codecov.io/gh/yourorg/rdf_mapper/branch/main/graph/badge.svg)](https://codecov.io/gh/yourorg/rdf_mapper)
+[![build](https://github.com/kkalass/rdf_mapper/actions/workflows/ci.yml/badge.svg)](https://github.com/kkalass/rdf_mapper/actions)
+[![codecov](https://codecov.io/gh/kkalass/rdf_mapper/branch/main/graph/badge.svg)](https://codecov.io/gh/kkalass/rdf_mapper)
+[![license](https://img.shields.io/github/license/kkalass/rdf_mapper.svg)](https://github.com/kkalass/rdf_mapper/blob/main/LICENSE)
 
 A powerful library for bidirectional mapping between Dart objects and RDF (Resource Description Framework), built on top of [`rdf_core`](https://pub.dev/packages/rdf_core).
 
 ## Overview
 
+[🌐 **Official Homepage**](https://kkalass.github.io/rdf_mapper/)
+
 `rdf_mapper` provides an elegant solution for transforming between Dart object models and RDF graphs, similar to an ORM for databases. This enables developers to work with semantic data in an object-oriented manner without manually managing the complexity of RDF serialization and deserialization.
 
-### Key Features
+### ✨ Key Features
 
 - **Bidirectional Mapping**: Seamless conversion between Dart objects and RDF representations
 - **Type-Safe**: Fully typed API for safe RDF mapping operations
@@ -44,7 +46,7 @@ Or use the following command:
 dart pub add rdf_mapper
 ```
 
-## Quick Start
+## 🚀 Quick Start
 
 ### Basic Setup
 
@@ -207,7 +209,7 @@ final schema = Namespace('http://schema.org/');
 builder.literal(foaf('name'), 'Alice');  // Generates http://xmlns.com/foaf/0.1/name
 ```
 
-## Complex Example
+### Complex Example
 
 The following example demonstrates handling complex models with relationships between objects and nested structures:
 
@@ -448,8 +450,6 @@ class RatingMapper implements LiteralTermMapper<Rating> {
 }
 ```
 
-
-
 ## Supported RDF Types
 
 The library includes built-in mappers for common Dart types:
@@ -463,7 +463,7 @@ The library includes built-in mappers for common Dart types:
 | `DateTime` | xsd:dateTime |
 | `Uri` | IRI |
 
-## Error Handling
+## ⚠️ Error Handling
 
 RDF Mapper provides specific exceptions to help diagnose mapping issues:
 
@@ -475,16 +475,29 @@ RDF Mapper provides specific exceptions to help diagnose mapping issues:
 - `PropertyValueNotFoundException`: When a required property is missing
 - `TooManyPropertyValuesException`: When multiple values exist for a single-valued property
 
-## Performance Considerations
+## 🚦 Performance Considerations
 
 - RDF Mapper uses efficient traversal algorithms for both serialization and deserialization
 - For large graphs, consider using the graph-based API instead of string serialization
 - Consider implementing custom mappers for performance-critical types in your application
 
-## Contributing
+## 🛣️ Roadmap / Next Steps
 
-Contributions are welcome! Please read the [contributing guidelines](CONTRIBUTING.md) for more information.
+- Detect cycles, optimally support them.
+- Support generating mappers based on annotations
 
-## License
+## 🤝 Contributing
 
-This project is licensed under the [MIT License](LICENSE).
+Contributions, bug reports, and feature requests are welcome!
+
+- Fork the repo and submit a PR
+- See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines
+- Join the discussion in [GitHub Issues](https://github.com/kkalass/rdf_mapper/issues)
+
+## 🤖 AI Policy
+
+This project is proudly human-led and human-controlled, with all key decisions, design, and code reviews made by people. At the same time, it stands on the shoulders of LLM giants: generative AI tools are used throughout the development process to accelerate iteration, inspire new ideas, and improve documentation quality. We believe that combining human expertise with the best of AI leads to higher-quality, more innovative open source software.
+
+---
+
+© 2025 Klas Kalaß. Licensed under the MIT License.
