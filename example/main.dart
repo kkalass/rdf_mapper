@@ -15,7 +15,7 @@ void main() {
 
   // Create a book with chapters
   final book = Book(
-    id: 'http://example.org/book/hobbit',
+    id: 'hobbit', // Now just the identifier, not the full IRI
     title: 'The Hobbit',
     author: 'J.R.R. Tolkien',
     published: DateTime(1937, 9, 21),
@@ -117,7 +117,7 @@ _:b2 a schema:Chapter;
 
   // Create a combined graph with more data
   final anotherBook = Book(
-    id: 'http://example.org/book/silmarillion',
+    id: 'silmarillion', // Now just the identifier, not the full IRI
     title: 'The Silmarillion',
     author: 'J.R.R. Tolkien',
     published: DateTime(1977, 9, 15),
@@ -140,7 +140,7 @@ _:b2 a schema:Chapter;
 
 // --- Domain Model ---
 
-// Primary entity with an IRI identifier
+// Primary entity with an identifier that will be part of the IRI
 class Book {
   final String id;
   final String title;
@@ -204,13 +204,28 @@ class BookMapper implements IriSubjectGraphMapper<Book> {
   static final ratingPredicate = IriTerm('https://schema.org/aggregateRating');
   static final chapterPredicate = IriTerm('https://schema.org/hasPart');
 
+  // Base IRI prefix for book resources
+  static const String bookIriPrefix = 'http://example.org/book/';
+
   @override
   final IriTerm typeIri = IriTerm('https://schema.org/Book');
+
+  /// Converts an ID to a full IRI
+  String _createIriFromId(String id) => '$bookIriPrefix$id';
+
+  /// Extracts the identifier from a full IRI
+  String _extractIdFromIri(String iri) {
+    if (!iri.startsWith(bookIriPrefix)) {
+      throw ArgumentError('Invalid Book IRI format: $iri');
+    }
+    return iri.substring(bookIriPrefix.length);
+  }
 
   @override
   Book fromRdfSubjectGraph(IriTerm subject, DeserializationContext context) {
     return Book(
-      id: subject.iri,
+      // Extract just the identifier part from the IRI
+      id: _extractIdFromIri(subject.iri),
       title: context.require<String>(subject, titlePredicate),
       author: context.require<String>(subject, authorPredicate),
       published: context.require<DateTime>(subject, publishedPredicate),
@@ -226,7 +241,8 @@ class BookMapper implements IriSubjectGraphMapper<Book> {
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    final subject = IriTerm(book.id);
+    // Create full IRI from the identifier
+    final subject = IriTerm(_createIriFromId(book.id));
     final triples = <Triple>[
       context.literal(subject, titlePredicate, book.title),
       context.literal(subject, authorPredicate, book.author),
