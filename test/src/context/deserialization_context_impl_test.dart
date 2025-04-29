@@ -238,7 +238,8 @@ class TestAddress {
   TestAddress({required this.city});
 }
 
-class TestPersonDeserializer implements IriNodeDeserializer<TestPerson> {
+class TestPersonDeserializer
+    implements IriSubjectGraphDeserializer<TestPerson> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
@@ -263,7 +264,7 @@ class CustomStringDeserializer implements LiteralTermDeserializer<String> {
 }
 
 class CustomBlankNodeDeserializer
-    implements BlankNodeDeserializer<TestAddress> {
+    implements BlankNodeSubjectGraphDeserializer<TestAddress> {
   @override
   IriTerm? get typeIri => null;
   @override

@@ -221,7 +221,7 @@ class BookMapper implements SubjectMapper<Book> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubject(
+  (RdfSubject, List<Triple>) toRdfSubjectGraph(
     Book book,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -257,7 +257,7 @@ class ChapterMapper implements BlankSubjectMapper<Chapter> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubject(
+  (RdfSubject, List<Triple>) toRdfSubjectGraph(
     Chapter chapter,
     SerializationContext ctxt, {
     RdfSubject? parentSubject,

@@ -163,7 +163,7 @@ final class TestItemRdfMapper implements SubjectMapper<TestItem> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubject(
+  (RdfSubject, List<Triple>) toRdfSubjectGraph(
     TestItem instance,
     SerializationContext context, {
     RdfSubject? parentSubject,

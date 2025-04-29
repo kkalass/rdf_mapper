@@ -8,7 +8,7 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 abstract class SerializationContext {
   (RdfSubject, List<Triple>) subject<T>(
     T instance, {
-    SubjectSerializer<T>? serializer,
+    SubjectGraphSerializer<T>? serializer,
   });
 
   Triple constant(RdfSubject subject, RdfPredicate predicate, RdfObject object);
@@ -81,7 +81,7 @@ abstract class SerializationContext {
     RdfSubject subject,
     RdfPredicate predicate,
     T instance, {
-    SubjectSerializer<T>? serializer,
+    SubjectGraphSerializer<T>? serializer,
   });
 
   List<Triple> childSubjects<A, T>(
@@ -89,7 +89,7 @@ abstract class SerializationContext {
     RdfPredicate predicate,
     Iterable<T> Function(A p1) toIterable,
     A instance, {
-    SubjectSerializer<T>? serializer,
+    SubjectGraphSerializer<T>? serializer,
   }) =>
       toIterable(instance)
           .expand<Triple>(
@@ -102,7 +102,7 @@ abstract class SerializationContext {
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> instance, {
-    SubjectSerializer<T>? serializer,
+    SubjectGraphSerializer<T>? serializer,
   }) => childSubjects(
     subject,
     predicate,
@@ -115,7 +115,7 @@ abstract class SerializationContext {
     RdfSubject subject,
     RdfPredicate predicate,
     Map<K, V> instance,
-    SubjectSerializer<MapEntry<K, V>> entrySerializer,
+    SubjectGraphSerializer<MapEntry<K, V>> entrySerializer,
   ) => childSubjects<Map<K, V>, MapEntry<K, V>>(
     subject,
     predicate,

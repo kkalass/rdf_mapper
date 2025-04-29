@@ -34,9 +34,9 @@ class DeserializationContextImpl extends DeserializationContext {
   T deserialize<T>(
     RdfTerm term,
     IriTermDeserializer<T>? iriDeserializer,
-    IriNodeDeserializer<T>? subjectDeserializer,
+    IriSubjectGraphDeserializer<T>? subjectDeserializer,
     LiteralTermDeserializer<T>? literalDeserializer,
-    BlankNodeDeserializer<T>? blankNodeDeserializer,
+    BlankNodeSubjectGraphDeserializer<T>? blankNodeDeserializer,
   ) {
     var context = this;
     switch (term) {
@@ -68,9 +68,9 @@ class DeserializationContextImpl extends DeserializationContext {
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
     IriTermDeserializer<T>? iriDeserializer,
-    IriNodeDeserializer<T>? subjectDeserializer,
+    IriSubjectGraphDeserializer<T>? subjectDeserializer,
     LiteralTermDeserializer<T>? literalDeserializer,
-    BlankNodeDeserializer<T>? blankNodeDeserializer,
+    BlankNodeSubjectGraphDeserializer<T>? blankNodeDeserializer,
   }) {
     final triples = _graph.findTriples(subject: subject, predicate: predicate);
     if (triples.isEmpty) {
@@ -100,9 +100,9 @@ class DeserializationContextImpl extends DeserializationContext {
     RdfPredicate predicate,
     R Function(Iterable<T>) collector, {
     IriTermDeserializer<T>? iriDeserializer,
-    IriNodeDeserializer<T>? subjectDeserializer,
+    IriSubjectGraphDeserializer<T>? subjectDeserializer,
     LiteralTermDeserializer<T>? literalDeserializer,
-    BlankNodeDeserializer<T>? blankNodeDeserializer,
+    BlankNodeSubjectGraphDeserializer<T>? blankNodeDeserializer,
   }) {
     final triples = _graph.findTriples(subject: subject, predicate: predicate);
     final convertedTriples = triples.map(
@@ -123,9 +123,9 @@ class DeserializationContextImpl extends DeserializationContext {
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
     IriTermDeserializer<T>? iriDeserializer,
-    IriNodeDeserializer<T>? subjectDeserializer,
+    IriSubjectGraphDeserializer<T>? subjectDeserializer,
     LiteralTermDeserializer<T>? literalDeserializer,
-    BlankNodeDeserializer<T>? blankNodeDeserializer,
+    BlankNodeSubjectGraphDeserializer<T>? blankNodeDeserializer,
   }) {
     var result = get<T>(
       subject,

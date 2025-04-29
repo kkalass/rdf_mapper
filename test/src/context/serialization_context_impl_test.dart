@@ -120,12 +120,12 @@ class TestPerson {
 
 // Test serializer that explicitly adds a type triple
 class TestPersonSerializerWithTypeTriple
-    implements SubjectSerializer<TestPerson> {
+    implements SubjectGraphSerializer<TestPerson> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubject(
+  (RdfSubject, List<Triple>) toRdfSubjectGraph(
     TestPerson value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -149,12 +149,12 @@ class TestPersonSerializerWithTypeTriple
 
 // Test serializer that doesn't add a type triple
 class TestPersonSerializerWithoutTypeTriple
-    implements SubjectSerializer<TestPerson> {
+    implements SubjectGraphSerializer<TestPerson> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubject(
+  (RdfSubject, List<Triple>) toRdfSubjectGraph(
     TestPerson value,
     SerializationContext context, {
     RdfSubject? parentSubject,

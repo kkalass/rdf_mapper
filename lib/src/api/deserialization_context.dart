@@ -20,10 +20,10 @@ abstract class DeserializationContext {
     RdfSubject subject,
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
-    IriNodeDeserializer<T>? subjectDeserializer,
+    IriSubjectGraphDeserializer<T>? subjectDeserializer,
     IriTermDeserializer<T>? iriDeserializer,
     LiteralTermDeserializer<T>? literalDeserializer,
-    BlankNodeDeserializer<T>? blankNodeDeserializer,
+    BlankNodeSubjectGraphDeserializer<T>? blankNodeDeserializer,
   });
 
   /// Gets an optional property value from the RDF graph
@@ -35,9 +35,9 @@ abstract class DeserializationContext {
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
     IriTermDeserializer<T>? iriDeserializer,
-    IriNodeDeserializer<T>? subjectDeserializer,
+    IriSubjectGraphDeserializer<T>? subjectDeserializer,
     LiteralTermDeserializer<T>? literalDeserializer,
-    BlankNodeDeserializer<T>? blankNodeDeserializer,
+    BlankNodeSubjectGraphDeserializer<T>? blankNodeDeserializer,
   });
 
   /// Gets multiple property values and collects them with a custom collector function
@@ -46,9 +46,9 @@ abstract class DeserializationContext {
     RdfPredicate predicate,
     R Function(Iterable<T>) collector, {
     IriTermDeserializer<T>? iriDeserializer,
-    IriNodeDeserializer<T>? subjectDeserializer,
+    IriSubjectGraphDeserializer<T>? subjectDeserializer,
     LiteralTermDeserializer<T>? literalDeserializer,
-    BlankNodeDeserializer<T>? blankNodeDeserializer,
+    BlankNodeSubjectGraphDeserializer<T>? blankNodeDeserializer,
   });
 
   /// Gets a list of property values
@@ -58,9 +58,9 @@ abstract class DeserializationContext {
     RdfSubject subject,
     RdfPredicate predicate, {
     IriTermDeserializer<T>? iriDeserializer,
-    IriNodeDeserializer<T>? subjectDeserializer,
+    IriSubjectGraphDeserializer<T>? subjectDeserializer,
     LiteralTermDeserializer<T>? literalDeserializer,
-    BlankNodeDeserializer<T>? blankNodeDeserializer,
+    BlankNodeSubjectGraphDeserializer<T>? blankNodeDeserializer,
   }) => getMany<T, List<T>>(
     subject,
     predicate,
@@ -78,9 +78,9 @@ abstract class DeserializationContext {
     RdfSubject subject,
     RdfPredicate predicate, {
     IriTermDeserializer<MapEntry<K, V>>? iriDeserializer,
-    IriNodeDeserializer<MapEntry<K, V>>? subjectDeserializer,
+    IriSubjectGraphDeserializer<MapEntry<K, V>>? subjectDeserializer,
     LiteralTermDeserializer<MapEntry<K, V>>? literalDeserializer,
-    BlankNodeDeserializer<MapEntry<K, V>>? blankNodeDeserializer,
+    BlankNodeSubjectGraphDeserializer<MapEntry<K, V>>? blankNodeDeserializer,
   }) => getMany<MapEntry<K, V>, Map<K, V>>(
     subject,
     predicate,

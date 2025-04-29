@@ -1054,7 +1054,7 @@ class CompanyMapper implements SubjectMapper<Company> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubject(
+  (RdfSubject, List<Triple>) toRdfSubjectGraph(
     Company company,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -1099,7 +1099,7 @@ class EmployeeMapper implements SubjectMapper<Employee> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubject(
+  (RdfSubject, List<Triple>) toRdfSubjectGraph(
     Employee person,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -1155,7 +1155,7 @@ class EmployeeWithCompanyReferenceMapper
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubject(
+  (RdfSubject, List<Triple>) toRdfSubjectGraph(
     EmployeeWithCompanyReference person,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -1314,7 +1314,7 @@ class TestPersonMapper implements SubjectMapper<TestPerson> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubject(
+  (RdfSubject, List<Triple>) toRdfSubjectGraph(
     TestPerson person,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -1373,7 +1373,7 @@ class AddressMapper implements BlankSubjectMapper<Address> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubject(
+  (RdfSubject, List<Triple>) toRdfSubjectGraph(
     Address value,
     SerializationContext context, {
     RdfSubject? parentSubject,

@@ -160,7 +160,7 @@ class TestEntityMapper implements SubjectMapper<TestEntity> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubject(
+  (RdfSubject, List<Triple>) toRdfSubjectGraph(
     TestEntity entity,
     SerializationContext context, {
     RdfSubject? parentSubject,

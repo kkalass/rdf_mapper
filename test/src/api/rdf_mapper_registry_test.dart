@@ -273,7 +273,8 @@ class TestLiteralSerializer implements LiteralTermSerializer<CustomType> {
   }
 }
 
-class TestSubjectDeserializer implements IriNodeDeserializer<CustomType> {
+class TestSubjectDeserializer
+    implements IriSubjectGraphDeserializer<CustomType> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/CustomType');
 
@@ -283,12 +284,12 @@ class TestSubjectDeserializer implements IriNodeDeserializer<CustomType> {
   }
 }
 
-class TestSubjectSerializer implements SubjectSerializer<CustomType> {
+class TestSubjectSerializer implements SubjectGraphSerializer<CustomType> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/CustomType');
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubject(
+  (RdfSubject, List<Triple>) toRdfSubjectGraph(
     CustomType value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -315,7 +316,7 @@ class TestSubjectMapper implements SubjectMapper<CustomType> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubject(
+  (RdfSubject, List<Triple>) toRdfSubjectGraph(
     CustomType value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -342,7 +343,7 @@ class AnotherTestSubjectMapper implements SubjectMapper<AnotherCustomType> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubject(
+  (RdfSubject, List<Triple>) toRdfSubjectGraph(
     AnotherCustomType value,
     SerializationContext context, {
     RdfSubject? parentSubject,

@@ -97,7 +97,7 @@ class PersonMapper implements SubjectMapper<Person> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubject(
+  (RdfSubject, List<Triple>) toRdfSubjectGraph(
     Person value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -134,7 +134,7 @@ class AddressMapper implements BlankSubjectMapper<Address> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubject(
+  (RdfSubject, List<Triple>) toRdfSubjectGraph(
     Address value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -165,7 +165,7 @@ class ContactMapper implements SubjectMapper<Contact> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubject(
+  (RdfSubject, List<Triple>) toRdfSubjectGraph(
     Contact value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -197,7 +197,7 @@ class StandaloneAddressMapper implements SubjectMapper<Address> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubject(
+  (RdfSubject, List<Triple>) toRdfSubjectGraph(
     Address value,
     SerializationContext context, {
     RdfSubject? parentSubject,

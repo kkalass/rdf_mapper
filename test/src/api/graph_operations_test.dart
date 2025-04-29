@@ -69,12 +69,12 @@ class TestItem {
 }
 
 // Test serializer
-class TestItemSerializer implements SubjectSerializer<TestItem> {
+class TestItemSerializer implements SubjectGraphSerializer<TestItem> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/TestItem');
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubject(
+  (RdfSubject, List<Triple>) toRdfSubjectGraph(
     TestItem value,
     SerializationContext context, {
     RdfSubject? parentSubject,

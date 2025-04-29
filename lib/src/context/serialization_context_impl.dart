@@ -54,10 +54,10 @@ class SerializationContextImpl extends SerializationContext {
     RdfSubject subject,
     RdfPredicate predicate,
     T instance, {
-    SubjectSerializer<T>? serializer,
+    SubjectGraphSerializer<T>? serializer,
   }) {
     // Try to get serializer directly for type T if provided or available
-    SubjectSerializer<T>? ser = _getSerializerFallbackToRuntimeType(
+    SubjectGraphSerializer<T>? ser = _getSerializerFallbackToRuntimeType(
       serializer,
       instance,
       _registry.getSubjectSerializer,
@@ -67,7 +67,7 @@ class SerializationContextImpl extends SerializationContext {
       return [];
     }
 
-    var (childIri, childTriples) = ser.toRdfSubject(
+    var (childIri, childTriples) = ser.toRdfSubjectGraph(
       instance,
       this,
       parentSubject: subject,
@@ -156,7 +156,7 @@ class SerializationContextImpl extends SerializationContext {
   @override
   (RdfSubject, List<Triple>) subject<T>(
     T instance, {
-    SubjectSerializer<T>? serializer,
+    SubjectGraphSerializer<T>? serializer,
   }) {
     if (instance == null) {
       throw ArgumentError('Cannot serialize null instance');
@@ -174,7 +174,7 @@ class SerializationContextImpl extends SerializationContext {
       throw SerializerNotFoundException('SubjectSerializer', T);
     }
 
-    var (iri, triples) = ser.toRdfSubject(instance, this);
+    var (iri, triples) = ser.toRdfSubjectGraph(instance, this);
 
     // Check if a type triple already exists
     final hasTypeTriple = triples.any(

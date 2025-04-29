@@ -724,7 +724,7 @@ class Tag {
   Tag({required this.id, required this.name});
 }
 
-class DocumentDeserializer implements IriNodeDeserializer<Document> {
+class DocumentDeserializer implements IriSubjectGraphDeserializer<Document> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Document');
 
@@ -746,7 +746,7 @@ class DocumentDeserializer implements IriNodeDeserializer<Document> {
 }
 
 class DocumentWithTagReferencesDeserializer
-    implements IriNodeDeserializer<Document> {
+    implements IriSubjectGraphDeserializer<Document> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Document');
 
@@ -767,7 +767,7 @@ class DocumentWithTagReferencesDeserializer
   }
 }
 
-class TagDeserializer implements IriNodeDeserializer<Tag> {
+class TagDeserializer implements IriSubjectGraphDeserializer<Tag> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Tag');
 
@@ -824,7 +824,7 @@ class AddressMapper implements SubjectMapper<Address> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubject(
+  (RdfSubject, List<Triple>) toRdfSubjectGraph(
     Address value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -859,7 +859,7 @@ class PersonMapper implements SubjectMapper<Person> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubject(
+  (RdfSubject, List<Triple>) toRdfSubjectGraph(
     Person value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -920,7 +920,7 @@ class TestPersonMapper implements SubjectMapper<TestPerson> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfSubject(
+  (RdfSubject, List<Triple>) toRdfSubjectGraph(
     TestPerson value,
     SerializationContext context, {
     RdfSubject? parentSubject,
