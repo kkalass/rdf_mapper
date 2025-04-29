@@ -56,7 +56,7 @@ class MockSerializationContext extends SerializationContext {
   }
 
   @override
-  (RdfSubject, List<Triple>) node<T>(T instance, {serializer}) {
+  List<Triple> node<T>(T instance, {serializer}) {
     throw UnimplementedError();
   }
 }
