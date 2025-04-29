@@ -196,7 +196,7 @@ class Rating {
 // --- Mappers ---
 
 // IRI-based entity mapper
-class BookMapper implements SubjectMapper<Book> {
+class BookMapper implements IriSubjectGraphMapper<Book> {
   static final titlePredicate = SchemaProperties.name;
   static final authorPredicate = SchemaProperties.author;
   static final publishedPredicate = SchemaProperties.datePublished;
@@ -243,7 +243,7 @@ class BookMapper implements SubjectMapper<Book> {
 }
 
 // Blank node-based entity mapper
-class ChapterMapper implements BlankSubjectMapper<Chapter> {
+class ChapterMapper implements BlankNodeSubjectGraphMapper<Chapter> {
   static final titlePredicate = IriTerm('https://schema.org/name');
   static final numberPredicate = IriTerm('https://schema.org/position');
 

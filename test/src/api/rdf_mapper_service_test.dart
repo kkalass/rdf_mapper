@@ -819,7 +819,7 @@ class Person {
   String toString() => 'Person($id, $name)';
 }
 
-class AddressMapper implements SubjectMapper<Address> {
+class AddressMapper implements IriSubjectGraphMapper<Address> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Address');
 
@@ -850,7 +850,7 @@ class AddressMapper implements SubjectMapper<Address> {
   }
 }
 
-class PersonMapper implements SubjectMapper<Person> {
+class PersonMapper implements IriSubjectGraphMapper<Person> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
@@ -906,7 +906,7 @@ class TestPerson {
   TestPerson({required this.id, required this.name, required this.age});
 }
 
-class TestPersonMapper implements SubjectMapper<TestPerson> {
+class TestPersonMapper implements IriSubjectGraphMapper<TestPerson> {
   @override
   final IriTerm typeIri = IriTerm('http://xmlns.com/foaf/0.1/Person');
 

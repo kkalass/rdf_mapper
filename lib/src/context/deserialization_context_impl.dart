@@ -31,7 +31,7 @@ class DeserializationContextImpl extends DeserializationContext {
   }
 
   // Hook for the Tracking implementation to track deserialized nodes.
-  void _deserializeNode(RdfTerm term) {}
+  void _deserializeSubjectGraph(RdfTerm term) {}
 
   T deserialize<T>(
     RdfTerm term,
@@ -48,7 +48,7 @@ class DeserializationContextImpl extends DeserializationContext {
           var deser =
               subjectGraphDeserializer ??
               _registry.getIriSubjectGraphDeserializer<T>();
-          _deserializeNode(term);
+          _deserializeSubjectGraph(term);
           return deser.fromRdfSubjectGraph(term, context);
         }
         var deser =
@@ -63,7 +63,7 @@ class DeserializationContextImpl extends DeserializationContext {
         var deser =
             blankNodeSubjectGraphDeserializer ??
             _registry.getBlankNodeSubjectGraphDeserializer<T>();
-        _deserializeNode(term);
+        _deserializeSubjectGraph(term);
         return deser.fromRdfSubjectGraph(term, context);
     }
   }
@@ -167,8 +167,8 @@ class TrackingDeserializationContext extends DeserializationContextImpl {
   }) : super(graph: graph, registry: registry);
 
   @override
-  void _deserializeNode(RdfTerm term) {
-    super._deserializeNode(term);
+  void _deserializeSubjectGraph(RdfTerm term) {
+    super._deserializeSubjectGraph(term);
     // Track processing of subject terms
     if (term is RdfSubject) {
       _processedSubjects.add(term);

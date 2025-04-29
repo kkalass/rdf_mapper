@@ -114,11 +114,11 @@ final class RdfMapperRegistry {
 
   void registerMapper<T>(Mapper<T> mapper) {
     switch (mapper) {
-      case SubjectMapper<T>():
+      case IriSubjectGraphMapper<T>():
         _registerIriSubjectGraphDeserializer(mapper);
         _registerSubjectGraphSerializer(mapper);
         break;
-      case BlankSubjectMapper<T>():
+      case BlankNodeSubjectGraphMapper<T>():
         _registerBlankNodeSubjectGraphDeserializer<T>(mapper);
         _registerSubjectGraphSerializer<T>(mapper);
         break;

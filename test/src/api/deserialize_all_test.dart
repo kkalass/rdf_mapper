@@ -74,7 +74,7 @@ class Contact {
 }
 
 // Mappers
-class PersonMapper implements SubjectMapper<Person> {
+class PersonMapper implements IriSubjectGraphMapper<Person> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
@@ -119,7 +119,7 @@ class PersonMapper implements SubjectMapper<Person> {
   }
 }
 
-class AddressMapper implements BlankSubjectMapper<Address> {
+class AddressMapper implements BlankNodeSubjectGraphMapper<Address> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Address');
 
@@ -153,7 +153,7 @@ class AddressMapper implements BlankSubjectMapper<Address> {
   }
 }
 
-class ContactMapper implements SubjectMapper<Contact> {
+class ContactMapper implements IriSubjectGraphMapper<Contact> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Contact');
 
@@ -185,7 +185,7 @@ class ContactMapper implements SubjectMapper<Contact> {
 }
 
 // Standalone address mapper for IRI-based addresses (not blank nodes)
-class StandaloneAddressMapper implements SubjectMapper<Address> {
+class StandaloneAddressMapper implements IriSubjectGraphMapper<Address> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Address');
 

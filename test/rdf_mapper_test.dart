@@ -1046,7 +1046,7 @@ class CompanyReferenceMapper implements IriTermMapper<CompanyReference> {
 }
 
 // Test mapper for Company class
-class CompanyMapper implements SubjectMapper<Company> {
+class CompanyMapper implements IriSubjectGraphMapper<Company> {
   static final namePredicate = SchemaProperties.name;
   static final addressPredicate = SchemaPersonProperties.address;
 
@@ -1085,7 +1085,7 @@ class CompanyMapper implements SubjectMapper<Company> {
 }
 
 // Update TestPersonMapper to include employer
-class EmployeeMapper implements SubjectMapper<Employee> {
+class EmployeeMapper implements IriSubjectGraphMapper<Employee> {
   static final addressPredicate = SchemaPersonProperties.address;
   static final employerPredicate = worksForPredicate;
   static final givenNamePredicate = SchemaPersonProperties.givenName;
@@ -1145,7 +1145,7 @@ class EmployeeMapper implements SubjectMapper<Employee> {
 }
 
 class EmployeeWithCompanyReferenceMapper
-    implements SubjectMapper<EmployeeWithCompanyReference> {
+    implements IriSubjectGraphMapper<EmployeeWithCompanyReference> {
   static final addressPredicate = SchemaPersonProperties.address;
   static final employerPredicate = worksForPredicate;
   static final givenNamePredicate = SchemaPersonProperties.givenName;
@@ -1298,7 +1298,7 @@ class TestPerson {
 }
 
 // Test mapper implementation
-class TestPersonMapper implements SubjectMapper<TestPerson> {
+class TestPersonMapper implements IriSubjectGraphMapper<TestPerson> {
   static final addressPredicate = SchemaPersonProperties.address;
   static final employerPredicate = worksForPredicate;
   static final givenNamePredicate = SchemaPersonProperties.givenName;
@@ -1370,7 +1370,7 @@ class TestPersonMapper implements SubjectMapper<TestPerson> {
 }
 
 // Implementation des Address-Mappers für Blank Nodes
-class AddressMapper implements BlankSubjectMapper<Address> {
+class AddressMapper implements BlankNodeSubjectGraphMapper<Address> {
   static final streetAddressPredicate = SchemaAddressProperties.streetAddress;
   static final addressLocalityPredicate =
       SchemaAddressProperties.addressLocality;

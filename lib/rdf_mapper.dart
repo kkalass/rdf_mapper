@@ -120,14 +120,14 @@ final class RdfMapper {
   /// If not specified, the contentType will be auto-detected.
   T deserializeBySubject<T>(
     String rdfString,
-    RdfSubject subjectId, {
+    RdfSubject subject, {
     String? contentType,
     void Function(RdfMapperRegistry registry)? register,
   }) {
     final graph = _rdfCore.parse(rdfString, contentType: contentType);
     return _graphOperations.deserializeBySubject<T>(
       graph,
-      subjectId,
+      subject,
       register: register,
     );
   }

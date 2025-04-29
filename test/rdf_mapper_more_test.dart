@@ -138,7 +138,7 @@ class TestItem {
   TestItem({required this.name, required this.age});
 }
 
-final class TestItemRdfMapper implements SubjectMapper<TestItem> {
+final class TestItemRdfMapper implements IriSubjectGraphMapper<TestItem> {
   final String storageRoot;
 
   TestItemRdfMapper({required this.storageRoot});

@@ -143,7 +143,7 @@ class TestEntity {
   TestEntity({required this.id, required this.name, required this.value});
 }
 
-class TestEntityMapper implements SubjectMapper<TestEntity> {
+class TestEntityMapper implements IriSubjectGraphMapper<TestEntity> {
   static final namePredicate = IriTerm('http://schema.org/name');
   static final valuePredicate = IriTerm('http://schema.org/value');
 

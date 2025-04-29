@@ -326,7 +326,7 @@ class TestSubjectSerializer implements SubjectGraphSerializer<CustomType> {
   }
 }
 
-class TestSubjectMapper implements SubjectMapper<CustomType> {
+class TestSubjectMapper implements IriSubjectGraphMapper<CustomType> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/CustomType');
 
@@ -353,7 +353,8 @@ class TestSubjectMapper implements SubjectMapper<CustomType> {
   }
 }
 
-class AnotherTestSubjectMapper implements SubjectMapper<AnotherCustomType> {
+class AnotherTestSubjectMapper
+    implements IriSubjectGraphMapper<AnotherCustomType> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/AnotherCustomType');
 
