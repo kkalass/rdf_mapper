@@ -47,13 +47,13 @@ class Namespace {
   ///
   /// @return The base IRI string
   String get uri => _base;
-  
+
   /// Returns a string representation of this namespace.
   ///
   /// @return The base IRI string
   @override
   String toString() => _base;
-  
+
   /// Checks if this namespace is equal to another object.
   ///
   /// Two namespaces are considered equal if they have the same base IRI.
@@ -65,7 +65,7 @@ class Namespace {
     if (identical(this, other)) return true;
     return other is Namespace && other._base == _base;
   }
-  
+
   /// Returns a hash code for this namespace.
   ///
   /// @return A hash code based on the base IRI
