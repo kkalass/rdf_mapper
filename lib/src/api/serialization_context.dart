@@ -1,7 +1,5 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/src/serializers/iri_term_serializer.dart';
-import 'package:rdf_mapper/src/serializers/literal_term_serializer.dart';
-import 'package:rdf_mapper/src/serializers/subject_serializer.dart';
+import 'package:rdf_mapper/src/api/serializer.dart';
 
 /// Context for serialization operations
 ///

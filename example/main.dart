@@ -1,19 +1,17 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_core/vocab.dart';
-import 'package:rdf_mapper/src/mappers/rdf_blank_subject_mapper.dart';
-import 'package:rdf_mapper/src/mappers/rdf_iri_term_mapper.dart';
-import 'package:rdf_mapper/src/mappers/rdf_literal_term_mapper.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
+import 'package:rdf_mapper/src/api/mapper.dart';
 
 void main() {
-  // Create mapper with default registry
-  final rdf = RdfMapper.withDefaultRegistry();
-
-  // Register our custom mappers
-  rdf.registerSubjectMapper<Book>(BookMapper());
-  rdf.registerBlankSubjectMapper<Chapter>(ChapterMapper());
-  rdf.registerIriTermMapper<ISBN>(ISBNMapper());
-  rdf.registerLiteralMapper<Rating>(RatingMapper());
+  final rdf =
+      // Create mapper with default registry
+      RdfMapper.withDefaultRegistry()
+        // Register our custom mappers
+        ..registerMapper<Book>(BookMapper())
+        ..registerMapper<Chapter>(ChapterMapper())
+        ..registerMapper<ISBN>(ISBNMapper())
+        ..registerMapper<Rating>(RatingMapper());
 
   // Create a book with chapters
   final book = Book(
@@ -198,7 +196,7 @@ class Rating {
 // --- Mappers ---
 
 // IRI-based entity mapper
-class BookMapper implements RdfSubjectMapper<Book> {
+class BookMapper implements SubjectMapper<Book> {
   static final titlePredicate = SchemaProperties.name;
   static final authorPredicate = SchemaProperties.author;
   static final publishedPredicate = SchemaProperties.datePublished;
@@ -244,7 +242,7 @@ class BookMapper implements RdfSubjectMapper<Book> {
 }
 
 // Blank node-based entity mapper
-class ChapterMapper implements RdfBlankSubjectMapper<Chapter> {
+class ChapterMapper implements BlankSubjectMapper<Chapter> {
   static final titlePredicate = IriTerm('https://schema.org/name');
   static final numberPredicate = IriTerm('https://schema.org/position');
 
@@ -274,7 +272,7 @@ class ChapterMapper implements RdfBlankSubjectMapper<Chapter> {
 }
 
 // Custom IRI mapper
-class ISBNMapper implements RdfIriTermMapper<ISBN> {
+class ISBNMapper implements IriTermMapper<ISBN> {
   static const String ISBN_URI_PREFIX = 'urn:isbn:';
 
   @override
@@ -293,7 +291,7 @@ class ISBNMapper implements RdfIriTermMapper<ISBN> {
 }
 
 // Custom literal mapper
-class RatingMapper implements RdfLiteralTermMapper<Rating> {
+class RatingMapper implements LiteralTermMapper<Rating> {
   @override
   LiteralTerm toRdfTerm(Rating rating, SerializationContext context) {
     return LiteralTerm.typed(rating.stars.toString(), 'integer');

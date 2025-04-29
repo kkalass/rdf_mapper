@@ -1,13 +1,10 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_core/vocab.dart';
+import 'package:rdf_mapper/src/api/deserializer.dart';
 import 'package:rdf_mapper/src/context/deserialization_context_impl.dart';
 import 'package:rdf_mapper/src/exceptions/property_value_not_found_exception.dart';
 import 'package:rdf_mapper/src/exceptions/too_many_property_values_exception.dart';
-import 'package:rdf_mapper/src/deserializers/blank_node_term_deserializer.dart';
-import 'package:rdf_mapper/src/deserializers/iri_term_deserializer.dart';
-import 'package:rdf_mapper/src/deserializers/literal_term_deserializer.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
-import 'package:rdf_mapper/src/deserializers/subject_deserializer.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
 import 'package:test/test.dart';
 
@@ -115,7 +112,7 @@ void main() {
 
     test('getPropertyValue correctly retrieves IRI values', () {
       // Register custom IRI deserializer
-      registry.registerIriTermDeserializer<String>(CustomIriDeserializer());
+      registry.registerDeserializer<String>(CustomIriDeserializer());
 
       final value = context.get<String>(
         subject,
@@ -181,7 +178,7 @@ void main() {
     test(
       'fromRdf correctly converts BlankNode values with custom deserializer',
       () {
-        registry.registerBlankNodeTermDeserializer<TestAddress>(
+        registry.registerDeserializer<TestAddress>(
           CustomBlankNodeDeserializer(),
         );
 
@@ -198,7 +195,7 @@ void main() {
     test('fromRdfByTypeIri deserializes objects by type IRI', () {
       // Register a subject deserializer
       final deserializer = TestPersonDeserializer();
-      registry.registerSubjectDeserializer<TestPerson>(deserializer);
+      registry.registerDeserializer<TestPerson>(deserializer);
 
       // Call fromRdfByTypeIri directly
       final person = context.deserializeSubject(

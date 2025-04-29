@@ -1,8 +1,9 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_core/vocab.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
-import 'package:rdf_mapper/src/serializers/subject_serializer.dart';
+
 import 'package:rdf_mapper/src/api/serialization_context.dart';
+import 'package:rdf_mapper/src/api/serializer.dart';
 import 'package:rdf_mapper/src/context/serialization_context_impl.dart';
 import 'package:test/test.dart';
 
@@ -21,7 +22,7 @@ void main() {
       () {
         // Register a custom mapper that explicitly adds a type triple
         final mapper = TestPersonSerializerWithTypeTriple();
-        registry.registerSubjectSerializer<TestPerson>(mapper);
+        registry.registerSerializer<TestPerson>(mapper);
 
         // Create a test person
         final person = TestPerson(
@@ -51,7 +52,7 @@ void main() {
     test('should add the type triple when not provided by the mapper', () {
       // Register a custom mapper that doesn't add a type triple
       final mapper = TestPersonSerializerWithoutTypeTriple();
-      registry.registerSubjectSerializer<TestPerson>(mapper);
+      registry.registerSerializer<TestPerson>(mapper);
 
       // Create a test person
       final person = TestPerson(
@@ -80,7 +81,7 @@ void main() {
     test('childSubject method should not add duplicate type triple', () {
       // Register a custom mapper that explicitly adds a type triple
       final mapper = TestPersonSerializerWithTypeTriple();
-      registry.registerSubjectSerializer<TestPerson>(mapper);
+      registry.registerSerializer<TestPerson>(mapper);
 
       // Create a test person
       final person = TestPerson(

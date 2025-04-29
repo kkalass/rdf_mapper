@@ -1,8 +1,5 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/src/deserializers/blank_node_term_deserializer.dart';
-import 'package:rdf_mapper/src/deserializers/iri_term_deserializer.dart';
-import 'package:rdf_mapper/src/deserializers/literal_term_deserializer.dart';
-import 'package:rdf_mapper/src/deserializers/subject_deserializer.dart';
+import 'package:rdf_mapper/src/api/deserializer.dart';
 
 /// Context for deserialization operations
 ///

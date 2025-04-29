@@ -1,7 +1,7 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_core/vocab.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
-import 'package:rdf_mapper/src/deserializers/literal_term_deserializer.dart';
+import 'package:rdf_mapper/src/api/deserializer.dart';
 
 /// Deserializer for string literals in RDF.
 ///

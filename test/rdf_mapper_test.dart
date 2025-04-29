@@ -1,9 +1,7 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_core/vocab.dart';
-import 'package:rdf_mapper/src/mappers/rdf_blank_subject_mapper.dart';
-import 'package:rdf_mapper/src/mappers/rdf_iri_term_mapper.dart';
-import 'package:rdf_mapper/src/mappers/rdf_literal_term_mapper.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
+import 'package:rdf_mapper/src/api/mapper.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -22,20 +20,38 @@ void main() {
         expect(rdfMapper.registry, isNotNull);
 
         // Check that standard primitive type serializers and deserializers are registered
-        expect(rdfMapper.registry.hasLiteralDeserializerFor<String>(), isTrue);
-        expect(rdfMapper.registry.hasLiteralDeserializerFor<int>(), isTrue);
-        expect(rdfMapper.registry.hasLiteralDeserializerFor<double>(), isTrue);
-        expect(rdfMapper.registry.hasLiteralDeserializerFor<bool>(), isTrue);
         expect(
-          rdfMapper.registry.hasLiteralDeserializerFor<DateTime>(),
+          rdfMapper.registry.hasLiteralTermDeserializerFor<String>(),
+          isTrue,
+        );
+        expect(rdfMapper.registry.hasLiteralTermDeserializerFor<int>(), isTrue);
+        expect(
+          rdfMapper.registry.hasLiteralTermDeserializerFor<double>(),
+          isTrue,
+        );
+        expect(
+          rdfMapper.registry.hasLiteralTermDeserializerFor<bool>(),
+          isTrue,
+        );
+        expect(
+          rdfMapper.registry.hasLiteralTermDeserializerFor<DateTime>(),
           isTrue,
         );
 
-        expect(rdfMapper.registry.hasLiteralSerializerFor<String>(), isTrue);
-        expect(rdfMapper.registry.hasLiteralSerializerFor<int>(), isTrue);
-        expect(rdfMapper.registry.hasLiteralSerializerFor<double>(), isTrue);
-        expect(rdfMapper.registry.hasLiteralSerializerFor<bool>(), isTrue);
-        expect(rdfMapper.registry.hasLiteralSerializerFor<DateTime>(), isTrue);
+        expect(
+          rdfMapper.registry.hasLiteralTermSerializerFor<String>(),
+          isTrue,
+        );
+        expect(rdfMapper.registry.hasLiteralTermSerializerFor<int>(), isTrue);
+        expect(
+          rdfMapper.registry.hasLiteralTermSerializerFor<double>(),
+          isTrue,
+        );
+        expect(rdfMapper.registry.hasLiteralTermSerializerFor<bool>(), isTrue);
+        expect(
+          rdfMapper.registry.hasLiteralTermSerializerFor<DateTime>(),
+          isTrue,
+        );
       },
     );
 
@@ -43,9 +59,7 @@ void main() {
       'toGraph should serialize an object to RDF graph using a custom mapper',
       () {
         // Register a custom mapper
-        rdfMapper.registry.registerSubjectMapper<TestPerson>(
-          TestPersonMapper(),
-        );
+        rdfMapper.registerMapper<TestPerson>(TestPersonMapper());
 
         // Create a test object
         final person = TestPerson(
@@ -112,7 +126,7 @@ void main() {
 
     test('fromGraphBySubject should deserialize an RDF graph to an object', () {
       // Register a custom mapper
-      rdfMapper.registerSubjectMapper<TestPerson>(TestPersonMapper());
+      rdfMapper.registerMapper<TestPerson>(TestPersonMapper());
 
       // Create a test graph
       final subjectId = IriTerm('http://example.org/person/1');
@@ -151,7 +165,7 @@ void main() {
 
     test('fromGraph should deserialize the single subject in an RDF graph', () {
       // Register a custom mapper
-      rdfMapper.registry.registerSubjectMapper<TestPerson>(TestPersonMapper());
+      rdfMapper.registerMapper<TestPerson>(TestPersonMapper());
 
       // Create a test graph with a single subject
       final subjectId = IriTerm('http://example.org/person/1');
@@ -185,9 +199,7 @@ void main() {
       'toGraphFromList should serialize a list of objects to an RDF graph',
       () {
         // Register a custom mapper
-        rdfMapper.registry.registerSubjectMapper<TestPerson>(
-          TestPersonMapper(),
-        );
+        rdfMapper.registerMapper<TestPerson>(TestPersonMapper());
 
         // Create test objects
         final people = [
@@ -252,9 +264,7 @@ void main() {
       'fromGraphAllSubjects should deserialize all subjects in an RDF graph',
       () {
         // Register a custom mapper
-        rdfMapper.registry.registerSubjectMapper<TestPerson>(
-          TestPersonMapper(),
-        );
+        rdfMapper.registerMapper<TestPerson>(TestPersonMapper());
 
         // Create a test graph with multiple subjects
         final graph = RdfGraph(
@@ -332,7 +342,7 @@ void main() {
       final graph = rdfMapper.graph.serialize<TestPerson>(
         person,
         register: (registry) {
-          registry.registerSubjectMapper<TestPerson>(TestPersonMapper());
+          registry.registerMapper<TestPerson>(TestPersonMapper());
         },
       );
 
@@ -351,9 +361,7 @@ void main() {
       'toString should serialize an object to RDF string using default Turtle format',
       () {
         // Register a custom mapper
-        rdfMapper.registry.registerSubjectMapper<TestPerson>(
-          TestPersonMapper(),
-        );
+        rdfMapper.registerMapper<TestPerson>(TestPersonMapper());
 
         // Create a test object
         final person = TestPerson(
@@ -379,8 +387,8 @@ void main() {
       'toString should serialize an object with blank child to RDF string using default Turtle format',
       () {
         // Register a custom mapper
-        rdfMapper.registerSubjectMapper(TestPersonMapper());
-        rdfMapper.registerBlankSubjectMapper(AddressMapper());
+        rdfMapper.registerMapper(TestPersonMapper());
+        rdfMapper.registerMapper(AddressMapper());
 
         // Create a test object
         final person = TestPerson(
@@ -422,9 +430,7 @@ _:b0 a schema:PostalAddress;
       'fromString should deserialize an RDF string to an object using default Turtle format',
       () {
         // Register a custom mapper
-        rdfMapper.registry.registerSubjectMapper<TestPerson>(
-          TestPersonMapper(),
-        );
+        rdfMapper.registerMapper<TestPerson>(TestPersonMapper());
 
         // Create a test Turtle string
         final turtle = '''
@@ -451,8 +457,8 @@ _:b0 a schema:PostalAddress;
       'toString should serialize an object with blank child to RDF string using default Turtle format including blank node',
       () {
         // Register a custom mapper
-        rdfMapper.registerSubjectMapper(TestPersonMapper());
-        rdfMapper.registerBlankSubjectMapper(AddressMapper());
+        rdfMapper.registerMapper(TestPersonMapper());
+        rdfMapper.registerMapper(AddressMapper());
 
         final turtle = """
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
@@ -493,9 +499,7 @@ _:b0 a schema:PostalAddress;
       'fromStringAllSubjects should deserialize multiple subjects from an RDF string',
       () {
         // Register a custom mapper
-        rdfMapper.registry.registerSubjectMapper<TestPerson>(
-          TestPersonMapper(),
-        );
+        rdfMapper.registerMapper<TestPerson>(TestPersonMapper());
 
         // Create a test Turtle string with multiple subjects
         final turtle = '''
@@ -541,9 +545,7 @@ _:b0 a schema:PostalAddress;
       'toStringFromList should serialize a list of objects to an RDF string',
       () {
         // Register a custom mapper
-        rdfMapper.registry.registerSubjectMapper<TestPerson>(
-          TestPersonMapper(),
-        );
+        rdfMapper.registerMapper<TestPerson>(TestPersonMapper());
 
         // Create test objects
         final people = [
@@ -603,7 +605,7 @@ _:b0 a schema:PostalAddress;
       );
 
       // Register mapper for testing
-      customRdfMapper.registerSubjectMapper<TestPerson>(TestPersonMapper());
+      customRdfMapper.registerMapper<TestPerson>(TestPersonMapper());
 
       // Test parsing using the mock
       final person = customRdfMapper.deserialize<TestPerson>(
@@ -623,7 +625,7 @@ _:b0 a schema:PostalAddress;
 
   group('Mapper registration convenience methods', () {
     test(
-      'registerSubjectMapper should register a subject serializer and deserializer in the registry',
+      'registerMapper should register a subject serializer and deserializer in the registry',
       () {
         final mapper = TestPersonMapper();
 
@@ -638,7 +640,7 @@ _:b0 a schema:PostalAddress;
         );
 
         // Register mapper through convenience method
-        rdfMapper.registerSubjectMapper<TestPerson>(mapper);
+        rdfMapper.registerMapper<TestPerson>(mapper);
 
         // Verify mapper is now registered
         expect(
@@ -668,21 +670,24 @@ _:b0 a schema:PostalAddress;
 
         // Verify serializer is not registered initially
         expect(
-          rdfMapper.registry.hasLiteralSerializerFor<_TestType>(),
+          rdfMapper.registry.hasLiteralTermSerializerFor<_TestType>(),
           isFalse,
         );
         expect(
-          rdfMapper.registry.hasLiteralDeserializerFor<_TestType>(),
+          rdfMapper.registry.hasLiteralTermDeserializerFor<_TestType>(),
           isFalse,
         );
 
         // Register serializer through convenience method
-        rdfMapper.registerLiteralMapper<_TestType>(mapper);
+        rdfMapper.registerMapper<_TestType>(mapper);
 
         // Verify serializer is now registered
-        expect(rdfMapper.registry.hasLiteralSerializerFor<_TestType>(), isTrue);
         expect(
-          rdfMapper.registry.hasLiteralDeserializerFor<_TestType>(),
+          rdfMapper.registry.hasLiteralTermSerializerFor<_TestType>(),
+          isTrue,
+        );
+        expect(
+          rdfMapper.registry.hasLiteralTermDeserializerFor<_TestType>(),
           isTrue,
         );
       },
@@ -694,15 +699,24 @@ _:b0 a schema:PostalAddress;
         final mapper = _TestIriTermMapper();
 
         // Verify serializer is not registered initially
-        expect(rdfMapper.registry.hasIriSerializerFor<_TestType>(), isFalse);
-        expect(rdfMapper.registry.hasIriDeserializerFor<_TestType>(), isFalse);
+        expect(
+          rdfMapper.registry.hasIriTermSerializerFor<_TestType>(),
+          isFalse,
+        );
+        expect(
+          rdfMapper.registry.hasIriTermDeserializerFor<_TestType>(),
+          isFalse,
+        );
 
         // Register serializer through convenience method
-        rdfMapper.registerIriTermMapper<_TestType>(mapper);
+        rdfMapper.registerMapper<_TestType>(mapper);
 
         // Verify serializer is now registered
-        expect(rdfMapper.registry.hasIriSerializerFor<_TestType>(), isTrue);
-        expect(rdfMapper.registry.hasIriDeserializerFor<_TestType>(), isTrue);
+        expect(rdfMapper.registry.hasIriTermSerializerFor<_TestType>(), isTrue);
+        expect(
+          rdfMapper.registry.hasIriTermDeserializerFor<_TestType>(),
+          isTrue,
+        );
       },
     );
     test(
@@ -712,17 +726,17 @@ _:b0 a schema:PostalAddress;
 
         // Verify deserializer is not registered initially
         expect(
-          rdfMapper.registry.hasBlankNodeDeserializerFor<Address>(),
+          rdfMapper.registry.hasBlankNodeTermDeserializerFor<Address>(),
           isFalse,
         );
         expect(rdfMapper.registry.hasSubjectSerializerFor<Address>(), isFalse);
 
         // Register deserializer through convenience method
-        rdfMapper.registerBlankSubjectMapper<Address>(mapper);
+        rdfMapper.registerMapper<Address>(mapper);
 
         // Verify deserializer is now registered
         expect(
-          rdfMapper.registry.hasBlankNodeDeserializerFor<Address>(),
+          rdfMapper.registry.hasBlankNodeTermDeserializerFor<Address>(),
           isTrue,
         );
         expect(rdfMapper.registry.hasSubjectSerializerFor<Address>(), isTrue);
@@ -822,7 +836,7 @@ class TestPerson {
 }
 
 // Test mapper implementation
-class TestPersonMapper implements RdfSubjectMapper<TestPerson> {
+class TestPersonMapper implements SubjectMapper<TestPerson> {
   static final addressPredicate = SchemaPersonProperties.address;
   static final givenNamePredicate = SchemaPersonProperties.givenName;
   static final agePredicate = IriTerm('http://xmlns.com/foaf/0.1/age');
@@ -876,7 +890,7 @@ class TestPersonMapper implements RdfSubjectMapper<TestPerson> {
 }
 
 // Implementation des Address-Mappers für Blank Nodes
-class AddressMapper implements RdfBlankSubjectMapper<Address> {
+class AddressMapper implements BlankSubjectMapper<Address> {
   static final streetAddressPredicate = SchemaAddressProperties.streetAddress;
   static final addressLocalityPredicate =
       SchemaAddressProperties.addressLocality;
@@ -974,7 +988,7 @@ class _TestType {
 }
 
 // Test serializers and deserializers for registration tests
-class _TestLiteralMapper implements RdfLiteralTermMapper<_TestType> {
+class _TestLiteralMapper implements LiteralTermMapper<_TestType> {
   @override
   LiteralTerm toRdfTerm(_TestType value, SerializationContext context) {
     return LiteralTerm.string(value.value);
@@ -986,7 +1000,7 @@ class _TestLiteralMapper implements RdfLiteralTermMapper<_TestType> {
   }
 }
 
-class _TestIriTermMapper implements RdfIriTermMapper<_TestType> {
+class _TestIriTermMapper implements IriTermMapper<_TestType> {
   @override
   IriTerm toRdfTerm(_TestType value, SerializationContext context) {
     return IriTerm('http://example.org/${value.value}');

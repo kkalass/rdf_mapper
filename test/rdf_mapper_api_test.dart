@@ -1,5 +1,6 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
+import 'package:rdf_mapper/src/api/mapper.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -44,7 +45,7 @@ void main() {
 
     setUp(() {
       rdfMapper = RdfMapper.withDefaultRegistry();
-      rdfMapper.registerSubjectMapper(TestEntityMapper());
+      rdfMapper.registerMapper(TestEntityMapper());
     });
 
     test('should serialize and deserialize via string operations', () {
@@ -125,7 +126,7 @@ class TestEntity {
   TestEntity({required this.id, required this.name, required this.value});
 }
 
-class TestEntityMapper implements RdfSubjectMapper<TestEntity> {
+class TestEntityMapper implements SubjectMapper<TestEntity> {
   static final namePredicate = IriTerm('http://schema.org/name');
   static final valuePredicate = IriTerm('http://schema.org/value');
 

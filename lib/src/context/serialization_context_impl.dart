@@ -1,10 +1,8 @@
 import 'package:logging/logging.dart';
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_core/vocab.dart';
-import 'package:rdf_mapper/src/serializers/iri_term_serializer.dart';
-import 'package:rdf_mapper/src/serializers/literal_term_serializer.dart';
+import 'package:rdf_mapper/src/api/serializer.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
-import 'package:rdf_mapper/src/serializers/subject_serializer.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
 
 final _log = Logger("rdf_orm.serialization");
@@ -122,8 +120,8 @@ class SerializationContextImpl extends SerializationContext {
         _nullTrimmingLookup(
           serializer,
           instance,
-          _registry.getIriSerializer,
-          _registry.getIriSerializerByType,
+          _registry.getIriTermSerializer,
+          _registry.getIriTermSerializerByType,
         )!;
 
     var term = ser.toRdfTerm(instance, this);
@@ -146,8 +144,8 @@ class SerializationContextImpl extends SerializationContext {
         _nullTrimmingLookup(
           serializer,
           instance,
-          _registry.getLiteralSerializer,
-          _registry.getLiteralSerializerByType,
+          _registry.getLiteralTermSerializer,
+          _registry.getLiteralTermSerializerByType,
         )!;
 
     var term = ser.toRdfTerm(instance, this);

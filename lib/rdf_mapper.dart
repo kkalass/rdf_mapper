@@ -24,27 +24,17 @@
 library rdf_mapper;
 
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/src/mappers/rdf_blank_subject_mapper.dart';
-import 'package:rdf_mapper/src/mappers/rdf_iri_term_mapper.dart';
-import 'package:rdf_mapper/src/mappers/rdf_literal_term_mapper.dart';
-import 'package:rdf_mapper/src/mappers/rdf_subject_mapper.dart';
 import 'package:rdf_mapper/src/api/graph_operations.dart';
+import 'package:rdf_mapper/src/api/mapper.dart';
 
 import 'src/api/rdf_mapper_registry.dart';
 import 'src/api/rdf_mapper_service.dart';
 
 export 'src/api/deserialization_context.dart';
 export 'src/context/deserialization_context_impl.dart';
-export 'src/deserializers/blank_node_term_deserializer.dart';
-export 'src/deserializers/iri_term_deserializer.dart';
-export 'src/serializers/iri_term_serializer.dart';
-export 'src/deserializers/literal_term_deserializer.dart';
-export 'src/serializers/literal_term_serializer.dart';
+
 export 'src/api/rdf_mapper_registry.dart';
 export 'src/api/rdf_mapper_service.dart';
-export 'src/deserializers/subject_deserializer.dart';
-export 'src/mappers/rdf_subject_mapper.dart';
-export 'src/serializers/subject_serializer.dart';
 export 'src/api/serialization_context.dart';
 export 'src/context/serialization_context_impl.dart';
 export 'src/api/graph_operations.dart';
@@ -260,47 +250,7 @@ final class RdfMapper {
     return _rdfCore.serialize(graph, contentType: format);
   }
 
-  // ---- MAPPER REGISTRATION METHODS ----
-
-  /// Registers a subject mapper for type [T].
-  ///
-  /// This is a convenience method that delegates to [registry.registerSubjectMapper].
-  /// It simplifies the registration of mappers directly through the facade.
-  ///
-  /// Example:
-  /// ```dart
-  /// rdfMapper.registerSubjectMapper<Person>(PersonMapper());
-  /// final person = Person(...);
-  /// final graph = rdfMapper.graph.serialize(person);
-  /// ```
-  void registerSubjectMapper<T>(RdfSubjectMapper<T> mapper) {
-    registry.registerSubjectMapper<T>(mapper);
-  }
-
-  /// Registers a blank subject mapper for type [T].
-  ///
-  /// This is a convenience method that delegates to [registry.registerBlankSubjectMapper].
-  /// It simplifies the registration of mappers for blank nodes directly through the facade.
-  ///
-  /// Example:
-  /// ```dart
-  /// rdfMapper.registerBlankSubjectMapper<Address>(AddressMapper());
-  /// ```
-  void registerBlankSubjectMapper<T>(RdfBlankSubjectMapper<T> mapper) {
-    registry.registerBlankSubjectMapper<T>(mapper);
-  }
-
-  /// Registers both a literal serializer and deserializer for type [T].
-  ///
-  /// This is a convenience method that delegates to [registry.registerLiteralMapper].
-  void registerLiteralMapper<T>(RdfLiteralTermMapper<T> mapper) {
-    registry.registerLiteralMapper<T>(mapper);
-  }
-
-  /// Registers an IRI term mapper for type [T].
-  ///
-  /// This is a convenience method that delegates to [registry.registerIriTermMapper].
-  void registerIriTermMapper<T>(RdfIriTermMapper<T> mapper) {
-    registry.registerIriTermMapper<T>(mapper);
+  void registerMapper<T>(Mapper<T> mapper) {
+    registry.registerMapper(mapper);
   }
 }

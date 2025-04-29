@@ -7,4 +7,35 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 /// providing bidirectional conversion between Dart objects and RDF representations.
 ///
 /// This is a marker interface that specific mapper interfaces extend.
-abstract interface class Mapper<T> implements Serializer<T>, Deserializer<T> {}
+sealed class Mapper<T> {}
+
+/// Bidirectional mapper between Dart objects and RDF blank node subjects.
+///
+/// Combines the functionality of blank node deserialization and subject serialization
+/// for handling anonymous nodes in RDF graphs.
+abstract interface class BlankSubjectMapper<T>
+    implements Mapper<T>, BlankNodeTermDeserializer<T>, SubjectSerializer<T> {}
+
+/// Bidirectional mapper between Dart objects and RDF IRI terms.
+///
+/// Combines the functionality of both [IriTermSerializer] and [IriTermDeserializer]
+/// for seamless conversion between Dart objects and RDF IRI terms in both directions.
+abstract interface class IriTermMapper<T>
+    implements Mapper<T>, IriTermSerializer<T>, IriTermDeserializer<T> {}
+
+/// Bidirectional mapper between Dart objects and RDF literal terms.
+///
+/// Combines the functionality of both [LiteralTermSerializer] and [LiteralTermDeserializer]
+/// for seamless conversion between Dart objects and RDF literal terms in both directions.
+abstract interface class LiteralTermMapper<T>
+    implements
+        Mapper<T>,
+        LiteralTermSerializer<T>,
+        LiteralTermDeserializer<T> {}
+
+/// Bidirectional mapper between Dart objects and RDF subjects with associated triples.
+///
+/// Combines the functionality of both [SubjectSerializer] and [SubjectDeserializer]
+/// for seamless conversion between Dart objects and RDF subjects in both directions.
+abstract interface class SubjectMapper<T>
+    implements Mapper<T>, SubjectSerializer<T>, SubjectDeserializer<T> {}

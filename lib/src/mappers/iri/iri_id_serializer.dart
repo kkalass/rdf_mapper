@@ -1,6 +1,6 @@
 import 'package:rdf_core/rdf_core.dart';
+import 'package:rdf_mapper/src/api/serializer.dart';
 import 'package:rdf_mapper/src/exceptions/serialization_exception.dart';
-import 'package:rdf_mapper/src/serializers/iri_term_serializer.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
 
 class IriIdSerializer implements IriTermSerializer<String> {

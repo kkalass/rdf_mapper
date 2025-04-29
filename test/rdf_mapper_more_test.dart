@@ -1,5 +1,6 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
+import 'package:rdf_mapper/src/api/mapper.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -9,7 +10,7 @@ void main() {
     setUp(() {
       rdfCore = RdfCore.withStandardFormats();
       rdf = RdfMapper.withDefaultRegistry();
-      rdf.registerSubjectMapper<TestItem>(
+      rdf.registerMapper<TestItem>(
         TestItemRdfMapper(storageRoot: "https://some.static.url.example.com/"),
       );
     });
@@ -39,7 +40,7 @@ void main() {
       final graph = rdf.graph.serialize<TestItem>(
         originalItem,
         register:
-            (registry) => registry.registerSubjectSerializer(
+            (registry) => registry.registerMapper(
               TestItemRdfMapper(storageRoot: storageRootForTest),
             ),
       );
@@ -70,7 +71,7 @@ void main() {
       final graph = rdf.graph.serialize<TestItem>(
         originalItem,
         register:
-            (registry) => registry.registerSubjectSerializer(
+            (registry) => registry.registerMapper(
               TestItemRdfMapper(storageRoot: storageRootForTest),
             ),
       );
@@ -113,7 +114,7 @@ void main() {
       final allSubjects = rdf.graph.deserializeAll(
         graph,
         register:
-            (registry) => registry.registerSubjectSerializer(
+            (registry) => registry.registerMapper(
               TestItemRdfMapper(storageRoot: storageRootForTest),
             ),
       );
@@ -137,7 +138,7 @@ class TestItem {
   TestItem({required this.name, required this.age});
 }
 
-final class TestItemRdfMapper implements RdfSubjectMapper<TestItem> {
+final class TestItemRdfMapper implements SubjectMapper<TestItem> {
   final String storageRoot;
 
   TestItemRdfMapper({required this.storageRoot});

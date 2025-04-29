@@ -1,7 +1,7 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
+import 'package:rdf_mapper/src/api/deserializer.dart';
 import 'package:rdf_mapper/src/exceptions/deserialization_exception.dart';
-import 'package:rdf_mapper/src/deserializers/iri_term_deserializer.dart';
 
 class ExtractingIriTermDeserializer<T> implements IriTermDeserializer<T> {
   final T Function(IriTerm, DeserializationContext) _extract;

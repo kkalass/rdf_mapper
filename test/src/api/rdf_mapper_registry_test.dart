@@ -1,16 +1,12 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
+import 'package:rdf_mapper/src/api/deserializer.dart';
+import 'package:rdf_mapper/src/api/mapper.dart';
+import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
+import 'package:rdf_mapper/src/api/serialization_context.dart';
+import 'package:rdf_mapper/src/api/serializer.dart';
 import 'package:rdf_mapper/src/exceptions/deserializer_not_found_exception.dart';
 import 'package:rdf_mapper/src/exceptions/serializer_not_found_exception.dart';
-import 'package:rdf_mapper/src/deserializers/iri_term_deserializer.dart';
-import 'package:rdf_mapper/src/serializers/iri_term_serializer.dart';
-import 'package:rdf_mapper/src/deserializers/literal_term_deserializer.dart';
-import 'package:rdf_mapper/src/serializers/literal_term_serializer.dart';
-import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
-import 'package:rdf_mapper/src/deserializers/subject_deserializer.dart';
-import 'package:rdf_mapper/src/mappers/rdf_subject_mapper.dart';
-import 'package:rdf_mapper/src/serializers/subject_serializer.dart';
-import 'package:rdf_mapper/src/api/serialization_context.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -23,80 +19,77 @@ void main() {
 
     test('registry is initialized with standard mappers', () {
       // Verify built-in deserializers are registered
-      expect(registry.hasLiteralDeserializerFor<String>(), isTrue);
-      expect(registry.hasLiteralDeserializerFor<int>(), isTrue);
-      expect(registry.hasLiteralDeserializerFor<double>(), isTrue);
-      expect(registry.hasLiteralDeserializerFor<bool>(), isTrue);
-      expect(registry.hasLiteralDeserializerFor<DateTime>(), isTrue);
+      expect(registry.hasLiteralTermDeserializerFor<String>(), isTrue);
+      expect(registry.hasLiteralTermDeserializerFor<int>(), isTrue);
+      expect(registry.hasLiteralTermDeserializerFor<double>(), isTrue);
+      expect(registry.hasLiteralTermDeserializerFor<bool>(), isTrue);
+      expect(registry.hasLiteralTermDeserializerFor<DateTime>(), isTrue);
 
       // Verify built-in serializers are registered
-      expect(registry.hasLiteralSerializerFor<String>(), isTrue);
-      expect(registry.hasLiteralSerializerFor<int>(), isTrue);
-      expect(registry.hasLiteralSerializerFor<double>(), isTrue);
-      expect(registry.hasLiteralSerializerFor<bool>(), isTrue);
-      expect(registry.hasLiteralSerializerFor<DateTime>(), isTrue);
+      expect(registry.hasLiteralTermSerializerFor<String>(), isTrue);
+      expect(registry.hasLiteralTermSerializerFor<int>(), isTrue);
+      expect(registry.hasLiteralTermSerializerFor<double>(), isTrue);
+      expect(registry.hasLiteralTermSerializerFor<bool>(), isTrue);
+      expect(registry.hasLiteralTermSerializerFor<DateTime>(), isTrue);
 
       // Verify IRI serializers/deserializers (IriFullDeserializer is for String type)
-      expect(registry.hasIriDeserializerFor<String>(), isTrue);
-      expect(registry.hasIriSerializerFor<String>(), isTrue);
+      expect(registry.hasIriTermDeserializerFor<String>(), isTrue);
+      expect(registry.hasIriTermSerializerFor<String>(), isTrue);
     });
 
-    test('registerIriDeserializer registers a new IRI deserializer', () {
+    test('registerDeserializer registers a new IRI deserializer', () {
       // Register custom deserializer
-      registry.registerIriTermDeserializer(TestIriDeserializer());
+      registry.registerDeserializer(TestIriDeserializer());
 
       // Verify registration
-      expect(registry.hasIriDeserializerFor<CustomType>(), isTrue);
+      expect(registry.hasIriTermDeserializerFor<CustomType>(), isTrue);
 
       // Verify retrieval works
-      var deserializer = registry.getIriDeserializer<CustomType>();
+      var deserializer = registry.getIriTermDeserializer<CustomType>();
       expect(deserializer, isA<TestIriDeserializer>());
     });
 
-    test('registerIriSerializer registers a new IRI serializer', () {
+    test('registerSerializer registers a new IRI serializer', () {
       // Register custom serializer
-      registry.registerIriTermSerializer(TestIriSerializer());
+      registry.registerSerializer(TestIriSerializer());
 
       // Verify registration
-      expect(registry.hasIriSerializerFor<CustomType>(), isTrue);
+      expect(registry.hasIriTermSerializerFor<CustomType>(), isTrue);
 
       // Verify retrieval works
-      var serializer = registry.getIriSerializer<CustomType>();
+      var serializer = registry.getIriTermSerializer<CustomType>();
       expect(serializer, isA<TestIriSerializer>());
     });
 
-    test(
-      'registerLiteralDeserializer registers a new literal deserializer',
-      () {
-        // Register custom deserializer
-        registry.registerLiteralDeserializer(TestLiteralDeserializer());
-
-        // Verify registration
-        expect(registry.hasLiteralDeserializerFor<CustomType>(), isTrue);
-
-        // Verify retrieval works
-        var deserializer = registry.getLiteralDeserializer<CustomType>();
-        expect(deserializer, isA<TestLiteralDeserializer>());
-      },
-    );
-
-    test('registerLiteralSerializer registers a new literal serializer', () {
-      // Register custom serializer
-      registry.registerLiteralSerializer(TestLiteralSerializer());
+    test('registerDeserializer registers a new literal deserializer', () {
+      // Register custom deserializer
+      registry.registerDeserializer(TestLiteralDeserializer());
 
       // Verify registration
-      expect(registry.hasLiteralSerializerFor<CustomType>(), isTrue);
+      expect(registry.hasLiteralTermDeserializerFor<CustomType>(), isTrue);
 
       // Verify retrieval works
-      var serializer = registry.getLiteralSerializer<CustomType>();
+      var deserializer = registry.getLiteralTermDeserializer<CustomType>();
+      expect(deserializer, isA<TestLiteralDeserializer>());
+    });
+
+    test('registerSerializer registers a new literal serializer', () {
+      // Register custom serializer
+      registry.registerSerializer(TestLiteralSerializer());
+
+      // Verify registration
+      expect(registry.hasLiteralTermSerializerFor<CustomType>(), isTrue);
+
+      // Verify retrieval works
+      var serializer = registry.getLiteralTermSerializer<CustomType>();
       expect(serializer, isA<TestLiteralSerializer>());
     });
 
     test(
-      'registerSubjectDeserializer registers deserializer by type and typeIri',
+      'registerDeserializer registers subject deserializer by type and typeIri',
       () {
         final deserializer = TestSubjectDeserializer();
-        registry.registerSubjectDeserializer<CustomType>(deserializer);
+        registry.registerDeserializer<CustomType>(deserializer);
 
         // Verify registration by type
         expect(registry.hasSubjectDeserializerFor<CustomType>(), isTrue);
@@ -117,9 +110,9 @@ void main() {
       },
     );
 
-    test('registerSubjectSerializer registers a new subject serializer', () {
+    test('registerSerializer registers a new subject serializer', () {
       final serializer = TestSubjectSerializer();
-      registry.registerSubjectSerializer<CustomType>(serializer);
+      registry.registerSerializer<CustomType>(serializer);
 
       // Verify registration
       expect(registry.hasSubjectSerializerFor<CustomType>(), isTrue);
@@ -128,32 +121,29 @@ void main() {
       expect(registry.getSubjectSerializer<CustomType>(), equals(serializer));
     });
 
-    test(
-      'registerSubjectMapper registers both serializer and deserializer',
-      () {
-        final mapper = TestSubjectMapper();
-        registry.registerSubjectMapper<CustomType>(mapper);
+    test('registerMapper registers both serializer and deserializer', () {
+      final mapper = TestSubjectMapper();
+      registry.registerMapper<CustomType>(mapper);
 
-        // Verify serializer registration
-        expect(registry.hasSubjectSerializerFor<CustomType>(), isTrue);
-        expect(registry.getSubjectSerializer<CustomType>(), equals(mapper));
+      // Verify serializer registration
+      expect(registry.hasSubjectSerializerFor<CustomType>(), isTrue);
+      expect(registry.getSubjectSerializer<CustomType>(), equals(mapper));
 
-        // Verify deserializer registration
-        expect(registry.hasSubjectDeserializerFor<CustomType>(), isTrue);
-        expect(registry.getSubjectDeserializer<CustomType>(), equals(mapper));
+      // Verify deserializer registration
+      expect(registry.hasSubjectDeserializerFor<CustomType>(), isTrue);
+      expect(registry.getSubjectDeserializer<CustomType>(), equals(mapper));
 
-        // Verify typeIri registration
-        expect(registry.hasSubjectDeserializerForType(mapper.typeIri), isTrue);
-        expect(
-          registry.getSubjectDeserializerByTypeIri(mapper.typeIri),
-          equals(mapper),
-        );
-      },
-    );
-
-    test('getIriDeserializer throws when deserializer not found', () {
+      // Verify typeIri registration
+      expect(registry.hasSubjectDeserializerForType(mapper.typeIri), isTrue);
       expect(
-        () => registry.getIriDeserializer<CustomType>(),
+        registry.getSubjectDeserializerByTypeIri(mapper.typeIri),
+        equals(mapper),
+      );
+    });
+
+    test('getIriTermDeserializer throws when deserializer not found', () {
+      expect(
+        () => registry.getIriTermDeserializer<CustomType>(),
         throwsA(isA<DeserializerNotFoundException>()),
       );
     });
@@ -177,30 +167,30 @@ void main() {
       },
     );
 
-    test('getIriSerializer throws when serializer not found', () {
+    test('getIriTermSerializer throws when serializer not found', () {
       expect(
-        () => registry.getIriSerializer<CustomType>(),
+        () => registry.getIriTermSerializer<CustomType>(),
         throwsA(isA<SerializerNotFoundException>()),
       );
     });
 
-    test('getLiteralDeserializer throws when deserializer not found', () {
+    test('getLiteralTermDeserializer throws when deserializer not found', () {
       expect(
-        () => registry.getLiteralDeserializer<CustomType>(),
+        () => registry.getLiteralTermDeserializer<CustomType>(),
         throwsA(isA<DeserializerNotFoundException>()),
       );
     });
 
-    test('getLiteralSerializer throws when serializer not found', () {
+    test('getLiteralTermSerializer throws when serializer not found', () {
       expect(
-        () => registry.getLiteralSerializer<CustomType>(),
+        () => registry.getLiteralTermSerializer<CustomType>(),
         throwsA(isA<SerializerNotFoundException>()),
       );
     });
 
-    test('getBlankNodeDeserializer throws when deserializer not found', () {
+    test('getBlankNodeTermDeserializer throws when deserializer not found', () {
       expect(
-        () => registry.getBlankNodeDeserializer<CustomType>(),
+        () => registry.getBlankNodeTermDeserializer<CustomType>(),
         throwsA(isA<DeserializerNotFoundException>()),
       );
     });
@@ -214,9 +204,9 @@ void main() {
 
     test('clone creates a deep copy with all registered mappers', () {
       // Register custom mappers
-      registry.registerSubjectMapper<CustomType>(TestSubjectMapper());
-      registry.registerLiteralSerializer(TestLiteralSerializer());
-      registry.registerLiteralDeserializer(TestLiteralDeserializer());
+      registry.registerMapper<CustomType>(TestSubjectMapper());
+      registry.registerSerializer(TestLiteralSerializer());
+      registry.registerDeserializer(TestLiteralDeserializer());
 
       // Clone the registry
       final clonedRegistry = registry.clone();
@@ -224,12 +214,15 @@ void main() {
       // Verify all mappers were copied
       expect(clonedRegistry.hasSubjectSerializerFor<CustomType>(), isTrue);
       expect(clonedRegistry.hasSubjectDeserializerFor<CustomType>(), isTrue);
-      expect(clonedRegistry.hasLiteralSerializerFor<CustomType>(), isTrue);
-      expect(clonedRegistry.hasLiteralDeserializerFor<CustomType>(), isTrue);
+      expect(clonedRegistry.hasLiteralTermSerializerFor<CustomType>(), isTrue);
+      expect(
+        clonedRegistry.hasLiteralTermDeserializerFor<CustomType>(),
+        isTrue,
+      );
 
       // Verify that changing the clone doesn't affect the original
       final newMapper = AnotherTestSubjectMapper();
-      clonedRegistry.registerSubjectMapper<AnotherCustomType>(newMapper);
+      clonedRegistry.registerMapper<AnotherCustomType>(newMapper);
 
       expect(
         clonedRegistry.hasSubjectSerializerFor<AnotherCustomType>(),
@@ -312,7 +305,7 @@ class TestSubjectSerializer implements SubjectSerializer<CustomType> {
   }
 }
 
-class TestSubjectMapper implements RdfSubjectMapper<CustomType> {
+class TestSubjectMapper implements SubjectMapper<CustomType> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/CustomType');
 
@@ -339,7 +332,7 @@ class TestSubjectMapper implements RdfSubjectMapper<CustomType> {
   }
 }
 
-class AnotherTestSubjectMapper implements RdfSubjectMapper<AnotherCustomType> {
+class AnotherTestSubjectMapper implements SubjectMapper<AnotherCustomType> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/AnotherCustomType');
 

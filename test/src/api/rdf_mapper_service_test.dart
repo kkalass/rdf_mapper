@@ -1,5 +1,6 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_core/vocab.dart';
+import 'package:rdf_mapper/src/api/mapper.dart';
 import 'package:rdf_mapper/src/exceptions/deserialization_exception.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
 import 'package:test/test.dart';
@@ -14,9 +15,9 @@ void main() {
       service = RdfMapperService(registry: registry);
     });
 
-    test('fromTriplesByRdfSubjectId deserializes an object from triples', () {
+    test('deserializeBySubject deserializes an object from triples', () {
       // Register a test mapper
-      registry.registerSubjectMapper<TestPerson>(TestPersonMapper());
+      registry.registerMapper<TestPerson>(TestPersonMapper());
 
       // Create test triples
       final subject = IriTerm('http://example.org/person/1');
@@ -52,7 +53,7 @@ void main() {
 
     test('fromGraphBySubject deserializes an object from a graph', () {
       // Register a test mapper
-      registry.registerSubjectMapper<TestPerson>(TestPersonMapper());
+      registry.registerMapper<TestPerson>(TestPersonMapper());
 
       // Create a test graph
       final subject = IriTerm('http://example.org/person/1');
@@ -87,7 +88,7 @@ void main() {
 
     test('fromGraph deserializes a single object from a graph', () {
       // Register a test mapper
-      registry.registerSubjectMapper<TestPerson>(TestPersonMapper());
+      registry.registerMapper<TestPerson>(TestPersonMapper());
 
       // Create a test graph with a single subject
       final subject = IriTerm('http://example.org/person/1');
@@ -129,7 +130,7 @@ void main() {
 
     test('fromGraph throws for multiple subjects', () {
       // Register a test mapper
-      registry.registerSubjectMapper<TestPerson>(TestPersonMapper());
+      registry.registerMapper<TestPerson>(TestPersonMapper());
 
       // Create a test graph with multiple subjects
       final graph = RdfGraph(
@@ -158,7 +159,7 @@ void main() {
       'fromGraphAllSubjects deserializes multiple subjects from a graph',
       () {
         // Register a test mapper
-        registry.registerSubjectMapper<TestPerson>(TestPersonMapper());
+        registry.registerMapper<TestPerson>(TestPersonMapper());
 
         // Create a test graph with multiple subjects
         final graph = RdfGraph(
@@ -226,7 +227,7 @@ void main() {
 
     test('fromGraphAllSubjects ignores subjects with unmapped types', () {
       // Register only a person mapper, not an address mapper
-      registry.registerSubjectMapper<TestPerson>(TestPersonMapper());
+      registry.registerMapper<TestPerson>(TestPersonMapper());
 
       // Create a test graph with multiple subjects of different types
       final graph = RdfGraph(
@@ -271,7 +272,7 @@ void main() {
 
     test('toGraph serializes an object to a graph', () {
       // Register a test mapper
-      registry.registerSubjectMapper<TestPerson>(TestPersonMapper());
+      registry.registerMapper<TestPerson>(TestPersonMapper());
 
       // Create a test person
       final person = TestPerson(
@@ -318,7 +319,7 @@ void main() {
       final graph = service.serialize(
         person,
         register: (registry) {
-          registry.registerSubjectMapper<TestPerson>(TestPersonMapper());
+          registry.registerMapper<TestPerson>(TestPersonMapper());
         },
       );
 
@@ -340,7 +341,7 @@ void main() {
 
     test('toGraphFromList serializes a list of objects to a graph', () {
       // Register a test mapper
-      registry.registerSubjectMapper<TestPerson>(TestPersonMapper());
+      registry.registerMapper<TestPerson>(TestPersonMapper());
 
       // Create test people
       final people = [
@@ -418,7 +419,7 @@ class TestPerson {
   TestPerson({required this.id, required this.name, required this.age});
 }
 
-class TestPersonMapper implements RdfSubjectMapper<TestPerson> {
+class TestPersonMapper implements SubjectMapper<TestPerson> {
   @override
   final IriTerm typeIri = IriTerm('http://xmlns.com/foaf/0.1/Person');
 
