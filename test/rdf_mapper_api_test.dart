@@ -132,7 +132,7 @@ class TestEntityMapper implements SubjectMapper<TestEntity> {
   final IriTerm typeIri = IriTerm('http://schema.org/TestEntity');
 
   @override
-  TestEntity fromRdfTerm(IriTerm subject, DeserializationContext context) {
+  TestEntity fromRdfNode(IriTerm subject, DeserializationContext context) {
     return TestEntity(
       id: subject.iri,
       name: context.require<String>(subject, namePredicate),

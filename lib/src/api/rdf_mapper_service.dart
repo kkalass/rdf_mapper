@@ -91,7 +91,7 @@ final class RdfMapperService {
         .map((triple) {
           final subject = triple.subject;
           final type = triple.object;
-          if ((subject is! IriTerm) || (type is! IriTerm)) {
+          if (type is! IriTerm) {
             _log.warning(
               "Will skip deserialization of subject $subject with type $type because both subject and type need to be IRIs in order to be able to deserialize.",
             );

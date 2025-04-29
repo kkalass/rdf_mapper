@@ -14,7 +14,7 @@ sealed class Mapper<T> {}
 /// Combines the functionality of blank node deserialization and subject serialization
 /// for handling anonymous nodes in RDF graphs.
 abstract interface class BlankSubjectMapper<T>
-    implements Mapper<T>, BlankNodeTermDeserializer<T>, SubjectSerializer<T> {}
+    implements Mapper<T>, BlankNodeDeserializer<T>, SubjectSerializer<T> {}
 
 /// Bidirectional mapper between Dart objects and RDF IRI terms.
 ///
@@ -35,7 +35,7 @@ abstract interface class LiteralTermMapper<T>
 
 /// Bidirectional mapper between Dart objects and RDF subjects with associated triples.
 ///
-/// Combines the functionality of both [SubjectSerializer] and [SubjectDeserializer]
+/// Combines the functionality of both [SubjectSerializer] and [IriNodeDeserializer]
 /// for seamless conversion between Dart objects and RDF subjects in both directions.
 abstract interface class SubjectMapper<T>
-    implements Mapper<T>, SubjectSerializer<T>, SubjectDeserializer<T> {}
+    implements Mapper<T>, SubjectSerializer<T>, IriNodeDeserializer<T> {}

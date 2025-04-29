@@ -37,10 +37,10 @@ class MockDeserializationContext extends _i1.Mock
     _i3.RdfSubject? subject,
     _i3.RdfPredicate? predicate, {
     bool? enforceSingleValue = true,
-    _i4.SubjectDeserializer<T>? subjectDeserializer,
+    _i4.IriNodeDeserializer<T>? subjectDeserializer,
     _i4.IriTermDeserializer<T>? iriDeserializer,
     _i4.LiteralTermDeserializer<T>? literalDeserializer,
-    _i4.BlankNodeTermDeserializer<T>? blankNodeDeserializer,
+    _i4.BlankNodeDeserializer<T>? blankNodeDeserializer,
   }) =>
       (super.noSuchMethod(
             Invocation.method(
@@ -77,9 +77,9 @@ class MockDeserializationContext extends _i1.Mock
     _i3.RdfPredicate? predicate, {
     bool? enforceSingleValue = true,
     _i4.IriTermDeserializer<T>? iriDeserializer,
-    _i4.SubjectDeserializer<T>? subjectDeserializer,
+    _i4.IriNodeDeserializer<T>? subjectDeserializer,
     _i4.LiteralTermDeserializer<T>? literalDeserializer,
-    _i4.BlankNodeTermDeserializer<T>? blankNodeDeserializer,
+    _i4.BlankNodeDeserializer<T>? blankNodeDeserializer,
   }) =>
       (super.noSuchMethod(
             Invocation.method(
@@ -102,9 +102,9 @@ class MockDeserializationContext extends _i1.Mock
     _i3.RdfPredicate? predicate,
     R Function(Iterable<T>)? collector, {
     _i4.IriTermDeserializer<T>? iriDeserializer,
-    _i4.SubjectDeserializer<T>? subjectDeserializer,
+    _i4.IriNodeDeserializer<T>? subjectDeserializer,
     _i4.LiteralTermDeserializer<T>? literalDeserializer,
-    _i4.BlankNodeTermDeserializer<T>? blankNodeDeserializer,
+    _i4.BlankNodeDeserializer<T>? blankNodeDeserializer,
   }) =>
       (super.noSuchMethod(
             Invocation.method(
@@ -138,9 +138,9 @@ class MockDeserializationContext extends _i1.Mock
     _i3.RdfSubject? subject,
     _i3.RdfPredicate? predicate, {
     _i4.IriTermDeserializer<T>? iriDeserializer,
-    _i4.SubjectDeserializer<T>? subjectDeserializer,
+    _i4.IriNodeDeserializer<T>? subjectDeserializer,
     _i4.LiteralTermDeserializer<T>? literalDeserializer,
-    _i4.BlankNodeTermDeserializer<T>? blankNodeDeserializer,
+    _i4.BlankNodeDeserializer<T>? blankNodeDeserializer,
   }) =>
       (super.noSuchMethod(
             Invocation.method(
@@ -162,9 +162,9 @@ class MockDeserializationContext extends _i1.Mock
     _i3.RdfSubject? subject,
     _i3.RdfPredicate? predicate, {
     _i4.IriTermDeserializer<MapEntry<K, V>>? iriDeserializer,
-    _i4.SubjectDeserializer<MapEntry<K, V>>? subjectDeserializer,
+    _i4.IriNodeDeserializer<MapEntry<K, V>>? subjectDeserializer,
     _i4.LiteralTermDeserializer<MapEntry<K, V>>? literalDeserializer,
-    _i4.BlankNodeTermDeserializer<MapEntry<K, V>>? blankNodeDeserializer,
+    _i4.BlankNodeDeserializer<MapEntry<K, V>>? blankNodeDeserializer,
   }) =>
       (super.noSuchMethod(
             Invocation.method(

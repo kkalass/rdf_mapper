@@ -208,7 +208,7 @@ class BookMapper implements SubjectMapper<Book> {
   final IriTerm typeIri = IriTerm('https://schema.org/Book');
 
   @override
-  Book fromRdfTerm(IriTerm subject, DeserializationContext context) {
+  Book fromRdfNode(IriTerm subject, DeserializationContext context) {
     return Book(
       id: subject.iri,
       title: context.require<String>(subject, titlePredicate),
@@ -250,7 +250,7 @@ class ChapterMapper implements BlankSubjectMapper<Chapter> {
   final IriTerm typeIri = IriTerm('https://schema.org/Chapter');
 
   @override
-  Chapter fromRdfTerm(BlankNodeTerm term, DeserializationContext context) {
+  Chapter fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
     final title = context.require<String>(term, titlePredicate);
     final number = context.require<int>(term, numberPredicate);
     return Chapter(title, number);

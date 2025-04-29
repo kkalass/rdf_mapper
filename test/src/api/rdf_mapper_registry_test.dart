@@ -92,19 +92,19 @@ void main() {
         registry.registerDeserializer<CustomType>(deserializer);
 
         // Verify registration by type
-        expect(registry.hasSubjectDeserializerFor<CustomType>(), isTrue);
+        expect(registry.hasIriNodeDeserializerFor<CustomType>(), isTrue);
         expect(
-          registry.getSubjectDeserializer<CustomType>(),
+          registry.getIriNodeDeserializer<CustomType>(),
           equals(deserializer),
         );
 
         // Verify registration by typeIri
         expect(
-          registry.hasSubjectDeserializerForType(deserializer.typeIri),
+          registry.hasIriNodeDeserializerForType(deserializer.typeIri),
           isTrue,
         );
         expect(
-          registry.getSubjectDeserializerByTypeIri(deserializer.typeIri),
+          registry.getIriNodeDeserializerByTypeIri(deserializer.typeIri),
           equals(deserializer),
         );
       },
@@ -130,13 +130,13 @@ void main() {
       expect(registry.getSubjectSerializer<CustomType>(), equals(mapper));
 
       // Verify deserializer registration
-      expect(registry.hasSubjectDeserializerFor<CustomType>(), isTrue);
-      expect(registry.getSubjectDeserializer<CustomType>(), equals(mapper));
+      expect(registry.hasIriNodeDeserializerFor<CustomType>(), isTrue);
+      expect(registry.getIriNodeDeserializer<CustomType>(), equals(mapper));
 
       // Verify typeIri registration
-      expect(registry.hasSubjectDeserializerForType(mapper.typeIri), isTrue);
+      expect(registry.hasIriNodeDeserializerForType(mapper.typeIri), isTrue);
       expect(
-        registry.getSubjectDeserializerByTypeIri(mapper.typeIri),
+        registry.getIriNodeDeserializerByTypeIri(mapper.typeIri),
         equals(mapper),
       );
     });
@@ -150,7 +150,7 @@ void main() {
 
     test('getSubjectDeserializer throws when deserializer not found', () {
       expect(
-        () => registry.getSubjectDeserializer<CustomType>(),
+        () => registry.getIriNodeDeserializer<CustomType>(),
         throwsA(isA<DeserializerNotFoundException>()),
       );
     });
@@ -159,7 +159,7 @@ void main() {
       'getSubjectDeserializerByTypeIri throws when deserializer not found',
       () {
         expect(
-          () => registry.getSubjectDeserializerByTypeIri(
+          () => registry.getIriNodeDeserializerByTypeIri(
             IriTerm('http://example.org/UnknownType'),
           ),
           throwsA(isA<DeserializerNotFoundException>()),
@@ -190,7 +190,7 @@ void main() {
 
     test('getBlankNodeTermDeserializer throws when deserializer not found', () {
       expect(
-        () => registry.getBlankNodeTermDeserializer<CustomType>(),
+        () => registry.getBlankNodeDeserializer<CustomType>(),
         throwsA(isA<DeserializerNotFoundException>()),
       );
     });
@@ -213,7 +213,7 @@ void main() {
 
       // Verify all mappers were copied
       expect(clonedRegistry.hasSubjectSerializerFor<CustomType>(), isTrue);
-      expect(clonedRegistry.hasSubjectDeserializerFor<CustomType>(), isTrue);
+      expect(clonedRegistry.hasIriNodeDeserializerFor<CustomType>(), isTrue);
       expect(clonedRegistry.hasLiteralTermSerializerFor<CustomType>(), isTrue);
       expect(
         clonedRegistry.hasLiteralTermDeserializerFor<CustomType>(),
@@ -273,12 +273,12 @@ class TestLiteralSerializer implements LiteralTermSerializer<CustomType> {
   }
 }
 
-class TestSubjectDeserializer implements SubjectDeserializer<CustomType> {
+class TestSubjectDeserializer implements IriNodeDeserializer<CustomType> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/CustomType');
 
   @override
-  CustomType fromRdfTerm(IriTerm term, DeserializationContext context) {
+  CustomType fromRdfNode(IriTerm term, DeserializationContext context) {
     return CustomType(term.iri);
   }
 }
@@ -310,7 +310,7 @@ class TestSubjectMapper implements SubjectMapper<CustomType> {
   final IriTerm typeIri = IriTerm('http://example.org/CustomType');
 
   @override
-  CustomType fromRdfTerm(IriTerm term, DeserializationContext context) {
+  CustomType fromRdfNode(IriTerm term, DeserializationContext context) {
     return CustomType(term.iri);
   }
 
@@ -337,7 +337,7 @@ class AnotherTestSubjectMapper implements SubjectMapper<AnotherCustomType> {
   final IriTerm typeIri = IriTerm('http://example.org/AnotherCustomType');
 
   @override
-  AnotherCustomType fromRdfTerm(IriTerm term, DeserializationContext context) {
+  AnotherCustomType fromRdfNode(IriTerm term, DeserializationContext context) {
     return AnotherCustomType(term.iri);
   }
 

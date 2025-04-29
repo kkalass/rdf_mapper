@@ -424,7 +424,7 @@ class TestPersonMapper implements SubjectMapper<TestPerson> {
   final IriTerm typeIri = IriTerm('http://xmlns.com/foaf/0.1/Person');
 
   @override
-  TestPerson fromRdfTerm(IriTerm term, DeserializationContext context) {
+  TestPerson fromRdfNode(IriTerm term, DeserializationContext context) {
     final id = term.iri;
 
     // Get name property

@@ -238,12 +238,12 @@ class TestAddress {
   TestAddress({required this.city});
 }
 
-class TestPersonDeserializer implements SubjectDeserializer<TestPerson> {
+class TestPersonDeserializer implements IriNodeDeserializer<TestPerson> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
   @override
-  TestPerson fromRdfTerm(IriTerm term, DeserializationContext context) {
+  TestPerson fromRdfNode(IriTerm term, DeserializationContext context) {
     return TestPerson(term.iri);
   }
 }
@@ -263,9 +263,11 @@ class CustomStringDeserializer implements LiteralTermDeserializer<String> {
 }
 
 class CustomBlankNodeDeserializer
-    implements BlankNodeTermDeserializer<TestAddress> {
+    implements BlankNodeDeserializer<TestAddress> {
   @override
-  TestAddress fromRdfTerm(BlankNodeTerm term, DeserializationContext context) {
+  IriTerm? get typeIri => null;
+  @override
+  TestAddress fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
     var city = context.require<String>(term, VcardPredicates.locality);
     return TestAddress(city: city);
   }

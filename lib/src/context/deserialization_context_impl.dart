@@ -15,27 +15,33 @@ class DeserializationContextImpl extends DeserializationContext {
   }) : _graph = graph,
        _registry = registry;
 
-  Object deserializeSubject(IriTerm subjectIri, IriTerm typeIri) {
+  Object deserializeSubject(RdfSubject subjectIri, IriTerm typeIri) {
     var context = this;
-    var ser = _registry.getSubjectDeserializerByTypeIri(typeIri);
-    return ser.fromRdfTerm(subjectIri, context);
+    switch (subjectIri) {
+      case BlankNodeTerm _:
+        var ser = _registry.getBlankNodeDeserializerByTypeIri(typeIri);
+        return ser.fromRdfNode(subjectIri, context);
+      case IriTerm _:
+        var ser = _registry.getIriNodeDeserializerByTypeIri(typeIri);
+        return ser.fromRdfNode(subjectIri, context);
+    }
   }
 
   T deserialize<T>(
     RdfTerm term,
     IriTermDeserializer<T>? iriDeserializer,
-    SubjectDeserializer<T>? subjectDeserializer,
+    IriNodeDeserializer<T>? subjectDeserializer,
     LiteralTermDeserializer<T>? literalDeserializer,
-    BlankNodeTermDeserializer<T>? blankNodeDeserializer,
+    BlankNodeDeserializer<T>? blankNodeDeserializer,
   ) {
     var context = this;
     switch (term) {
       case IriTerm _:
         if (subjectDeserializer != null ||
-            _registry.hasSubjectDeserializerFor<T>()) {
+            _registry.hasIriNodeDeserializerFor<T>()) {
           var ser =
-              subjectDeserializer ?? _registry.getSubjectDeserializer<T>();
-          return ser.fromRdfTerm(term, context);
+              subjectDeserializer ?? _registry.getIriNodeDeserializer<T>();
+          return ser.fromRdfNode(term, context);
         }
         var ser = iriDeserializer ?? _registry.getIriTermDeserializer<T>();
         return ser.fromRdfTerm(term, context);
@@ -45,9 +51,8 @@ class DeserializationContextImpl extends DeserializationContext {
         return ser.fromRdfTerm(term, context);
       case BlankNodeTerm _:
         var ser =
-            blankNodeDeserializer ??
-            _registry.getBlankNodeTermDeserializer<T>();
-        return ser.fromRdfTerm(term, context);
+            blankNodeDeserializer ?? _registry.getBlankNodeDeserializer<T>();
+        return ser.fromRdfNode(term, context);
     }
   }
 
@@ -57,9 +62,9 @@ class DeserializationContextImpl extends DeserializationContext {
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
     IriTermDeserializer<T>? iriDeserializer,
-    SubjectDeserializer<T>? subjectDeserializer,
+    IriNodeDeserializer<T>? subjectDeserializer,
     LiteralTermDeserializer<T>? literalDeserializer,
-    BlankNodeTermDeserializer<T>? blankNodeDeserializer,
+    BlankNodeDeserializer<T>? blankNodeDeserializer,
   }) {
     final triples = _graph.findTriples(subject: subject, predicate: predicate);
     if (triples.isEmpty) {
@@ -89,9 +94,9 @@ class DeserializationContextImpl extends DeserializationContext {
     RdfPredicate predicate,
     R Function(Iterable<T>) collector, {
     IriTermDeserializer<T>? iriDeserializer,
-    SubjectDeserializer<T>? subjectDeserializer,
+    IriNodeDeserializer<T>? subjectDeserializer,
     LiteralTermDeserializer<T>? literalDeserializer,
-    BlankNodeTermDeserializer<T>? blankNodeDeserializer,
+    BlankNodeDeserializer<T>? blankNodeDeserializer,
   }) {
     final triples = _graph.findTriples(subject: subject, predicate: predicate);
     final convertedTriples = triples.map(
@@ -112,9 +117,9 @@ class DeserializationContextImpl extends DeserializationContext {
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
     IriTermDeserializer<T>? iriDeserializer,
-    SubjectDeserializer<T>? subjectDeserializer,
+    IriNodeDeserializer<T>? subjectDeserializer,
     LiteralTermDeserializer<T>? literalDeserializer,
-    BlankNodeTermDeserializer<T>? blankNodeDeserializer,
+    BlankNodeDeserializer<T>? blankNodeDeserializer,
   }) {
     var result = get<T>(
       subject,

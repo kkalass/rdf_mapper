@@ -638,7 +638,7 @@ _:b0 a schema:PostalAddress;
           isFalse,
         );
         expect(
-          rdfMapper.registry.hasSubjectDeserializerFor<TestPerson>(),
+          rdfMapper.registry.hasIriNodeDeserializerFor<TestPerson>(),
           isFalse,
         );
 
@@ -651,7 +651,7 @@ _:b0 a schema:PostalAddress;
           isTrue,
         );
         expect(
-          rdfMapper.registry.hasSubjectDeserializerFor<TestPerson>(),
+          rdfMapper.registry.hasIriNodeDeserializerFor<TestPerson>(),
           isTrue,
         );
 
@@ -729,7 +729,7 @@ _:b0 a schema:PostalAddress;
 
         // Verify deserializer is not registered initially
         expect(
-          rdfMapper.registry.hasBlankNodeTermDeserializerFor<Address>(),
+          rdfMapper.registry.hasBlankNodDeserializerFor<Address>(),
           isFalse,
         );
         expect(rdfMapper.registry.hasSubjectSerializerFor<Address>(), isFalse);
@@ -739,7 +739,7 @@ _:b0 a schema:PostalAddress;
 
         // Verify deserializer is now registered
         expect(
-          rdfMapper.registry.hasBlankNodeTermDeserializerFor<Address>(),
+          rdfMapper.registry.hasBlankNodDeserializerFor<Address>(),
           isTrue,
         );
         expect(rdfMapper.registry.hasSubjectSerializerFor<Address>(), isTrue);
@@ -848,7 +848,7 @@ class TestPersonMapper implements SubjectMapper<TestPerson> {
   final IriTerm typeIri = SchemaClasses.person;
 
   @override
-  TestPerson fromRdfTerm(IriTerm subject, DeserializationContext context) {
+  TestPerson fromRdfNode(IriTerm subject, DeserializationContext context) {
     final id = subject.iri;
 
     // Get name property
@@ -904,7 +904,7 @@ class AddressMapper implements BlankSubjectMapper<Address> {
   final IriTerm typeIri = SchemaClasses.postalAddress;
 
   @override
-  Address fromRdfTerm(BlankNodeTerm term, DeserializationContext context) {
+  Address fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
     // Get address properties
     final street = context.require<String>(term, streetAddressPredicate);
 
