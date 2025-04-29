@@ -154,10 +154,7 @@ class SerializationContextImpl extends SerializationContext {
   }
 
   @override
-  (RdfSubject, List<Triple>) node<T>(
-    T instance, {
-    NodeSerializer<T>? serializer,
-  }) {
+  List<Triple> node<T>(T instance, {NodeSerializer<T>? serializer}) {
     if (instance == null) {
       throw ArgumentError('Cannot serialize null instance');
     }
@@ -204,14 +201,11 @@ class SerializationContextImpl extends SerializationContext {
     }
 
     final typeIri = ser.typeIri;
-    return (
-      iri,
-      [
-        // Add rdf:type only if not already present in triples
-        if (!hasTypeTriple && typeIri != null)
-          constant(iri, RdfPredicates.type, typeIri),
-        ...triples,
-      ],
-    );
+    return [
+      // Add rdf:type only if not already present in triples
+      if (!hasTypeTriple && typeIri != null)
+        constant(iri, RdfPredicates.type, typeIri),
+      ...triples,
+    ];
   }
 }

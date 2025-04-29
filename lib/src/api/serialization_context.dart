@@ -6,10 +6,7 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 /// Provides access to services and state needed during RDF serialization.
 /// Used to delegate complex type mapping to the parent service.
 abstract class SerializationContext {
-  (RdfSubject, List<Triple>) node<T>(
-    T instance, {
-    NodeSerializer<T>? serializer,
-  });
+  List<Triple> node<T>(T instance, {NodeSerializer<T>? serializer});
 
   Triple constant(RdfSubject subject, RdfPredicate predicate, RdfObject object);
 

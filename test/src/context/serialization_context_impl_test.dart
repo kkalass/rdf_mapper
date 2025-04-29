@@ -31,7 +31,7 @@ void main() {
         );
 
         // Serialize the person to RDF triples
-        final (_, triples) = context.node(person);
+        final triples = context.node(person);
 
         // Count the number of type triples
         final typeTriples =

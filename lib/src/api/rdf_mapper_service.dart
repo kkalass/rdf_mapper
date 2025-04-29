@@ -175,9 +175,7 @@ final class RdfMapperService {
     }
     final context = SerializationContextImpl(registry: registry);
 
-    var (_, triples) = context.node<T>(instance);
-
-    return RdfGraph(triples: triples);
+    return RdfGraph(triples: context.node<T>(instance));
   }
 
   /// Serialize a list of objects to an RDF graph.
@@ -199,8 +197,7 @@ final class RdfMapperService {
     final context = SerializationContextImpl(registry: registry);
     var triples =
         instances.expand((instance) {
-          var (_, triples) = context.node(instance);
-          return triples;
+          return context.node(instance);
         }).toList();
 
     return RdfGraph(triples: triples);

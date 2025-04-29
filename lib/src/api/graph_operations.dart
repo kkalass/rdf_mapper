@@ -108,8 +108,7 @@ final class GraphOperations {
       // we rely on the context.subject method without an explicit serializer.
       // The SerializationContextImpl class will internally select the correct
       // serializer based on the runtime type of the instance object.
-      final (_, triples) = context.node(instance);
-      allTriples.addAll(triples);
+      allTriples.addAll(context.node(instance));
     }
 
     return RdfGraph(triples: allTriples);
