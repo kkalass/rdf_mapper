@@ -268,7 +268,8 @@ class CustomBlankNodeDeserializer
   IriTerm? get typeIri => null;
   @override
   TestAddress fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
-    var city = context.require<String>(term, VcardPredicates.locality);
+    final reader = context.reader(term);
+    var city = reader.require<String>(VcardPredicates.locality);
     return TestAddress(city: city);
   }
 }

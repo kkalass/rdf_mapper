@@ -1,5 +1,5 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/src/api/deserialization_context.dart';
+import 'package:rdf_mapper/src/api/deserialization_service.dart';
 import 'package:rdf_mapper/src/api/deserializer.dart';
 
 /// Reader for fluent RDF node deserialization.
@@ -14,13 +14,13 @@ import 'package:rdf_mapper/src/api/deserializer.dart';
 /// ```
 class NodeReader {
   final RdfSubject _subject;
-  final DeserializationContext _context;
+  final DeserializationService _service;
 
   /// Creates a new NodeReader for the fluent API.
   ///
   /// @param subject The RDF subject to read properties from
   /// @param context The deserialization context
-  NodeReader(this._subject, this._context);
+  NodeReader(this._subject, this._service);
 
   /// Gets a required property value from the RDF graph.
   ///
@@ -37,7 +37,7 @@ class NodeReader {
     LiteralTermDeserializer<T>? literalTermDeserializer,
     BlankNodeDeserializer<T>? blankNodeDeserializer,
   }) {
-    return _context.require<T>(
+    return _service.require<T>(
       _subject,
       predicate,
       enforceSingleValue: enforceSingleValue,
@@ -63,7 +63,7 @@ class NodeReader {
     LiteralTermDeserializer<T>? literalTermDeserializer,
     BlankNodeDeserializer<T>? blankNodeDeserializer,
   }) {
-    return _context.get<T>(
+    return _service.get<T>(
       _subject,
       predicate,
       enforceSingleValue: enforceSingleValue,
@@ -85,7 +85,7 @@ class NodeReader {
     LiteralTermDeserializer<T>? literalTermDeserializer,
     BlankNodeDeserializer<T>? blankNodeDeserializer,
   }) {
-    return _context.getList<T>(
+    return _service.getList<T>(
       _subject,
       predicate,
       nodeDeserializer: iriNodeDeserializer,
@@ -106,7 +106,7 @@ class NodeReader {
     LiteralTermDeserializer<MapEntry<K, V>>? literalTermDeserializer,
     BlankNodeDeserializer<MapEntry<K, V>>? blankNodeDeserializer,
   }) {
-    return _context.getMap<K, V>(
+    return _service.getMap<K, V>(
       _subject,
       predicate,
       iriNodeDeserializer: iriNodeDeserializer,
@@ -129,7 +129,7 @@ class NodeReader {
     LiteralTermDeserializer<T>? literalTermDeserializer,
     BlankNodeDeserializer<T>? blankNodeDeserializer,
   }) {
-    return _context.getMany<T, R>(
+    return _service.getMany<T, R>(
       _subject,
       predicate,
       collector,

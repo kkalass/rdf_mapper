@@ -1,10 +1,10 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/src/api/serialization_context.dart';
+import 'package:rdf_mapper/src/api/serialization_service.dart';
 import 'package:rdf_mapper/src/api/serializer.dart';
 
-/// Builder für fluent RDF node serialization.
+/// Builder for fluent RDF node serialization.
 ///
-/// Ermöglicht das Erstellen von RDF-Graphen in einer verketteten API.
+/// Enables creating RDF graphs in a chained API pattern.
 ///
 /// ```dart
 /// final (subject, triples) = context
@@ -16,15 +16,15 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 class NodeBuilder<S extends RdfSubject, T> {
   final S _subject;
   final List<Triple> _triples;
-  final SerializationContext _context;
+  final SerializationService _service;
 
-  /// Creates a new NodeBuilder für die fluent API.
+  /// Creates a new NodeBuilder for the fluent API.
   ///
   /// @param subject The RDF subject to build properties for
   /// @param context The serialization context
   /// @param initialTriples Optional list of initial triples
   /// @param serializer Optional serializer for the node type
-  NodeBuilder(this._subject, this._context, {List<Triple>? initialTriples})
+  NodeBuilder(this._subject, this._service, {List<Triple>? initialTriples})
     : _triples = initialTriples ?? [];
 
   /// Adds a literal property to the node.
@@ -38,7 +38,7 @@ class NodeBuilder<S extends RdfSubject, T> {
     LiteralTermSerializer<V>? serializer,
   }) {
     _triples.add(
-      _context.literal(_subject, predicate, value, serializer: serializer),
+      _service.literal(_subject, predicate, value, serializer: serializer),
     );
     return this;
   }
@@ -54,7 +54,7 @@ class NodeBuilder<S extends RdfSubject, T> {
     IriTermSerializer<V>? serializer,
   }) {
     _triples.add(
-      _context.iri(_subject, predicate, value, serializer: serializer),
+      _service.iri(_subject, predicate, value, serializer: serializer),
     );
     return this;
   }
@@ -70,7 +70,7 @@ class NodeBuilder<S extends RdfSubject, T> {
     NodeSerializer<V>? serializer,
   }) {
     _triples.addAll(
-      _context.childNode(_subject, predicate, value, serializer: serializer),
+      _service.childNode(_subject, predicate, value, serializer: serializer),
     );
     return this;
   }
@@ -86,7 +86,7 @@ class NodeBuilder<S extends RdfSubject, T> {
     NodeSerializer<V>? serializer,
   }) {
     _triples.addAll(
-      _context.childNodeList(
+      _service.childNodeList(
         _subject,
         predicate,
         values,
@@ -107,7 +107,7 @@ class NodeBuilder<S extends RdfSubject, T> {
     LiteralTermSerializer<V>? serializer,
   }) {
     _triples.addAll(
-      _context.literalList(_subject, predicate, values, serializer: serializer),
+      _service.literalList(_subject, predicate, values, serializer: serializer),
     );
     return this;
   }
@@ -123,8 +123,93 @@ class NodeBuilder<S extends RdfSubject, T> {
     IriTermSerializer<V>? serializer,
   }) {
     _triples.addAll(
-      _context.iriList(_subject, predicate, values, serializer: serializer),
+      _service.iriList(_subject, predicate, values, serializer: serializer),
     );
+    return this;
+  }
+
+  /// Adds a literal property to the node if the value is not null.
+  ///
+  /// @param predicate The predicate for the property
+  /// @param value The optional literal value
+  /// @param serializer Optional serializer for the value type
+  /// @return This builder instance for method chaining
+  NodeBuilder<S, T> literalIfNotNull<V>(
+    RdfPredicate predicate,
+    V? value, {
+    LiteralTermSerializer<V>? serializer,
+  }) {
+    if (value != null) {
+      literal(predicate, value, serializer: serializer);
+    }
+    return this;
+  }
+
+  /// Adds an IRI property to the node if the value is not null.
+  ///
+  /// @param predicate The predicate for the property
+  /// @param value The optional value to be serialized as an IRI
+  /// @param serializer Optional serializer for the value type
+  /// @return This builder instance for method chaining
+  NodeBuilder<S, T> iriIfNotNull<V>(
+    RdfPredicate predicate,
+    V? value, {
+    IriTermSerializer<V>? serializer,
+  }) {
+    if (value != null) {
+      iri(predicate, value, serializer: serializer);
+    }
+    return this;
+  }
+
+  /// Adds a child node to this node if the value is not null.
+  ///
+  /// @param predicate The predicate for the relationship
+  /// @param value The optional child node value
+  /// @param serializer Optional serializer for the child node type
+  /// @return This builder instance for method chaining
+  NodeBuilder<S, T> childNodeIfNotNull<V>(
+    RdfPredicate predicate,
+    V? value, {
+    NodeSerializer<V>? serializer,
+  }) {
+    if (value != null) {
+      childNode(predicate, value, serializer: serializer);
+    }
+    return this;
+  }
+
+  /// Adds multiple child nodes to this node if the collection is not null and not empty.
+  ///
+  /// @param predicate The predicate for the relationships
+  /// @param values The optional collection of child node values
+  /// @param serializer Optional serializer for the child node type
+  /// @return This builder instance for method chaining
+  NodeBuilder<S, T> childNodeListIfNotEmpty<V>(
+    RdfPredicate predicate,
+    Iterable<V>? values, {
+    NodeSerializer<V>? serializer,
+  }) {
+    if (values != null && values.isNotEmpty) {
+      childNodeList(predicate, values, serializer: serializer);
+    }
+    return this;
+  }
+
+  /// Conditionally applies a transformation to this builder.
+  ///
+  /// Useful for complex conditional logic that doesn't fit the other conditional methods.
+  ///
+  /// @param condition The condition that determines if the action should be applied
+  /// @param action The action to apply to the builder if the condition is true
+  /// @return This builder instance for method chaining
+  NodeBuilder<S, T> when(
+    bool condition,
+    void Function(NodeBuilder<S, T> builder) action,
+  ) {
+    if (condition) {
+      action(this);
+    }
     return this;
   }
 

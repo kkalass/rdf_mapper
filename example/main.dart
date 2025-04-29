@@ -241,17 +241,17 @@ class BookMapper implements IriNodeMapper<Book> {
     Book book,
     SerializationContext context, {
     RdfSubject? parentSubject,
-  }) =>
-      // Create full IRI from the identifier
-      context
-          .nodeBuilder(IriTerm(_createIriFromId(book.id)))
-          .literal(titlePredicate, book.title)
-          .literal(authorPredicate, book.author)
-          .literal<DateTime>(publishedPredicate, book.published)
-          .iri<ISBN>(isbnPredicate, book.isbn)
-          .literal<Rating>(ratingPredicate, book.rating)
-          .childNodeList(chapterPredicate, book.chapters)
-          .build();
+  }) {
+    return context
+        .nodeBuilder(IriTerm(_createIriFromId(book.id)))
+        .literal(titlePredicate, book.title)
+        .literal(authorPredicate, book.author)
+        .literal<DateTime>(publishedPredicate, book.published)
+        .iri<ISBN>(isbnPredicate, book.isbn)
+        .literal<Rating>(ratingPredicate, book.rating)
+        .childNodeList(chapterPredicate, book.chapters)
+        .build();
+  }
 }
 
 // Blank node-based entity mapper

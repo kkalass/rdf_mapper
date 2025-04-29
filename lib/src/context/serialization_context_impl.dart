@@ -2,6 +2,7 @@ import 'package:logging/logging.dart';
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_core/vocab.dart';
 import 'package:rdf_mapper/src/api/node_builder.dart';
+import 'package:rdf_mapper/src/api/serialization_service.dart';
 import 'package:rdf_mapper/src/api/serializer.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
@@ -9,7 +10,8 @@ import 'package:rdf_mapper/src/exceptions/serializer_not_found_exception.dart';
 
 final _log = Logger("rdf_orm.serialization");
 
-class SerializationContextImpl extends SerializationContext {
+class SerializationContextImpl extends SerializationContext
+    implements SerializationService {
   final RdfMapperRegistry _registry;
 
   SerializationContextImpl({required RdfMapperRegistry registry})
@@ -215,4 +217,97 @@ class SerializationContextImpl extends SerializationContext {
       ...triples,
     ];
   }
+
+  /// Creates triples for multiple literal objects derived from a source object.
+  List<Triple> literals<A, T>(
+    RdfSubject subject,
+    RdfPredicate predicate,
+    Iterable<T> Function(A) toIterable,
+    A instance, {
+    LiteralTermSerializer<T>? serializer,
+  }) =>
+      toIterable(instance)
+          .map(
+            (item) => literal(subject, predicate, item, serializer: serializer),
+          )
+          .toList();
+
+  /// Creates triples for a collection of literal objects.
+  List<Triple> literalList<T>(
+    RdfSubject subject,
+    RdfPredicate predicate,
+    Iterable<T> instance, {
+    LiteralTermSerializer<T>? serializer,
+  }) => literals<Iterable<T>, T>(
+    subject,
+    predicate,
+    (it) => it,
+    instance,
+    serializer: serializer,
+  );
+  List<Triple> iris<A, T>(
+    RdfSubject subject,
+    RdfPredicate predicate,
+    Iterable<T> Function(A) toIterable,
+    A instance, {
+    IriTermSerializer<T>? serializer,
+  }) =>
+      toIterable(instance)
+          .map((item) => iri(subject, predicate, item, serializer: serializer))
+          .toList();
+
+  /// Creates triples for a collection of IRI objects.
+  List<Triple> iriList<T>(
+    RdfSubject subject,
+    RdfPredicate predicate,
+    Iterable<T> instance, {
+    IriTermSerializer<T>? serializer,
+  }) => iris<Iterable<T>, T>(
+    subject,
+    predicate,
+    (it) => it,
+    instance,
+    serializer: serializer,
+  );
+  List<Triple> childNodes<A, T>(
+    RdfSubject subject,
+    RdfPredicate predicate,
+    Iterable<T> Function(A p1) toIterable,
+    A instance, {
+    NodeSerializer<T>? serializer,
+  }) =>
+      toIterable(instance)
+          .expand<Triple>(
+            (item) =>
+                childNode(subject, predicate, item, serializer: serializer),
+          )
+          .toList();
+
+  /// Creates triples for a collection of child nodes.
+  List<Triple> childNodeList<T>(
+    RdfSubject subject,
+    RdfPredicate predicate,
+    Iterable<T> instance, {
+    NodeSerializer<T>? serializer,
+  }) => childNodes(
+    subject,
+    predicate,
+    (it) => it,
+    instance,
+    serializer: serializer,
+  );
+
+  /// Creates triples for a map of child nodes.
+  List<Triple> childNodeMap<K, V>(
+    RdfSubject subject,
+    RdfPredicate predicate,
+    Map<K, V> instance,
+    NodeSerializer<MapEntry<K, V>> entrySerializer,
+  ) => childNodes<Map<K, V>, MapEntry<K, V>>(
+    subject,
+    predicate,
+    (it) => it.entries,
+    instance,
+    serializer: entrySerializer,
+  );
 }

@@ -1040,9 +1040,10 @@ class CompanyMapper implements IriNodeMapper<Company> {
 
   @override
   Company fromRdfNode(IriTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
     final id = subject.iri;
-    final name = context.require<String>(subject, namePredicate);
-    final address = context.get<Address>(subject, addressPredicate);
+    final name = reader.require<String>(namePredicate);
+    final address = reader.get<Address>(addressPredicate);
 
     return Company(id: id, name: name, address: address);
   }
@@ -1053,15 +1054,11 @@ class CompanyMapper implements IriNodeMapper<Company> {
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    final subject = IriTerm(company.id);
-    final triples = <Triple>[
-      Triple(subject, namePredicate, LiteralTerm.string(company.name)),
-
-      if (company.address != null)
-        ...context.childNode(subject, addressPredicate, company.address),
-    ];
-
-    return (subject, triples);
+    return context
+        .nodeBuilder(IriTerm(company.id))
+        .literal(namePredicate, company.name)
+        .childNodeIfNotNull(addressPredicate, company.address)
+        .build();
   }
 }
 
@@ -1077,11 +1074,12 @@ class EmployeeMapper implements IriNodeMapper<Employee> {
 
   @override
   Employee fromRdfNode(IriTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
     final id = subject.iri;
-    final name = context.require<String>(subject, givenNamePredicate);
-    final age = context.require<int>(subject, agePredicate);
-    final address = context.get<Address>(subject, addressPredicate);
-    final employer = context.get<Company>(subject, employerPredicate);
+    final name = reader.require<String>(givenNamePredicate);
+    final age = reader.require<int>(agePredicate);
+    final address = reader.get<Address>(addressPredicate);
+    final employer = reader.get<Company>(employerPredicate);
 
     return Employee(
       id: id,
@@ -1098,23 +1096,13 @@ class EmployeeMapper implements IriNodeMapper<Employee> {
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    final subject = IriTerm(person.id);
-    final triples = <Triple>[
-      Triple(subject, givenNamePredicate, LiteralTerm.string(person.name)),
-      Triple(
-        subject,
-        agePredicate,
-        LiteralTerm.typed(person.age.toString(), 'integer'),
-      ),
-
-      if (person.address != null)
-        ...context.childNode(subject, addressPredicate, person.address),
-
-      if (person.employer != null)
-        ...context.childNode(subject, employerPredicate, person.employer),
-    ];
-
-    return (subject, triples);
+    return context
+        .nodeBuilder(IriTerm(person.id))
+        .literal(givenNamePredicate, person.name)
+        .literal(agePredicate, person.age)
+        .childNodeIfNotNull(addressPredicate, person.address)
+        .childNodeIfNotNull(employerPredicate, person.employer)
+        .build();
   }
 }
 
@@ -1133,11 +1121,12 @@ class EmployeeWithCompanyReferenceMapper
     IriTerm subject,
     DeserializationContext context,
   ) {
+    final reader = context.reader(subject);
     final id = subject.iri;
-    final name = context.require<String>(subject, givenNamePredicate);
-    final age = context.require<int>(subject, agePredicate);
-    final address = context.get<Address>(subject, addressPredicate);
-    final employer = context.get<CompanyReference>(subject, employerPredicate);
+    final name = reader.require<String>(givenNamePredicate);
+    final age = reader.require<int>(agePredicate);
+    final address = reader.get<Address>(addressPredicate);
+    final employer = reader.get<CompanyReference>(employerPredicate);
 
     return EmployeeWithCompanyReference(
       id: id,
@@ -1154,23 +1143,13 @@ class EmployeeWithCompanyReferenceMapper
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    final subject = IriTerm(person.id);
-    final triples = <Triple>[
-      Triple(subject, givenNamePredicate, LiteralTerm.string(person.name)),
-      Triple(
-        subject,
-        agePredicate,
-        LiteralTerm.typed(person.age.toString(), 'integer'),
-      ),
-
-      if (person.address != null)
-        ...context.childNode(subject, addressPredicate, person.address),
-
-      if (person.employer != null)
-        context.iri(subject, employerPredicate, person.employer),
-    ];
-
-    return (subject, triples);
+    return context
+        .nodeBuilder(IriTerm(person.id))
+        .literal(givenNamePredicate, person.name)
+        .literal(agePredicate, person.age)
+        .childNodeIfNotNull(addressPredicate, person.address)
+        .iriIfNotNull(employerPredicate, person.employer)
+        .build();
   }
 }
 
@@ -1283,21 +1262,13 @@ class TestPersonMapper implements IriNodeMapper<TestPerson> {
 
   @override
   TestPerson fromRdfNode(IriTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
     final id = subject.iri;
+    final name = reader.require<String>(givenNamePredicate);
+    final age = reader.require<int>(agePredicate);
+    final address = reader.get<Address>(addressPredicate);
+    final employer = reader.get<Company>(employerPredicate);
 
-    // Get name property
-    final name = context.require<String>(subject, givenNamePredicate);
-
-    // Get age property
-    final age = context.require<int>(
-      subject,
-      // Age currently has the status unstable in the spec, thus it is not
-      // included in the predicates class
-      agePredicate,
-    );
-
-    final address = context.get<Address>(subject, addressPredicate);
-    final employer = context.get<Company>(subject, employerPredicate);
     return TestPerson(
       id: id,
       name: name,
@@ -1313,26 +1284,13 @@ class TestPersonMapper implements IriNodeMapper<TestPerson> {
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    final subject = IriTerm(person.id);
-    final triples = <Triple>[
-      // Name triple
-      Triple(subject, givenNamePredicate, LiteralTerm.string(person.name)),
-
-      // Age triple
-      Triple(
-        subject,
-        agePredicate,
-        LiteralTerm.typed(person.age.toString(), 'integer'),
-      ),
-
-      if (person.address != null)
-        ...context.childNode(subject, addressPredicate, person.address),
-
-      if (person.employer != null)
-        ...context.childNode(subject, employerPredicate, person.employer),
-    ];
-
-    return (subject, triples);
+    return context
+        .nodeBuilder(IriTerm(person.id))
+        .literal(givenNamePredicate, person.name)
+        .literal(agePredicate, person.age)
+        .childNodeIfNotNull(addressPredicate, person.address)
+        .childNodeIfNotNull(employerPredicate, person.employer)
+        .build();
   }
 }
 
@@ -1349,14 +1307,12 @@ class AddressMapper implements BlankNodeMapper<Address> {
 
   @override
   Address fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
+    final reader = context.reader(term);
     // Get address properties
-    final street = context.require<String>(term, streetAddressPredicate);
-
-    final city = context.require<String>(term, addressLocalityPredicate);
-
-    final zipCode = context.require<String>(term, postalCodePredicate);
-
-    final country = context.require<String>(term, addressCountryPredicate);
+    final street = reader.require<String>(streetAddressPredicate);
+    final city = reader.require<String>(addressLocalityPredicate);
+    final zipCode = reader.require<String>(postalCodePredicate);
+    final country = reader.require<String>(addressCountryPredicate);
 
     return Address(
       street: street,
@@ -1372,28 +1328,14 @@ class AddressMapper implements BlankNodeMapper<Address> {
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    // Create a blank node subject - no ID needed for addresses
-    final subject = BlankNodeTerm();
-
-    final triples = <Triple>[
-      // Street address triple
-      Triple(subject, streetAddressPredicate, LiteralTerm.string(value.street)),
-
-      // City/locality triple
-      Triple(subject, addressLocalityPredicate, LiteralTerm.string(value.city)),
-
-      // Postal code triple
-      Triple(subject, postalCodePredicate, LiteralTerm.string(value.zipCode)),
-
-      // Country triple
-      Triple(
-        subject,
-        addressCountryPredicate,
-        LiteralTerm.string(value.country),
-      ),
-    ];
-
-    return (subject, triples);
+    // Create a blank node subject
+    return context
+        .nodeBuilder(BlankNodeTerm())
+        .literal(streetAddressPredicate, value.street)
+        .literal(addressLocalityPredicate, value.city)
+        .literal(postalCodePredicate, value.zipCode)
+        .literal(addressCountryPredicate, value.country)
+        .build();
   }
 }
 

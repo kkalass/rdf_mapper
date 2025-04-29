@@ -4,10 +4,9 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i5;
-import 'package:rdf_core/rdf_core.dart' as _i3;
-import 'package:rdf_mapper/src/api/deserialization_context.dart' as _i2;
-import 'package:rdf_mapper/src/api/deserializer.dart' as _i4;
+import 'package:rdf_core/rdf_core.dart' as _i4;
+import 'package:rdf_mapper/src/api/deserialization_context.dart' as _i3;
+import 'package:rdf_mapper/src/api/node_reader.dart' as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -23,161 +22,28 @@ import 'package:rdf_mapper/src/api/deserializer.dart' as _i4;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
+class _FakeNodeReader_0 extends _i1.SmartFake implements _i2.NodeReader {
+  _FakeNodeReader_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [DeserializationContext].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockDeserializationContext extends _i1.Mock
-    implements _i2.DeserializationContext {
+    implements _i3.DeserializationContext {
   MockDeserializationContext() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  T require<T>(
-    _i3.RdfSubject? subject,
-    _i3.RdfPredicate? predicate, {
-    bool? enforceSingleValue = true,
-    _i4.IriNodeDeserializer<T>? iriNodeDeserializer,
-    _i4.IriTermDeserializer<T>? iriTermDeserializer,
-    _i4.LiteralTermDeserializer<T>? literalTermDeserializer,
-    _i4.BlankNodeDeserializer<T>? blankNodeDeserializer,
-  }) =>
+  _i2.NodeReader reader(_i4.RdfSubject? subject) =>
       (super.noSuchMethod(
-            Invocation.method(
-              #require,
-              [subject, predicate],
-              {
-                #enforceSingleValue: enforceSingleValue,
-                #subjectDeserializer: iriNodeDeserializer,
-                #iriDeserializer: iriTermDeserializer,
-                #literalDeserializer: literalTermDeserializer,
-                #blankNodeDeserializer: blankNodeDeserializer,
-              },
-            ),
-            returnValue: _i5.dummyValue<T>(
+            Invocation.method(#reader, [subject]),
+            returnValue: _FakeNodeReader_0(
               this,
-              Invocation.method(
-                #require,
-                [subject, predicate],
-                {
-                  #enforceSingleValue: enforceSingleValue,
-                  #subjectDeserializer: iriNodeDeserializer,
-                  #iriDeserializer: iriTermDeserializer,
-                  #literalDeserializer: literalTermDeserializer,
-                  #blankNodeDeserializer: blankNodeDeserializer,
-                },
-              ),
+              Invocation.method(#reader, [subject]),
             ),
           )
-          as T);
-
-  @override
-  T? get<T>(
-    _i3.RdfSubject? subject,
-    _i3.RdfPredicate? predicate, {
-    bool? enforceSingleValue = true,
-    _i4.IriTermDeserializer<T>? iriTermDeserializer,
-    _i4.IriNodeDeserializer<T>? iriNodeDeserializer,
-    _i4.LiteralTermDeserializer<T>? literalTermDeserializer,
-    _i4.BlankNodeDeserializer<T>? blankNodeDeserializer,
-  }) =>
-      (super.noSuchMethod(
-            Invocation.method(
-              #get,
-              [subject, predicate],
-              {
-                #enforceSingleValue: enforceSingleValue,
-                #iriDeserializer: iriTermDeserializer,
-                #subjectDeserializer: iriNodeDeserializer,
-                #literalDeserializer: literalTermDeserializer,
-                #blankNodeDeserializer: blankNodeDeserializer,
-              },
-            ),
-          )
-          as T?);
-
-  @override
-  R getMany<T, R>(
-    _i3.RdfSubject? subject,
-    _i3.RdfPredicate? predicate,
-    R Function(Iterable<T>)? collector, {
-    _i4.IriTermDeserializer<T>? iriTermDeserializer,
-    _i4.IriNodeDeserializer<T>? iriNodeDeserializer,
-    _i4.LiteralTermDeserializer<T>? literalTermDeserializer,
-    _i4.BlankNodeDeserializer<T>? blankNodeDeserializer,
-  }) =>
-      (super.noSuchMethod(
-            Invocation.method(
-              #getMany,
-              [subject, predicate, collector],
-              {
-                #iriDeserializer: iriTermDeserializer,
-                #subjectDeserializer: iriNodeDeserializer,
-                #literalDeserializer: literalTermDeserializer,
-                #blankNodeDeserializer: blankNodeDeserializer,
-              },
-            ),
-            returnValue: _i5.dummyValue<R>(
-              this,
-              Invocation.method(
-                #getMany,
-                [subject, predicate, collector],
-                {
-                  #iriDeserializer: iriTermDeserializer,
-                  #subjectDeserializer: iriNodeDeserializer,
-                  #literalDeserializer: literalTermDeserializer,
-                  #blankNodeDeserializer: blankNodeDeserializer,
-                },
-              ),
-            ),
-          )
-          as R);
-
-  @override
-  List<T> getList<T>(
-    _i3.RdfSubject? subject,
-    _i3.RdfPredicate? predicate, {
-    _i4.IriTermDeserializer<T>? iriTermDeserializer,
-    _i4.IriNodeDeserializer<T>? nodeDeserializer,
-    _i4.LiteralTermDeserializer<T>? literalTermDeserializer,
-    _i4.BlankNodeDeserializer<T>? blankNodeDeserializer,
-  }) =>
-      (super.noSuchMethod(
-            Invocation.method(
-              #getList,
-              [subject, predicate],
-              {
-                #iriDeserializer: iriTermDeserializer,
-                #subjectDeserializer: nodeDeserializer,
-                #literalDeserializer: literalTermDeserializer,
-                #blankNodeDeserializer: blankNodeDeserializer,
-              },
-            ),
-            returnValue: <T>[],
-          )
-          as List<T>);
-
-  @override
-  Map<K, V> getMap<K, V>(
-    _i3.RdfSubject? subject,
-    _i3.RdfPredicate? predicate, {
-    _i4.IriTermDeserializer<MapEntry<K, V>>? iriTermDeserializer,
-    _i4.IriNodeDeserializer<MapEntry<K, V>>? iriNodeDeserializer,
-    _i4.LiteralTermDeserializer<MapEntry<K, V>>? literalTermDeserializer,
-    _i4.BlankNodeDeserializer<MapEntry<K, V>>? blankNodeDeserializer,
-  }) =>
-      (super.noSuchMethod(
-            Invocation.method(
-              #getMap,
-              [subject, predicate],
-              {
-                #iriDeserializer: iriTermDeserializer,
-                #subjectDeserializer: iriNodeDeserializer,
-                #literalDeserializer: literalTermDeserializer,
-                #blankNodeDeserializer: blankNodeDeserializer,
-              },
-            ),
-            returnValue: <K, V>{},
-          )
-          as Map<K, V>);
+          as _i2.NodeReader);
 }

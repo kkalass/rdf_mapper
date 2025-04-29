@@ -150,13 +150,12 @@ final class TestItemRdfMapper implements IriNodeMapper<TestItem> {
 
   @override
   TestItem fromRdfNode(IriTerm iri, DeserializationContext context) {
+    final reader = context.reader(iri);
     return TestItem(
-      name: context.require(
-        iri,
+      name: reader.require(
         IriTerm("http://kalass.de/dart/rdf/test-ontology#name"),
       ),
-      age: context.require(
-        iri,
+      age: reader.require(
         IriTerm("http://kalass.de/dart/rdf/test-ontology#age"),
       ),
     );
@@ -171,23 +170,16 @@ final class TestItemRdfMapper implements IriNodeMapper<TestItem> {
     final itemIri = IriTerm(
       "$storageRoot${Uri.encodeComponent(instance.name)}",
     );
-
-    return (
-      itemIri,
-      [
-        // Add basic properties
-        context.literal(
-          itemIri,
+    return context
+        .nodeBuilder(itemIri)
+        .literal(
           IriTerm("http://kalass.de/dart/rdf/test-ontology#name"),
           instance.name,
-        ),
-
-        context.literal(
-          itemIri,
+        )
+        .literal(
           IriTerm("http://kalass.de/dart/rdf/test-ontology#age"),
           instance.age,
-        ),
-      ],
-    );
+        )
+        .build();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
+import 'package:rdf_mapper/src/api/deserialization_service.dart';
 import 'package:rdf_mapper/src/api/deserializer.dart';
 import 'package:rdf_mapper/src/api/node_reader.dart';
 import 'package:rdf_mapper/src/exceptions/property_value_not_found_exception.dart';
@@ -7,7 +8,8 @@ import 'package:rdf_mapper/src/exceptions/too_many_property_values_exception.dar
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
 
 /// Standard implementation of deserialization context
-class DeserializationContextImpl extends DeserializationContext {
+class DeserializationContextImpl extends DeserializationContext
+    implements DeserializationService {
   final RdfGraph _graph;
   final RdfMapperRegistry _registry;
 
@@ -152,6 +154,46 @@ class DeserializationContextImpl extends DeserializationContext {
     }
     return result;
   }
+
+  /// Gets a list of property values
+  ///
+  /// Convenience method that collects multiple property values into a List.
+  List<T> getList<T>(
+    RdfSubject subject,
+    RdfPredicate predicate, {
+    IriTermDeserializer<T>? iriTermDeserializer,
+    IriNodeDeserializer<T>? nodeDeserializer,
+    LiteralTermDeserializer<T>? literalTermDeserializer,
+    BlankNodeDeserializer<T>? blankNodeDeserializer,
+  }) => getMany<T, List<T>>(
+    subject,
+    predicate,
+    (it) => it.toList(),
+    iriTermDeserializer: iriTermDeserializer,
+    iriNodeDeserializer: nodeDeserializer,
+    literalTermDeserializer: literalTermDeserializer,
+    blankNodeDeserializer: blankNodeDeserializer,
+  );
+
+  /// Gets a map of property values
+  ///
+  /// Convenience method that collects multiple property values into a Map.
+  Map<K, V> getMap<K, V>(
+    RdfSubject subject,
+    RdfPredicate predicate, {
+    IriTermDeserializer<MapEntry<K, V>>? iriTermDeserializer,
+    IriNodeDeserializer<MapEntry<K, V>>? iriNodeDeserializer,
+    LiteralTermDeserializer<MapEntry<K, V>>? literalTermDeserializer,
+    BlankNodeDeserializer<MapEntry<K, V>>? blankNodeDeserializer,
+  }) => getMany<MapEntry<K, V>, Map<K, V>>(
+    subject,
+    predicate,
+    (it) => Map<K, V>.fromEntries(it),
+    iriTermDeserializer: iriTermDeserializer,
+    iriNodeDeserializer: iriNodeDeserializer,
+    literalTermDeserializer: literalTermDeserializer,
+    blankNodeDeserializer: blankNodeDeserializer,
+  );
 }
 
 /// A specialized deserialization context that tracks subject processing order.

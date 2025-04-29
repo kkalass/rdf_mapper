@@ -9,7 +9,7 @@ import 'package:test/test.dart';
 
 void main() {
   late RdfMapperRegistry registry;
-  late SerializationContext context;
+  late SerializationContextImpl context;
 
   setUp(() {
     registry = RdfMapperRegistry();

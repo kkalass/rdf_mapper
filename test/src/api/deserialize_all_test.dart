@@ -84,9 +84,11 @@ class PersonMapper implements IriNodeMapper<Person> {
 
   @override
   Person fromRdfNode(IriTerm subject, DeserializationContext context) {
-    final name = context.require<String>(subject, namePredicate);
-    final address = context.get<Address>(subject, addressPredicate);
-    final contacts = context.getList<Contact>(subject, contactPredicate);
+    final reader = context.reader(subject);
+    // Use require to ensure these properties are present
+    final name = reader.require<String>(namePredicate);
+    final address = reader.get<Address>(addressPredicate);
+    final contacts = reader.getList<Contact>(contactPredicate);
 
     return Person(
       id: subject.iri,
@@ -102,19 +104,12 @@ class PersonMapper implements IriNodeMapper<Person> {
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    final subject = IriTerm(value.id);
-    final triples = <Triple>[
-      context.literal(subject, namePredicate, value.name),
-
-      if (value.address != null)
-        ...context.childNode(subject, addressPredicate, value.address),
-
-      ...value.contacts.expand(
-        (contact) => context.childNode(subject, contactPredicate, contact),
-      ),
-    ];
-
-    return (subject, triples);
+    return context
+        .nodeBuilder(IriTerm(value.id))
+        .literal(namePredicate, value.name)
+        .childNodeIfNotNull(addressPredicate, value.address)
+        .childNodeList(contactPredicate, value.contacts)
+        .build();
   }
 }
 
@@ -127,8 +122,9 @@ class AddressMapper implements BlankNodeMapper<Address> {
 
   @override
   Address fromRdfNode(BlankNodeTerm subject, DeserializationContext context) {
-    final street = context.require<String>(subject, streetPredicate);
-    final city = context.require<String>(subject, cityPredicate);
+    final reader = context.reader(subject);
+    final street = reader.require<String>(streetPredicate);
+    final city = reader.require<String>(cityPredicate);
 
     return Address(street: street, city: city);
   }
@@ -139,13 +135,11 @@ class AddressMapper implements BlankNodeMapper<Address> {
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    final subject = BlankNodeTerm();
-    final triples = <Triple>[
-      context.literal(subject, streetPredicate, value.street),
-      context.literal(subject, cityPredicate, value.city),
-    ];
-
-    return (subject, triples);
+    return context
+        .nodeBuilder(BlankNodeTerm())
+        .literal(streetPredicate, value.street)
+        .literal(cityPredicate, value.city)
+        .build();
   }
 }
 
@@ -158,8 +152,9 @@ class ContactMapper implements IriNodeMapper<Contact> {
 
   @override
   Contact fromRdfNode(IriTerm subject, DeserializationContext context) {
-    final type = context.require<String>(subject, typePredicate);
-    final value = context.require<String>(subject, valuePredicate);
+    final reader = context.reader(subject);
+    final type = reader.require<String>(typePredicate);
+    final value = reader.require<String>(valuePredicate);
 
     return Contact(id: subject.iri, type: type, value: value);
   }
@@ -170,13 +165,11 @@ class ContactMapper implements IriNodeMapper<Contact> {
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    final subject = IriTerm(value.id);
-    final triples = <Triple>[
-      context.literal(subject, typePredicate, value.type),
-      context.literal(subject, valuePredicate, value.value),
-    ];
-
-    return (subject, triples);
+    return context
+        .nodeBuilder(IriTerm(value.id))
+        .literal(typePredicate, value.type)
+        .literal(valuePredicate, value.value)
+        .build();
   }
 }
 
@@ -190,8 +183,9 @@ class StandaloneAddressMapper implements IriNodeMapper<Address> {
 
   @override
   Address fromRdfNode(IriTerm subject, DeserializationContext context) {
-    final street = context.require<String>(subject, streetPredicate);
-    final city = context.require<String>(subject, cityPredicate);
+    final reader = context.reader(subject);
+    final street = reader.require<String>(streetPredicate);
+    final city = reader.require<String>(cityPredicate);
 
     return Address(street: street, city: city);
   }
@@ -202,14 +196,11 @@ class StandaloneAddressMapper implements IriNodeMapper<Address> {
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    // For this test mapper, we're using a fixed IRI
-    final subject = IriTerm('http://example.org/address/1');
-    final triples = <Triple>[
-      context.literal(subject, streetPredicate, value.street),
-      context.literal(subject, cityPredicate, value.city),
-    ];
-
-    return (subject, triples);
+    return context
+        .nodeBuilder(IriTerm('http://example.org/address/1'))
+        .literal(streetPredicate, value.street)
+        .literal(cityPredicate, value.city)
+        .build();
   }
 }
 

@@ -19,50 +19,6 @@ import 'package:test/test.dart';
 // Mock implementation of SerializationContext for testing
 class MockSerializationContext extends SerializationContext {
   @override
-  List<Triple> childNode<T>(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    T instance, {
-    serializer,
-  }) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Triple constant(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    RdfObject object,
-  ) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Triple iri<T>(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    T instance, {
-    serializer,
-  }) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Triple literal<T>(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    T instance, {
-    serializer,
-  }) {
-    throw UnimplementedError();
-  }
-
-  @override
-  List<Triple> node<T>(T instance, {serializer}) {
-    throw UnimplementedError();
-  }
-
-  @override
   NodeBuilder<S, T> nodeBuilder<S extends RdfSubject, T>(S subject) {
     throw UnimplementedError();
   }
@@ -70,45 +26,6 @@ class MockSerializationContext extends SerializationContext {
 
 // Mock implementation of DeserializationContext for testing
 class MockDeserializationContext extends DeserializationContext {
-  @override
-  T require<T>(
-    RdfSubject subject,
-    RdfPredicate predicate, {
-    bool enforceSingleValue = true,
-    iriNodeDeserializer,
-    iriTermDeserializer,
-    literalTermDeserializer,
-    blankNodeDeserializer,
-  }) {
-    throw UnimplementedError();
-  }
-
-  @override
-  T? get<T>(
-    RdfSubject subject,
-    RdfPredicate predicate, {
-    bool enforceSingleValue = true,
-    iriNodeDeserializer,
-    iriTermDeserializer,
-    literalTermDeserializer,
-    blankNodeDeserializer,
-  }) {
-    throw UnimplementedError();
-  }
-
-  @override
-  R getMany<T, R>(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    R Function(Iterable<T>) collector, {
-    iriNodeDeserializer,
-    iriTermDeserializer,
-    literalTermDeserializer,
-    blankNodeDeserializer,
-  }) {
-    throw UnimplementedError();
-  }
-
   @override
   NodeReader reader(RdfSubject subject) {
     throw UnimplementedError();

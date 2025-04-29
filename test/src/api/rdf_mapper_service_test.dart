@@ -730,14 +730,12 @@ class DocumentDeserializer implements IriNodeDeserializer<Document> {
 
   @override
   Document fromRdfNode(IriTerm subject, DeserializationContext context) {
-    final title = context.require<String>(
-      subject,
-      IriTerm('http://example.org/title'),
-    );
+    final reader = context.reader(subject);
+    final title = reader.require<String>(IriTerm('http://example.org/title'));
 
     final tagNames =
-        context
-            .getList<Tag>(subject, IriTerm('http://example.org/tag'))
+        reader
+            .getList<Tag>(IriTerm('http://example.org/tag'))
             .map((tag) => tag.name)
             .toList();
 
@@ -752,13 +750,10 @@ class DocumentWithTagReferencesDeserializer
 
   @override
   Document fromRdfNode(IriTerm subject, DeserializationContext context) {
-    final title = context.require<String>(
-      subject,
-      IriTerm('http://example.org/title'),
-    );
+    final reader = context.reader(subject);
+    final title = reader.require<String>(IriTerm('http://example.org/title'));
 
-    final tagIris = context.getList<String>(
-      subject,
+    final tagIris = reader.getList<String>(
       IriTerm('http://example.org/tag'),
       iriTermDeserializer: IriStringDeserializer(),
     );
@@ -773,10 +768,8 @@ class TagDeserializer implements IriNodeDeserializer<Tag> {
 
   @override
   Tag fromRdfNode(IriTerm subject, DeserializationContext context) {
-    final name = context.require<String>(
-      subject,
-      IriTerm('http://example.org/name'),
-    );
+    final reader = context.reader(subject);
+    final name = reader.require<String>(IriTerm('http://example.org/name'));
 
     return Tag(id: subject.iri, name: name);
   }
@@ -816,10 +809,8 @@ class AddressMapper implements IriNodeMapper<Address> {
 
   @override
   Address fromRdfNode(IriTerm subject, DeserializationContext context) {
-    final city = context.require<String>(
-      subject,
-      IriTerm('http://example.org/city'),
-    );
+    final reader = context.reader(subject);
+    final city = reader.require<String>(IriTerm('http://example.org/city'));
     return Address(id: subject.iri, city: city);
   }
 
@@ -829,15 +820,10 @@ class AddressMapper implements IriNodeMapper<Address> {
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    final subject = IriTerm(value.id);
-    final triples = [
-      Triple(
-        subject,
-        IriTerm('http://example.org/city'),
-        LiteralTerm.string(value.city),
-      ),
-    ];
-    return (subject, triples);
+    return context
+        .nodeBuilder(IriTerm(value.id))
+        .literal(IriTerm('http://example.org/city'), value.city)
+        .build();
   }
 }
 
@@ -847,14 +833,9 @@ class PersonMapper implements IriNodeMapper<Person> {
 
   @override
   Person fromRdfNode(IriTerm subject, DeserializationContext context) {
-    final name = context.require<String>(
-      subject,
-      IriTerm('http://example.org/name'),
-    );
-    final address = context.get<Address>(
-      subject,
-      IriTerm('http://example.org/address'),
-    );
+    final reader = context.reader(subject);
+    final name = reader.require<String>(IriTerm('http://example.org/name'));
+    final address = reader.get<Address>(IriTerm('http://example.org/address'));
     return Person(id: subject.iri, name: name, address: address);
   }
 
@@ -864,26 +845,14 @@ class PersonMapper implements IriNodeMapper<Person> {
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    final subject = IriTerm(value.id);
-    final triples = <Triple>[
-      Triple(
-        subject,
-        IriTerm('http://example.org/name'),
-        LiteralTerm.string(value.name),
-      ),
-    ];
-
-    if (value.address != null) {
-      triples.add(
-        Triple(
-          subject,
+    return context
+        .nodeBuilder(IriTerm(value.id))
+        .literal(IriTerm('http://example.org/name'), value.name)
+        .iriIfNotNull(
           IriTerm('http://example.org/address'),
-          IriTerm(value.address!.id),
-        ),
-      );
-    }
-
-    return (subject, triples);
+          value.address == null ? null : IriTerm(value.address!.id),
+        )
+        .build();
   }
 }
 
@@ -904,16 +873,14 @@ class TestPersonMapper implements IriNodeMapper<TestPerson> {
   @override
   TestPerson fromRdfNode(IriTerm term, DeserializationContext context) {
     final id = term.iri;
+    final reader = context.reader(term);
 
     // Get name property
-    final name = context.get<String>(
-      term,
-      IriTerm('http://xmlns.com/foaf/0.1/name'),
-    );
+    final name = reader.get<String>(IriTerm('http://xmlns.com/foaf/0.1/name'));
 
     // Get age property
     final age =
-        context.get<int>(term, IriTerm('http://xmlns.com/foaf/0.1/age')) ??
+        reader.get<int>(IriTerm('http://xmlns.com/foaf/0.1/age')) ??
         0; // Default age to 0 if not present
 
     return TestPerson(id: id, name: name ?? 'Unknown', age: age);

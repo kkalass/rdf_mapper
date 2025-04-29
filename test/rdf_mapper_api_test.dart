@@ -152,10 +152,11 @@ class TestEntityMapper implements IriNodeMapper<TestEntity> {
 
   @override
   TestEntity fromRdfNode(IriTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
     return TestEntity(
       id: subject.iri,
-      name: context.require<String>(subject, namePredicate),
-      value: context.require<int>(subject, valuePredicate),
+      name: reader.require<String>(namePredicate),
+      value: reader.require<int>(valuePredicate),
     );
   }
 
@@ -165,11 +166,10 @@ class TestEntityMapper implements IriNodeMapper<TestEntity> {
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    final subject = IriTerm(entity.id);
-    final triples = <Triple>[
-      context.literal(subject, namePredicate, entity.name),
-      context.literal<int>(subject, valuePredicate, entity.value),
-    ];
-    return (subject, triples);
+    return context
+        .nodeBuilder(IriTerm(entity.id))
+        .literal(namePredicate, entity.name)
+        .literal(valuePredicate, entity.value)
+        .build();
   }
 }
