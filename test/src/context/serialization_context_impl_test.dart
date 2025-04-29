@@ -31,7 +31,7 @@ void main() {
         );
 
         // Serialize the person to RDF triples
-        final (_, triples) = context.subject(person);
+        final (_, triples) = context.subjectGraph(person);
 
         // Count the number of type triples
         final typeTriples =
@@ -61,7 +61,7 @@ void main() {
       );
 
       // Serialize the person to RDF triples
-      final (_, triples) = context.subject(person);
+      final (_, triples) = context.subjectGraph(person);
 
       // Count the number of type triples
       final typeTriples =
@@ -92,7 +92,11 @@ void main() {
       // Use childSubject to serialize the person as a child of another subject
       final parentSubject = IriTerm('http://example.org/container/1');
       final predicate = IriTerm('http://example.org/contains');
-      final triples = context.childSubject(parentSubject, predicate, person);
+      final triples = context.childSubjectGraph(
+        parentSubject,
+        predicate,
+        person,
+      );
 
       // Count the number of type triples for the person
       final typeTriples =

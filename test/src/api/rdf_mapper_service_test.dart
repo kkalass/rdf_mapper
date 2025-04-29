@@ -333,7 +333,10 @@ void main() {
       );
 
       // And verify the main registry wasn't affected
-      expect(service.registry.hasSubjectSerializerFor<TestPerson>(), isFalse);
+      expect(
+        service.registry.hasSubjectGraphSerializerFor<TestPerson>(),
+        isFalse,
+      );
     });
 
     test('toGraphFromList serializes a list of objects to a graph', () {
@@ -766,7 +769,7 @@ class DocumentWithTagReferencesDeserializer
     final tagIris = context.getList<String>(
       subject,
       IriTerm('http://example.org/tag'),
-      iriDeserializer: IriStringDeserializer(),
+      iriTermDeserializer: IriStringDeserializer(),
     );
 
     return Document(id: subject.iri, title: title, tags: tagIris);

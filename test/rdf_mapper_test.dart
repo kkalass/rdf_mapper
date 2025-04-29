@@ -354,7 +354,10 @@ void main() {
       expect(nameTriples.isNotEmpty, isTrue);
 
       // Verify the temporary registration didn't affect the original registry
-      expect(rdfMapper.registry.hasSubjectSerializerFor<TestPerson>(), isFalse);
+      expect(
+        rdfMapper.registry.hasSubjectGraphSerializerFor<TestPerson>(),
+        isFalse,
+      );
     });
 
     test(
@@ -634,11 +637,11 @@ _:b0 a schema:PostalAddress;
 
         // Verify mapper is not registered initially
         expect(
-          rdfMapper.registry.hasSubjectSerializerFor<TestPerson>(),
+          rdfMapper.registry.hasSubjectGraphSerializerFor<TestPerson>(),
           isFalse,
         );
         expect(
-          rdfMapper.registry.hasIriNodeDeserializerFor<TestPerson>(),
+          rdfMapper.registry.hasIriSubjectGraphDeserializerFor<TestPerson>(),
           isFalse,
         );
 
@@ -647,11 +650,11 @@ _:b0 a schema:PostalAddress;
 
         // Verify mapper is now registered
         expect(
-          rdfMapper.registry.hasSubjectSerializerFor<TestPerson>(),
+          rdfMapper.registry.hasSubjectGraphSerializerFor<TestPerson>(),
           isTrue,
         );
         expect(
-          rdfMapper.registry.hasIriNodeDeserializerFor<TestPerson>(),
+          rdfMapper.registry.hasIriSubjectGraphDeserializerFor<TestPerson>(),
           isTrue,
         );
 
@@ -729,20 +732,26 @@ _:b0 a schema:PostalAddress;
 
         // Verify deserializer is not registered initially
         expect(
-          rdfMapper.registry.hasBlankNodDeserializerFor<Address>(),
+          rdfMapper.registry.hasBlankNodeSubjectGraphDeserializerFor<Address>(),
           isFalse,
         );
-        expect(rdfMapper.registry.hasSubjectSerializerFor<Address>(), isFalse);
+        expect(
+          rdfMapper.registry.hasSubjectGraphSerializerFor<Address>(),
+          isFalse,
+        );
 
         // Register deserializer through convenience method
         rdfMapper.registerMapper<Address>(mapper);
 
         // Verify deserializer is now registered
         expect(
-          rdfMapper.registry.hasBlankNodDeserializerFor<Address>(),
+          rdfMapper.registry.hasBlankNodeSubjectGraphDeserializerFor<Address>(),
           isTrue,
         );
-        expect(rdfMapper.registry.hasSubjectSerializerFor<Address>(), isTrue);
+        expect(
+          rdfMapper.registry.hasSubjectGraphSerializerFor<Address>(),
+          isTrue,
+        );
       },
     );
   });
@@ -1064,7 +1073,11 @@ class CompanyMapper implements SubjectMapper<Company> {
       Triple(subject, namePredicate, LiteralTerm.string(company.name)),
 
       if (company.address != null)
-        ...context.childSubject(subject, addressPredicate, company.address),
+        ...context.childSubjectGraph(
+          subject,
+          addressPredicate,
+          company.address,
+        ),
     ];
 
     return (subject, triples);
@@ -1117,10 +1130,14 @@ class EmployeeMapper implements SubjectMapper<Employee> {
       ),
 
       if (person.address != null)
-        ...context.childSubject(subject, addressPredicate, person.address),
+        ...context.childSubjectGraph(subject, addressPredicate, person.address),
 
       if (person.employer != null)
-        ...context.childSubject(subject, employerPredicate, person.employer),
+        ...context.childSubjectGraph(
+          subject,
+          employerPredicate,
+          person.employer,
+        ),
     ];
 
     return (subject, triples);
@@ -1173,7 +1190,7 @@ class EmployeeWithCompanyReferenceMapper
       ),
 
       if (person.address != null)
-        ...context.childSubject(subject, addressPredicate, person.address),
+        ...context.childSubjectGraph(subject, addressPredicate, person.address),
 
       if (person.employer != null)
         context.iri(subject, employerPredicate, person.employer),
@@ -1338,10 +1355,14 @@ class TestPersonMapper implements SubjectMapper<TestPerson> {
       ),
 
       if (person.address != null)
-        ...context.childSubject(subject, addressPredicate, person.address),
+        ...context.childSubjectGraph(subject, addressPredicate, person.address),
 
       if (person.employer != null)
-        ...context.childSubject(subject, employerPredicate, person.employer),
+        ...context.childSubjectGraph(
+          subject,
+          employerPredicate,
+          person.employer,
+        ),
     ];
 
     return (subject, triples);

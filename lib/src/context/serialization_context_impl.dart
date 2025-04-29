@@ -50,7 +50,7 @@ class SerializationContextImpl extends SerializationContext {
   }
 
   @override
-  List<Triple> childSubject<T>(
+  List<Triple> childSubjectGraph<T>(
     RdfSubject subject,
     RdfPredicate predicate,
     T instance, {
@@ -60,8 +60,8 @@ class SerializationContextImpl extends SerializationContext {
     SubjectGraphSerializer<T>? ser = _getSerializerFallbackToRuntimeType(
       serializer,
       instance,
-      _registry.getSubjectSerializer,
-      _registry.getSubjectSerializerByType,
+      _registry.getSubjectGraphSerializer,
+      _registry.getSubjectGraphSerializerByType,
     );
     if (ser == null) {
       return [];
@@ -154,7 +154,7 @@ class SerializationContextImpl extends SerializationContext {
   }
 
   @override
-  (RdfSubject, List<Triple>) subject<T>(
+  (RdfSubject, List<Triple>) subjectGraph<T>(
     T instance, {
     SubjectGraphSerializer<T>? serializer,
   }) {
@@ -166,8 +166,8 @@ class SerializationContextImpl extends SerializationContext {
     final ser = _getSerializerFallbackToRuntimeType(
       serializer,
       instance,
-      _registry.getSubjectSerializer<T>,
-      _registry.getSubjectSerializerByType<T>,
+      _registry.getSubjectGraphSerializer<T>,
+      _registry.getSubjectGraphSerializerByType<T>,
     );
 
     if (ser == null) {

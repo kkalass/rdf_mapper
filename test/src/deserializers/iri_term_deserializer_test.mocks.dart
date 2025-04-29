@@ -37,10 +37,10 @@ class MockDeserializationContext extends _i1.Mock
     _i3.RdfSubject? subject,
     _i3.RdfPredicate? predicate, {
     bool? enforceSingleValue = true,
-    _i4.IriSubjectGraphDeserializer<T>? subjectDeserializer,
-    _i4.IriTermDeserializer<T>? iriDeserializer,
-    _i4.LiteralTermDeserializer<T>? literalDeserializer,
-    _i4.BlankNodeSubjectGraphDeserializer<T>? blankNodeDeserializer,
+    _i4.IriSubjectGraphDeserializer<T>? iriSubjectGraphDeserializer,
+    _i4.IriTermDeserializer<T>? iriTermDeserializer,
+    _i4.LiteralTermDeserializer<T>? literalTermDeserializer,
+    _i4.BlankNodeSubjectGraphDeserializer<T>? blankNodeSubjectGraphDeserializer,
   }) =>
       (super.noSuchMethod(
             Invocation.method(
@@ -48,10 +48,10 @@ class MockDeserializationContext extends _i1.Mock
               [subject, predicate],
               {
                 #enforceSingleValue: enforceSingleValue,
-                #subjectDeserializer: subjectDeserializer,
-                #iriDeserializer: iriDeserializer,
-                #literalDeserializer: literalDeserializer,
-                #blankNodeDeserializer: blankNodeDeserializer,
+                #subjectDeserializer: iriSubjectGraphDeserializer,
+                #iriDeserializer: iriTermDeserializer,
+                #literalDeserializer: literalTermDeserializer,
+                #blankNodeDeserializer: blankNodeSubjectGraphDeserializer,
               },
             ),
             returnValue: _i5.dummyValue<T>(
@@ -61,10 +61,10 @@ class MockDeserializationContext extends _i1.Mock
                 [subject, predicate],
                 {
                   #enforceSingleValue: enforceSingleValue,
-                  #subjectDeserializer: subjectDeserializer,
-                  #iriDeserializer: iriDeserializer,
-                  #literalDeserializer: literalDeserializer,
-                  #blankNodeDeserializer: blankNodeDeserializer,
+                  #subjectDeserializer: iriSubjectGraphDeserializer,
+                  #iriDeserializer: iriTermDeserializer,
+                  #literalDeserializer: literalTermDeserializer,
+                  #blankNodeDeserializer: blankNodeSubjectGraphDeserializer,
                 },
               ),
             ),
@@ -76,10 +76,10 @@ class MockDeserializationContext extends _i1.Mock
     _i3.RdfSubject? subject,
     _i3.RdfPredicate? predicate, {
     bool? enforceSingleValue = true,
-    _i4.IriTermDeserializer<T>? iriDeserializer,
-    _i4.IriSubjectGraphDeserializer<T>? subjectDeserializer,
-    _i4.LiteralTermDeserializer<T>? literalDeserializer,
-    _i4.BlankNodeSubjectGraphDeserializer<T>? blankNodeDeserializer,
+    _i4.IriTermDeserializer<T>? iriTermDeserializer,
+    _i4.IriSubjectGraphDeserializer<T>? iriSubjectGraphDeserializer,
+    _i4.LiteralTermDeserializer<T>? literalTermDeserializer,
+    _i4.BlankNodeSubjectGraphDeserializer<T>? blankNodeSubjectGraphDeserializer,
   }) =>
       (super.noSuchMethod(
             Invocation.method(
@@ -87,10 +87,10 @@ class MockDeserializationContext extends _i1.Mock
               [subject, predicate],
               {
                 #enforceSingleValue: enforceSingleValue,
-                #iriDeserializer: iriDeserializer,
-                #subjectDeserializer: subjectDeserializer,
-                #literalDeserializer: literalDeserializer,
-                #blankNodeDeserializer: blankNodeDeserializer,
+                #iriDeserializer: iriTermDeserializer,
+                #subjectDeserializer: iriSubjectGraphDeserializer,
+                #literalDeserializer: literalTermDeserializer,
+                #blankNodeDeserializer: blankNodeSubjectGraphDeserializer,
               },
             ),
           )
@@ -101,20 +101,20 @@ class MockDeserializationContext extends _i1.Mock
     _i3.RdfSubject? subject,
     _i3.RdfPredicate? predicate,
     R Function(Iterable<T>)? collector, {
-    _i4.IriTermDeserializer<T>? iriDeserializer,
-    _i4.IriSubjectGraphDeserializer<T>? subjectDeserializer,
-    _i4.LiteralTermDeserializer<T>? literalDeserializer,
-    _i4.BlankNodeSubjectGraphDeserializer<T>? blankNodeDeserializer,
+    _i4.IriTermDeserializer<T>? iriTermDeserializer,
+    _i4.IriSubjectGraphDeserializer<T>? iriSubjectGraphDeserializer,
+    _i4.LiteralTermDeserializer<T>? literalTermDeserializer,
+    _i4.BlankNodeSubjectGraphDeserializer<T>? blankNodeSubjectGraphDeserializer,
   }) =>
       (super.noSuchMethod(
             Invocation.method(
               #getMany,
               [subject, predicate, collector],
               {
-                #iriDeserializer: iriDeserializer,
-                #subjectDeserializer: subjectDeserializer,
-                #literalDeserializer: literalDeserializer,
-                #blankNodeDeserializer: blankNodeDeserializer,
+                #iriDeserializer: iriTermDeserializer,
+                #subjectDeserializer: iriSubjectGraphDeserializer,
+                #literalDeserializer: literalTermDeserializer,
+                #blankNodeDeserializer: blankNodeSubjectGraphDeserializer,
               },
             ),
             returnValue: _i5.dummyValue<R>(
@@ -123,10 +123,10 @@ class MockDeserializationContext extends _i1.Mock
                 #getMany,
                 [subject, predicate, collector],
                 {
-                  #iriDeserializer: iriDeserializer,
-                  #subjectDeserializer: subjectDeserializer,
-                  #literalDeserializer: literalDeserializer,
-                  #blankNodeDeserializer: blankNodeDeserializer,
+                  #iriDeserializer: iriTermDeserializer,
+                  #subjectDeserializer: iriSubjectGraphDeserializer,
+                  #literalDeserializer: literalTermDeserializer,
+                  #blankNodeDeserializer: blankNodeSubjectGraphDeserializer,
                 },
               ),
             ),
@@ -137,20 +137,20 @@ class MockDeserializationContext extends _i1.Mock
   List<T> getList<T>(
     _i3.RdfSubject? subject,
     _i3.RdfPredicate? predicate, {
-    _i4.IriTermDeserializer<T>? iriDeserializer,
-    _i4.IriSubjectGraphDeserializer<T>? subjectDeserializer,
-    _i4.LiteralTermDeserializer<T>? literalDeserializer,
-    _i4.BlankNodeSubjectGraphDeserializer<T>? blankNodeDeserializer,
+    _i4.IriTermDeserializer<T>? iriTermDeserializer,
+    _i4.IriSubjectGraphDeserializer<T>? subjectGraphDeserializer,
+    _i4.LiteralTermDeserializer<T>? literalTermDeserializer,
+    _i4.BlankNodeSubjectGraphDeserializer<T>? blankNodeSubjectGraphDeserializer,
   }) =>
       (super.noSuchMethod(
             Invocation.method(
               #getList,
               [subject, predicate],
               {
-                #iriDeserializer: iriDeserializer,
-                #subjectDeserializer: subjectDeserializer,
-                #literalDeserializer: literalDeserializer,
-                #blankNodeDeserializer: blankNodeDeserializer,
+                #iriDeserializer: iriTermDeserializer,
+                #subjectDeserializer: subjectGraphDeserializer,
+                #literalDeserializer: literalTermDeserializer,
+                #blankNodeDeserializer: blankNodeSubjectGraphDeserializer,
               },
             ),
             returnValue: <T>[],
@@ -161,21 +161,22 @@ class MockDeserializationContext extends _i1.Mock
   Map<K, V> getMap<K, V>(
     _i3.RdfSubject? subject,
     _i3.RdfPredicate? predicate, {
-    _i4.IriTermDeserializer<MapEntry<K, V>>? iriDeserializer,
-    _i4.IriSubjectGraphDeserializer<MapEntry<K, V>>? subjectDeserializer,
-    _i4.LiteralTermDeserializer<MapEntry<K, V>>? literalDeserializer,
+    _i4.IriTermDeserializer<MapEntry<K, V>>? iriTermDeserializer,
+    _i4.IriSubjectGraphDeserializer<MapEntry<K, V>>?
+    iriSubjectGraphDeserializer,
+    _i4.LiteralTermDeserializer<MapEntry<K, V>>? literalTermDeserializer,
     _i4.BlankNodeSubjectGraphDeserializer<MapEntry<K, V>>?
-    blankNodeDeserializer,
+    blankNodeSubjectGraphDeserializer,
   }) =>
       (super.noSuchMethod(
             Invocation.method(
               #getMap,
               [subject, predicate],
               {
-                #iriDeserializer: iriDeserializer,
-                #subjectDeserializer: subjectDeserializer,
-                #literalDeserializer: literalDeserializer,
-                #blankNodeDeserializer: blankNodeDeserializer,
+                #iriDeserializer: iriTermDeserializer,
+                #subjectDeserializer: iriSubjectGraphDeserializer,
+                #literalDeserializer: literalTermDeserializer,
+                #blankNodeDeserializer: blankNodeSubjectGraphDeserializer,
               },
             ),
             returnValue: <K, V>{},

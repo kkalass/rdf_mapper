@@ -36,7 +36,7 @@ final class RdfMapperService {
   /// ```
   T deserializeBySubject<T>(
     RdfGraph graph,
-    RdfSubject rdfSubjectId, {
+    RdfSubject rdfSubject, {
     void Function(RdfMapperRegistry registry)? register,
   }) {
     _log.fine('Delegated mapping graph to ${T.toString()}');
@@ -48,7 +48,7 @@ final class RdfMapperService {
     }
     var context = DeserializationContextImpl(graph: graph, registry: registry);
 
-    return context.deserialize<T>(rdfSubjectId, null, null, null, null);
+    return context.deserialize<T>(rdfSubject, null, null, null, null);
   }
 
   /// Convenience method to deserialize the single subject [T] from an RDF graph
@@ -74,7 +74,7 @@ final class RdfMapperService {
   /// regardless of how mappers handle referenced subjects. It tracks which subjects
   /// have already been deserialized during the process to prevent duplicates.
   ///
-  /// Root objects are defined as those that aren't primarily referenced as properties
+  /// Root objects are defined as those that aren't referenced as properties
   /// of other objects. Only these root objects are returned.
   ///
   /// If any subject cannot be deserialized because a deserializer is not found for its type,
@@ -120,7 +120,7 @@ final class RdfMapperService {
 
       try {
         // Deserialize the object and track it by subject
-        final obj = context.deserializeSubject(subject, type);
+        final obj = context.deserializeSubjectGraph(subject, type);
         deserializedObjects[subject] = obj;
       } on DeserializerNotFoundException {
         // Propagate deserializer not found exceptions - we don't want to silently ignore them
@@ -158,12 +158,6 @@ final class RdfMapperService {
   /// custom mappers for this operation. The callback receives a clone of the registry.
   /// This allows for dynamic, per-call configuration without affecting the global registry.
   ///
-  /// Example:
-  /// ```dart
-  /// orm.toGraph('root', myObject, register: (registry) {
-  ///   registry.registerMapper(ItemMapper(baseUrl));
-  /// });
-  /// ```
   /// @param instance The object to convert
   /// @param uri Optional URI to use as the subject
   /// @return RDF graph representing the object
@@ -181,7 +175,7 @@ final class RdfMapperService {
     }
     final context = SerializationContextImpl(registry: registry);
 
-    var (_, triples) = context.subject<T>(instance);
+    var (_, triples) = context.subjectGraph<T>(instance);
 
     return RdfGraph(triples: triples);
   }
@@ -191,12 +185,6 @@ final class RdfMapperService {
   /// Optionally, a [register] callback can be provided to temporarily register
   /// custom mappers for this operation. The callback receives a clone of the registry.
   ///
-  /// Example:
-  /// ```dart
-  /// orm.toGraphFromList('root', items, register: (registry) {
-  ///   registry.registerMapper(ItemMapper(baseUrl));
-  /// });
-  /// ```
   RdfGraph serializeList<T>(
     List<T> instances, {
     void Function(RdfMapperRegistry registry)? register,
@@ -211,7 +199,7 @@ final class RdfMapperService {
     final context = SerializationContextImpl(registry: registry);
     var triples =
         instances.expand((instance) {
-          var (_, triples) = context.subject(instance);
+          var (_, triples) = context.subjectGraph(instance);
           return triples;
         }).toList();
 

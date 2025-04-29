@@ -92,19 +92,24 @@ void main() {
         registry.registerDeserializer<CustomType>(deserializer);
 
         // Verify registration by type
-        expect(registry.hasIriNodeDeserializerFor<CustomType>(), isTrue);
         expect(
-          registry.getIriNodeDeserializer<CustomType>(),
+          registry.hasIriSubjectGraphDeserializerFor<CustomType>(),
+          isTrue,
+        );
+        expect(
+          registry.getIriSubjectGraphDeserializer<CustomType>(),
           equals(deserializer),
         );
 
         // Verify registration by typeIri
         expect(
-          registry.hasIriNodeDeserializerForType(deserializer.typeIri),
+          registry.hasIriSubjectGraphDeserializerForType(deserializer.typeIri),
           isTrue,
         );
         expect(
-          registry.getIriNodeDeserializerByTypeIri(deserializer.typeIri),
+          registry.getIriSubjectGraphDeserializerByTypeIri(
+            deserializer.typeIri,
+          ),
           equals(deserializer),
         );
       },
@@ -115,10 +120,13 @@ void main() {
       registry.registerSerializer<CustomType>(serializer);
 
       // Verify registration
-      expect(registry.hasSubjectSerializerFor<CustomType>(), isTrue);
+      expect(registry.hasSubjectGraphSerializerFor<CustomType>(), isTrue);
 
       // Verify retrieval works
-      expect(registry.getSubjectSerializer<CustomType>(), equals(serializer));
+      expect(
+        registry.getSubjectGraphSerializer<CustomType>(),
+        equals(serializer),
+      );
     });
 
     test('registerMapper registers both serializer and deserializer', () {
@@ -126,17 +134,23 @@ void main() {
       registry.registerMapper<CustomType>(mapper);
 
       // Verify serializer registration
-      expect(registry.hasSubjectSerializerFor<CustomType>(), isTrue);
-      expect(registry.getSubjectSerializer<CustomType>(), equals(mapper));
+      expect(registry.hasSubjectGraphSerializerFor<CustomType>(), isTrue);
+      expect(registry.getSubjectGraphSerializer<CustomType>(), equals(mapper));
 
       // Verify deserializer registration
-      expect(registry.hasIriNodeDeserializerFor<CustomType>(), isTrue);
-      expect(registry.getIriNodeDeserializer<CustomType>(), equals(mapper));
+      expect(registry.hasIriSubjectGraphDeserializerFor<CustomType>(), isTrue);
+      expect(
+        registry.getIriSubjectGraphDeserializer<CustomType>(),
+        equals(mapper),
+      );
 
       // Verify typeIri registration
-      expect(registry.hasIriNodeDeserializerForType(mapper.typeIri), isTrue);
       expect(
-        registry.getIriNodeDeserializerByTypeIri(mapper.typeIri),
+        registry.hasIriSubjectGraphDeserializerForType(mapper.typeIri),
+        isTrue,
+      );
+      expect(
+        registry.getIriSubjectGraphDeserializerByTypeIri(mapper.typeIri),
         equals(mapper),
       );
     });
@@ -150,7 +164,7 @@ void main() {
 
     test('getSubjectDeserializer throws when deserializer not found', () {
       expect(
-        () => registry.getIriNodeDeserializer<CustomType>(),
+        () => registry.getIriSubjectGraphDeserializer<CustomType>(),
         throwsA(isA<DeserializerNotFoundException>()),
       );
     });
@@ -159,7 +173,7 @@ void main() {
       'getSubjectDeserializerByTypeIri throws when deserializer not found',
       () {
         expect(
-          () => registry.getIriNodeDeserializerByTypeIri(
+          () => registry.getIriSubjectGraphDeserializerByTypeIri(
             IriTerm('http://example.org/UnknownType'),
           ),
           throwsA(isA<DeserializerNotFoundException>()),
@@ -190,14 +204,14 @@ void main() {
 
     test('getBlankNodeTermDeserializer throws when deserializer not found', () {
       expect(
-        () => registry.getBlankNodeDeserializer<CustomType>(),
+        () => registry.getBlankNodeSubjectGraphDeserializer<CustomType>(),
         throwsA(isA<DeserializerNotFoundException>()),
       );
     });
 
     test('getSubjectSerializer throws when serializer not found', () {
       expect(
-        () => registry.getSubjectSerializer<CustomType>(),
+        () => registry.getSubjectGraphSerializer<CustomType>(),
         throwsA(isA<SerializerNotFoundException>()),
       );
     });
@@ -212,8 +226,11 @@ void main() {
       final clonedRegistry = registry.clone();
 
       // Verify all mappers were copied
-      expect(clonedRegistry.hasSubjectSerializerFor<CustomType>(), isTrue);
-      expect(clonedRegistry.hasIriNodeDeserializerFor<CustomType>(), isTrue);
+      expect(clonedRegistry.hasSubjectGraphSerializerFor<CustomType>(), isTrue);
+      expect(
+        clonedRegistry.hasIriSubjectGraphDeserializerFor<CustomType>(),
+        isTrue,
+      );
       expect(clonedRegistry.hasLiteralTermSerializerFor<CustomType>(), isTrue);
       expect(
         clonedRegistry.hasLiteralTermDeserializerFor<CustomType>(),
@@ -225,10 +242,13 @@ void main() {
       clonedRegistry.registerMapper<AnotherCustomType>(newMapper);
 
       expect(
-        clonedRegistry.hasSubjectSerializerFor<AnotherCustomType>(),
+        clonedRegistry.hasSubjectGraphSerializerFor<AnotherCustomType>(),
         isTrue,
       );
-      expect(registry.hasSubjectSerializerFor<AnotherCustomType>(), isFalse);
+      expect(
+        registry.hasSubjectGraphSerializerFor<AnotherCustomType>(),
+        isFalse,
+      );
     });
   });
 }

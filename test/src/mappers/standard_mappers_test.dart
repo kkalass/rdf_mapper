@@ -17,7 +17,7 @@ import 'package:test/test.dart';
 // Mock implementation of SerializationContext for testing
 class MockSerializationContext extends SerializationContext {
   @override
-  List<Triple> childSubject<T>(
+  List<Triple> childSubjectGraph<T>(
     RdfSubject subject,
     RdfPredicate predicate,
     T instance, {
@@ -56,7 +56,7 @@ class MockSerializationContext extends SerializationContext {
   }
 
   @override
-  (RdfSubject, List<Triple>) subject<T>(T instance, {serializer}) {
+  (RdfSubject, List<Triple>) subjectGraph<T>(T instance, {serializer}) {
     throw UnimplementedError();
   }
 }
@@ -68,10 +68,10 @@ class MockDeserializationContext extends DeserializationContext {
     RdfSubject subject,
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
-    subjectDeserializer,
-    iriDeserializer,
-    literalDeserializer,
-    blankNodeDeserializer,
+    iriSubjectGraphDeserializer,
+    iriTermDeserializer,
+    literalTermDeserializer,
+    blankNodeSubjectGraphDeserializer,
   }) {
     throw UnimplementedError();
   }
@@ -81,10 +81,10 @@ class MockDeserializationContext extends DeserializationContext {
     RdfSubject subject,
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
-    subjectDeserializer,
-    iriDeserializer,
-    literalDeserializer,
-    blankNodeDeserializer,
+    iriSubjectGraphDeserializer,
+    iriTermDeserializer,
+    literalTermDeserializer,
+    blankNodeSubjectGraphDeserializer,
   }) {
     throw UnimplementedError();
   }
@@ -94,10 +94,10 @@ class MockDeserializationContext extends DeserializationContext {
     RdfSubject subject,
     RdfPredicate predicate,
     R Function(Iterable<T>) collector, {
-    subjectDeserializer,
-    iriDeserializer,
-    literalDeserializer,
-    blankNodeDeserializer,
+    iriSubjectGraphDeserializer,
+    iriTermDeserializer,
+    literalTermDeserializer,
+    blankNodeSubjectGraphDeserializer,
   }) {
     throw UnimplementedError();
   }

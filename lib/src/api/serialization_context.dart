@@ -6,7 +6,7 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 /// Provides access to services and state needed during RDF serialization.
 /// Used to delegate complex type mapping to the parent service.
 abstract class SerializationContext {
-  (RdfSubject, List<Triple>) subject<T>(
+  (RdfSubject, List<Triple>) subjectGraph<T>(
     T instance, {
     SubjectGraphSerializer<T>? serializer,
   });
@@ -77,14 +77,14 @@ abstract class SerializationContext {
     serializer: serializer,
   );
 
-  List<Triple> childSubject<T>(
+  List<Triple> childSubjectGraph<T>(
     RdfSubject subject,
     RdfPredicate predicate,
     T instance, {
     SubjectGraphSerializer<T>? serializer,
   });
 
-  List<Triple> childSubjects<A, T>(
+  List<Triple> childSubjectGraphs<A, T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> Function(A p1) toIterable,
@@ -93,17 +93,21 @@ abstract class SerializationContext {
   }) =>
       toIterable(instance)
           .expand<Triple>(
-            (item) =>
-                childSubject(subject, predicate, item, serializer: serializer),
+            (item) => childSubjectGraph(
+              subject,
+              predicate,
+              item,
+              serializer: serializer,
+            ),
           )
           .toList();
 
-  List<Triple> childSubjectList<T>(
+  List<Triple> childSubjectGraphList<T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> instance, {
     SubjectGraphSerializer<T>? serializer,
-  }) => childSubjects(
+  }) => childSubjectGraphs(
     subject,
     predicate,
     (it) => it,
@@ -111,12 +115,12 @@ abstract class SerializationContext {
     serializer: serializer,
   );
 
-  List<Triple> childSubjectMap<K, V>(
+  List<Triple> childSubjectGraphMap<K, V>(
     RdfSubject subject,
     RdfPredicate predicate,
     Map<K, V> instance,
     SubjectGraphSerializer<MapEntry<K, V>> entrySerializer,
-  ) => childSubjects<Map<K, V>, MapEntry<K, V>>(
+  ) => childSubjectGraphs<Map<K, V>, MapEntry<K, V>>(
     subject,
     predicate,
     (it) => it.entries,

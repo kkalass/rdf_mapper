@@ -198,7 +198,7 @@ void main() {
       registry.registerDeserializer<TestPerson>(deserializer);
 
       // Call fromRdfByTypeIri directly
-      final person = context.deserializeSubject(
+      final person = context.deserializeSubjectGraph(
         IriTerm('http://example.org/subject'),
         IriTerm('http://example.org/Person'),
       );
@@ -213,7 +213,7 @@ void main() {
       final value = context.get<String>(
         subject,
         IriTerm('http://example.org/name'),
-        literalDeserializer: customLiteralDeserializer,
+        literalTermDeserializer: customLiteralDeserializer,
       );
 
       expect(

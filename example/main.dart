@@ -234,7 +234,8 @@ class BookMapper implements SubjectMapper<Book> {
       context.iri<ISBN>(subject, isbnPredicate, book.isbn),
       context.literal<Rating>(subject, ratingPredicate, book.rating),
       ...book.chapters.expand(
-        (chapter) => context.childSubject(subject, chapterPredicate, chapter),
+        (chapter) =>
+            context.childSubjectGraph(subject, chapterPredicate, chapter),
       ),
     ];
     return (subject, triples);

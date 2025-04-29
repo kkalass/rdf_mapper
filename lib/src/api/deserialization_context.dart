@@ -20,10 +20,10 @@ abstract class DeserializationContext {
     RdfSubject subject,
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
-    IriSubjectGraphDeserializer<T>? subjectDeserializer,
-    IriTermDeserializer<T>? iriDeserializer,
-    LiteralTermDeserializer<T>? literalDeserializer,
-    BlankNodeSubjectGraphDeserializer<T>? blankNodeDeserializer,
+    IriSubjectGraphDeserializer<T>? iriSubjectGraphDeserializer,
+    IriTermDeserializer<T>? iriTermDeserializer,
+    LiteralTermDeserializer<T>? literalTermDeserializer,
+    BlankNodeSubjectGraphDeserializer<T>? blankNodeSubjectGraphDeserializer,
   });
 
   /// Gets an optional property value from the RDF graph
@@ -34,10 +34,10 @@ abstract class DeserializationContext {
     RdfSubject subject,
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
-    IriTermDeserializer<T>? iriDeserializer,
-    IriSubjectGraphDeserializer<T>? subjectDeserializer,
-    LiteralTermDeserializer<T>? literalDeserializer,
-    BlankNodeSubjectGraphDeserializer<T>? blankNodeDeserializer,
+    IriTermDeserializer<T>? iriTermDeserializer,
+    IriSubjectGraphDeserializer<T>? iriSubjectGraphDeserializer,
+    LiteralTermDeserializer<T>? literalTermDeserializer,
+    BlankNodeSubjectGraphDeserializer<T>? blankNodeSubjectGraphDeserializer,
   });
 
   /// Gets multiple property values and collects them with a custom collector function
@@ -45,10 +45,10 @@ abstract class DeserializationContext {
     RdfSubject subject,
     RdfPredicate predicate,
     R Function(Iterable<T>) collector, {
-    IriTermDeserializer<T>? iriDeserializer,
-    IriSubjectGraphDeserializer<T>? subjectDeserializer,
-    LiteralTermDeserializer<T>? literalDeserializer,
-    BlankNodeSubjectGraphDeserializer<T>? blankNodeDeserializer,
+    IriTermDeserializer<T>? iriTermDeserializer,
+    IriSubjectGraphDeserializer<T>? iriSubjectGraphDeserializer,
+    LiteralTermDeserializer<T>? literalTermDeserializer,
+    BlankNodeSubjectGraphDeserializer<T>? blankNodeSubjectGraphDeserializer,
   });
 
   /// Gets a list of property values
@@ -57,18 +57,18 @@ abstract class DeserializationContext {
   List<T> getList<T>(
     RdfSubject subject,
     RdfPredicate predicate, {
-    IriTermDeserializer<T>? iriDeserializer,
-    IriSubjectGraphDeserializer<T>? subjectDeserializer,
-    LiteralTermDeserializer<T>? literalDeserializer,
-    BlankNodeSubjectGraphDeserializer<T>? blankNodeDeserializer,
+    IriTermDeserializer<T>? iriTermDeserializer,
+    IriSubjectGraphDeserializer<T>? subjectGraphDeserializer,
+    LiteralTermDeserializer<T>? literalTermDeserializer,
+    BlankNodeSubjectGraphDeserializer<T>? blankNodeSubjectGraphDeserializer,
   }) => getMany<T, List<T>>(
     subject,
     predicate,
     (it) => it.toList(),
-    iriDeserializer: iriDeserializer,
-    subjectDeserializer: subjectDeserializer,
-    literalDeserializer: literalDeserializer,
-    blankNodeDeserializer: blankNodeDeserializer,
+    iriTermDeserializer: iriTermDeserializer,
+    iriSubjectGraphDeserializer: subjectGraphDeserializer,
+    literalTermDeserializer: literalTermDeserializer,
+    blankNodeSubjectGraphDeserializer: blankNodeSubjectGraphDeserializer,
   );
 
   /// Gets a map of property values
@@ -77,17 +77,18 @@ abstract class DeserializationContext {
   Map<K, V> getMap<K, V>(
     RdfSubject subject,
     RdfPredicate predicate, {
-    IriTermDeserializer<MapEntry<K, V>>? iriDeserializer,
-    IriSubjectGraphDeserializer<MapEntry<K, V>>? subjectDeserializer,
-    LiteralTermDeserializer<MapEntry<K, V>>? literalDeserializer,
-    BlankNodeSubjectGraphDeserializer<MapEntry<K, V>>? blankNodeDeserializer,
+    IriTermDeserializer<MapEntry<K, V>>? iriTermDeserializer,
+    IriSubjectGraphDeserializer<MapEntry<K, V>>? iriSubjectGraphDeserializer,
+    LiteralTermDeserializer<MapEntry<K, V>>? literalTermDeserializer,
+    BlankNodeSubjectGraphDeserializer<MapEntry<K, V>>?
+    blankNodeSubjectGraphDeserializer,
   }) => getMany<MapEntry<K, V>, Map<K, V>>(
     subject,
     predicate,
     (it) => Map<K, V>.fromEntries(it),
-    iriDeserializer: iriDeserializer,
-    subjectDeserializer: subjectDeserializer,
-    literalDeserializer: literalDeserializer,
-    blankNodeDeserializer: blankNodeDeserializer,
+    iriTermDeserializer: iriTermDeserializer,
+    iriSubjectGraphDeserializer: iriSubjectGraphDeserializer,
+    literalTermDeserializer: literalTermDeserializer,
+    blankNodeSubjectGraphDeserializer: blankNodeSubjectGraphDeserializer,
   );
 }

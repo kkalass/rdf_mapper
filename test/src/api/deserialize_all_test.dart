@@ -107,10 +107,11 @@ class PersonMapper implements SubjectMapper<Person> {
       context.literal(subject, namePredicate, value.name),
 
       if (value.address != null)
-        ...context.childSubject(subject, addressPredicate, value.address),
+        ...context.childSubjectGraph(subject, addressPredicate, value.address),
 
       ...value.contacts.expand(
-        (contact) => context.childSubject(subject, contactPredicate, contact),
+        (contact) =>
+            context.childSubjectGraph(subject, contactPredicate, contact),
       ),
     ];
 
