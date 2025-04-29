@@ -237,140 +237,244 @@ final rdfMapper = RdfMapper.withDefaultRegistry();</code></pre>
                     <div class="tab-header">
                         <button class="tab-btn active" data-tab="serialization">Serialization</button>
                         <button class="tab-btn" data-tab="deserialization">Deserialization</button>
-                        <button class="tab-btn" data-tab="model">Model & Mapper</button>
-                        <button class="tab-btn" data-tab="advanced">Advanced</button>
+                        <button class="tab-btn" data-tab="model">Model</button>
+                        <button class="tab-btn" data-tab="mapper">Mapper</button>
                     </div>
                     
                     <div class="tab-content">
                         <div class="tab-pane active" id="serialization">
-                            <pre class="code-block"><code class="language-dart">// Register the mapper
-rdfMapper.registerMapper&lt;Person&gt;(PersonMapper());
+                            <pre class="code-block"><code class="language-dart">// Create mapper instance with default registry
+final rdf = RdfMapper.withDefaultRegistry()
+  // Register our custom mappers
+  ..registerMapper&lt;Book&gt;(BookMapper())
+  ..registerMapper&lt;Chapter&gt;(ChapterMapper())
+  ..registerMapper&lt;ISBN&gt;(ISBNMapper())
+  ..registerMapper&lt;Rating&gt;(RatingMapper());
 
-// Create a person object to serialize
-final person = Person(
-  id: 'http://example.org/person/1',
-  name: 'John Smith',
-  age: 30,
+// Create a book with chapters
+final book = Book(
+  id: 'hobbit', // Just the identifier, not the full IRI
+  title: 'The Hobbit',
+  author: 'J.R.R. Tolkien',
+  published: DateTime(1937, 9, 21),
+  isbn: ISBN('9780618260300'),
+  rating: Rating(5),
+  chapters: [
+    Chapter('An Unexpected Party', 1),
+    Chapter('Roast Mutton', 2),
+    Chapter('A Short Rest', 3),
+  ],
 );
 
-// Convert the object to RDF Turtle format
-final turtle = rdfMapper.serialize(person);
+// Convert the book to RDF Turtle format
+final turtle = rdf.serialize(book);
 
-// Output will look like:
-// &lt;http://example.org/person/1&gt; a foaf:Person ;
-//   foaf:name "John Smith" ;
-//   foaf:age 30 .
+// Result will be nicely formatted RDF Turtle
 </code></pre>
                         </div>
                         
                         <div class="tab-pane" id="deserialization">
                             <pre class="code-block"><code class="language-dart">// RDF Turtle input to deserialize
 final turtleInput = '''
-@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix schema: &lt;https://schema.org/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
 
-&lt;http://example.org/person/1&gt; a foaf:Person ;
-  foaf:name "John Smith" ;
-  foaf:age 30 .
+&lt;http://example.org/book/hobbit&gt; a schema:Book;
+  schema:name "The Hobbit";
+  schema:author "J.R.R. Tolkien";
+  schema:datePublished "1937-09-20T23:00:00.000Z"^^xsd:dateTime;
+  schema:isbn &lt;urn:isbn:9780618260300&gt;;
+  schema:aggregateRating "5"^^xsd:integer;
+  schema:hasPart _:b0, _:b1, _:b2 .
+_:b0 a schema:Chapter;
+  schema:name "An Unexpected Party";
+  schema:position "1"^^xsd:integer .
+_:b1 a schema:Chapter;
+  schema:name "Roast Mutton";
+  schema:position "2"^^xsd:integer .
+_:b2 a schema:Chapter;
+  schema:name "A Short Rest";
+  schema:position "3"^^xsd:integer .
 ''';
 
-// Convert RDF back to a typed Dart object
-final person = rdfMapper.deserialize&lt;Person&gt;(turtleInput);
+// Deserialize RDF back to our Book object with all its chapters
+final book = rdf.deserialize&lt;Book&gt;(turtleInput);
 
-// Access the object's properties
-print('Name: ${person.name}, Age: ${person.age}');</code></pre>
+// Access complex properties
+print('Title: ${book.title}');
+print('Author: ${book.author}');
+print('Published: ${book.published}');
+print('Rating: ${book.rating.stars} stars');
+print('Chapters: ${book.chapters.length}');</code></pre>
                         </div>
                         
                         <div class="tab-pane" id="model">
-                            <pre class="code-block"><code class="language-dart">// Define a model class for your domain object
-class Person {
+                            <pre class="code-block"><code class="language-dart">// --- Domain Model ---
+
+// Primary entity with an identifier
+class Book {
   final String id;
-  final String name;
-  final int age;
-  
-  Person({
-    required this.id, 
-    required this.name, 
-    required this.age
+  final String title;
+  final String author;
+  final DateTime published;
+  final ISBN isbn;
+  final Rating rating;
+  final List&lt;Chapter&gt; chapters;
+
+  Book({
+    required this.id,
+    required this.title,
+    required this.author,
+    required this.published,
+    required this.isbn,
+    required this.rating,
+    required this.chapters,
   });
 }
 
-// Create a custom mapper for bidirectional conversion
-class PersonMapper implements IriNodeMapper&lt;Person&gt; {
-  // Define the RDF type for this class
-  @override
-  IriTerm? get typeIri => 
-      IriTerm('http://xmlns.com/foaf/0.1/Person');
-  
-  // Convert Dart object to RDF (serialization)
-  @override
-  (IriTerm, List&lt;Triple&gt;) toRdfNode(
-      Person value, 
-      SerializationContext context, 
-      {RdfSubject? parentSubject}) {
+// Value object using blank nodes (no identifier)
+class Chapter {
+  final String title;
+  final int number;
 
-    // Use the fluent builder API for clean triple creation
-    return context.nodeBuilder(IriTerm(value.id))
-      .literal(IriTerm('http://xmlns.com/foaf/0.1/name'), value.name)
-      .literal(IriTerm('http://xmlns.com/foaf/0.1/age'), value.age)
-      .build();
-  }
-  
-  // Convert RDF back to Dart object (deserialization)
-  @override
-  Person fromRdfNode(IriTerm term, DeserializationContext context) {
-    // Use the node reader for convenient property access
-    final reader = context.reader(term);
-    
-    return Person(
-      id: term.iri,
-      name: reader.require&lt;String&gt;(
-          IriTerm('http://xmlns.com/foaf/0.1/name')),
-      age: reader.require&lt;int&gt;(
-          IriTerm('http://xmlns.com/foaf/0.1/age')),
-    );
+  Chapter(this.title, this.number);
+}
+
+// Custom identifier type using IRI mapping
+class ISBN {
+  final String value;
+  ISBN(this.value);
+}
+
+// Custom value type using literal mapping
+class Rating {
+  final int stars;
+  Rating(this.stars) {
+    if (stars &lt; 0 || stars > 5) {
+      throw ArgumentError('Rating must be between 0 and 5 stars');
+    }
   }
 }</code></pre>
                         </div>
                         
-                        <div class="tab-pane" id="advanced">
-                            <pre class="code-block"><code class="language-dart">// Direct graph manipulation
-final graph = rdfMapper.graph.serialize(person);
-final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
-
-// Working with multiple objects
-final multiObjectInput = '''
-@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
-
-&lt;http://example.org/person/1&gt; a foaf:Person ;
-  foaf:name "John Smith" ;
-  foaf:age 30 .
-&lt;http://example.org/person/2&gt; a foaf:Person ;
-  foaf:name "Jane Smith" ;
-  foaf:age 28 .
-''';
-
-// Get all Person objects from the input
-final people = rdfMapper.deserializeAllOfType&lt;Person&gt;(multiObjectInput);
-
-// Using namespaces for cleaner code
-final foaf = Namespace('http://xmlns.com/foaf/0.1/');
-
-class CleanerPersonMapper implements IriNodeMapper&lt;Person&gt; {
+                        <div class="tab-pane" id="mapper">
+                            <pre class="code-block"><code class="language-dart">// Book mapper - maps Book objects to IRI nodes
+class BookMapper implements IriNodeMapper&lt;Book&gt; {
+  // Property predicates for semantic clarity
+  static final titlePredicate = SchemaProperties.name;
+  static final authorPredicate = SchemaProperties.author;
+  static final publishedPredicate = SchemaProperties.datePublished;
+  static final isbnPredicate = IriTerm('https://schema.org/isbn');
+  static final ratingPredicate = IriTerm('https://schema.org/aggregateRating');
+  static final chapterPredicate = IriTerm('https://schema.org/hasPart');
+  
+  static const String bookIriPrefix = 'http://example.org/book/';
+  
   @override
-  IriTerm? get typeIri => IriTerm(foaf('Person'));
+  final IriTerm typeIri = IriTerm('https://schema.org/Book');
   
   @override
   (IriTerm, List&lt;Triple&gt;) toRdfNode(
-      Person value, SerializationContext context, 
-      {RdfSubject? parentSubject}) {
+    Book book,
+    SerializationContext context, {
+    RdfSubject? parentSubject,
+  }) {
+    return context
+        .nodeBuilder(IriTerm('$bookIriPrefix${book.id}'))
+        .literal(titlePredicate, book.title)
+        .literal(authorPredicate, book.author)
+        .literal&lt;DateTime&gt;(publishedPredicate, book.published)
+        .iri&lt;ISBN&gt;(isbnPredicate, book.isbn)
+        .literal&lt;Rating&gt;(ratingPredicate, book.rating)
+        .childNodeList(chapterPredicate, book.chapters)
+        .build();
+  }
+  
+  @override
+  Book fromRdfNode(IriTerm term, DeserializationContext context) {
+    final reader = context.reader(term);
     
-    return context.nodeBuilder(IriTerm(value.id))
-      .literal(IriTerm(foaf('name')), value.name)
-      .literal(IriTerm(foaf('age')), value.age)
+    return Book(
+      id: _extractIdFromIri(term.iri),
+      title: reader.require&lt;String&gt;(titlePredicate),
+      author: reader.require&lt;String&gt;(authorPredicate),
+      published: reader.require&lt;DateTime&gt;(publishedPredicate),
+      isbn: reader.require&lt;ISBN&gt;(isbnPredicate),
+      rating: reader.require&lt;Rating&gt;(ratingPredicate),
+      chapters: reader.getList&lt;Chapter&gt;(chapterPredicate),
+    );
+  }
+  
+  // Helper method to extract ID from IRI
+  String _extractIdFromIri(String iri) {
+    if (!iri.startsWith(bookIriPrefix)) {
+      throw ArgumentError('Invalid Book IRI format: $iri');
+    }
+    return iri.substring(bookIriPrefix.length);
+  }
+}
+
+// Chapter mapper - maps Chapters to blank nodes
+class ChapterMapper implements BlankNodeMapper&lt;Chapter&gt; {
+  static final titlePredicate = IriTerm('https://schema.org/name');
+  static final numberPredicate = IriTerm('https://schema.org/position');
+
+  @override
+  final IriTerm typeIri = IriTerm('https://schema.org/Chapter');
+  
+  @override
+  (BlankNodeTerm, List&lt;Triple&gt;) toRdfNode(
+    Chapter chapter,
+    SerializationContext context, {
+    RdfSubject? parentSubject,
+  }) {
+    return context.nodeBuilder()
+      .literal(titlePredicate, chapter.title)
+      .literal(positionPredicate, chapter.number)
       .build();
   }
   
-  // ...remaining implementation
+  @override
+  Chapter fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
+    final reader = context.reader(term);
+    
+    return Chapter(
+      reader.require&lt;String&gt;(titlePredicate),
+      reader.require&lt;int&gt;(positionPredicate),
+    );
+  }
+}
+
+// ISBN mapper - maps ISBN to IRI term
+class ISBNMapper implements IriTermMapper&lt;ISBN&gt; {
+  static const String ISBN_URI_PREFIX = 'urn:isbn:';
+
+  @override
+  IriTerm toRdfTerm(ISBN value, SerializationContext context) {
+    return IriTerm('$ISBN_URI_PREFIX${isbn.value}');
+  }
+  
+  @override
+  ISBN fromRdfTerm(IriTerm term, DeserializationContext context) {
+    final uri = term.iri;
+    if (!uri.startsWith(ISBN_URI_PREFIX)) {
+      throw ArgumentError('Invalid ISBN URI format: $uri');
+    }
+    return ISBN(uri.substring(ISBN_URI_PREFIX.length));
+  }
+}
+
+// Rating mapper - maps Rating to literal term
+class RatingMapper implements LiteralTermMapper&lt;Rating&gt; {
+  @override
+  LiteralTerm toRdfTerm(Rating value, SerializationContext context) {
+    return LiteralTerm.typed(rating.stars.toString(), 'integer');
+  }
+  
+  @override
+  Rating fromRdfTerm(LiteralTerm term, DeserializationContext context) {
+    return Rating(int.parse(term.value));
+  }
 }</code></pre>
                         </div>
                     </div>
