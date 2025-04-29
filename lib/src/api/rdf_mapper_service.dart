@@ -31,7 +31,7 @@ final class RdfMapperService {
   /// Example:
   /// ```dart
   /// orm.fromGraph<MyType>(graph, subject, register: (registry) {
-  ///   registry.registerSubjectMapper(ItemMapper(baseUrl));
+  ///   registry.registerMapper(ItemMapper(baseUrl));
   /// });
   /// ```
   T deserializeBySubject<T>(
@@ -119,7 +119,7 @@ final class RdfMapperService {
   /// Example:
   /// ```dart
   /// orm.toGraph('root', myObject, register: (registry) {
-  ///   registry.registerSubjectMapper(ItemMapper(baseUrl));
+  ///   registry.registerMapper(ItemMapper(baseUrl));
   /// });
   /// ```
   /// @param instance The object to convert
@@ -152,7 +152,7 @@ final class RdfMapperService {
   /// Example:
   /// ```dart
   /// orm.toGraphFromList('root', items, register: (registry) {
-  ///   registry.registerSubjectMapper(ItemMapper(baseUrl));
+  ///   registry.registerMapper(ItemMapper(baseUrl));
   /// });
   /// ```
   RdfGraph serializeList<T>(

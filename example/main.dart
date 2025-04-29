@@ -127,7 +127,7 @@ _:b2 a schema:Chapter;
   );
 
   // Serialize multiple books to a single graph
-  final booksGraph = rdf.graph.serializeList([book, anotherBook]);
+  final booksGraph = rdf.graph.serialize([book, anotherBook]);
   print('Combined graph contains ${booksGraph.size} triples');
 
   // Retrieve all books from the graph with type safety

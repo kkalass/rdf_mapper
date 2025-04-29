@@ -1,6 +1,7 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_service.dart';
+import 'package:rdf_mapper/src/context/serialization_context_impl.dart';
 
 /// Provides graph-based operations for the RDF Mapper.
 ///
@@ -63,24 +64,50 @@ final class GraphOperations {
     return deserializeAll(graph, register: register).whereType<T>().toList();
   }
 
-  /// Converts an object of type [T] to an RDF graph.
+  /// Serializes an object or collection of objects to an RDF graph.
   ///
-  /// This method uses the registered mappers to convert the object to an RDF graph.
+  /// This method intelligently handles both single instances and collections:
+  /// - For a single object, it creates a graph with that object's triples
+  /// - For an Iterable of objects, it combines all objects into a single graph
+  ///
+  /// Usage with single instance:
+  /// ```dart
+  /// final person = Person(id: 'http://example.org/person/1', name: 'John Doe');
+  /// final graph = graphOperations.serialize(person);
+  /// ```
+  ///
+  /// Usage with multiple instances:
+  /// ```dart
+  /// final people = [
+  ///   Person(id: 'http://example.org/person/1', name: 'John Doe'),
+  ///   Person(id: 'http://example.org/person/2', name: 'Jane Smith')
+  /// ];
+  /// final graph = graphOperations.serialize(people);
+  /// ```
   RdfGraph serialize<T>(
     T instance, {
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    return _service.serialize<T>(instance, register: register);
-  }
+    // Clone registry if registration callback is provided
+    final registry =
+        register != null ? _service.registry.clone() : _service.registry;
+    if (register != null) {
+      register(registry);
+    }
 
-  /// Converts a list of objects to an RDF graph.
-  ///
-  /// This method uses the registered mappers to convert each object in the list
-  /// to RDF triples, which are combined into a single graph.
-  RdfGraph serializeList<T>(
-    List<T> instances, {
-    void Function(RdfMapperRegistry registry)? register,
-  }) {
-    return _service.serializeList<T>(instances, register: register);
+    final Iterable instances =
+        instance is Iterable && !registry.hasSubjectSerializerFor<T>()
+            ? instance
+            : [instance];
+    final allTriples = <Triple>[];
+
+    final context = SerializationContextImpl(registry: registry);
+
+    for (final instance in instances) {
+      final (_, triples) = context.subject(instance);
+      allTriples.addAll(triples);
+    }
+
+    return RdfGraph(triples: allTriples);
   }
 }

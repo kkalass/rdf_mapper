@@ -216,7 +216,7 @@ void main() {
         ];
 
         // Serialize to graph
-        final graph = rdfMapper.graph.serializeList(people);
+        final graph = rdfMapper.graph.serialize(people);
 
         // Check for John's name property
         final johnNameTriples = graph.findTriples(
@@ -517,7 +517,10 @@ _:b0 a schema:PostalAddress;
         ''';
 
         // Deserialize all subjects from Turtle string
-        final objects = rdfMapper.deserializeAll(turtle, format: 'text/turtle');
+        final objects = rdfMapper.deserializeAll(
+          turtle,
+          contentType: 'text/turtle',
+        );
 
         // Verify we got both persons
         expect(objects.length, equals(2));
@@ -562,7 +565,7 @@ _:b0 a schema:PostalAddress;
         ];
 
         // Convert to Turtle format
-        final turtle = rdfMapper.serializeList(people, format: 'text/turtle');
+        final turtle = rdfMapper.serialize(people, contentType: 'text/turtle');
 
         // Verify the Turtle string contains content from both persons
         expect(turtle, contains('<http://example.org/person/1>'));
@@ -617,7 +620,7 @@ _:b0 a schema:PostalAddress;
       // Test serialization using the mock
       final serialized = customRdfMapper.serialize(
         person,
-        format: 'application/predefined-results',
+        contentType: 'application/predefined-results',
       );
       expect(serialized, equals('TEST SERIALIZATION RESULT'));
     });

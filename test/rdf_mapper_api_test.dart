@@ -26,7 +26,6 @@ void main() {
       expect(rdfMapper.deserializeAll, isA<Function>);
       expect(rdfMapper.deserializeAllOfType, isA<Function>);
       expect(rdfMapper.serialize, isA<Function>);
-      expect(rdfMapper.serializeList, isA<Function>);
     });
 
     test('should expose graph-based operations under graph property', () {
@@ -36,7 +35,6 @@ void main() {
       expect(rdfMapper.graph.deserializeAll, isA<Function>);
       expect(rdfMapper.graph.deserializeAllOfType, isA<Function>);
       expect(rdfMapper.graph.serialize, isA<Function>);
-      expect(rdfMapper.graph.serializeList, isA<Function>);
     });
   });
 
@@ -98,7 +96,7 @@ void main() {
       ];
 
       // String operations with list
-      final turtle = rdfMapper.serializeList(entities);
+      final turtle = rdfMapper.serialize(entities);
       expect(turtle, contains('http://example.org/entity/1'));
       expect(turtle, contains('http://example.org/entity/2'));
 
@@ -108,7 +106,7 @@ void main() {
       expect(deserialized[1].name, equals('Entity 2'));
 
       // Graph operations with list
-      final graph = rdfMapper.graph.serializeList(entities);
+      final graph = rdfMapper.graph.serialize(entities);
       final deserializedFromGraph = rdfMapper.graph
           .deserializeAllOfType<TestEntity>(graph);
       expect(deserializedFromGraph.length, equals(2));
