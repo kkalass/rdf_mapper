@@ -279,7 +279,7 @@ class TestSubjectDeserializer
   final IriTerm typeIri = IriTerm('http://example.org/CustomType');
 
   @override
-  CustomType fromRdfNode(IriTerm term, DeserializationContext context) {
+  CustomType fromRdfSubjectGraph(IriTerm term, DeserializationContext context) {
     return CustomType(term.iri);
   }
 }
@@ -311,7 +311,7 @@ class TestSubjectMapper implements SubjectMapper<CustomType> {
   final IriTerm typeIri = IriTerm('http://example.org/CustomType');
 
   @override
-  CustomType fromRdfNode(IriTerm term, DeserializationContext context) {
+  CustomType fromRdfSubjectGraph(IriTerm term, DeserializationContext context) {
     return CustomType(term.iri);
   }
 
@@ -338,7 +338,10 @@ class AnotherTestSubjectMapper implements SubjectMapper<AnotherCustomType> {
   final IriTerm typeIri = IriTerm('http://example.org/AnotherCustomType');
 
   @override
-  AnotherCustomType fromRdfNode(IriTerm term, DeserializationContext context) {
+  AnotherCustomType fromRdfSubjectGraph(
+    IriTerm term,
+    DeserializationContext context,
+  ) {
     return AnotherCustomType(term.iri);
   }
 

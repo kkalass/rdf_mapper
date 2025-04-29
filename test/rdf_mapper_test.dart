@@ -1045,7 +1045,7 @@ class CompanyMapper implements SubjectMapper<Company> {
   final IriTerm typeIri = SchemaClasses.organization;
 
   @override
-  Company fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Company fromRdfSubjectGraph(IriTerm subject, DeserializationContext context) {
     final id = subject.iri;
     final name = context.require<String>(subject, namePredicate);
     final address = context.get<Address>(subject, addressPredicate);
@@ -1082,7 +1082,10 @@ class EmployeeMapper implements SubjectMapper<Employee> {
   final IriTerm typeIri = SchemaClasses.person;
 
   @override
-  Employee fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Employee fromRdfSubjectGraph(
+    IriTerm subject,
+    DeserializationContext context,
+  ) {
     final id = subject.iri;
     final name = context.require<String>(subject, givenNamePredicate);
     final age = context.require<int>(subject, agePredicate);
@@ -1135,7 +1138,7 @@ class EmployeeWithCompanyReferenceMapper
   final IriTerm typeIri = SchemaClasses.person;
 
   @override
-  EmployeeWithCompanyReference fromRdfNode(
+  EmployeeWithCompanyReference fromRdfSubjectGraph(
     IriTerm subject,
     DeserializationContext context,
   ) {
@@ -1288,7 +1291,10 @@ class TestPersonMapper implements SubjectMapper<TestPerson> {
   final IriTerm typeIri = SchemaClasses.person;
 
   @override
-  TestPerson fromRdfNode(IriTerm subject, DeserializationContext context) {
+  TestPerson fromRdfSubjectGraph(
+    IriTerm subject,
+    DeserializationContext context,
+  ) {
     final id = subject.iri;
 
     // Get name property
@@ -1354,7 +1360,10 @@ class AddressMapper implements BlankSubjectMapper<Address> {
   final IriTerm typeIri = SchemaClasses.postalAddress;
 
   @override
-  Address fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
+  Address fromRdfSubjectGraph(
+    BlankNodeTerm term,
+    DeserializationContext context,
+  ) {
     // Get address properties
     final street = context.require<String>(term, streetAddressPredicate);
 

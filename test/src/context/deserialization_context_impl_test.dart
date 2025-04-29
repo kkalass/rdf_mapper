@@ -244,7 +244,7 @@ class TestPersonDeserializer
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
   @override
-  TestPerson fromRdfNode(IriTerm term, DeserializationContext context) {
+  TestPerson fromRdfSubjectGraph(IriTerm term, DeserializationContext context) {
     return TestPerson(term.iri);
   }
 }
@@ -268,7 +268,10 @@ class CustomBlankNodeDeserializer
   @override
   IriTerm? get typeIri => null;
   @override
-  TestAddress fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
+  TestAddress fromRdfSubjectGraph(
+    BlankNodeTerm term,
+    DeserializationContext context,
+  ) {
     var city = context.require<String>(term, VcardPredicates.locality);
     return TestAddress(city: city);
   }

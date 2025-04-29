@@ -729,7 +729,10 @@ class DocumentDeserializer implements IriSubjectGraphDeserializer<Document> {
   final IriTerm typeIri = IriTerm('http://example.org/Document');
 
   @override
-  Document fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Document fromRdfSubjectGraph(
+    IriTerm subject,
+    DeserializationContext context,
+  ) {
     final title = context.require<String>(
       subject,
       IriTerm('http://example.org/title'),
@@ -751,7 +754,10 @@ class DocumentWithTagReferencesDeserializer
   final IriTerm typeIri = IriTerm('http://example.org/Document');
 
   @override
-  Document fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Document fromRdfSubjectGraph(
+    IriTerm subject,
+    DeserializationContext context,
+  ) {
     final title = context.require<String>(
       subject,
       IriTerm('http://example.org/title'),
@@ -772,7 +778,7 @@ class TagDeserializer implements IriSubjectGraphDeserializer<Tag> {
   final IriTerm typeIri = IriTerm('http://example.org/Tag');
 
   @override
-  Tag fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Tag fromRdfSubjectGraph(IriTerm subject, DeserializationContext context) {
     final name = context.require<String>(
       subject,
       IriTerm('http://example.org/name'),
@@ -815,7 +821,7 @@ class AddressMapper implements SubjectMapper<Address> {
   final IriTerm typeIri = IriTerm('http://example.org/Address');
 
   @override
-  Address fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Address fromRdfSubjectGraph(IriTerm subject, DeserializationContext context) {
     final city = context.require<String>(
       subject,
       IriTerm('http://example.org/city'),
@@ -846,7 +852,7 @@ class PersonMapper implements SubjectMapper<Person> {
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
   @override
-  Person fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Person fromRdfSubjectGraph(IriTerm subject, DeserializationContext context) {
     final name = context.require<String>(
       subject,
       IriTerm('http://example.org/name'),
@@ -902,7 +908,7 @@ class TestPersonMapper implements SubjectMapper<TestPerson> {
   final IriTerm typeIri = IriTerm('http://xmlns.com/foaf/0.1/Person');
 
   @override
-  TestPerson fromRdfNode(IriTerm term, DeserializationContext context) {
+  TestPerson fromRdfSubjectGraph(IriTerm term, DeserializationContext context) {
     final id = term.iri;
 
     // Get name property

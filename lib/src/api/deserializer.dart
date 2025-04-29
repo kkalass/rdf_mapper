@@ -59,7 +59,7 @@ abstract interface class BlankNodeSubjectGraphDeserializer<T>
   /// @param term The blank node term to convert
   /// @param context The deserialization context, providing access to the graph
   /// @return The resulting value
-  T fromRdfNode(BlankNodeTerm term, DeserializationContext context);
+  T fromRdfSubjectGraph(BlankNodeTerm term, DeserializationContext context);
 }
 
 abstract interface class IriSubjectGraphDeserializer<T>
@@ -68,5 +68,5 @@ abstract interface class IriSubjectGraphDeserializer<T>
   /// @param term The IRI term to convert
   /// @param context The deserialization context providing access to the graph
   /// @return The resulting object
-  T fromRdfNode(IriTerm term, DeserializationContext context);
+  T fromRdfSubjectGraph(IriTerm term, DeserializationContext context);
 }

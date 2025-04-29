@@ -21,10 +21,10 @@ class DeserializationContextImpl extends DeserializationContext {
     switch (subjectIri) {
       case BlankNodeTerm _:
         var ser = _registry.getBlankNodeDeserializerByTypeIri(typeIri);
-        return ser.fromRdfNode(subjectIri, context);
+        return ser.fromRdfSubjectGraph(subjectIri, context);
       case IriTerm _:
         var ser = _registry.getIriNodeDeserializerByTypeIri(typeIri);
-        return ser.fromRdfNode(subjectIri, context);
+        return ser.fromRdfSubjectGraph(subjectIri, context);
     }
   }
 
@@ -46,7 +46,7 @@ class DeserializationContextImpl extends DeserializationContext {
           var ser =
               subjectDeserializer ?? _registry.getIriNodeDeserializer<T>();
           _deserializeNode(term);
-          return ser.fromRdfNode(term, context);
+          return ser.fromRdfSubjectGraph(term, context);
         }
         var ser = iriDeserializer ?? _registry.getIriTermDeserializer<T>();
         return ser.fromRdfTerm(term, context);
@@ -58,7 +58,7 @@ class DeserializationContextImpl extends DeserializationContext {
         var ser =
             blankNodeDeserializer ?? _registry.getBlankNodeDeserializer<T>();
         _deserializeNode(term);
-        return ser.fromRdfNode(term, context);
+        return ser.fromRdfSubjectGraph(term, context);
     }
   }
 

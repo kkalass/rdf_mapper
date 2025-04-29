@@ -83,7 +83,7 @@ class PersonMapper implements SubjectMapper<Person> {
   static final contactPredicate = IriTerm('http://example.org/contact');
 
   @override
-  Person fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Person fromRdfSubjectGraph(IriTerm subject, DeserializationContext context) {
     final name = context.require<String>(subject, namePredicate);
     final address = context.get<Address>(subject, addressPredicate);
     final contacts = context.getList<Contact>(subject, contactPredicate);
@@ -126,7 +126,10 @@ class AddressMapper implements BlankSubjectMapper<Address> {
   static final cityPredicate = IriTerm('http://example.org/city');
 
   @override
-  Address fromRdfNode(BlankNodeTerm subject, DeserializationContext context) {
+  Address fromRdfSubjectGraph(
+    BlankNodeTerm subject,
+    DeserializationContext context,
+  ) {
     final street = context.require<String>(subject, streetPredicate);
     final city = context.require<String>(subject, cityPredicate);
 
@@ -157,7 +160,7 @@ class ContactMapper implements SubjectMapper<Contact> {
   static final valuePredicate = IriTerm('http://example.org/contactValue');
 
   @override
-  Contact fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Contact fromRdfSubjectGraph(IriTerm subject, DeserializationContext context) {
     final type = context.require<String>(subject, typePredicate);
     final value = context.require<String>(subject, valuePredicate);
 
@@ -189,7 +192,7 @@ class StandaloneAddressMapper implements SubjectMapper<Address> {
   static final cityPredicate = IriTerm('http://example.org/city');
 
   @override
-  Address fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Address fromRdfSubjectGraph(IriTerm subject, DeserializationContext context) {
     final street = context.require<String>(subject, streetPredicate);
     final city = context.require<String>(subject, cityPredicate);
 

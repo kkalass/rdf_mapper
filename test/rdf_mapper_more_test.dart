@@ -149,7 +149,7 @@ final class TestItemRdfMapper implements SubjectMapper<TestItem> {
   );
 
   @override
-  TestItem fromRdfNode(IriTerm iri, DeserializationContext context) {
+  TestItem fromRdfSubjectGraph(IriTerm iri, DeserializationContext context) {
     return TestItem(
       name: context.require(
         iri,
