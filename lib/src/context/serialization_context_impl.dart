@@ -1,6 +1,7 @@
 import 'package:logging/logging.dart';
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_core/vocab.dart';
+import 'package:rdf_mapper/src/api/node_builder.dart';
 import 'package:rdf_mapper/src/api/serializer.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
@@ -13,6 +14,12 @@ class SerializationContextImpl extends SerializationContext {
 
   SerializationContextImpl({required RdfMapperRegistry registry})
     : _registry = registry;
+
+  /// Implementation of the nodeBuilder method to support fluent API.
+  @override
+  NodeBuilder<S, T> nodeBuilder<S extends RdfSubject, T>(S subject) {
+    return NodeBuilder<S, T>(subject, this);
+  }
 
   /// This method is used to look up serializers for types.
   /// It first tries to find a serializer for the exact type T.

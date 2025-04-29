@@ -1,11 +1,18 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserializer.dart';
+import 'package:rdf_mapper/src/api/node_reader.dart';
 
 /// Context for deserialization operations
 ///
 /// Provides access to services and state needed during RDF deserialization.
 /// Used to delegate complex type reconstruction to the parent service.
 abstract class DeserializationContext {
+  /// Creates a reader for fluent node property access.
+  ///
+  /// @param subject The subject to read properties from
+  /// @return A NodeReader instance for fluent API
+  NodeReader reader(RdfSubject subject);
+
   /// Gets a required property value from the RDF graph
   ///
   /// In RDF, we have triples of "subject", "predicate", "object".

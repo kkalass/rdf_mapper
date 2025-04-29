@@ -1,6 +1,8 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_core/vocab.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
+import 'package:rdf_mapper/src/api/node_builder.dart';
+import 'package:rdf_mapper/src/api/node_reader.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
 import 'package:rdf_mapper/src/mappers/literal/bool_deserializer.dart';
 import 'package:rdf_mapper/src/mappers/literal/bool_serializer.dart';
@@ -59,6 +61,11 @@ class MockSerializationContext extends SerializationContext {
   List<Triple> node<T>(T instance, {serializer}) {
     throw UnimplementedError();
   }
+
+  @override
+  NodeBuilder<S, T> nodeBuilder<S extends RdfSubject, T>(S subject) {
+    throw UnimplementedError();
+  }
 }
 
 // Mock implementation of DeserializationContext for testing
@@ -99,6 +106,11 @@ class MockDeserializationContext extends DeserializationContext {
     literalTermDeserializer,
     blankNodeDeserializer,
   }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  NodeReader reader(RdfSubject subject) {
     throw UnimplementedError();
   }
 }

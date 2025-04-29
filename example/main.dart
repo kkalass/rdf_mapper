@@ -223,15 +223,16 @@ class BookMapper implements IriNodeMapper<Book> {
 
   @override
   Book fromRdfNode(IriTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
     return Book(
       // Extract just the identifier part from the IRI
       id: _extractIdFromIri(subject.iri),
-      title: context.require<String>(subject, titlePredicate),
-      author: context.require<String>(subject, authorPredicate),
-      published: context.require<DateTime>(subject, publishedPredicate),
-      isbn: context.require<ISBN>(subject, isbnPredicate),
-      rating: context.require<Rating>(subject, ratingPredicate),
-      chapters: context.getList<Chapter>(subject, chapterPredicate),
+      title: reader.require<String>(titlePredicate),
+      author: reader.require<String>(authorPredicate),
+      published: reader.require<DateTime>(publishedPredicate),
+      isbn: reader.require<ISBN>(isbnPredicate),
+      rating: reader.require<Rating>(ratingPredicate),
+      chapters: reader.getList<Chapter>(chapterPredicate),
     );
   }
 
@@ -240,21 +241,17 @@ class BookMapper implements IriNodeMapper<Book> {
     Book book,
     SerializationContext context, {
     RdfSubject? parentSubject,
-  }) {
-    // Create full IRI from the identifier
-    final subject = IriTerm(_createIriFromId(book.id));
-    final triples = <Triple>[
-      context.literal(subject, titlePredicate, book.title),
-      context.literal(subject, authorPredicate, book.author),
-      context.literal<DateTime>(subject, publishedPredicate, book.published),
-      context.iri<ISBN>(subject, isbnPredicate, book.isbn),
-      context.literal<Rating>(subject, ratingPredicate, book.rating),
-      ...book.chapters.expand(
-        (chapter) => context.childNode(subject, chapterPredicate, chapter),
-      ),
-    ];
-    return (subject, triples);
-  }
+  }) =>
+      // Create full IRI from the identifier
+      context
+          .nodeBuilder(IriTerm(_createIriFromId(book.id)))
+          .literal(titlePredicate, book.title)
+          .literal(authorPredicate, book.author)
+          .literal<DateTime>(publishedPredicate, book.published)
+          .iri<ISBN>(isbnPredicate, book.isbn)
+          .literal<Rating>(ratingPredicate, book.rating)
+          .childNodeList(chapterPredicate, book.chapters)
+          .build();
 }
 
 // Blank node-based entity mapper
@@ -267,9 +264,11 @@ class ChapterMapper implements BlankNodeMapper<Chapter> {
 
   @override
   Chapter fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
-    final title = context.require<String>(term, titlePredicate);
-    final number = context.require<int>(term, numberPredicate);
-    return Chapter(title, number);
+    final reader = context.reader(term);
+    return Chapter(
+      reader.require<String>(titlePredicate),
+      reader.require<int>(numberPredicate),
+    );
   }
 
   @override
@@ -278,12 +277,11 @@ class ChapterMapper implements BlankNodeMapper<Chapter> {
     SerializationContext ctxt, {
     RdfSubject? parentSubject,
   }) {
-    final subject = BlankNodeTerm();
-    final triples = <Triple>[
-      ctxt.literal(subject, titlePredicate, chapter.title),
-      ctxt.literal<int>(subject, numberPredicate, chapter.number),
-    ];
-    return (subject, triples);
+    return ctxt
+        .nodeBuilder(BlankNodeTerm())
+        .literal(titlePredicate, chapter.title)
+        .literal<int>(numberPredicate, chapter.number)
+        .build();
   }
 }
 

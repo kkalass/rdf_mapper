@@ -1,6 +1,7 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
 import 'package:rdf_mapper/src/api/deserializer.dart';
+import 'package:rdf_mapper/src/api/node_reader.dart';
 import 'package:rdf_mapper/src/exceptions/property_value_not_found_exception.dart';
 import 'package:rdf_mapper/src/exceptions/too_many_property_values_exception.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
@@ -15,6 +16,12 @@ class DeserializationContextImpl extends DeserializationContext {
     required RdfMapperRegistry registry,
   }) : _graph = graph,
        _registry = registry;
+
+  /// Implementation of the reader method to support fluent API.
+  @override
+  NodeReader reader(RdfSubject subject) {
+    return NodeReader(subject, this);
+  }
 
   Object deserializeNode(RdfSubject subjectIri, IriTerm typeIri) {
     var context = this;
