@@ -174,40 +174,60 @@ Directory? _findWorkspaceRoot() {
 
 /// Updates version references in README.md
 String _updateReadme(String content, String version) {
-  // Update pubspec.yaml example
+  // Extract clean version without any -dev suffix for documentation
+  final cleanVersion = version.split('-').first;
   var result = content;
-  final pubspecPattern = RegExp(
-    r'```yaml\ndependencies:\n\s+rdf_mapper:\s+\^\d+\.\d+\.\d+',
-  );
-  final updatedPubspec = '```yaml\ndependencies:\n  rdf_mapper: ^$version';
-  result = result.replaceAll(pubspecPattern, updatedPubspec);
 
-  // Update command-line example if present
-  final dartPubAddPattern = RegExp(
-    r'dart pub add rdf_mapper(?:@\^\d+\.\d+\.\d+)?',
+  // Update pubspec.yaml example with a more robust pattern
+  final pubspecPattern = RegExp(
+    r'```yaml\s*\n\s*dependencies:\s*\n\s*rdf_mapper:\s*\^[0-9]+\.[0-9]+\.[0-9]+(?:[-+].+)?',
+    multiLine: true,
   );
-  final updatedDartPubAdd = 'dart pub add rdf_mapper:^$version';
-  result = result.replaceAll(dartPubAddPattern, updatedDartPubAdd);
+  final updatedPubspec = '```yaml\ndependencies:\n  rdf_mapper: ^$cleanVersion';
+  if (pubspecPattern.hasMatch(result)) {
+    result = result.replaceAll(pubspecPattern, updatedPubspec);
+  }
+
+  // Replace any complex dart pub add command with the simplified version
+  final dartPubAddPattern = RegExp(
+    r'```bash\s*\n\s*dart pub add rdf_mapper(?::.*)?',
+    multiLine: true,
+  );
+  const updatedDartPubAdd = '```bash\ndart pub add rdf_mapper';
+  if (dartPubAddPattern.hasMatch(result)) {
+    result = result.replaceAll(dartPubAddPattern, updatedDartPubAdd);
+  }
 
   return result;
 }
 
 /// Updates version references in doc/index.html
 String _updateDocIndex(String content, String version) {
-  // Update installation code block in Quick Start section
+  // Extract clean version without any -dev suffix for documentation
+  final cleanVersion = version.split('-').first;
   var result = content;
-  final dependencyPattern = RegExp(
-    r'dependencies:\n\s+rdf_mapper: \^\d+\.\d+\.\d+',
-  );
-  final updatedDependency = 'dependencies:\n  rdf_mapper: ^$version';
-  result = result.replaceAll(dependencyPattern, updatedDependency);
 
-  // Update command-line example if present
-  final dartPubAddPattern = RegExp(
-    r'dart pub add rdf_mapper(?:@\^\d+\.\d+\.\d+)?',
+  // Update installation code block in Quick Start section - more robust pattern
+  final dependencyPattern = RegExp(
+    r'<code class="language-yaml">dependencies:\s*\n\s*rdf_mapper:\s*\^[0-9]+\.[0-9]+\.[0-9]+(?:[-+].+)?',
+    multiLine: true,
   );
-  final updatedDartPubAdd = 'dart pub add rdf_mapper';
-  result = result.replaceAll(dartPubAddPattern, updatedDartPubAdd);
+  final updatedDependency =
+      '<code class="language-yaml">dependencies:\n  rdf_mapper: ^$cleanVersion';
+  if (dependencyPattern.hasMatch(result)) {
+    result = result.replaceAll(dependencyPattern, updatedDependency);
+  }
+
+  // Always simplify the dart pub add command
+  final dartPubAddPattern = RegExp(
+    r'<code class="language-bash">dart pub add rdf_mapper(?::[^\s<]+)?',
+    multiLine: true,
+  );
+  const updatedDartPubAdd =
+      '<code class="language-bash">dart pub add rdf_mapper';
+  if (dartPubAddPattern.hasMatch(result)) {
+    result = result.replaceAll(dartPubAddPattern, updatedDartPubAdd);
+  }
 
   return result;
 }

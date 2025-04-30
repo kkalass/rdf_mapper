@@ -52,7 +52,10 @@ void main(List<String> args) async {
   // Step 1: Check for clean working directory if in non-interactive mode
   if (nonInteractive) {
     print('Step 1/8: Checking git status (non-interactive mode)...');
-    final gitStatus = await _runProcess('git', ['status', '--porcelain']);
+    final gitStatus = await _runProcess('git', [
+      'status',
+      '--porcelain',
+    ], captureOutput: true);
 
     if (gitStatus.stdout.toString().trim().isNotEmpty) {
       print(
@@ -266,13 +269,22 @@ void main(List<String> args) async {
   // Step 4: Update documentation and version references
   print('\nStep 4/8: Updating documentation...');
   if (!dryRun) {
+    // When updating from a dev version, make sure all docs are correctly updated
+    // by explicitly passing the clean release version to update_version.dart
+    final wasDevVersion = isDevVersion;
     final updateDocsResult = await _runProcess('dart', [
       'run',
       'tool/update_version.dart',
     ]);
+
     if (updateDocsResult.exitCode != 0) {
       print('Error: Failed to update documentation');
       exit(1);
+    }
+
+    // Double check for any lingering -dev version strings in README and doc/index.html
+    if (wasDevVersion) {
+      await _ensureNoDevVersionStrings(releaseVersion);
     }
 
     // Generate API documentation using dartdoc
@@ -301,24 +313,32 @@ void main(List<String> args) async {
 
   if (!dryRun) {
     // Check if any files were changed by the doc update or interactive mode
-    final statusAfterDocs = await _runProcess('git', ['status', '--porcelain']);
+    // Use captureOutput to properly capture changes
+    final statusAfterDocs = await _runProcess('git', [
+      'status',
+      '--porcelain',
+    ], captureOutput: true);
     final hasChanges = statusAfterDocs.stdout.toString().trim().isNotEmpty;
 
     if (hasChanges) {
       // Explicitly add common files that might have been updated
-      // Using 'git add doc/' might miss new files in subdirectories, so we use a more explicit approach for doc/api/
       await _runProcess('git', [
         'add',
         'pubspec.yaml',
         'CHANGELOG.md',
         'README.md',
       ]);
-      
+
       // Ensure all documentation files are added, including new files
       await _runProcess('git', ['add', 'doc/']);
-      
+
       // Specifically check if any new files in doc/api weren't added and add them
-      final apiStatus = await _runProcess('git', ['status', '--porcelain', 'doc/api/']);
+      final apiStatus = await _runProcess('git', [
+        'status',
+        '--porcelain',
+        'doc/api/',
+      ], captureOutput: true);
+
       if (apiStatus.stdout.toString().trim().isNotEmpty) {
         await _runProcess('git', ['add', 'doc/api/']);
       }
@@ -327,7 +347,10 @@ void main(List<String> args) async {
       await _runProcess('git', ['add', '-u']);
 
       // Show what will be committed
-      final filesToCommit = await _runProcess('git', ['status', '--short']);
+      final filesToCommit = await _runProcess('git', [
+        'status',
+        '--short',
+      ], captureOutput: true);
       print('  Files to be committed:');
       print(filesToCommit.stdout.toString().trim());
 
@@ -586,23 +609,42 @@ bool _changelogContainsVersion(String version) {
   return (hasCurrentVersion, latestVersion);
 }
 
-/// Runs a process and returns the result, streaming output to console
+/// Runs a process and returns the result with captured output
+/// If captureOutput is true, stdout and stderr are captured in the returned ProcessResult
+/// Otherwise, output is streamed to the console (inheritStdio)
 Future<ProcessResult> _runProcess(
   String command,
-  List<String> arguments,
-) async {
+  List<String> arguments, {
+  bool captureOutput = false,
+}) async {
   print('  Running: $command ${arguments.join(' ')}');
 
-  final process = await Process.start(
-    command,
-    arguments,
-    mode: ProcessStartMode.inheritStdio,
-  );
+  if (captureOutput) {
+    // Capture output for programmatic use (e.g. to check for changes)
+    final result = await Process.run(command, arguments);
 
-  final exitCode = await process.exitCode;
+    // Still print the output for user feedback
+    if (result.stdout.toString().isNotEmpty) {
+      print(result.stdout);
+    }
+    if (result.stderr.toString().isNotEmpty) {
+      print(result.stderr);
+    }
 
-  // Create synthetic ProcessResult since we used inheritStdio
-  return ProcessResult(process.pid, exitCode, '', '');
+    return result;
+  } else {
+    // Stream output directly to console (better for interactive output)
+    final process = await Process.start(
+      command,
+      arguments,
+      mode: ProcessStartMode.inheritStdio,
+    );
+
+    final exitCode = await process.exitCode;
+
+    // Return a ProcessResult with empty strings for stdout/stderr
+    return ProcessResult(process.pid, exitCode, '', '');
+  }
 }
 
 /// Gets today's date in YYYY-MM-DD format
@@ -672,4 +714,47 @@ bool _isValidVersion(String version) {
   // Basic semver validation (x.y.z with optional pre-release/build metadata)
   final regex = RegExp(r'^\d+\.\d+\.\d+(?:[-+].+)?$');
   return regex.hasMatch(version);
+}
+
+/// Ensures that no development version strings remain in documentation files
+/// This is a safety measure for releases that transition from -dev versions
+Future<void> _ensureNoDevVersionStrings(String releaseVersion) async {
+  print('  Ensuring documentation contains no development version strings...');
+
+  // Files to check and clean
+  final filesToCheck = ['README.md', 'doc/index.html'];
+
+  for (final filePath in filesToCheck) {
+    final file = File(filePath);
+    if (!file.existsSync()) {
+      print('  Warning: $filePath not found, skipping');
+      continue;
+    }
+
+    var content = file.readAsStringSync();
+    final devPattern = RegExp(r'\^[0-9]+\.[0-9]+\.[0-9]+\-dev');
+    final wrongPubAddPattern = RegExp(r'dart pub add rdf_mapper:[^\s"]+');
+
+    // Check for any remaining -dev version strings
+    if (devPattern.hasMatch(content) || wrongPubAddPattern.hasMatch(content)) {
+      print(
+        '  Found lingering development version strings in $filePath, fixing...',
+      );
+
+      // Replace all remaining -dev versions with the clean release version
+      content = content.replaceAll(devPattern, '^$releaseVersion');
+
+      // Ensure dart pub add command is simplified
+      content = content.replaceAll(
+        wrongPubAddPattern,
+        'dart pub add rdf_mapper',
+      );
+
+      // Write updated content
+      file.writeAsStringSync(content);
+      print('  ✓ Fixed version strings in $filePath');
+    } else {
+      print('  ✓ No development version strings found in $filePath');
+    }
+  }
 }
