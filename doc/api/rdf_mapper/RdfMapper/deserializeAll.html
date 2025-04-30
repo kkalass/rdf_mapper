@@ -60,6 +60,7 @@
 <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
 <span class="name ">deserializeAll</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="deserializeAll-param-rdfString"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">rdfString</span>, {</span></li>
 <li><span class="parameter" id="deserializeAll-param-contentType"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">contentType</span>, </span></li>
+<li><span class="parameter" id="deserializeAll-param-documentUrl"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">documentUrl</span>, </span></li>
 <li><span class="parameter" id="deserializeAll-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-registry"><span class="type-annotation"><a href="../../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span></li>
 </ol>)?, </span></li>
 </ol>})
@@ -75,6 +76,7 @@ into objects using the registered mappers. The resulting list may contain
 objects of different types.</p>
 <p><code>contentType</code> should be a MIME type like 'text/turtle' or 'application/ld+json'.
 If not specified, the contentType will be auto-detected.</p>
+<p><code>documentUrl</code> Optional base URI for resolving relative references in the document.</p>
 <p>Usage:</p>
 <pre class="language-dart"><code class="language-dart">// Register mappers for all relevant classes
 rdfMapper.registerMapper&lt;Person&gt;(PersonMapper());
@@ -102,9 +104,14 @@ final people = rdfMapper.deserializeAll(turtle)
   <pre class="language-dart"><code class="language-dart">List&lt;Object&gt; deserializeAll(
   String rdfString, {
   String? contentType,
+  String? documentUrl,
   void Function(RdfMapperRegistry registry)? register,
 }) {
-  final graph = _rdfCore.parse(rdfString, contentType: contentType);
+  final graph = _rdfCore.parse(
+    rdfString,
+    contentType: contentType,
+    documentUrl: documentUrl,
+  );
   return _graphOperations.deserializeAll(graph, register: register);
 }</code></pre>
 </section>
@@ -134,7 +141,7 @@ final people = rdfMapper.deserializeAll(turtle)
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.1.0
+      0.1.2
   </span>
   
 </footer>

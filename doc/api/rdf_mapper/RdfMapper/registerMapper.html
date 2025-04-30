@@ -65,6 +65,59 @@
 
     </section>
     
+<section class="desc markdown">
+  <p>Registers a mapper for bidirectional conversion between Dart objects and RDF.</p>
+<p>This method adds a <a href="../../rdf_mapper/Mapper-class.html">Mapper</a> implementation to the registry, enabling serialization
+and deserialization of objects of type <code>T</code>. The mapper determines how objects are
+converted to RDF triples and reconstructed from them.</p>
+<p>The registry supports four distinct mapper types based on RDF node characteristics:</p>
+<ul>
+<li>
+<p><a href="../../rdf_mapper/IriNodeMapper-class.html">IriNodeMapper</a>: Maps objects to/from IRI subjects (identified by URIs)
+Used for entity objects with identity and complex properties</p>
+</li>
+<li>
+<p><a href="../../rdf_mapper/BlankNodeMapper-class.html">BlankNodeMapper</a>: Maps objects to/from blank node subjects
+Used for embedded objects without their own identity</p>
+</li>
+<li>
+<p><a href="../../rdf_mapper/LiteralTermMapper-class.html">LiteralTermMapper</a>: Maps objects to/from RDF literal terms
+Used for value objects with datatype annotations</p>
+</li>
+<li>
+<p><a href="../../rdf_mapper/IriTermMapper-class.html">IriTermMapper</a>: Maps objects to/from IRI reference terms
+Used for object references and URIs</p>
+</li>
+</ul>
+<p>Example with IriNodeMapper:</p>
+<pre class="language-dart"><code class="language-dart">class PersonMapper implements IriNodeMapper&lt;Person&gt; {
+  static final foaf = Namespace('http://xmlns.com/foaf/0.1/');
+  static final rdf = Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
+
+  @override
+  RdfIriNode toRdfNode(Person instance, SerializationContext context) {
+    return context.nodeBuilder(Uri.parse(instance.id))
+      .iri(rdf('type'), foaf('Person'))
+      .literal(foaf('name'), instance.name)
+      .build();
+  }
+
+  @override
+  Person fromRdfNode(RdfSubject subject, DeserializationContext context) {
+    return Person(
+      id: subject.iri.toString(),
+      name: context.reader.require&lt;String&gt;(foaf('name')),
+    );
+  }
+
+  @override
+  RdfIriReference typeIri() =&gt; foaf('Person');
+}
+
+// Register the mapper
+rdfMapper.registerMapper&lt;Person&gt;(PersonMapper());
+</code></pre>
+</section>
 
 
     
@@ -100,7 +153,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.1.0
+      0.1.2
   </span>
   
 </footer>
