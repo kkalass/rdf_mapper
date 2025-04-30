@@ -73,6 +73,46 @@ void main(List<String> args) async {
   var currentVersion = _getCurrentVersion();
   var lastVersion = await _getLastReleasedVersion();
 
+  // Check if CHANGELOG.md has an entry for the current version or a newer version
+  final (changelogEntryExists, changelogVersion) = _checkChangelogVersion(
+    currentVersion,
+  );
+
+  // If changelog has a newer version than pubspec, suggest synchronizing
+  if (changelogVersion != null &&
+      changelogVersion != currentVersion &&
+      _isVersionIncremented(currentVersion, changelogVersion)) {
+    if (!nonInteractive) {
+      print(
+        '  Warning: Found newer version $changelogVersion in CHANGELOG.md than in pubspec.yaml ($currentVersion)',
+      );
+      final syncVersion = await _prompt(
+        '  Update pubspec.yaml to match CHANGELOG.md version $changelogVersion? (y/n): ',
+      );
+
+      if (syncVersion.toLowerCase() == 'y') {
+        if (!dryRun) {
+          _updatePubspecVersion(changelogVersion);
+          print('  ✓ Updated pubspec.yaml version to $changelogVersion');
+          currentVersion = changelogVersion;
+        } else {
+          print(
+            '  (dry run) Would update pubspec.yaml version to $changelogVersion',
+          );
+        }
+      } else {
+        print(
+          '  Warning: Continuing with version mismatch between pubspec.yaml and CHANGELOG.md',
+        );
+      }
+    } else {
+      print(
+        'Error: CHANGELOG.md has version $changelogVersion but pubspec.yaml has $currentVersion',
+      );
+      exit(1);
+    }
+  }
+
   if (!nonInteractive) {
     // Suggest version increment in interactive mode
     final suggestedVersion = _suggestNextVersion(
@@ -129,10 +169,12 @@ void main(List<String> args) async {
     }
   }
 
-  // Check if CHANGELOG.md has an entry for the current version
-  final changelogEntryExists = _changelogContainsVersion(currentVersion);
+  // Re-check if CHANGELOG.md has an entry for the current version after possible updates
+  final (updatedChangelogEntryExists, _) = _checkChangelogVersion(
+    currentVersion,
+  );
 
-  if (!changelogEntryExists) {
+  if (!updatedChangelogEntryExists) {
     if (!nonInteractive) {
       print(
         '\n  CHANGELOG.md does not contain an entry for version $currentVersion',
@@ -212,9 +254,25 @@ void main(List<String> args) async {
       print('Error: Failed to update documentation');
       exit(1);
     }
+
+    // Generate API documentation using dartdoc
+    print('\nGenerating API documentation...');
+    try {
+      final dartdocResult = await _runProcess('dart', ['doc']);
+      if (dartdocResult.exitCode != 0) {
+        print('Warning: Failed to generate API documentation');
+      } else {
+        print('  ✓ API documentation generated successfully');
+      }
+    } catch (e) {
+      print('Warning: Failed to generate API documentation');
+      print('  $e');
+    }
   } else {
     print('  (dry run) Would update documentation and version references');
   }
+
+  print('Success: Documentation updated to v$currentVersion');
   print('  ✓ Documentation updated');
 
   // Step 5: Commit changes and create tag
@@ -227,8 +285,23 @@ void main(List<String> args) async {
     final hasChanges = statusAfterDocs.stdout.toString().trim().isNotEmpty;
 
     if (hasChanges) {
-      // Commit changes
-      await _runProcess('git', ['add', '.']);
+      // Explicitly add common files that might have been updated
+      await _runProcess('git', [
+        'add',
+        'pubspec.yaml',
+        'CHANGELOG.md',
+        'README.md',
+        'doc/',
+      ]);
+
+      // Also add any other changed files
+      await _runProcess('git', ['add', '-u']);
+
+      // Show what will be committed
+      final filesToCommit = await _runProcess('git', ['status', '--short']);
+      print('  Files to be committed:');
+      print(filesToCommit.stdout.toString().trim());
+
       await _runProcess('git', [
         'commit',
         '-m',
@@ -447,6 +520,31 @@ bool _changelogContainsVersion(String version) {
   // Look for standard changelog format: ## [x.y.z] - date
   final versionRegex = RegExp(r'## *\[' + RegExp.escape(version) + r'\]');
   return versionRegex.hasMatch(content);
+}
+
+/// Checks CHANGELOG.md for version entries and returns the latest version found
+/// Returns (bool hasCurrentVersion, String? latestVersionInChangelog)
+(bool, String?) _checkChangelogVersion(String currentVersion) {
+  final changelog = File('CHANGELOG.md');
+
+  if (!changelog.existsSync()) {
+    return (false, null);
+  }
+
+  final content = changelog.readAsStringSync();
+  final hasCurrentVersion = _changelogContainsVersion(currentVersion);
+
+  // Look for all version entries in changelog: ## [x.y.z] - date
+  final versionRegex = RegExp(r'## *\[([0-9]+\.[0-9]+\.[0-9]+(?:[-+].+)?)\]');
+  final matches = versionRegex.allMatches(content).toList();
+
+  if (matches.isEmpty) {
+    return (hasCurrentVersion, null);
+  }
+
+  // Get latest version (first match, as changelog is ordered by newest first)
+  final latestVersion = matches.first.group(1);
+  return (hasCurrentVersion, latestVersion);
 }
 
 /// Runs a process and returns the result, streaming output to console
