@@ -484,7 +484,10 @@ RDF Mapper provides specific exceptions to help diagnose mapping issues:
 ## 🛣️ Roadmap / Next Steps
 
 - Detect cycles, optimally support them.
+- Implement default behaviour for nodes without mapper ((Json-LD?) Maps)
 - Support generating mappers based on annotations
+- Support "any" feature and annotation which puts the remaining properties of a node into a (Json-LD?) Map that is a property of the dart class
+- Improve test coverage
 
 ## 🤝 Contributing
 
