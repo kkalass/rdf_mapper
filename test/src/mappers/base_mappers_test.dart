@@ -1,0 +1,293 @@
+import 'package:rdf_core/rdf_core.dart';
+import 'package:rdf_core/vocab.dart';
+import 'package:rdf_mapper/src/api/deserialization_context.dart';
+import 'package:rdf_mapper/src/api/node_reader.dart';
+import 'package:rdf_mapper/src/api/node_builder.dart';
+import 'package:rdf_mapper/src/api/serialization_context.dart';
+import 'package:rdf_mapper/src/exceptions/deserialization_exception.dart';
+import 'package:rdf_mapper/src/mappers/literal/base_rdf_literal_term_deserializer.dart';
+import 'package:rdf_mapper/src/mappers/literal/base_rdf_literal_term_serializer.dart';
+import 'package:test/test.dart';
+
+// Mock implementation of SerializationContext for testing
+class MockSerializationContext extends SerializationContext {
+  @override
+  NodeBuilder<S> nodeBuilder<S extends RdfSubject>(S subject) {
+    throw UnimplementedError();
+  }
+}
+
+// Mock implementation of DeserializationContext for testing
+class MockDeserializationContext extends DeserializationContext {
+  @override
+  NodeReader reader(RdfSubject subject) {
+    throw UnimplementedError();
+  }
+}
+
+// Concrete implementation for testing BaseRdfLiteralTermSerializer
+class TestPointSerializer extends BaseRdfLiteralTermSerializer<Point> {
+  TestPointSerializer({IriTerm? datatype})
+    : super(
+        datatype: datatype ?? XsdTypes.string,
+        convertToString: (point) => '${point.x},${point.y}',
+      );
+}
+
+// Custom language tag serializer implementation
+class LangTaggedSerializer extends BaseRdfLiteralTermSerializer<String> {
+  final String langTag;
+
+  LangTaggedSerializer(this.langTag)
+    : super(datatype: XsdTypes.string, convertToString: (value) => value);
+
+  @override
+  LiteralTerm toRdfTerm(String value, SerializationContext context) {
+    return LiteralTerm.withLanguage(value, langTag);
+  }
+}
+
+// Concrete implementation for testing BaseRdfLiteralTermDeserializer
+class TestPointDeserializer extends BaseRdfLiteralTermDeserializer<Point> {
+  TestPointDeserializer({IriTerm? datatype})
+    : super(
+        datatype: datatype ?? XsdTypes.string,
+        convertFromLiteral: (term, _) {
+          final parts = term.value.split(',');
+          return Point(int.parse(parts[0]), int.parse(parts[1]));
+        },
+      );
+}
+
+// Deserializer that accepts language-tagged literals
+class LangTagTestDeserializer extends BaseRdfLiteralTermDeserializer<String> {
+  LangTagTestDeserializer()
+    : super(
+        datatype: XsdTypes.string,
+        convertFromLiteral: (term, _) => term.value,
+      );
+
+  @override
+  String fromRdfTerm(LiteralTerm term, DeserializationContext context) {
+    if (term.language != null) {
+      return term.value;
+    }
+    return super.fromRdfTerm(term, context);
+  }
+}
+
+void main() {
+  late SerializationContext serializationContext;
+  late DeserializationContext deserializationContext;
+
+  setUp(() {
+    serializationContext = MockSerializationContext();
+    deserializationContext = MockDeserializationContext();
+  });
+
+  group('Base Mapper Classes', () {
+    group('BaseRdfLiteralTermSerializer', () {
+      test('serializes values using conversion function', () {
+        // Create a custom serializer for a complex type
+        final serializer = TestPointSerializer();
+
+        final point = Point(10, 20);
+        final term = serializer.toRdfTerm(point, serializationContext);
+
+        expect(term, isA<LiteralTerm>());
+        expect(term.value, equals('10,20'));
+        expect(term.datatype, equals(XsdTypes.string));
+      });
+
+      test('uses custom datatype when provided', () {
+        final customDatatype = IriTerm('http://example.org/point');
+        final serializer = TestPointSerializer(datatype: customDatatype);
+
+        final term = serializer.toRdfTerm(Point(10, 20), serializationContext);
+
+        expect(term, isA<LiteralTerm>());
+        expect(term.value, equals('10,20'));
+        expect(term.datatype, equals(customDatatype));
+      });
+
+      test('can be extended to support language tags', () {
+        final serializer = LangTaggedSerializer('de');
+
+        final term = serializer.toRdfTerm('Hallo Welt', serializationContext);
+
+        expect(term, isA<LiteralTerm>());
+        expect(term.value, equals('Hallo Welt'));
+        expect(term.language, equals('de'));
+      });
+
+      test('can be extended for custom type handling', () {
+        // A custom serializer for color values
+        final colorSerializer = ColorSerializer();
+
+        final color = Color(255, 0, 128);
+        final term = colorSerializer.toRdfTerm(color, serializationContext);
+
+        expect(term, isA<LiteralTerm>());
+        expect(term.value.toLowerCase(), equals('#ff0080'));
+        expect(term.datatype, equals(IriTerm('http://example.org/color')));
+      });
+    });
+
+    group('BaseRdfLiteralTermDeserializer', () {
+      test('deserializes values using conversion function', () {
+        // Create a custom deserializer for a complex type
+        final deserializer = TestPointDeserializer();
+
+        final term = LiteralTerm.string('10,20');
+        final point = deserializer.fromRdfTerm(term, deserializationContext);
+
+        expect(point, isA<Point>());
+        expect(point.x, equals(10));
+        expect(point.y, equals(20));
+      });
+
+      test('validates datatype against required datatype', () {
+        final customDatatype = IriTerm('http://example.org/point');
+        final deserializer = TestPointDeserializer(datatype: customDatatype);
+
+        // Valid datatype
+        final validTerm = LiteralTerm('10,20', datatype: customDatatype);
+        final point = deserializer.fromRdfTerm(
+          validTerm,
+          deserializationContext,
+        );
+        expect(point, isA<Point>());
+
+        // Invalid datatype
+        final invalidTerm = LiteralTerm.string('10,20');
+
+        expect(
+          () => deserializer.fromRdfTerm(invalidTerm, deserializationContext),
+          throwsA(isA<DeserializationException>()),
+        );
+      });
+
+      test('rejects language-tagged literals by default', () {
+        final deserializer = TestPointDeserializer();
+
+        final languageTerm = LiteralTerm.withLanguage('10,20', 'de');
+
+        expect(
+          () => deserializer.fromRdfTerm(languageTerm, deserializationContext),
+          throwsA(isA<DeserializationException>()),
+        );
+      });
+
+      test('can be extended to handle language-tagged literals', () {
+        final deserializer = LangTagTestDeserializer();
+
+        final languageTerm = LiteralTerm.withLanguage('Hallo Welt', 'de');
+        final result = deserializer.fromRdfTerm(
+          languageTerm,
+          deserializationContext,
+        );
+
+        expect(result, equals('Hallo Welt'));
+      });
+
+      test('can be extended for custom type handling', () {
+        // A custom deserializer for color values
+        final colorDeserializer = ColorDeserializer();
+
+        final term = LiteralTerm(
+          '#FF0080',
+          datatype: IriTerm('http://example.org/color'),
+        );
+
+        final color = colorDeserializer.fromRdfTerm(
+          term,
+          deserializationContext,
+        );
+
+        expect(color, isA<Color>());
+        expect(color.red, equals(255));
+        expect(color.green, equals(0));
+        expect(color.blue, equals(128));
+      });
+
+      test('handles non-standard datatypes', () {
+        final customDatatype = IriTerm('http://example.org/customType');
+        final term = LiteralTerm('10,20', datatype: customDatatype);
+
+        final deserializer = TestPointDeserializer(datatype: customDatatype);
+        final point = deserializer.fromRdfTerm(term, deserializationContext);
+
+        expect(point, isA<Point>());
+        expect(point.x, equals(10));
+        expect(point.y, equals(20));
+      });
+    });
+  });
+}
+
+// Helper classes for testing
+
+class Point {
+  final int x;
+  final int y;
+
+  Point(this.x, this.y);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Point &&
+          runtimeType == other.runtimeType &&
+          x == other.x &&
+          y == other.y;
+
+  @override
+  int get hashCode => x.hashCode ^ y.hashCode;
+}
+
+class Color {
+  final int red;
+  final int green;
+  final int blue;
+
+  Color(this.red, this.green, this.blue);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Color &&
+          runtimeType == other.runtimeType &&
+          red == other.red &&
+          green == other.green &&
+          blue == other.blue;
+
+  @override
+  int get hashCode => red.hashCode ^ green.hashCode ^ blue.hashCode;
+}
+
+class ColorSerializer extends BaseRdfLiteralTermSerializer<Color> {
+  ColorSerializer()
+    : super(
+        datatype: IriTerm('http://example.org/color'),
+        convertToString:
+            (color) =>
+                '#${color.red.toRadixString(16).padLeft(2, '0')}'
+                '${color.green.toRadixString(16).padLeft(2, '0')}'
+                '${color.blue.toRadixString(16).padLeft(2, '0')}',
+      );
+}
+
+class ColorDeserializer extends BaseRdfLiteralTermDeserializer<Color> {
+  ColorDeserializer()
+    : super(
+        datatype: IriTerm('http://example.org/color'),
+        convertFromLiteral: (term, _) {
+          // Parse hex color (e.g., #FF0080)
+          final hexStr = term.value.substring(1); // Remove # prefix
+          final red = int.parse(hexStr.substring(0, 2), radix: 16);
+          final green = int.parse(hexStr.substring(2, 4), radix: 16);
+          final blue = int.parse(hexStr.substring(4, 6), radix: 16);
+          return Color(red, green, blue);
+        },
+      );
+}
