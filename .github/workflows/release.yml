@@ -19,7 +19,7 @@ jobs:
         id: changelog
         run: |
           VERSION=${GITHUB_REF#refs/tags/v}
-          RELEASE_NOTES=$(awk "/^## $VERSION/ {flag=1; next} /^## / {flag=0} flag" CHANGELOG.md | sed '/^$/d')
+          RELEASE_NOTES=$(awk "/^## \[$VERSION\]/ {flag=1; next} /^## / {flag=0} flag" CHANGELOG.md | sed '/^$/d')
           echo "release_notes<<EOF" >> $GITHUB_OUTPUT
           echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
