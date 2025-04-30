@@ -29,7 +29,7 @@ class Namespace {
   /// but this is not enforced to allow for flexibility in namespace conventions.
   ///
   /// @param base The base IRI for this namespace (e.g., "http://schema.org/")
-  Namespace(this._base);
+  const Namespace(this._base);
 
   /// Creates an IRI term by combining the namespace base with a local name.
   ///
