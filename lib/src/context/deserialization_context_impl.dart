@@ -38,22 +38,23 @@ class DeserializationContextImpl extends DeserializationContext
   }
 
   // Hook for the Tracking implementation to track deserialized nodes.
-  void _deserializeNode(RdfTerm term) {}
+  void _onDeserializeNode(RdfTerm term) {}
 
   T deserialize<T>(
     RdfTerm term,
     IriTermDeserializer<T>? iriTermDeserializer,
-    IriNodeDeserializer<T>? nodeDeserializer,
+    IriNodeDeserializer<T>? iriNodeDeserializer,
     LiteralTermDeserializer<T>? literalTermDeserializer,
     BlankNodeDeserializer<T>? blankNodeDeserializer,
   ) {
     var context = this;
     switch (term) {
       case IriTerm _:
-        if (nodeDeserializer != null ||
+        if (iriNodeDeserializer != null ||
             _registry.hasIriNodeDeserializerFor<T>()) {
-          var deser = nodeDeserializer ?? _registry.getIriNodeDeserializer<T>();
-          _deserializeNode(term);
+          var deser =
+              iriNodeDeserializer ?? _registry.getIriNodeDeserializer<T>();
+          _onDeserializeNode(term);
           return deser.fromRdfNode(term, context);
         }
         var deser =
@@ -67,7 +68,7 @@ class DeserializationContextImpl extends DeserializationContext
       case BlankNodeTerm _:
         var deser =
             blankNodeDeserializer ?? _registry.getBlankNodeDeserializer<T>();
-        _deserializeNode(term);
+        _onDeserializeNode(term);
         return deser.fromRdfNode(term, context);
     }
   }
@@ -211,8 +212,8 @@ class TrackingDeserializationContext extends DeserializationContextImpl {
   }) : super(graph: graph, registry: registry);
 
   @override
-  void _deserializeNode(RdfTerm term) {
-    super._deserializeNode(term);
+  void _onDeserializeNode(RdfTerm term) {
+    super._onDeserializeNode(term);
     // Track processing of subject terms
     if (term is RdfSubject) {
       _processedSubjects.add(term);

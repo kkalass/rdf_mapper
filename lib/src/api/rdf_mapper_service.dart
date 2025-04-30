@@ -185,6 +185,8 @@ final class RdfMapperService {
 
     // Map to store deserialized objects by subject
     final Map<RdfSubject, Object> deserializedObjects = {};
+    // Keep track of subjects that couldn't be deserialized due to missing mappers
+    final Set<RdfSubject> failedSubjects = {};
 
     // First pass: deserialize all typed subjects
     for (final triple in typedSubjects) {
@@ -192,7 +194,9 @@ final class RdfMapperService {
       final type = triple.object;
 
       // Skip if not an IRI type or already processed
-      if (type is! IriTerm || deserializedObjects.containsKey(subject)) {
+      if (type is! IriTerm ||
+          deserializedObjects.containsKey(subject) ||
+          failedSubjects.contains(subject)) {
         continue;
       }
 
@@ -201,11 +205,10 @@ final class RdfMapperService {
         final obj = context.deserializeNode(subject, type);
         deserializedObjects[subject] = obj;
       } on DeserializerNotFoundException {
-        // Propagate deserializer not found exceptions - we don't want to silently ignore them
-        _log.warning(
-          "No deserializer found for subject $subject with type $type",
-        );
-        rethrow;
+        // Record this subject as failed to deserialize
+        failedSubjects.add(subject);
+        _log.fine("No deserializer found for subject $subject with type $type");
+        // Don't rethrow - we'll check if it's a root node later
       }
     }
 
@@ -224,6 +227,25 @@ final class RdfMapperService {
       // 2. It is not primarily referenced by other subjects
       if (!subjectReferences.contains(subject)) {
         rootObjects.add(object);
+      }
+    }
+
+    // Final check: If any root subject failed to deserialize, that's an error
+    // because we couldn't find a mapper for a top-level object
+    for (final subject in failedSubjects) {
+      // Only throw if this failed subject isn't referenced by other objects
+      // (meaning it's a root node)
+      if (!subjectReferences.contains(subject)) {
+        final type =
+            graph
+                .findTriples(subject: subject, predicate: RdfPredicates.type)
+                .firstOrNull
+                ?.object;
+
+        throw DeserializerNotFoundException.forTypeIri(
+          "IriNodeDeserializer",
+          type as IriTerm,
+        );
       }
     }
 
