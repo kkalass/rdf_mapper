@@ -37,13 +37,13 @@ Add the following to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  rdf_mapper: ^0.1.2
+  rdf_mapper: ^0.1.3
 ```
 
 Or use the following command:
 
 ```bash
-dart pub add rdf_mapper
+dart pub add rdf_mapper:^0.1.3:^0.1.2
 ```
 
 ## 🚀 Quick Start
