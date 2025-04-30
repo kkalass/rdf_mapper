@@ -121,6 +121,8 @@ final organizations = objects.whereType&lt;Organization&gt;().toList();
 
   &#47;&#47; Map to store deserialized objects by subject
   final Map&lt;RdfSubject, Object&gt; deserializedObjects = {};
+  &#47;&#47; Keep track of subjects that couldn&#39;t be deserialized due to missing mappers
+  final Set&lt;RdfSubject&gt; failedSubjects = {};
 
   &#47;&#47; First pass: deserialize all typed subjects
   for (final triple in typedSubjects) {
@@ -128,7 +130,9 @@ final organizations = objects.whereType&lt;Organization&gt;().toList();
     final type = triple.object;
 
     &#47;&#47; Skip if not an IRI type or already processed
-    if (type is! IriTerm || deserializedObjects.containsKey(subject)) {
+    if (type is! IriTerm ||
+        deserializedObjects.containsKey(subject) ||
+        failedSubjects.contains(subject)) {
       continue;
     }
 
@@ -137,11 +141,10 @@ final organizations = objects.whereType&lt;Organization&gt;().toList();
       final obj = context.deserializeNode(subject, type);
       deserializedObjects[subject] = obj;
     } on DeserializerNotFoundException {
-      &#47;&#47; Propagate deserializer not found exceptions - we don&#39;t want to silently ignore them
-      _log.warning(
-        &quot;No deserializer found for subject $subject with type $type&quot;,
-      );
-      rethrow;
+      &#47;&#47; Record this subject as failed to deserialize
+      failedSubjects.add(subject);
+      _log.fine(&quot;No deserializer found for subject $subject with type $type&quot;);
+      &#47;&#47; Don&#39;t rethrow - we&#39;ll check if it&#39;s a root node later
     }
   }
 
@@ -160,6 +163,25 @@ final organizations = objects.whereType&lt;Organization&gt;().toList();
     &#47;&#47; 2. It is not primarily referenced by other subjects
     if (!subjectReferences.contains(subject)) {
       rootObjects.add(object);
+    }
+  }
+
+  &#47;&#47; Final check: If any root subject failed to deserialize, that&#39;s an error
+  &#47;&#47; because we couldn&#39;t find a mapper for a top-level object
+  for (final subject in failedSubjects) {
+    &#47;&#47; Only throw if this failed subject isn&#39;t referenced by other objects
+    &#47;&#47; (meaning it&#39;s a root node)
+    if (!subjectReferences.contains(subject)) {
+      final type =
+          graph
+              .findTriples(subject: subject, predicate: RdfPredicates.type)
+              .firstOrNull
+              ?.object;
+
+      throw DeserializerNotFoundException.forTypeIri(
+        &quot;IriNodeDeserializer&quot;,
+        type as IriTerm,
+      );
     }
   }
 
@@ -192,7 +214,7 @@ final organizations = objects.whereType&lt;Organization&gt;().toList();
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.1.2
+      0.1.4-dev
   </span>
   
 </footer>

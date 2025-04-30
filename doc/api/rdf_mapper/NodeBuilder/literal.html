@@ -26,7 +26,7 @@
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../../index.html">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper">rdf_mapper.dart</a></li>
-    <li><a href="../../rdf_mapper/NodeBuilder-class.html">NodeBuilder<span class="signature">&lt;<wbr><span class="type-parameter">S extends RdfSubject</span>, <span class="type-parameter">T</span>&gt;</span></a></li>
+    <li><a href="../../rdf_mapper/NodeBuilder-class.html">NodeBuilder<span class="signature">&lt;<wbr><span class="type-parameter">S extends RdfSubject</span>&gt;</span></a></li>
     <li class="self-crumb">literal&lt;<wbr><span class="type-parameter">V</span>&gt; method</li>
   </ol>
   <div class="self-name">literal</div>
@@ -57,7 +57,7 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="../../rdf_mapper/NodeBuilder-class.html">NodeBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>, <span class="type-parameter">T</span>&gt;</span></span>
+<span class="returntype"><a href="../../rdf_mapper/NodeBuilder-class.html">NodeBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
 <span class="name ">literal</span>&lt;<wbr><span class="type-parameter">V</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="literal-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.4.0/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span></li>
 <li><span class="parameter" id="literal-param-value"><span class="type-annotation">V</span> <span class="parameter-name">value</span>, {</span></li>
 <li><span class="parameter" id="literal-param-serializer"><span class="type-annotation"><a href="../../rdf_mapper/LiteralTermSerializer-class.html">LiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span>?</span> <span class="parameter-name">serializer</span>, </span></li>
@@ -86,7 +86,7 @@ builder.literal(foaf.age, 30);
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">NodeBuilder&lt;S, T&gt; literal&lt;V&gt;(
+  <pre class="language-dart"><code class="language-dart">NodeBuilder&lt;S&gt; literal&lt;V&gt;(
   RdfPredicate predicate,
   V value, {
   LiteralTermSerializer&lt;V&gt;? serializer,
@@ -110,7 +110,7 @@ builder.literal(foaf.age, 30);
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../../index.html">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper">rdf_mapper</a></li>
-    <li><a href="../../rdf_mapper/NodeBuilder-class.html">NodeBuilder<span class="signature">&lt;<wbr><span class="type-parameter">S extends RdfSubject</span>, <span class="type-parameter">T</span>&gt;</span></a></li>
+    <li><a href="../../rdf_mapper/NodeBuilder-class.html">NodeBuilder<span class="signature">&lt;<wbr><span class="type-parameter">S extends RdfSubject</span>&gt;</span></a></li>
     <li class="self-crumb">literal&lt;<wbr><span class="type-parameter">V</span>&gt; method</li>
 </ol>
 
@@ -123,7 +123,7 @@ builder.literal(foaf.age, 30);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.1.2
+      0.1.4-dev
   </span>
   
 </footer>

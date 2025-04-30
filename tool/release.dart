@@ -71,6 +71,26 @@ void main(List<String> args) async {
   // Step 2: Verify or update version and changelog
   print('\nStep 2/8: Checking version and changelog...');
   var currentVersion = _getCurrentVersion();
+
+  // Check if current version is a development version with -dev suffix
+  var isDevVersion = currentVersion.endsWith('-dev');
+  var releaseVersion = currentVersion;
+
+  // For development versions, remove the -dev suffix to create a proper release
+  if (isDevVersion) {
+    releaseVersion = currentVersion.split('-dev').first;
+    print('  Development version detected: $currentVersion');
+    print('  Will create release with version: $releaseVersion');
+
+    if (!dryRun) {
+      _updatePubspecVersion(releaseVersion);
+      print('  ✓ Updated pubspec.yaml version to $releaseVersion');
+      currentVersion = releaseVersion;
+    } else {
+      print('  (dry run) Would update pubspec.yaml version to $releaseVersion');
+    }
+  }
+
   var lastVersion = await _getLastReleasedVersion();
 
   // Check if CHANGELOG.md has an entry for the current version or a newer version
@@ -286,15 +306,24 @@ void main(List<String> args) async {
 
     if (hasChanges) {
       // Explicitly add common files that might have been updated
+      // Using 'git add doc/' might miss new files in subdirectories, so we use a more explicit approach for doc/api/
       await _runProcess('git', [
         'add',
         'pubspec.yaml',
         'CHANGELOG.md',
         'README.md',
-        'doc/',
       ]);
+      
+      // Ensure all documentation files are added, including new files
+      await _runProcess('git', ['add', 'doc/']);
+      
+      // Specifically check if any new files in doc/api weren't added and add them
+      final apiStatus = await _runProcess('git', ['status', '--porcelain', 'doc/api/']);
+      if (apiStatus.stdout.toString().trim().isNotEmpty) {
+        await _runProcess('git', ['add', 'doc/api/']);
+      }
 
-      // Also add any other changed files
+      // Add any other tracked files that were changed
       await _runProcess('git', ['add', '-u']);
 
       // Show what will be committed
@@ -532,7 +561,17 @@ bool _changelogContainsVersion(String version) {
   }
 
   final content = changelog.readAsStringSync();
-  final hasCurrentVersion = _changelogContainsVersion(currentVersion);
+
+  // For -dev versions, check for the base version without the -dev suffix
+  String versionToCheck = currentVersion;
+  if (currentVersion.endsWith('-dev')) {
+    versionToCheck = currentVersion.split('-dev').first;
+    print(
+      '  Info: Development version detected ($currentVersion). Checking for base version $versionToCheck in changelog.',
+    );
+  }
+
+  final hasCurrentVersion = _changelogContainsVersion(versionToCheck);
 
   // Look for all version entries in changelog: ## [x.y.z] - date
   final versionRegex = RegExp(r'## *\[([0-9]+\.[0-9]+\.[0-9]+(?:[-+].+)?)\]');

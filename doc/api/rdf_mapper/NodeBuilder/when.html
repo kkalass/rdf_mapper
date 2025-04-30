@@ -26,7 +26,7 @@
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../../index.html">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper">rdf_mapper.dart</a></li>
-    <li><a href="../../rdf_mapper/NodeBuilder-class.html">NodeBuilder<span class="signature">&lt;<wbr><span class="type-parameter">S extends RdfSubject</span>, <span class="type-parameter">T</span>&gt;</span></a></li>
+    <li><a href="../../rdf_mapper/NodeBuilder-class.html">NodeBuilder<span class="signature">&lt;<wbr><span class="type-parameter">S extends RdfSubject</span>&gt;</span></a></li>
     <li class="self-crumb">when method</li>
   </ol>
   <div class="self-name">when</div>
@@ -57,9 +57,9 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="../../rdf_mapper/NodeBuilder-class.html">NodeBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>, <span class="type-parameter">T</span>&gt;</span></span>
+<span class="returntype"><a href="../../rdf_mapper/NodeBuilder-class.html">NodeBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
 <span class="name ">when</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="when-param-condition"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">condition</span>, </span></li>
-<li><span class="parameter" id="when-param-action"><span class="type-annotation">void</span> <span class="parameter-name">action</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-builder"><span class="type-annotation"><a href="../../rdf_mapper/NodeBuilder-class.html">NodeBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>, <span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">builder</span></span></li>
+<li><span class="parameter" id="when-param-action"><span class="type-annotation">void</span> <span class="parameter-name">action</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-builder"><span class="type-annotation"><a href="../../rdf_mapper/NodeBuilder-class.html">NodeBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span> <span class="parameter-name">builder</span></span></li>
 </ol>)</span></li>
 </ol>)
 
@@ -79,9 +79,9 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">NodeBuilder&lt;S, T&gt; when(
+  <pre class="language-dart"><code class="language-dart">NodeBuilder&lt;S&gt; when(
   bool condition,
-  void Function(NodeBuilder&lt;S, T&gt; builder) action,
+  void Function(NodeBuilder&lt;S&gt; builder) action,
 ) {
   if (condition) {
     action(this);
@@ -102,7 +102,7 @@
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../../index.html">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper">rdf_mapper</a></li>
-    <li><a href="../../rdf_mapper/NodeBuilder-class.html">NodeBuilder<span class="signature">&lt;<wbr><span class="type-parameter">S extends RdfSubject</span>, <span class="type-parameter">T</span>&gt;</span></a></li>
+    <li><a href="../../rdf_mapper/NodeBuilder-class.html">NodeBuilder<span class="signature">&lt;<wbr><span class="type-parameter">S extends RdfSubject</span>&gt;</span></a></li>
     <li class="self-crumb">when method</li>
 </ol>
 
@@ -115,7 +115,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.1.2
+      0.1.4-dev
   </span>
   
 </footer>
