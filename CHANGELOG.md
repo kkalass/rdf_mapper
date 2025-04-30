@@ -5,18 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.3] - 2025-04-30
+
+### Added
+
+- Completed NodeBuilder API with missing methods from SerializationService:
+  - `constant()` - For direct use of pre-created RDF terms
+  - `literals()` - For extracting multiple literal values from a source object
+  - `iris()` - For extracting multiple IRI values from a source object
+  - `childNodes()` - For extracting multiple child nodes from a source object
+- Enhanced documentation for all NodeBuilder methods
+
 ## [0.1.2] - 2025-04-30
 
 ### Added
+
 - Added optional `documentUrl` parameter to RDF parsing methods for resolving relative references in RDF documents
 - Enhanced API documentation for public methods
 
 ## [0.1.1] - 2025-04-30
 
 ### Added
+
 - Support for constant namespace construction, enabling compile-time safety and improved performance
 
 ### Changed
+
 - Updated roadmap with new planned features and milestones
 - Improved code formatting for better readability and consistency
 

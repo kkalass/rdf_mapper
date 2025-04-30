@@ -19,8 +19,8 @@ class SerializationContextImpl extends SerializationContext
 
   /// Implementation of the nodeBuilder method to support fluent API.
   @override
-  NodeBuilder<S, T> nodeBuilder<S extends RdfSubject, T>(S subject) {
-    return NodeBuilder<S, T>(subject, this);
+  NodeBuilder<S> nodeBuilder<S extends RdfSubject>(S subject) {
+    return NodeBuilder<S>(subject, this);
   }
 
   /// This method is used to look up serializers for types.

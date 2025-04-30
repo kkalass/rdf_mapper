@@ -41,5 +41,5 @@ abstract class SerializationContext {
   ///
   /// @param subject The subject term (IRI or blank node) for the node
   /// @return A NodeBuilder instance for fluent API construction
-  NodeBuilder<S, T> nodeBuilder<S extends RdfSubject, T>(S subject);
+  NodeBuilder<S> nodeBuilder<S extends RdfSubject>(S subject);
 }

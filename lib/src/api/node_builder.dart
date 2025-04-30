@@ -37,7 +37,7 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 ///     .childNodeList(foaf.knows, friends)
 ///     .build();
 /// ```
-class NodeBuilder<S extends RdfSubject, T> {
+class NodeBuilder<S extends RdfSubject> {
   final S _subject;
   final List<Triple> _triples;
   final SerializationService _service;
@@ -52,6 +52,128 @@ class NodeBuilder<S extends RdfSubject, T> {
   /// @param initialTriples Optional list of initial triples to include
   NodeBuilder(this._subject, this._service, {List<Triple>? initialTriples})
     : _triples = initialTriples ?? [];
+
+  /// Adds a constant object property to the node.
+  ///
+  /// Use this method to add a property with a pre-created RDF term as an object.
+  /// Unlike other methods, this one takes a direct RdfObject instance rather than
+  /// a value that needs serialization.
+  ///
+  /// Example:
+  /// ```dart
+  /// builder.constant(rdf.type, foaf.Person);
+  /// builder.constant(dc.format, LiteralTerm('text/html', datatype: xsd.string));
+  /// ```
+  ///
+  /// @param predicate The predicate IRI for the property
+  /// @param object The RDF object term to add
+  /// @return This builder for method chaining
+  NodeBuilder<S> constant(RdfPredicate predicate, RdfObject object) {
+    _triples.add(_service.constant(_subject, predicate, object));
+    return this;
+  }
+
+  /// Adds multiple literal properties extracted from a source object.
+  ///
+  /// This method is useful when you need to extract multiple values from a complex object
+  /// and add them as separate literal properties.
+  ///
+  /// Example:
+  /// ```dart
+  /// // Extracts all tags from a post and adds them as dc:subject properties
+  /// builder.literals(dc.subject, (post) => post.tags, blogPost);
+  /// ```
+  ///
+  /// @param predicate The predicate for the properties
+  /// @param toIterable A function that extracts the collection of values from the source object
+  /// @param instance The source object to extract values from
+  /// @param serializer Optional serializer for the value type
+  /// @return This builder for method chaining
+  NodeBuilder<S> literals<A, T>(
+    RdfPredicate predicate,
+    Iterable<T> Function(A) toIterable,
+    A instance, {
+    LiteralTermSerializer<T>? serializer,
+  }) {
+    _triples.addAll(
+      _service.literals(
+        _subject,
+        predicate,
+        toIterable,
+        instance,
+        serializer: serializer,
+      ),
+    );
+    return this;
+  }
+
+  /// Adds multiple IRI properties extracted from a source object.
+  ///
+  /// This method is useful when you need to extract multiple values from a complex object
+  /// and add them as separate IRI references.
+  ///
+  /// Example:
+  /// ```dart
+  /// // Extracts all collaborators from a project and adds them as dc:contributor properties
+  /// builder.iris(dc.contributor, (project) => project.collaborators, currentProject);
+  /// ```
+  ///
+  /// @param predicate The predicate for the properties
+  /// @param toIterable A function that extracts the collection of values from the source object
+  /// @param instance The source object to extract values from
+  /// @param serializer Optional serializer for the value type
+  /// @return This builder for method chaining
+  NodeBuilder<S> iris<A, T>(
+    RdfPredicate predicate,
+    Iterable<T> Function(A) toIterable,
+    A instance, {
+    IriTermSerializer<T>? serializer,
+  }) {
+    _triples.addAll(
+      _service.iris(
+        _subject,
+        predicate,
+        toIterable,
+        instance,
+        serializer: serializer,
+      ),
+    );
+    return this;
+  }
+
+  /// Adds multiple child nodes extracted from a source object.
+  ///
+  /// This method is useful when you need to extract multiple complex objects from a parent object
+  /// and serialize each as a separate linked node.
+  ///
+  /// Example:
+  /// ```dart
+  /// // Extracts all chapters from a book and adds them as structured content
+  /// builder.childNodes(schema.hasPart, (book) => book.chapters, currentBook);
+  /// ```
+  ///
+  /// @param predicate The predicate for the relationships
+  /// @param toIterable A function that extracts the collection of objects from the source
+  /// @param instance The source object to extract values from
+  /// @param serializer Optional serializer for the child node type
+  /// @return This builder for method chaining
+  NodeBuilder<S> childNodes<A, T>(
+    RdfPredicate predicate,
+    Iterable<T> Function(A) toIterable,
+    A instance, {
+    NodeSerializer<T>? serializer,
+  }) {
+    _triples.addAll(
+      _service.childNodes(
+        _subject,
+        predicate,
+        toIterable,
+        instance,
+        serializer: serializer,
+      ),
+    );
+    return this;
+  }
 
   /// Adds a literal property to the node.
   ///
@@ -69,7 +191,7 @@ class NodeBuilder<S extends RdfSubject, T> {
   /// @param value The literal value to add
   /// @param serializer Optional custom serializer for the value type
   /// @return This builder for method chaining
-  NodeBuilder<S, T> literal<V>(
+  NodeBuilder<S> literal<V>(
     RdfPredicate predicate,
     V value, {
     LiteralTermSerializer<V>? serializer,
@@ -96,7 +218,7 @@ class NodeBuilder<S extends RdfSubject, T> {
   /// @param value The value to be serialized as an IRI
   /// @param serializer Optional custom serializer for the value type
   /// @return This builder for method chaining
-  NodeBuilder<S, T> iri<V>(
+  NodeBuilder<S> iri<V>(
     RdfPredicate predicate,
     V value, {
     IriTermSerializer<V>? serializer,
@@ -125,7 +247,7 @@ class NodeBuilder<S extends RdfSubject, T> {
   /// @param value The child node object to serialize
   /// @param serializer Optional custom serializer for the child object type
   /// @return This builder for method chaining
-  NodeBuilder<S, T> childNode<V>(
+  NodeBuilder<S> childNode<V>(
     RdfPredicate predicate,
     V value, {
     NodeSerializer<V>? serializer,
@@ -138,10 +260,21 @@ class NodeBuilder<S extends RdfSubject, T> {
 
   /// Adds multiple child nodes to this node.
   ///
+  /// Use this method to add a collection of objects as related nodes. Each object
+  /// in the collection will be serialized to its own set of RDF triples and linked
+  /// to the current subject via the specified predicate.
+  ///
+  /// Example:
+  /// ```dart
+  /// builder.childNodeList(foaf.knows, friends);
+  /// builder.childNodeList(schema.author, authors);
+  /// ```
+  ///
   /// @param predicate The predicate for the relationships
   /// @param values The collection of child node values
   /// @param serializer Optional serializer for the child node type
-  NodeBuilder<S, T> childNodeList<V>(
+  /// @return This builder for method chaining
+  NodeBuilder<S> childNodeList<V>(
     RdfPredicate predicate,
     Iterable<V> values, {
     NodeSerializer<V>? serializer,
@@ -157,12 +290,42 @@ class NodeBuilder<S extends RdfSubject, T> {
     return this;
   }
 
+  /// Adds a map of key-value pairs as child nodes.
+  ///
+  /// This method is useful for serializing dictionary-like structures where both
+  /// the keys and values need to be serialized as part of the RDF graph.
+  ///
+  /// Example:
+  /// ```dart
+  /// // Serializes a metadata dictionary as linked nodes
+  /// builder.childNodeMap(
+  ///   schema.additionalProperty,
+  ///   metadata,
+  ///   MetadataEntrySerializer(),
+  /// );
+  /// ```
+  ///
+  /// @param predicate The predicate for the relationships
+  /// @param instance The map to serialize
+  /// @param entrySerializer The serializer for map entries
+  /// @return This builder for method chaining
+  NodeBuilder<S> childNodeMap<K, V>(
+    RdfPredicate predicate,
+    Map<K, V> instance,
+    NodeSerializer<MapEntry<K, V>> entrySerializer,
+  ) {
+    _triples.addAll(
+      _service.childNodeMap(_subject, predicate, instance, entrySerializer),
+    );
+    return this;
+  }
+
   /// Adds multiple literal properties to this node.
   ///
   /// @param predicate The predicate for the properties
   /// @param values The collection of literal values
   /// @param serializer Optional serializer for the value type
-  NodeBuilder<S, T> literalList<V>(
+  NodeBuilder<S> literalList<V>(
     RdfPredicate predicate,
     Iterable<V> values, {
     LiteralTermSerializer<V>? serializer,
@@ -178,7 +341,7 @@ class NodeBuilder<S extends RdfSubject, T> {
   /// @param predicate The predicate for the properties
   /// @param values The collection of values to be serialized as IRIs
   /// @param serializer Optional serializer for the value type
-  NodeBuilder<S, T> iriList<V>(
+  NodeBuilder<S> iriList<V>(
     RdfPredicate predicate,
     Iterable<V> values, {
     IriTermSerializer<V>? serializer,
@@ -195,7 +358,7 @@ class NodeBuilder<S extends RdfSubject, T> {
   /// @param value The optional literal value
   /// @param serializer Optional serializer for the value type
   /// @return This builder instance for method chaining
-  NodeBuilder<S, T> literalIfNotNull<V>(
+  NodeBuilder<S> literalIfNotNull<V>(
     RdfPredicate predicate,
     V? value, {
     LiteralTermSerializer<V>? serializer,
@@ -212,7 +375,7 @@ class NodeBuilder<S extends RdfSubject, T> {
   /// @param value The optional value to be serialized as an IRI
   /// @param serializer Optional serializer for the value type
   /// @return This builder instance for method chaining
-  NodeBuilder<S, T> iriIfNotNull<V>(
+  NodeBuilder<S> iriIfNotNull<V>(
     RdfPredicate predicate,
     V? value, {
     IriTermSerializer<V>? serializer,
@@ -229,7 +392,7 @@ class NodeBuilder<S extends RdfSubject, T> {
   /// @param value The optional child node value
   /// @param serializer Optional serializer for the child node type
   /// @return This builder instance for method chaining
-  NodeBuilder<S, T> childNodeIfNotNull<V>(
+  NodeBuilder<S> childNodeIfNotNull<V>(
     RdfPredicate predicate,
     V? value, {
     NodeSerializer<V>? serializer,
@@ -246,7 +409,7 @@ class NodeBuilder<S extends RdfSubject, T> {
   /// @param values The optional collection of child node values
   /// @param serializer Optional serializer for the child node type
   /// @return This builder instance for method chaining
-  NodeBuilder<S, T> childNodeListIfNotEmpty<V>(
+  NodeBuilder<S> childNodeListIfNotEmpty<V>(
     RdfPredicate predicate,
     Iterable<V>? values, {
     NodeSerializer<V>? serializer,
@@ -264,9 +427,9 @@ class NodeBuilder<S extends RdfSubject, T> {
   /// @param condition The condition that determines if the action should be applied
   /// @param action The action to apply to the builder if the condition is true
   /// @return This builder instance for method chaining
-  NodeBuilder<S, T> when(
+  NodeBuilder<S> when(
     bool condition,
-    void Function(NodeBuilder<S, T> builder) action,
+    void Function(NodeBuilder<S> builder) action,
   ) {
     if (condition) {
       action(this);

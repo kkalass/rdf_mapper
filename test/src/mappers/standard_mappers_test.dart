@@ -19,7 +19,7 @@ import 'package:test/test.dart';
 // Mock implementation of SerializationContext for testing
 class MockSerializationContext extends SerializationContext {
   @override
-  NodeBuilder<S, T> nodeBuilder<S extends RdfSubject, T>(S subject) {
+  NodeBuilder<S> nodeBuilder<S extends RdfSubject>(S subject) {
     throw UnimplementedError();
   }
 }
