@@ -156,6 +156,8 @@ final class RdfMapper {
   /// [contentType] should be a MIME type like 'text/turtle' or 'application/ld+json'.
   /// If not specified, the contentType will be auto-detected.
   ///
+  /// [documentUrl] Optional base URI for resolving relative references in the document.
+  ///
   /// The [register] callback allows temporary registration of custom mappers
   /// for this operation without affecting the global registry.
   ///
@@ -176,9 +178,14 @@ final class RdfMapper {
   T deserialize<T>(
     String rdfString, {
     String? contentType,
+    String? documentUrl,
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    final graph = _rdfCore.parse(rdfString, contentType: contentType);
+    final graph = _rdfCore.parse(
+      rdfString,
+      contentType: contentType,
+      documentUrl: documentUrl,
+    );
     return _graphOperations.deserialize<T>(graph, register: register);
   }
 
@@ -189,13 +196,20 @@ final class RdfMapper {
   ///
   /// [contentType] should be a MIME type like 'text/turtle' or 'application/ld+json'.
   /// If not specified, the contentType will be auto-detected.
+  ///
+  /// [documentUrl] Optional base URI for resolving relative references in the document.
   T deserializeBySubject<T>(
     String rdfString,
     RdfSubject subject, {
     String? contentType,
+    String? documentUrl,
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    final graph = _rdfCore.parse(rdfString, contentType: contentType);
+    final graph = _rdfCore.parse(
+      rdfString,
+      contentType: contentType,
+      documentUrl: documentUrl,
+    );
     return _graphOperations.deserializeBySubject<T>(
       graph,
       subject,
@@ -211,6 +225,8 @@ final class RdfMapper {
   ///
   /// [contentType] should be a MIME type like 'text/turtle' or 'application/ld+json'.
   /// If not specified, the contentType will be auto-detected.
+  ///
+  /// [documentUrl] Optional base URI for resolving relative references in the document.
   ///
   /// Usage:
   /// ```dart
@@ -234,9 +250,14 @@ final class RdfMapper {
   List<Object> deserializeAll(
     String rdfString, {
     String? contentType,
+    String? documentUrl,
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    final graph = _rdfCore.parse(rdfString, contentType: contentType);
+    final graph = _rdfCore.parse(
+      rdfString,
+      contentType: contentType,
+      documentUrl: documentUrl,
+    );
     return _graphOperations.deserializeAll(graph, register: register);
   }
 
@@ -247,27 +268,124 @@ final class RdfMapper {
   ///
   /// [contentType] should be a MIME type like 'text/turtle' or 'application/ld+json'.
   /// If not specified, the contentType will be auto-detected.
+  ///
+  /// [documentUrl] Optional base URI for resolving relative references in the document.
   List<T> deserializeAllOfType<T>(
     String rdfString, {
     String? contentType,
+    String? documentUrl,
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    return deserializeAll(
+    final graph = _rdfCore.parse(
       rdfString,
       contentType: contentType,
-      register: register,
-    ).whereType<T>().toList();
+      documentUrl: documentUrl,
+    );
+    return _graphOperations.deserializeAllOfType<T>(graph, register: register);
   }
 
+  /// Serializes a Dart object or collection to an RDF string representation.
+  ///
+  /// This method intelligently handles both single instances and collections:
+  /// - For a single object, it creates a graph with that object's triples
+  /// - For an Iterable of objects, it combines all objects into a single graph
+  ///
+  /// Parameters:
+  /// - [instance]: The object or collection of objects to serialize
+  /// - [contentType]: MIME type for output format (e.g., 'text/turtle', 'application/ld+json')
+  ///   If omitted, defaults to 'text/turtle'
+  /// - [baseUri]: Optional base URI for the RDF document, used for relative IRI resolution
+  /// - [register]: Callback function to temporarily register additional mappers for this operation
+  ///
+  /// Returns a string containing the serialized RDF representation.
+  ///
+  /// Example with single instance:
+  /// ```dart
+  /// final person = Person(
+  ///   id: 'http://example.org/person/1',
+  ///   name: 'Alice',
+  /// );
+  ///
+  /// final turtle = rdfMapper.serialize(person);
+  /// ```
+  ///
+  /// Example with multiple instances:
+  /// ```dart
+  /// final people = [
+  ///   Person(id: 'http://example.org/person/1', name: 'John Doe'),
+  ///   Person(id: 'http://example.org/person/2', name: 'Jane Smith')
+  /// ];
+  ///
+  /// final jsonLd = rdfMapper.serialize(
+  ///   people,
+  ///   contentType: 'application/ld+json',
+  /// );
+  /// ```
+  ///
+  /// Throws [SerializerNotFoundException] if no suitable mapper is registered for the instance type.
   String serialize<T>(
     T instance, {
     String? contentType,
+    String? baseUri,
     void Function(RdfMapperRegistry registry)? register,
   }) {
     final graph = this.graph.serialize<T>(instance, register: register);
-    return _rdfCore.serialize(graph, contentType: contentType);
+    return _rdfCore.serialize(
+      graph,
+      contentType: contentType,
+      baseUri: baseUri,
+    );
   }
 
+  /// Registers a mapper for bidirectional conversion between Dart objects and RDF.
+  ///
+  /// This method adds a [Mapper] implementation to the registry, enabling serialization
+  /// and deserialization of objects of type [T]. The mapper determines how objects are
+  /// converted to RDF triples and reconstructed from them.
+  ///
+  /// The registry supports four distinct mapper types based on RDF node characteristics:
+  ///
+  /// - [IriNodeMapper]: Maps objects to/from IRI subjects (identified by URIs)
+  ///   Used for entity objects with identity and complex properties
+  ///
+  /// - [BlankNodeMapper]: Maps objects to/from blank node subjects
+  ///   Used for embedded objects without their own identity
+  ///
+  /// - [LiteralTermMapper]: Maps objects to/from RDF literal terms
+  ///   Used for value objects with datatype annotations
+  ///
+  /// - [IriTermMapper]: Maps objects to/from IRI reference terms
+  ///   Used for object references and URIs
+  ///
+  /// Example with IriNodeMapper:
+  /// ```dart
+  /// class PersonMapper implements IriNodeMapper<Person> {
+  ///   static final foaf = Namespace('http://xmlns.com/foaf/0.1/');
+  ///   static final rdf = Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
+  ///
+  ///   @override
+  ///   RdfIriNode toRdfNode(Person instance, SerializationContext context) {
+  ///     return context.nodeBuilder(Uri.parse(instance.id))
+  ///       .iri(rdf('type'), foaf('Person'))
+  ///       .literal(foaf('name'), instance.name)
+  ///       .build();
+  ///   }
+  ///
+  ///   @override
+  ///   Person fromRdfNode(RdfSubject subject, DeserializationContext context) {
+  ///     return Person(
+  ///       id: subject.iri.toString(),
+  ///       name: context.reader.require<String>(foaf('name')),
+  ///     );
+  ///   }
+  ///
+  ///   @override
+  ///   RdfIriReference typeIri() => foaf('Person');
+  /// }
+  ///
+  /// // Register the mapper
+  /// rdfMapper.registerMapper<Person>(PersonMapper());
+  /// ```
   void registerMapper<T>(Mapper<T> mapper) {
     registry.registerMapper(mapper);
   }
