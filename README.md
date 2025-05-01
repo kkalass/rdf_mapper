@@ -487,6 +487,7 @@ RDF Mapper provides specific exceptions to help diagnose mapping issues:
 - Implement default behaviour for nodes without mapper ((Json-LD?) Maps)
 - Support generating mappers based on annotations
 - Support "any" feature and annotation which puts the remaining properties of a node into a (Json-LD?) Map that is a property of the dart class
+- Support mapping to / from multiple RDF classes (e.g. schema:Person and foaf:Person)
 - Improve test coverage
 
 ## 🤝 Contributing
