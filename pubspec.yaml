@@ -19,7 +19,7 @@ description: >
 environment:
   sdk: '^3.7.0'
 dependencies:
-  rdf_core: ^0.5.1
+  rdf_core: ^0.7.0
   logging: ^1.2.0
 
 dev_dependencies:
@@ -28,3 +28,4 @@ dev_dependencies:
   mockito: ^5.4.6
   yaml: ^3.1.2
   path: ^1.8.0
+  lints: ^5.1.1
