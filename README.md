@@ -94,6 +94,8 @@ print('Name: ${person.name}, Age: ${person.age}');
 ### Model and Mapper classes for above examples
 
 ```dart
+import 'package:rdf_vocabularies/schema.dart';
+
 // Define a model class.
 // You can define them as you like, there is no requirement for immutability or such
 class Person {
@@ -107,15 +109,15 @@ class Person {
 // Create a custom mapper
 class PersonMapper implements IriNodeMapper<Person> {
   @override
-  IriTerm? get typeIri => IriTerm('http://xmlns.com/foaf/0.1/Person');
+  IriTerm? get typeIri => SchemaPerson.classIri;
   
   @override
   (IriTerm, List<Triple>) toRdfNode(Person value, SerializationContext context, {RdfSubject? parentSubject}) {
 
     // convert dart objects to triples using the fluent builder API
     return context.nodeBuilder(IriTerm(value.id))
-      .literal(IriTerm('http://xmlns.com/foaf/0.1/name'), value.name)
-      .literal(IriTerm('http://xmlns.com/foaf/0.1/age'), value.age)
+      .literal(SchemaPerson.foafName, value.name)
+      .literal(SchemaPerson.foafAge, value.age)
       .build();
   }
   
@@ -125,8 +127,8 @@ class PersonMapper implements IriNodeMapper<Person> {
     
     return Person(
       id: term.iri,
-      name: reader.require<String>(IriTerm('http://xmlns.com/foaf/0.1/name')),
-      age: reader.require<int>(IriTerm('http://xmlns.com/foaf/0.1/age')),
+      name: reader.require<String>(SchemaPerson.foafName),
+      age: reader.require<int>(SchemaPerson.foafAge),
     );
   }
 }
@@ -194,19 +196,19 @@ final result = rdfMapper.deserialize<CustomType>(
 
 ### Namespace Helper Class
 
-For clean management of IRIs in RDF, you can use [vocab.dart from rdf_core](https://kkalass.github.io/rdf_core/api/vocab/) which
-provides constants for the most common predicates of the most common vocabularies.
+For clean management of IRIs in RDF, we have [rdf_vocabularies](https://kkalass.github.io/rdf_vocabularies/) which provides constants for the most common vocabularies. 
 
-But you can also use our Namespace helper class which is more flexible but less discoverable:
+In addition, if you have your own vocabulary and would like such a helper class generated, you may use [rdf_vocabulary_to_dart](https://kkalass.github.io/rdf_vocabulary_to_dart/) which provides a build_runner for generating dart constants from rdf vocabulary files. It supports all serializations that rdf_core supports (turtle, jsonld, n-triple and also rdf/xml).
+
+But you can also use our Namespace helper class which might be usefull during development
 
 ```dart
 
 // Example usage:
-final foaf = Namespace('http://xmlns.com/foaf/0.1/');
-final schema = Namespace('http://schema.org/');
+final example = Namespace('http://example.com/my-new-vocab/');
 
 // Usage:
-builder.literal(foaf('name'), 'Alice');  // Generates http://xmlns.com/foaf/0.1/name
+builder.literal(example('name'), 'Alice');  // Generates http://example.com/my-new-vocab/name
 ```
 
 ### Complex Example
@@ -214,6 +216,11 @@ builder.literal(foaf('name'), 'Alice');  // Generates http://xmlns.com/foaf/0.1/
 The following example demonstrates handling complex models with relationships between objects and nested structures:
 
 ```dart
+import 'package:rdf_core/rdf_core.dart';
+
+import 'package:rdf_mapper/rdf_mapper.dart';
+import 'package:rdf_vocabularies/schema.dart';
+
 void main() {
   final rdf =
       // Create mapper with default registry
@@ -329,18 +336,18 @@ class Rating {
 
 // IRI-based entity mapper
 class BookMapper implements IriNodeMapper<Book> {
-  static final titlePredicate = SchemaProperties.name;
-  static final authorPredicate = SchemaProperties.author;
-  static final publishedPredicate = SchemaProperties.datePublished;
-  static final isbnPredicate = IriTerm('https://schema.org/isbn');
-  static final ratingPredicate = IriTerm('https://schema.org/aggregateRating');
-  static final chapterPredicate = IriTerm('https://schema.org/hasPart');
+  static final titlePredicate = SchemaBook.name;
+  static final authorPredicate = SchemaBook.author;
+  static final publishedPredicate = SchemaBook.datePublished;
+  static final isbnPredicate = SchemaBook.isbn;
+  static final ratingPredicate = SchemaBook.aggregateRating;
+  static final chapterPredicate = SchemaBook.hasPart;
 
   // Base IRI prefix for book resources
   static const String bookIriPrefix = 'http://example.org/book/';
 
   @override
-  final IriTerm typeIri = IriTerm('https://schema.org/Book');
+  final IriTerm typeIri = SchemaBook.classIri;
 
   /// Converts an ID to a full IRI
   String _createIriFromId(String id) => '$bookIriPrefix$id';
@@ -388,11 +395,11 @@ class BookMapper implements IriNodeMapper<Book> {
 
 // Blank node-based entity mapper
 class ChapterMapper implements BlankNodeMapper<Chapter> {
-  static final titlePredicate = IriTerm('https://schema.org/name');
-  static final numberPredicate = IriTerm('https://schema.org/position');
+  static final titlePredicate = SchemaChapter.name;
+  static final numberPredicate = SchemaChapter.position;
 
   @override
-  final IriTerm typeIri = IriTerm('https://schema.org/Chapter');
+  final IriTerm typeIri = SchemaChapter.classIri;
 
   @override
   Chapter fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
@@ -484,6 +491,7 @@ RDF Mapper provides specific exceptions to help diagnose mapping issues:
 ## 🛣️ Roadmap / Next Steps
 
 - **breaking change** (sorry!) - rename IriNode- and BlankNode- Mapper/Serializer/Deserializer to IriResource or BlankResource - this does seem to be more in sync with RDF terminology 
+- **breaking change** Adjust to vocab removal from rdf_core
 - Detect cycles, optimally support them.
 - Properly Support Collection for serialization and derserialization - map multiple triples to Sets, not Lists
 - Implement default behaviour for nodes without mapper ((Json-LD?) Maps)
