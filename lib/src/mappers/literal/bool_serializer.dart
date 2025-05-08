@@ -1,6 +1,7 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_core/vocab.dart';
+
 import 'package:rdf_mapper/src/mappers/literal/base_rdf_literal_term_serializer.dart';
+import 'package:rdf_vocabularies/xsd.dart';
 
 /// Standard serializer for converting Dart boolean values to RDF boolean literals.
 ///
@@ -26,7 +27,7 @@ final class BoolSerializer extends BaseRdfLiteralTermSerializer<bool> {
   /// @param datatype Optional custom datatype IRI (defaults to xsd:boolean)
   BoolSerializer({IriTerm? datatype})
     : super(
-        datatype: datatype ?? XsdTypes.boolean,
+        datatype: datatype ?? Xsd.boolean,
         convertToString: (b) => b.toString(),
       );
 }

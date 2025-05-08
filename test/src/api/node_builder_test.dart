@@ -1,9 +1,9 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_core/vocab.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
 import 'package:rdf_mapper/src/api/serializer.dart';
 import 'package:rdf_mapper/src/context/serialization_context_impl.dart';
+import 'package:rdf_vocabularies/rdf.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -157,7 +157,7 @@ void main() {
 
         // Check type triples for each person
         final typeTriples =
-            triples.where((t) => t.predicate == RdfPredicates.type).toList();
+            triples.where((t) => t.predicate == Rdf.type).toList();
         expect(typeTriples.length, equals(2));
         expect(
           typeTriples.map((t) => (t.object as IriTerm).iri).toSet(),

@@ -101,7 +101,7 @@ final organizations = objects.whereType&lt;Organization&gt;().toList();
   void Function(RdfMapperRegistry registry)? register,
 }) {
   &#47;&#47; Find all subjects with a type
-  final typedSubjects = graph.findTriples(predicate: RdfPredicates.type);
+  final typedSubjects = graph.findTriples(predicate: Rdf.type);
 
   if (typedSubjects.isEmpty) {
     return [];
@@ -174,7 +174,7 @@ final organizations = objects.whereType&lt;Organization&gt;().toList();
     if (!subjectReferences.contains(subject)) {
       final type =
           graph
-              .findTriples(subject: subject, predicate: RdfPredicates.type)
+              .findTriples(subject: subject, predicate: Rdf.type)
               .firstOrNull
               ?.object;
 

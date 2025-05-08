@@ -1,5 +1,5 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_core/vocab.dart';
+import 'package:rdf_vocabularies/xsd.dart';
 import 'package:rdf_mapper/src/mappers/literal/base_rdf_literal_term_deserializer.dart';
 
 /// Standard deserializer for converting RDF integer literals to Dart integers.
@@ -16,7 +16,7 @@ import 'package:rdf_mapper/src/mappers/literal/base_rdf_literal_term_deserialize
 /// final intDeserializer = IntDeserializer();
 ///
 /// // Custom datatype - accepts xsd:byte
-/// final byteDeserializer = IntDeserializer(datatype: XsdTypes.byte);
+/// final byteDeserializer = IntDeserializer(datatype: Xsd.byte);
 /// ```
 final class IntDeserializer extends BaseRdfLiteralTermDeserializer<int> {
   /// Creates a new integer deserializer with an optional custom datatype.
@@ -24,7 +24,7 @@ final class IntDeserializer extends BaseRdfLiteralTermDeserializer<int> {
   /// @param datatype Optional custom datatype IRI (defaults to xsd:integer)
   IntDeserializer({IriTerm? datatype})
     : super(
-        datatype: datatype ?? XsdTypes.integer,
+        datatype: datatype ?? Xsd.integer,
         convertFromLiteral: (term, _) => int.parse(term.value),
       );
 }

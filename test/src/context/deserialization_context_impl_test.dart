@@ -1,11 +1,11 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_core/vocab.dart';
+import 'package:rdf_mapper/src/api/deserialization_context.dart';
 import 'package:rdf_mapper/src/api/deserializer.dart';
+import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
 import 'package:rdf_mapper/src/context/deserialization_context_impl.dart';
 import 'package:rdf_mapper/src/exceptions/property_value_not_found_exception.dart';
 import 'package:rdf_mapper/src/exceptions/too_many_property_values_exception.dart';
-import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
-import 'package:rdf_mapper/src/api/deserialization_context.dart';
+import 'package:rdf_vocabularies/vcard.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -68,7 +68,7 @@ void main() {
         Triple(subject, IriTerm('http://example.org/address'), addressNode),
         Triple(
           addressNode,
-          VcardPredicates.locality,
+          VcardUniversalProperties.locality,
           LiteralTerm.string("Hamburg"),
         ),
       ],
@@ -269,7 +269,7 @@ class CustomBlankNodeDeserializer
   @override
   TestAddress fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
     final reader = context.reader(term);
-    var city = reader.require<String>(VcardPredicates.locality);
+    var city = reader.require<String>(VcardUniversalProperties.locality);
     return TestAddress(city: city);
   }
 }

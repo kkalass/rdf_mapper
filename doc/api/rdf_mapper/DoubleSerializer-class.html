@@ -66,14 +66,14 @@ built-in toString() method.</p>
 used for serializing double values to RDF.</p>
 <p>Note: The default XSD datatype used is xsd:decimal, not xsd:double, as decimal
 is more commonly used in RDF data. Use the optional datatype parameter to
-specify XsdTypes.double if that datatype is preferred.</p>
+specify Xsd.double if that datatype is preferred.</p>
 <p>Example:</p>
 <pre class="language-dart"><code class="language-dart">// Default usage with xsd:decimal datatype
 final decimalSerializer = DoubleSerializer();
 
 // Using xsd:double datatype instead
 final doubleSerializer = DoubleSerializer(
-  datatype: XsdTypes.double
+  datatype: Xsd.double
 );
 </code></pre>
 </section>

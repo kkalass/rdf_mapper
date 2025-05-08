@@ -1,5 +1,5 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_core/vocab.dart';
+import 'package:rdf_vocabularies/xsd.dart';
 import 'package:rdf_mapper/src/mappers/literal/base_rdf_literal_term_serializer.dart';
 
 /// Standard serializer for converting Dart double values to RDF decimal literals.
@@ -13,7 +13,7 @@ import 'package:rdf_mapper/src/mappers/literal/base_rdf_literal_term_serializer.
 ///
 /// Note: The default XSD datatype used is xsd:decimal, not xsd:double, as decimal
 /// is more commonly used in RDF data. Use the optional datatype parameter to
-/// specify XsdTypes.double if that datatype is preferred.
+/// specify Xsd.double if that datatype is preferred.
 ///
 /// Example:
 /// ```dart
@@ -22,7 +22,7 @@ import 'package:rdf_mapper/src/mappers/literal/base_rdf_literal_term_serializer.
 ///
 /// // Using xsd:double datatype instead
 /// final doubleSerializer = DoubleSerializer(
-///   datatype: XsdTypes.double
+///   datatype: Xsd.double
 /// );
 /// ```
 final class DoubleSerializer extends BaseRdfLiteralTermSerializer<double> {
@@ -31,7 +31,7 @@ final class DoubleSerializer extends BaseRdfLiteralTermSerializer<double> {
   /// @param datatype Optional custom datatype IRI (defaults to xsd:decimal)
   DoubleSerializer({IriTerm? datatype})
     : super(
-        datatype: datatype ?? XsdTypes.decimal,
+        datatype: datatype ?? Xsd.decimal,
         convertToString: (d) => d.toString(),
       );
 }

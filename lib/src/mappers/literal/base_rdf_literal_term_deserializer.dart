@@ -20,7 +20,7 @@ import 'package:rdf_mapper/src/exceptions/deserialization_exception.dart';
 /// final class IntDeserializer extends BaseRdfLiteralTermDeserializer<int> {
 ///   IntDeserializer()
 ///     : super(
-///         datatype: XsdTypes.integer,
+///         datatype: Xsd.integer,
 ///         convertFromLiteral: (term, _) => int.parse(term.value),
 ///       );
 /// }

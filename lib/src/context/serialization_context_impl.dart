@@ -1,12 +1,12 @@
 import 'package:logging/logging.dart';
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_core/vocab.dart';
 import 'package:rdf_mapper/src/api/node_builder.dart';
 import 'package:rdf_mapper/src/api/serialization_service.dart';
 import 'package:rdf_mapper/src/api/serializer.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
 import 'package:rdf_mapper/src/exceptions/serializer_not_found_exception.dart';
+import 'package:rdf_vocabularies/rdf.dart';
 
 final _log = Logger("rdf_orm.serialization");
 
@@ -84,8 +84,7 @@ class SerializationContextImpl extends SerializationContext
 
     // Check if a type triple already exists for the child
     final hasTypeTriple = childTriples.any(
-      (triple) =>
-          triple.subject == childIri && triple.predicate == RdfPredicates.type,
+      (triple) => triple.subject == childIri && triple.predicate == Rdf.type,
     );
 
     if (hasTypeTriple) {
@@ -99,7 +98,7 @@ class SerializationContextImpl extends SerializationContext
     return [
       // Add rdf:type for the child only if not already present
       if (!hasTypeTriple && typeIri != null)
-        constant(childIri, RdfPredicates.type, typeIri),
+        constant(childIri, Rdf.type, typeIri),
       ...childTriples,
       // connect the parent to the child
       constant(subject, predicate, childIri),
@@ -184,15 +183,13 @@ class SerializationContextImpl extends SerializationContext
 
     // Check if a type triple already exists
     final hasTypeTriple = triples.any(
-      (triple) =>
-          triple.subject == iri && triple.predicate == RdfPredicates.type,
+      (triple) => triple.subject == iri && triple.predicate == Rdf.type,
     );
 
     if (hasTypeTriple) {
       // Check if the type is correct
       final typeTriple = triples.firstWhere(
-        (triple) =>
-            triple.subject == iri && triple.predicate == RdfPredicates.type,
+        (triple) => triple.subject == iri && triple.predicate == Rdf.type,
       );
 
       if (typeTriple.object != ser.typeIri) {
@@ -212,8 +209,7 @@ class SerializationContextImpl extends SerializationContext
     final typeIri = ser.typeIri;
     return [
       // Add rdf:type only if not already present in triples
-      if (!hasTypeTriple && typeIri != null)
-        constant(iri, RdfPredicates.type, typeIri),
+      if (!hasTypeTriple && typeIri != null) constant(iri, Rdf.type, typeIri),
       ...triples,
     ];
   }

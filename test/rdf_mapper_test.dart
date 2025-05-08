@@ -1,6 +1,7 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_core/vocab.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
+import 'package:rdf_vocabularies/rdf.dart';
+import 'package:rdf_vocabularies/schema.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -107,7 +108,7 @@ void main() {
         // Check for the person type triple
         final typeTriples = graph.findTriples(
           subject: IriTerm('http://example.org/person/1'),
-          predicate: RdfPredicates.type,
+          predicate: Rdf.type,
         );
         // At least one type triple should exist
         expect(typeTriples.isNotEmpty, isTrue);
@@ -141,11 +142,7 @@ void main() {
             TestPersonMapper.agePredicate,
             LiteralTerm.typed('30', 'integer'),
           ),
-          Triple(
-            subjectId,
-            RdfPredicates.type,
-            IriTerm('https://schema.org/Person'),
-          ),
+          Triple(subjectId, Rdf.type, IriTerm('https://schema.org/Person')),
         ],
       );
 
@@ -180,7 +177,7 @@ void main() {
             TestPersonMapper.agePredicate,
             LiteralTerm.typed('30', 'integer'),
           ),
-          Triple(subjectId, RdfPredicates.type, SchemaClasses.person),
+          Triple(subjectId, Rdf.type, SchemaPerson.classIri),
         ],
       );
 
@@ -271,29 +268,29 @@ void main() {
             // Person 1
             Triple(
               IriTerm('http://example.org/person/1'),
-              RdfPredicates.type,
-              SchemaClasses.person,
+              Rdf.type,
+              SchemaPerson.classIri,
             ),
             Triple(
               IriTerm('http://example.org/person/1'),
-              SchemaPersonProperties.givenName,
+              SchemaPerson.givenName,
               LiteralTerm.string('John Doe'),
             ),
             Triple(
               IriTerm('http://example.org/person/1'),
-              IriTerm('http://xmlns.com/foaf/0.1/age'),
+              SchemaPerson.foafAge,
               LiteralTerm.typed('30', 'integer'),
             ),
 
             // Person 2
             Triple(
               IriTerm('http://example.org/person/2'),
-              RdfPredicates.type,
-              SchemaClasses.person,
+              Rdf.type,
+              SchemaPerson.classIri,
             ),
             Triple(
               IriTerm('http://example.org/person/2'),
-              SchemaPersonProperties.givenName,
+              SchemaPerson.givenName,
               LiteralTerm.string('Jane Smith'),
             ),
             Triple(
@@ -348,7 +345,7 @@ void main() {
       // Verify the serialization worked by checking for at least one name triple
       final nameTriples = graph.findTriples(
         subject: IriTerm('http://example.org/person/1'),
-        predicate: SchemaPersonProperties.givenName,
+        predicate: SchemaPerson.givenName,
       );
       expect(nameTriples.isNotEmpty, isTrue);
 
@@ -587,8 +584,8 @@ _:b0 a schema:PostalAddress;
                 parsed: [
                   Triple(
                     IriTerm('http://example.org/testperson'),
-                    RdfPredicates.type,
-                    SchemaClasses.person,
+                    Rdf.type,
+                    SchemaPerson.classIri,
                   ),
                   Triple(
                     IriTerm('http://example.org/testperson'),
@@ -998,7 +995,7 @@ class EmployeeWithCompanyReference {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Employee &&
+      other is EmployeeWithCompanyReference &&
           id == other.id &&
           name == other.name &&
           age == other.age &&
@@ -1031,11 +1028,11 @@ class CompanyReferenceMapper implements IriTermMapper<CompanyReference> {
 
 // Test mapper for Company class
 class CompanyMapper implements IriNodeMapper<Company> {
-  static final namePredicate = SchemaProperties.name;
-  static final addressPredicate = SchemaPersonProperties.address;
+  static final namePredicate = SchemaOrganization.name;
+  static final addressPredicate = SchemaOrganization.address;
 
   @override
-  final IriTerm typeIri = SchemaClasses.organization;
+  final IriTerm typeIri = SchemaOrganization.classIri;
 
   @override
   Company fromRdfNode(IriTerm subject, DeserializationContext context) {
@@ -1063,13 +1060,13 @@ class CompanyMapper implements IriNodeMapper<Company> {
 
 // Update TestPersonMapper to include employer
 class EmployeeMapper implements IriNodeMapper<Employee> {
-  static final addressPredicate = SchemaPersonProperties.address;
+  static final addressPredicate = SchemaPerson.address;
   static final employerPredicate = worksForPredicate;
-  static final givenNamePredicate = SchemaPersonProperties.givenName;
+  static final givenNamePredicate = SchemaPerson.givenName;
   static final agePredicate = IriTerm('http://xmlns.com/foaf/0.1/age');
 
   @override
-  final IriTerm typeIri = SchemaClasses.person;
+  final IriTerm typeIri = SchemaPerson.classIri;
 
   @override
   Employee fromRdfNode(IriTerm subject, DeserializationContext context) {
@@ -1107,13 +1104,13 @@ class EmployeeMapper implements IriNodeMapper<Employee> {
 
 class EmployeeWithCompanyReferenceMapper
     implements IriNodeMapper<EmployeeWithCompanyReference> {
-  static final addressPredicate = SchemaPersonProperties.address;
+  static final addressPredicate = SchemaPerson.address;
   static final employerPredicate = worksForPredicate;
-  static final givenNamePredicate = SchemaPersonProperties.givenName;
+  static final givenNamePredicate = SchemaPerson.givenName;
   static final agePredicate = IriTerm('http://xmlns.com/foaf/0.1/age');
 
   @override
-  final IriTerm typeIri = SchemaClasses.person;
+  final IriTerm typeIri = SchemaPerson.classIri;
 
   @override
   EmployeeWithCompanyReference fromRdfNode(
@@ -1251,13 +1248,13 @@ class TestPerson {
 
 // Test mapper implementation
 class TestPersonMapper implements IriNodeMapper<TestPerson> {
-  static final addressPredicate = SchemaPersonProperties.address;
-  static final employerPredicate = worksForPredicate;
-  static final givenNamePredicate = SchemaPersonProperties.givenName;
-  static final agePredicate = IriTerm('http://xmlns.com/foaf/0.1/age');
+  static final addressPredicate = SchemaPerson.address;
+  static final employerPredicate = SchemaPerson.worksFor;
+  static final givenNamePredicate = SchemaPerson.givenName;
+  static final agePredicate = SchemaPerson.foafAge;
 
   @override
-  final IriTerm typeIri = SchemaClasses.person;
+  final IriTerm typeIri = SchemaPerson.classIri;
 
   @override
   TestPerson fromRdfNode(IriTerm subject, DeserializationContext context) {
@@ -1295,14 +1292,13 @@ class TestPersonMapper implements IriNodeMapper<TestPerson> {
 
 // Implementation des Address-Mappers für Blank Nodes
 class AddressMapper implements BlankNodeMapper<Address> {
-  static final streetAddressPredicate = SchemaAddressProperties.streetAddress;
-  static final addressLocalityPredicate =
-      SchemaAddressProperties.addressLocality;
-  static final postalCodePredicate = SchemaAddressProperties.postalCode;
-  static final addressCountryPredicate = SchemaAddressProperties.addressCountry;
+  static final streetAddressPredicate = SchemaPostalAddress.streetAddress;
+  static final addressLocalityPredicate = SchemaPostalAddress.addressLocality;
+  static final postalCodePredicate = SchemaPostalAddress.postalCode;
+  static final addressCountryPredicate = SchemaPostalAddress.addressCountry;
 
   @override
-  final IriTerm typeIri = SchemaClasses.postalAddress;
+  final IriTerm typeIri = SchemaPostalAddress.classIri;
 
   @override
   Address fromRdfNode(BlankNodeTerm term, DeserializationContext context) {

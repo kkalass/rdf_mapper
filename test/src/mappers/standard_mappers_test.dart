@@ -1,5 +1,5 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_core/vocab.dart';
+import 'package:rdf_vocabularies/xsd.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
 import 'package:rdf_mapper/src/api/node_builder.dart';
 import 'package:rdf_mapper/src/api/node_reader.dart';
@@ -53,7 +53,7 @@ void main() {
 
         expect(literal, isA<LiteralTerm>());
         expect(literal.value, equals('Hello, World!'));
-        expect(literal.datatype, equals(XsdTypes.string));
+        expect(literal.datatype, equals(Xsd.string));
         expect(literal.language, isNull);
       });
 
@@ -135,7 +135,7 @@ void main() {
 
         expect(literal, isA<LiteralTerm>());
         expect(literal.value, equals('42'));
-        expect(literal.datatype, equals(XsdTypes.integer));
+        expect(literal.datatype, equals(Xsd.integer));
       });
 
       test(
@@ -167,10 +167,10 @@ void main() {
         final falseLiteral = serializer.toRdfTerm(false, serializationContext);
 
         expect(trueLiteral.value, equals('true'));
-        expect(trueLiteral.datatype, equals(XsdTypes.boolean));
+        expect(trueLiteral.datatype, equals(Xsd.boolean));
 
         expect(falseLiteral.value, equals('false'));
-        expect(falseLiteral.datatype, equals(XsdTypes.boolean));
+        expect(falseLiteral.datatype, equals(Xsd.boolean));
       });
 
       test(
@@ -215,10 +215,10 @@ void main() {
         final literal2 = serializer.toRdfTerm(-0.5, serializationContext);
 
         expect(literal1.value, equals('3.14159'));
-        expect(literal1.datatype, equals(XsdTypes.decimal));
+        expect(literal1.datatype, equals(Xsd.decimal));
 
         expect(literal2.value, equals('-0.5'));
-        expect(literal2.datatype, equals(XsdTypes.decimal));
+        expect(literal2.datatype, equals(Xsd.decimal));
       });
 
       test(
@@ -252,7 +252,7 @@ void main() {
           final literal = serializer.toRdfTerm(dateTime, serializationContext);
 
           expect(literal.value, equals('2023-04-01T12:30:45.000Z'));
-          expect(literal.datatype, equals(XsdTypes.dateTime));
+          expect(literal.datatype, equals(Xsd.dateTime));
         },
       );
 

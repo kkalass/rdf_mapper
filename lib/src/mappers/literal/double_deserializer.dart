@@ -1,5 +1,5 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_core/vocab.dart';
+import 'package:rdf_vocabularies/xsd.dart';
 import 'package:rdf_mapper/src/mappers/literal/base_rdf_literal_term_deserializer.dart';
 
 /// Standard deserializer for converting RDF decimal/double literals to Dart double values.
@@ -20,7 +20,7 @@ import 'package:rdf_mapper/src/mappers/literal/base_rdf_literal_term_deserialize
 /// final decimalDeserializer = DoubleDeserializer();
 ///
 /// // Accept xsd:double instead
-/// final doubleDeserializer = DoubleDeserializer(datatype: XsdTypes.double);
+/// final doubleDeserializer = DoubleDeserializer(datatype: Xsd.double);
 /// ```
 final class DoubleDeserializer extends BaseRdfLiteralTermDeserializer<double> {
   /// Creates a new double deserializer with an optional custom datatype.
@@ -28,7 +28,7 @@ final class DoubleDeserializer extends BaseRdfLiteralTermDeserializer<double> {
   /// @param datatype Optional custom datatype IRI (defaults to xsd:decimal)
   DoubleDeserializer({IriTerm? datatype})
     : super(
-        datatype: datatype ?? XsdTypes.decimal,
+        datatype: datatype ?? Xsd.decimal,
         convertFromLiteral: (term, _) => double.parse(term.value),
       );
 }

@@ -18,7 +18,7 @@ import 'package:rdf_mapper/src/api/serialization_context.dart';
 /// final class DateSerializer extends BaseRdfLiteralTermSerializer<DateTime> {
 ///   DateSerializer()
 ///     : super(
-///         datatype: XsdTypes.date,
+///         datatype: Xsd.date,
 ///         convertToString: (date) => date.toIso8601String().split('T')[0],
 ///       );
 /// }

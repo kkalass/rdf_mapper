@@ -1,5 +1,5 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_core/vocab.dart';
+import 'package:rdf_vocabularies/xsd.dart';
 import 'package:rdf_mapper/src/mappers/literal/base_rdf_literal_term_serializer.dart';
 
 /// Standard serializer for converting Dart integers to RDF integer literals.
@@ -18,7 +18,7 @@ import 'package:rdf_mapper/src/mappers/literal/base_rdf_literal_term_serializer.
 ///
 /// // Custom datatype for specialized integers
 /// final byteSerializer = IntSerializer(
-///   datatype: XsdTypes.byte
+///   datatype: Xsd.byte
 /// );
 /// ```
 final class IntSerializer extends BaseRdfLiteralTermSerializer<int> {
@@ -27,7 +27,7 @@ final class IntSerializer extends BaseRdfLiteralTermSerializer<int> {
   /// @param datatype Optional custom datatype IRI (defaults to xsd:integer)
   IntSerializer({IriTerm? datatype})
     : super(
-        datatype: datatype ?? XsdTypes.integer,
+        datatype: datatype ?? Xsd.integer,
         convertToString: (i) => i.toString(),
       );
 }

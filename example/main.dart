@@ -1,6 +1,7 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_core/vocab.dart';
+
 import 'package:rdf_mapper/rdf_mapper.dart';
+import 'package:rdf_vocabularies/schema.dart';
 
 void main() {
   final rdf =
@@ -196,18 +197,18 @@ class Rating {
 
 // IRI-based entity mapper
 class BookMapper implements IriNodeMapper<Book> {
-  static final titlePredicate = SchemaProperties.name;
-  static final authorPredicate = SchemaProperties.author;
-  static final publishedPredicate = SchemaProperties.datePublished;
-  static final isbnPredicate = IriTerm('https://schema.org/isbn');
-  static final ratingPredicate = IriTerm('https://schema.org/aggregateRating');
-  static final chapterPredicate = IriTerm('https://schema.org/hasPart');
+  static final titlePredicate = SchemaBook.name;
+  static final authorPredicate = SchemaBook.author;
+  static final publishedPredicate = SchemaBook.datePublished;
+  static final isbnPredicate = SchemaBook.isbn;
+  static final ratingPredicate = SchemaBook.aggregateRating;
+  static final chapterPredicate = SchemaBook.hasPart;
 
   // Base IRI prefix for book resources
   static const String bookIriPrefix = 'http://example.org/book/';
 
   @override
-  final IriTerm typeIri = IriTerm('https://schema.org/Book');
+  final IriTerm typeIri = SchemaBook.classIri;
 
   /// Converts an ID to a full IRI
   String _createIriFromId(String id) => '$bookIriPrefix$id';
@@ -255,11 +256,11 @@ class BookMapper implements IriNodeMapper<Book> {
 
 // Blank node-based entity mapper
 class ChapterMapper implements BlankNodeMapper<Chapter> {
-  static final titlePredicate = IriTerm('https://schema.org/name');
-  static final numberPredicate = IriTerm('https://schema.org/position');
+  static final titlePredicate = SchemaChapter.name;
+  static final numberPredicate = SchemaChapter.position;
 
   @override
-  final IriTerm typeIri = IriTerm('https://schema.org/Chapter');
+  final IriTerm typeIri = SchemaChapter.classIri;
 
   @override
   Chapter fromRdfNode(BlankNodeTerm term, DeserializationContext context) {

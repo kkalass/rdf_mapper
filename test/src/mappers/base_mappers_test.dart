@@ -1,5 +1,5 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_core/vocab.dart';
+import 'package:rdf_vocabularies/xsd.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
 import 'package:rdf_mapper/src/api/node_reader.dart';
 import 'package:rdf_mapper/src/api/node_builder.dart';
@@ -29,7 +29,7 @@ class MockDeserializationContext extends DeserializationContext {
 class TestPointSerializer extends BaseRdfLiteralTermSerializer<Point> {
   TestPointSerializer({IriTerm? datatype})
     : super(
-        datatype: datatype ?? XsdTypes.string,
+        datatype: datatype ?? Xsd.string,
         convertToString: (point) => '${point.x},${point.y}',
       );
 }
@@ -39,7 +39,7 @@ class LangTaggedSerializer extends BaseRdfLiteralTermSerializer<String> {
   final String langTag;
 
   LangTaggedSerializer(this.langTag)
-    : super(datatype: XsdTypes.string, convertToString: (value) => value);
+    : super(datatype: Xsd.string, convertToString: (value) => value);
 
   @override
   LiteralTerm toRdfTerm(String value, SerializationContext context) {
@@ -51,7 +51,7 @@ class LangTaggedSerializer extends BaseRdfLiteralTermSerializer<String> {
 class TestPointDeserializer extends BaseRdfLiteralTermDeserializer<Point> {
   TestPointDeserializer({IriTerm? datatype})
     : super(
-        datatype: datatype ?? XsdTypes.string,
+        datatype: datatype ?? Xsd.string,
         convertFromLiteral: (term, _) {
           final parts = term.value.split(',');
           return Point(int.parse(parts[0]), int.parse(parts[1]));
@@ -62,10 +62,7 @@ class TestPointDeserializer extends BaseRdfLiteralTermDeserializer<Point> {
 // Deserializer that accepts language-tagged literals
 class LangTagTestDeserializer extends BaseRdfLiteralTermDeserializer<String> {
   LangTagTestDeserializer()
-    : super(
-        datatype: XsdTypes.string,
-        convertFromLiteral: (term, _) => term.value,
-      );
+    : super(datatype: Xsd.string, convertFromLiteral: (term, _) => term.value);
 
   @override
   String fromRdfTerm(LiteralTerm term, DeserializationContext context) {
@@ -96,7 +93,7 @@ void main() {
 
         expect(term, isA<LiteralTerm>());
         expect(term.value, equals('10,20'));
-        expect(term.datatype, equals(XsdTypes.string));
+        expect(term.datatype, equals(Xsd.string));
       });
 
       test('uses custom datatype when provided', () {

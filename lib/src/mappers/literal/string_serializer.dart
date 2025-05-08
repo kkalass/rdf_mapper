@@ -1,5 +1,5 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_core/vocab.dart';
+import 'package:rdf_vocabularies/xsd.dart';
 import 'package:rdf_mapper/src/mappers/literal/base_rdf_literal_term_serializer.dart';
 
 /// Standard serializer for converting Dart strings to RDF string literals.
@@ -26,5 +26,5 @@ final class StringSerializer extends BaseRdfLiteralTermSerializer<String> {
   ///
   /// @param datatype Optional custom datatype IRI (defaults to xsd:string)
   StringSerializer({IriTerm? datatype})
-    : super(datatype: datatype ?? XsdTypes.string, convertToString: (s) => s);
+    : super(datatype: datatype ?? Xsd.string, convertToString: (s) => s);
 }

@@ -72,7 +72,7 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">IntDeserializer({IriTerm? datatype})
   : super(
-      datatype: datatype ?? XsdTypes.integer,
+      datatype: datatype ?? Xsd.integer,
       convertFromLiteral: (term, _) =&gt; int.parse(term.value),
     );</code></pre>
 </section>

@@ -1,6 +1,6 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_core/vocab.dart';
 import 'package:rdf_mapper/src/mappers/literal/base_rdf_literal_term_deserializer.dart';
+import 'package:rdf_vocabularies/xsd.dart';
 
 /// Standard deserializer for converting RDF dateTime literals to Dart DateTime objects.
 ///
@@ -17,7 +17,7 @@ import 'package:rdf_mapper/src/mappers/literal/base_rdf_literal_term_deserialize
 /// final dateTimeDeserializer = DateTimeDeserializer();
 ///
 /// // Accept xsd:date instead
-/// final dateDeserializer = DateTimeDeserializer(datatype: XsdTypes.date);
+/// final dateDeserializer = DateTimeDeserializer(datatype: Xsd.date);
 /// ```
 final class DateTimeDeserializer
     extends BaseRdfLiteralTermDeserializer<DateTime> {
@@ -26,7 +26,7 @@ final class DateTimeDeserializer
   /// @param datatype Optional custom datatype IRI (defaults to xsd:dateTime)
   DateTimeDeserializer({IriTerm? datatype})
     : super(
-        datatype: datatype ?? XsdTypes.dateTime,
+        datatype: datatype ?? Xsd.dateTime,
         convertFromLiteral: (term, _) => DateTime.parse(term.value).toUtc(),
       );
 }

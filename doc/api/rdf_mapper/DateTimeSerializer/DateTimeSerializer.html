@@ -72,7 +72,7 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">DateTimeSerializer({IriTerm? datatype})
   : super(
-      datatype: datatype ?? XsdTypes.dateTime,
+      datatype: datatype ?? Xsd.dateTime,
       convertToString: (dateTime) =&gt; dateTime.toUtc().toIso8601String(),
     );</code></pre>
 </section>

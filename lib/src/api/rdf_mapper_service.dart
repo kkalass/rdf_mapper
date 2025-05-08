@@ -1,11 +1,11 @@
 import 'package:logging/logging.dart';
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_core/vocab.dart';
 import 'package:rdf_mapper/src/context/deserialization_context_impl.dart';
 import 'package:rdf_mapper/src/exceptions/deserialization_exception.dart';
 import 'package:rdf_mapper/src/exceptions/deserializer_not_found_exception.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
 import 'package:rdf_mapper/src/context/serialization_context_impl.dart';
+import 'package:rdf_vocabularies/rdf.dart';
 
 final _log = Logger("rdf_orm.service");
 
@@ -165,7 +165,7 @@ final class RdfMapperService {
     void Function(RdfMapperRegistry registry)? register,
   }) {
     // Find all subjects with a type
-    final typedSubjects = graph.findTriples(predicate: RdfPredicates.type);
+    final typedSubjects = graph.findTriples(predicate: Rdf.type);
 
     if (typedSubjects.isEmpty) {
       return [];
@@ -238,7 +238,7 @@ final class RdfMapperService {
       if (!subjectReferences.contains(subject)) {
         final type =
             graph
-                .findTriples(subject: subject, predicate: RdfPredicates.type)
+                .findTriples(subject: subject, predicate: Rdf.type)
                 .firstOrNull
                 ?.object;
 

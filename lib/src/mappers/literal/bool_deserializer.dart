@@ -1,7 +1,7 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_core/vocab.dart';
 import 'package:rdf_mapper/src/exceptions/deserialization_exception.dart';
 import 'package:rdf_mapper/src/mappers/literal/base_rdf_literal_term_deserializer.dart';
+import 'package:rdf_vocabularies/xsd.dart';
 
 /// Standard deserializer for converting RDF boolean literals to Dart boolean values.
 ///
@@ -32,7 +32,7 @@ final class BoolDeserializer extends BaseRdfLiteralTermDeserializer<bool> {
   /// @param datatype Optional custom datatype IRI (defaults to xsd:boolean)
   BoolDeserializer({IriTerm? datatype})
     : super(
-        datatype: datatype ?? XsdTypes.boolean,
+        datatype: datatype ?? Xsd.boolean,
         convertFromLiteral: (term, _) {
           final value = term.value.toLowerCase();
 

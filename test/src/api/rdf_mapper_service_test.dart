@@ -1,6 +1,6 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_core/vocab.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
+import 'package:rdf_vocabularies/rdf.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -30,11 +30,7 @@ void main() {
           IriTerm('http://xmlns.com/foaf/0.1/age'),
           LiteralTerm.typed('30', 'integer'),
         ),
-        Triple(
-          subject,
-          RdfPredicates.type,
-          IriTerm('http://xmlns.com/foaf/0.1/Person'),
-        ),
+        Triple(subject, Rdf.type, IriTerm('http://xmlns.com/foaf/0.1/Person')),
       ];
 
       // Deserialize the object
@@ -69,7 +65,7 @@ void main() {
           ),
           Triple(
             subject,
-            RdfPredicates.type,
+            Rdf.type,
             IriTerm('http://xmlns.com/foaf/0.1/Person'),
           ),
         ],
@@ -104,7 +100,7 @@ void main() {
           ),
           Triple(
             subject,
-            RdfPredicates.type,
+            Rdf.type,
             IriTerm('http://xmlns.com/foaf/0.1/Person'),
           ),
         ],
@@ -135,12 +131,12 @@ void main() {
         triples: [
           Triple(
             IriTerm('http://example.org/person/1'),
-            RdfPredicates.type,
+            Rdf.type,
             IriTerm('http://xmlns.com/foaf/0.1/Person'),
           ),
           Triple(
             IriTerm('http://example.org/person/2'),
-            RdfPredicates.type,
+            Rdf.type,
             IriTerm('http://xmlns.com/foaf/0.1/Person'),
           ),
         ],
@@ -165,7 +161,7 @@ void main() {
             // Person 1
             Triple(
               IriTerm('http://example.org/person/1'),
-              RdfPredicates.type,
+              Rdf.type,
               IriTerm('http://xmlns.com/foaf/0.1/Person'),
             ),
             Triple(
@@ -182,7 +178,7 @@ void main() {
             // Person 2
             Triple(
               IriTerm('http://example.org/person/2'),
-              RdfPredicates.type,
+              Rdf.type,
               IriTerm('http://xmlns.com/foaf/0.1/Person'),
             ),
             Triple(
@@ -233,7 +229,7 @@ void main() {
           // Person
           Triple(
             IriTerm('http://example.org/person/1'),
-            RdfPredicates.type,
+            Rdf.type,
             IriTerm('http://xmlns.com/foaf/0.1/Person'),
           ),
           Triple(
@@ -245,7 +241,7 @@ void main() {
           // Address (unmapped type)
           Triple(
             IriTerm('http://example.org/address/1'),
-            RdfPredicates.type,
+            Rdf.type,
             IriTerm('http://example.org/Address'),
           ),
           Triple(
@@ -291,7 +287,7 @@ void main() {
       // Check for the type triple
       final typeTriples = graph.findTriples(
         subject: IriTerm('http://example.org/person/1'),
-        predicate: RdfPredicates.type,
+        predicate: Rdf.type,
       );
       expect(typeTriples.length, equals(1));
       expect(
@@ -419,7 +415,7 @@ void main() {
             // Person 1
             Triple(
               IriTerm('http://example.org/person/1'),
-              RdfPredicates.type,
+              Rdf.type,
               IriTerm('http://example.org/Person'),
             ),
             Triple(
@@ -436,7 +432,7 @@ void main() {
             // Person 2
             Triple(
               IriTerm('http://example.org/person/2'),
-              RdfPredicates.type,
+              Rdf.type,
               IriTerm('http://example.org/Person'),
             ),
             Triple(
@@ -453,7 +449,7 @@ void main() {
             // Address 1
             Triple(
               IriTerm('http://example.org/address/1'),
-              RdfPredicates.type,
+              Rdf.type,
               IriTerm('http://example.org/Address'),
             ),
             Triple(
@@ -465,7 +461,7 @@ void main() {
             // Address 2
             Triple(
               IriTerm('http://example.org/address/2'),
-              RdfPredicates.type,
+              Rdf.type,
               IriTerm('http://example.org/Address'),
             ),
             Triple(
@@ -483,8 +479,8 @@ void main() {
         expect(objects.length, equals(2));
 
         // Check all objects are Persons
-        expect(objects.where((obj) => obj is Person).length, equals(2));
-        expect(objects.where((obj) => obj is Address).length, equals(0));
+        expect(objects.whereType<Person>().length, equals(2));
+        expect(objects.whereType<Address>().length, equals(0));
 
         // Verify person references are correct
         final people =
@@ -520,7 +516,7 @@ void main() {
             // Document
             Triple(
               IriTerm('http://example.org/doc/1'),
-              RdfPredicates.type,
+              Rdf.type,
               IriTerm('http://example.org/Document'),
             ),
             Triple(
@@ -542,7 +538,7 @@ void main() {
             // Referenced Tag 1
             Triple(
               IriTerm('http://example.org/tag/1'),
-              RdfPredicates.type,
+              Rdf.type,
               IriTerm('http://example.org/Tag'),
             ),
             Triple(
@@ -554,7 +550,7 @@ void main() {
             // Referenced Tag 2
             Triple(
               IriTerm('http://example.org/tag/2'),
-              RdfPredicates.type,
+              Rdf.type,
               IriTerm('http://example.org/Tag'),
             ),
             Triple(
@@ -566,7 +562,7 @@ void main() {
             // Standalone Tag (not referenced)
             Triple(
               IriTerm('http://example.org/tag/3'),
-              RdfPredicates.type,
+              Rdf.type,
               IriTerm('http://example.org/Tag'),
             ),
             Triple(
@@ -623,7 +619,7 @@ void main() {
           // Document
           Triple(
             IriTerm('http://example.org/doc/1'),
-            RdfPredicates.type,
+            Rdf.type,
             IriTerm('http://example.org/Document'),
           ),
           Triple(
@@ -645,7 +641,7 @@ void main() {
           // Referenced Tag 1
           Triple(
             IriTerm('http://example.org/tag/1'),
-            RdfPredicates.type,
+            Rdf.type,
             IriTerm('http://example.org/Tag'),
           ),
           Triple(
@@ -657,7 +653,7 @@ void main() {
           // Referenced Tag 2
           Triple(
             IriTerm('http://example.org/tag/2'),
-            RdfPredicates.type,
+            Rdf.type,
             IriTerm('http://example.org/Tag'),
           ),
           Triple(
@@ -669,7 +665,7 @@ void main() {
           // Standalone Tag (not referenced)
           Triple(
             IriTerm('http://example.org/tag/3'),
-            RdfPredicates.type,
+            Rdf.type,
             IriTerm('http://example.org/Tag'),
           ),
           Triple(

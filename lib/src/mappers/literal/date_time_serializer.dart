@@ -1,5 +1,5 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_core/vocab.dart';
+import 'package:rdf_vocabularies/xsd.dart';
 import 'package:rdf_mapper/src/mappers/literal/base_rdf_literal_term_serializer.dart';
 
 /// Standard serializer for converting Dart DateTime objects to RDF dateTime literals.
@@ -18,7 +18,7 @@ import 'package:rdf_mapper/src/mappers/literal/base_rdf_literal_term_serializer.
 ///
 /// // Using xsd:date datatype instead (will still use full ISO format)
 /// final dateSerializer = DateTimeSerializer(
-///   datatype: XsdTypes.date
+///   datatype: Xsd.date
 /// );
 /// ```
 final class DateTimeSerializer extends BaseRdfLiteralTermSerializer<DateTime> {
@@ -27,7 +27,7 @@ final class DateTimeSerializer extends BaseRdfLiteralTermSerializer<DateTime> {
   /// @param datatype Optional custom datatype IRI (defaults to xsd:dateTime)
   DateTimeSerializer({IriTerm? datatype})
     : super(
-        datatype: datatype ?? XsdTypes.dateTime,
+        datatype: datatype ?? Xsd.dateTime,
         convertToString: (dateTime) => dateTime.toUtc().toIso8601String(),
       );
 }

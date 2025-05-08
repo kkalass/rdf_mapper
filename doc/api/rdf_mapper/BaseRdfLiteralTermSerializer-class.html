@@ -74,7 +74,7 @@ for converting Dart values to RDF literal terms. It handles the common pattern o
 <pre class="language-dart"><code class="language-dart">final class DateSerializer extends BaseRdfLiteralTermSerializer&lt;DateTime&gt; {
   DateSerializer()
     : super(
-        datatype: XsdTypes.date,
+        datatype: Xsd.date,
         convertToString: (date) =&gt; date.toIso8601String().split('T')[0],
       );
 }

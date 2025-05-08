@@ -90,7 +90,7 @@ then returns the literal's lexical value.</p>
 String fromRdfTerm(LiteralTerm term, DeserializationContext context) {
   final isExpectedDatatype = term.datatype == _datatype;
   final isLangString =
-      _acceptLangString &amp;&amp; term.datatype == RdfTypes.langString;
+      _acceptLangString &amp;&amp; term.datatype == Rdf.langString;
 
   if (!isExpectedDatatype &amp;&amp; !isLangString) {
     throw Exception(

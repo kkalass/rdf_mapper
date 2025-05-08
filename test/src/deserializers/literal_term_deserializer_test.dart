@@ -1,6 +1,6 @@
 import 'package:mockito/annotations.dart';
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_core/vocab.dart';
+import 'package:rdf_vocabularies/xsd.dart';
 import 'package:rdf_mapper/src/api/deserializer.dart';
 
 import 'package:test/test.dart';
@@ -42,7 +42,7 @@ void main() {
       final deserializer = IntegerLiteralDeserializer();
 
       // Test with integer literal
-      final term = LiteralTerm('42', datatype: XsdTypes.integer);
+      final term = LiteralTerm('42', datatype: Xsd.integer);
       final result = deserializer.fromRdfTerm(term, context);
 
       expect(result, equals(42));
@@ -52,7 +52,7 @@ void main() {
       final deserializer = IntegerLiteralDeserializer();
 
       // Test with non-integer literal
-      final term = LiteralTerm('not-a-number', datatype: XsdTypes.integer);
+      final term = LiteralTerm('not-a-number', datatype: Xsd.integer);
 
       expect(
         () => deserializer.fromRdfTerm(term, context),
@@ -64,8 +64,8 @@ void main() {
       final deserializer = BooleanLiteralDeserializer();
 
       // Test with boolean literals
-      final trueTerm = LiteralTerm('true', datatype: XsdTypes.boolean);
-      final falseTerm = LiteralTerm('false', datatype: XsdTypes.boolean);
+      final trueTerm = LiteralTerm('true', datatype: Xsd.boolean);
+      final falseTerm = LiteralTerm('false', datatype: Xsd.boolean);
 
       expect(deserializer.fromRdfTerm(trueTerm, context), isTrue);
       expect(deserializer.fromRdfTerm(falseTerm, context), isFalse);
@@ -75,8 +75,8 @@ void main() {
       final deserializer = BooleanLiteralDeserializer();
 
       // Test with different casing
-      final trueTerm = LiteralTerm('TRUE', datatype: XsdTypes.boolean);
-      final falseTerm = LiteralTerm('False', datatype: XsdTypes.boolean);
+      final trueTerm = LiteralTerm('TRUE', datatype: Xsd.boolean);
+      final falseTerm = LiteralTerm('False', datatype: Xsd.boolean);
 
       expect(deserializer.fromRdfTerm(trueTerm, context), isTrue);
       expect(deserializer.fromRdfTerm(falseTerm, context), isFalse);
@@ -86,7 +86,7 @@ void main() {
       final deserializer = DoubleLiteralDeserializer();
 
       // Test with double literal
-      final term = LiteralTerm('3.14159', datatype: XsdTypes.double);
+      final term = LiteralTerm('3.14159', datatype: Xsd.double);
       final result = deserializer.fromRdfTerm(term, context);
 
       expect(result, equals(3.14159));

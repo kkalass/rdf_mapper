@@ -75,7 +75,7 @@ for converting RDF literal terms to Dart values. It handles the common pattern o
 <pre class="language-dart"><code class="language-dart">final class IntDeserializer extends BaseRdfLiteralTermDeserializer&lt;int&gt; {
   IntDeserializer()
     : super(
-        datatype: XsdTypes.integer,
+        datatype: Xsd.integer,
         convertFromLiteral: (term, _) =&gt; int.parse(term.value),
       );
 }
