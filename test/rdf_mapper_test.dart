@@ -375,7 +375,7 @@ void main() {
         expect(turtle, contains('schema:givenName'));
         expect(turtle, contains('"John Doe"'));
         expect(turtle, contains('foaf:age'));
-        expect(turtle, contains('"30"'));
+        expect(turtle, contains('30'));
       },
     );
 
@@ -408,14 +408,9 @@ void main() {
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <http://example.org/person/1> a schema:Person;
-    schema:givenName "John Doe";
-    foaf:age "30"^^xsd:integer;
-    schema:address _:b0 .
-_:b0 a schema:PostalAddress;
-    schema:streetAddress "123 Main St";
-    schema:addressLocality "Anytown";
-    schema:postalCode "12345";
-    schema:addressCountry "USA" .
+    foaf:age 30;
+    schema:address [ a schema:PostalAddress ; schema:streetAddress "123 Main St" ; schema:addressLocality "Anytown" ; schema:postalCode "12345" ; schema:addressCountry "USA" ];
+    schema:givenName "John Doe" .
 """;
         // Verify the Turtle string contains expected content
         expect(turtle, equals(expectedTurtle.trim()));
@@ -568,8 +563,8 @@ _:b0 a schema:PostalAddress;
         expect(turtle, contains('<http://example.org/person/2>'));
         expect(turtle, contains('"John Doe"'));
         expect(turtle, contains('"Jane Smith"'));
-        expect(turtle, contains('"30"'));
-        expect(turtle, contains('"28"'));
+        expect(turtle, contains('30'));
+        expect(turtle, contains('28'));
       },
     );
 

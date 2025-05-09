@@ -54,8 +54,8 @@ void main() {
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <https://example.com/pod/Graph%20Conversion%20Test> a <http://kalass.de/dart/rdf/test-ontology#TestItem>;
-    <http://kalass.de/dart/rdf/test-ontology#name> "Graph Conversion Test";
-    <http://kalass.de/dart/rdf/test-ontology#age> "42"^^xsd:integer .
+    <http://kalass.de/dart/rdf/test-ontology#age> 42;
+    <http://kalass.de/dart/rdf/test-ontology#name> "Graph Conversion Test" .
 """.trim(),
         ),
       );
@@ -89,8 +89,8 @@ void main() {
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <https://example.com/pod/Graph%20Conversion%20Test> a test:TestItem;
-    test:name "Graph Conversion Test";
-    test:age "42"^^xsd:integer .
+    test:age 42;
+    test:name "Graph Conversion Test" .
 """.trim(),
         ),
       );
