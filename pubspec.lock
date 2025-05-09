@@ -364,10 +364,11 @@ packages:
   rdf_vocabularies:
     dependency: "direct main"
     description:
-      path: "../rdf_vocabularies"
-      relative: true
-    source: path
-    version: "0.1.0-dev"
+      name: rdf_vocabularies
+      sha256: "0f2a6090a97e08ae00c24132d731afd72be3b824fa20095bf52b75312bdeae80"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
   shelf:
     dependency: transitive
     description:
