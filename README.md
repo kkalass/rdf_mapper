@@ -503,8 +503,6 @@ RDF Mapper provides specific exceptions to help diagnose mapping issues:
 
 ## 🛣️ Roadmap / Next Steps
 
-- **breaking change** (sorry!) - rename IriNode- and BlankNode- Mapper/Serializer/Deserializer to IriResource or BlankResource - this does seem to be more in sync with RDF terminology 
-- **breaking change** Adjust to vocab removal from rdf_core
 - Detect cycles, optimally support them.
 - Properly Support Collection for serialization and derserialization - map multiple triples to Sets, not Lists
 - Implement default behaviour for nodes without mapper ((Json-LD?) Maps)
