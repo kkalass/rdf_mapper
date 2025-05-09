@@ -55,7 +55,17 @@
 <h2 id="overview">Overview</h2>
 <p><a href="https://kkalass.github.io/rdf_mapper/">🌐 <strong>Official Homepage</strong></a></p>
 <p><code>rdf_mapper</code> provides an elegant solution for transforming between Dart object models and RDF graphs, similar to an ORM for databases. This enables developers to work with semantic data in an object-oriented manner without manually managing the complexity of RDF serialization and deserialization.</p>
-<h3 id="-key-features">✨ Key Features</h3>
+<hr>
+<h2 id="part-of-a-whole-family-of-projects">Part of a whole family of projects</h2>
+<p>If you are looking for more rdf-related functionality, have a look at our companion projects:</p>
+<ul>
+<li>basic graph classes as well as turtle/jsonld/n-triple serialization and parsing: <a href="https://github.com/kkalass/rdf_core">rdf_core</a></li>
+<li>parse and serialize rdf/xml format: <a href="https://github.com/kkalass/rdf_xml">rdf_xml</a></li>
+<li>easy-to-use constants for many well-known vocabularies: <a href="https://github.com/kkalass/rdf_vocabularies">rdf_vocabularies</a></li>
+<li>generate your own easy-to-use constants for other vocabularies with a build_runner: <a href="https://github.com/kkalass/rdf_vocabulary_to_dart">rdf_vocabulary_to_dart</a></li>
+</ul>
+<hr>
+<h2 id="-key-features">✨ Key Features</h2>
 <ul>
 <li><strong>Bidirectional Mapping</strong>: Seamless conversion between Dart objects and RDF representations</li>
 <li><strong>Type-Safe</strong>: Fully typed API for safe RDF mapping operations</li>
@@ -74,7 +84,7 @@
 <h2 id="installation">Installation</h2>
 <p>Add the following to your <code>pubspec.yaml</code>:</p>
 <pre class="language-yaml"><code class="language-yaml">dependencies:
-  rdf_mapper: ^0.1.6
+  rdf_mapper: ^0.2.0
 </code></pre>
 <p>Or use the following command:</p>
 <pre class="language-bash"><code class="language-bash">dart pub add rdf_mapper
@@ -115,7 +125,9 @@ final person = rdfMapper.deserialize&lt;Person&gt;(turtleInput);
 print('Name: ${person.name}, Age: ${person.age}');
 </code></pre>
 <h3 id="model-and-mapper-classes-for-above-examples">Model and Mapper classes for above examples</h3>
-<pre class="language-dart"><code class="language-dart">// Define a model class.
+<pre class="language-dart"><code class="language-dart">import 'package:rdf_vocabularies/schema.dart';
+
+// Define a model class.
 // You can define them as you like, there is no requirement for immutability or such
 class Person {
   final String id;
@@ -128,15 +140,15 @@ class Person {
 // Create a custom mapper
 class PersonMapper implements IriNodeMapper&lt;Person&gt; {
   @override
-  IriTerm? get typeIri =&gt; IriTerm('http://xmlns.com/foaf/0.1/Person');
+  IriTerm? get typeIri =&gt; SchemaPerson.classIri;
   
   @override
   (IriTerm, List&lt;Triple&gt;) toRdfNode(Person value, SerializationContext context, {RdfSubject? parentSubject}) {
 
     // convert dart objects to triples using the fluent builder API
     return context.nodeBuilder(IriTerm(value.id))
-      .literal(IriTerm('http://xmlns.com/foaf/0.1/name'), value.name)
-      .literal(IriTerm('http://xmlns.com/foaf/0.1/age'), value.age)
+      .literal(SchemaPerson.foafName, value.name)
+      .literal(SchemaPerson.foafAge, value.age)
       .build();
   }
   
@@ -146,8 +158,8 @@ class PersonMapper implements IriNodeMapper&lt;Person&gt; {
     
     return Person(
       id: term.iri,
-      name: reader.require&lt;String&gt;(IriTerm('http://xmlns.com/foaf/0.1/name')),
-      age: reader.require&lt;int&gt;(IriTerm('http://xmlns.com/foaf/0.1/age')),
+      name: reader.require&lt;String&gt;(SchemaPerson.foafName),
+      age: reader.require&lt;int&gt;(SchemaPerson.foafAge),
     );
   }
 }
@@ -207,20 +219,24 @@ final result = rdfMapper.deserialize&lt;CustomType&gt;(
 );
 </code></pre>
 <h3 id="namespace-helper-class">Namespace Helper Class</h3>
-<p>For clean management of IRIs in RDF, you can use <a href="https://kkalass.github.io/rdf_core/api/vocab/">vocab.dart from rdf_core</a> which
-provides constants for the most common predicates of the most common vocabularies.</p>
-<p>But you can also use our Namespace helper class which is more flexible but less discoverable:</p>
+<p>For clean management of IRIs in RDF, we have <a href="https://kkalass.github.io/rdf_vocabularies/">rdf_vocabularies</a> which provides constants for the most common vocabularies.</p>
+<p>In addition, if you have your own vocabulary and would like such a helper class generated, you may use <a href="https://kkalass.github.io/rdf_vocabulary_to_dart/">rdf_vocabulary_to_dart</a> which provides a build_runner for generating dart constants from rdf vocabulary files. It supports all serializations that rdf_core supports (turtle, jsonld, n-triple and also rdf/xml).</p>
+<p>But you can also use our Namespace helper class which might be usefull during development</p>
 <pre class="language-dart"><code class="language-dart">
 // Example usage:
-final foaf = Namespace('http://xmlns.com/foaf/0.1/');
-final schema = Namespace('http://schema.org/');
+final example = Namespace('http://example.com/my-new-vocab/');
 
 // Usage:
-builder.literal(foaf('name'), 'Alice');  // Generates http://xmlns.com/foaf/0.1/name
+builder.literal(example('name'), 'Alice');  // Generates http://example.com/my-new-vocab/name
 </code></pre>
 <h3 id="complex-example">Complex Example</h3>
 <p>The following example demonstrates handling complex models with relationships between objects and nested structures:</p>
-<pre class="language-dart"><code class="language-dart">void main() {
+<pre class="language-dart"><code class="language-dart">import 'package:rdf_core/rdf_core.dart';
+
+import 'package:rdf_mapper/rdf_mapper.dart';
+import 'package:rdf_vocabularies/schema.dart';
+
+void main() {
   final rdf =
       // Create mapper with default registry
       RdfMapper.withDefaultRegistry()
@@ -335,18 +351,18 @@ class Rating {
 
 // IRI-based entity mapper
 class BookMapper implements IriNodeMapper&lt;Book&gt; {
-  static final titlePredicate = SchemaProperties.name;
-  static final authorPredicate = SchemaProperties.author;
-  static final publishedPredicate = SchemaProperties.datePublished;
-  static final isbnPredicate = IriTerm('https://schema.org/isbn');
-  static final ratingPredicate = IriTerm('https://schema.org/aggregateRating');
-  static final chapterPredicate = IriTerm('https://schema.org/hasPart');
+  static final titlePredicate = SchemaBook.name;
+  static final authorPredicate = SchemaBook.author;
+  static final publishedPredicate = SchemaBook.datePublished;
+  static final isbnPredicate = SchemaBook.isbn;
+  static final ratingPredicate = SchemaBook.aggregateRating;
+  static final chapterPredicate = SchemaBook.hasPart;
 
   // Base IRI prefix for book resources
   static const String bookIriPrefix = 'http://example.org/book/';
 
   @override
-  final IriTerm typeIri = IriTerm('https://schema.org/Book');
+  final IriTerm typeIri = SchemaBook.classIri;
 
   /// Converts an ID to a full IRI
   String _createIriFromId(String id) =&gt; '$bookIriPrefix$id';
@@ -394,11 +410,11 @@ class BookMapper implements IriNodeMapper&lt;Book&gt; {
 
 // Blank node-based entity mapper
 class ChapterMapper implements BlankNodeMapper&lt;Chapter&gt; {
-  static final titlePredicate = IriTerm('https://schema.org/name');
-  static final numberPredicate = IriTerm('https://schema.org/position');
+  static final titlePredicate = SchemaChapter.name;
+  static final numberPredicate = SchemaChapter.position;
 
   @override
-  final IriTerm typeIri = IriTerm('https://schema.org/Chapter');
+  final IriTerm typeIri = SchemaChapter.classIri;
 
   @override
   Chapter fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
@@ -511,9 +527,11 @@ class RatingMapper implements LiteralTermMapper&lt;Rating&gt; {
 <h2 id="-roadmap--next-steps">🛣️ Roadmap / Next Steps</h2>
 <ul>
 <li>Detect cycles, optimally support them.</li>
+<li>Properly Support Collection for serialization and derserialization - map multiple triples to Sets, not Lists</li>
 <li>Implement default behaviour for nodes without mapper ((Json-LD?) Maps)</li>
 <li>Support generating mappers based on annotations</li>
 <li>Support "any" feature and annotation which puts the remaining properties of a node into a (Json-LD?) Map that is a property of the dart class</li>
+<li>Support mapping to / from multiple RDF classes (e.g. schema:Person and foaf:Person)</li>
 <li>Improve test coverage</li>
 </ul>
 <h2 id="-contributing">🤝 Contributing</h2>
@@ -567,7 +585,7 @@ class RatingMapper implements LiteralTermMapper&lt;Rating&gt; {
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.1.6
+      0.2.0
   </span>
   
 </footer>
