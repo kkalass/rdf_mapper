@@ -572,30 +572,31 @@ _:b0 a schema:PostalAddress;
       // Create RdfMapper with a real RdfCore
       final customRdfMapper = RdfMapper(
         registry: RdfMapperRegistry(),
-        rdfCore:
-            RdfCore.withStandardFormats()..registerFormat(
-              _PredefinedResultsFormat(
-                contentType: 'application/predefined-results',
-                parsed: [
-                  Triple(
-                    IriTerm('http://example.org/testperson'),
-                    Rdf.type,
-                    SchemaPerson.classIri,
-                  ),
-                  Triple(
-                    IriTerm('http://example.org/testperson'),
-                    TestPersonMapper.givenNamePredicate,
-                    LiteralTerm.string('Test Person'),
-                  ),
-                  Triple(
-                    IriTerm('http://example.org/testperson'),
-                    TestPersonMapper.agePredicate,
-                    LiteralTerm.typed("42", "integer"),
-                  ),
-                ],
-                serialized: "TEST SERIALIZATION RESULT",
-              ),
+        rdfCore: RdfCore.withStandardCodecs(
+          additionalCodecs: [
+            _PredefinedResultsCodec(
+              contentType: 'application/predefined-results',
+              parsed: [
+                Triple(
+                  IriTerm('http://example.org/testperson'),
+                  Rdf.type,
+                  SchemaPerson.classIri,
+                ),
+                Triple(
+                  IriTerm('http://example.org/testperson'),
+                  TestPersonMapper.givenNamePredicate,
+                  LiteralTerm.string('Test Person'),
+                ),
+                Triple(
+                  IriTerm('http://example.org/testperson'),
+                  TestPersonMapper.agePredicate,
+                  LiteralTerm.typed("42", "integer"),
+                ),
+              ],
+              serialized: "TEST SERIALIZATION RESULT",
             ),
+          ],
+        ),
       );
 
       // Register mapper for testing
@@ -1144,22 +1145,22 @@ class EmployeeWithCompanyReferenceMapper
   }
 }
 
-class _PredefinedResultsParser implements RdfParser {
+class _PredefinedResultsParser extends RdfGraphDecoder {
   final RdfGraph graph;
 
   _PredefinedResultsParser({required this.graph});
   @override
-  RdfGraph parse(String input, {String? documentUrl}) {
+  RdfGraph convert(String input, {String? documentUrl}) {
     return graph;
   }
 }
 
-class _PredefinedResultsSerializer implements RdfSerializer {
+class _PredefinedResultsSerializer extends RdfGraphEncoder {
   final String serialized;
 
   _PredefinedResultsSerializer({required this.serialized});
   @override
-  String write(
+  String convert(
     RdfGraph graph, {
     String? baseUri,
     Map<String, String> customPrefixes = const {},
@@ -1168,14 +1169,14 @@ class _PredefinedResultsSerializer implements RdfSerializer {
   }
 }
 
-class _PredefinedResultsFormat implements RdfFormat {
+class _PredefinedResultsCodec extends RdfGraphCodec {
   final String _contentType;
 
   final RdfGraph _parsedGraph;
   final String serialized;
   final bool _canParse;
 
-  _PredefinedResultsFormat({
+  _PredefinedResultsCodec({
     required List<Triple> parsed,
     required this.serialized,
     bool canParse = true,
@@ -1190,12 +1191,12 @@ class _PredefinedResultsFormat implements RdfFormat {
   }
 
   @override
-  RdfParser createParser() {
+  RdfGraphDecoder get decoder {
     return new _PredefinedResultsParser(graph: _parsedGraph);
   }
 
   @override
-  RdfSerializer createSerializer() {
+  RdfGraphEncoder get encoder {
     return _PredefinedResultsSerializer(serialized: serialized);
   }
 

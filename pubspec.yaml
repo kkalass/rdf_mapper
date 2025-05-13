@@ -1,5 +1,5 @@
 name: rdf_mapper
-version: 0.2.0
+version: 0.3.0-dev
 homepage: https://kkalass.github.io/rdf_mapper/
 repository: https://github.com/kkalass/rdf_mapper
 issue_tracker: https://github.com/kkalass/rdf_mapper/issues
@@ -19,8 +19,8 @@ description: >
 environment:
   sdk: '^3.7.0'
 dependencies:
-  rdf_core: ^0.7.6
-  rdf_vocabularies: ^0.1.0
+  rdf_core: ^0.8.1
+  rdf_vocabularies: ^0.2.0
   logging: ^1.2.0
 
 dev_dependencies:

@@ -7,7 +7,7 @@ void main() {
     late RdfCore rdfCore;
     late RdfMapper rdf;
     setUp(() {
-      rdfCore = RdfCore.withStandardFormats();
+      rdfCore = RdfCore.withStandardCodecs();
       rdf = RdfMapper.withDefaultRegistry();
       rdf.registerMapper<TestItem>(
         TestItemRdfMapper(storageRoot: "https://some.static.url.example.com/"),
@@ -30,7 +30,7 @@ void main() {
     });
 
     test('Converting item to turtle', () {
-      final serializer = rdfCore.getSerializer(contentType: 'text/turtle');
+      final codec = rdfCore.codec('text/turtle');
       // Create test item
       final originalItem = TestItem(name: 'Graph Conversion Test', age: 42);
 
@@ -44,7 +44,7 @@ void main() {
             ),
       );
       expect(graph.triples, isNotEmpty);
-      final turtle = serializer.write(graph);
+      final turtle = codec.encode(graph);
 
       // Verify generated turtle
       expect(
@@ -62,7 +62,7 @@ void main() {
     });
 
     test('Converting item to turtle with prefixes', () {
-      final serializer = rdfCore.getSerializer(contentType: 'text/turtle');
+      final codec = rdfCore.codec('text/turtle');
       // Create test item
       final originalItem = TestItem(name: 'Graph Conversion Test', age: 42);
 
@@ -75,7 +75,7 @@ void main() {
             ),
       );
       expect(graph.triples, isNotEmpty);
-      final turtle = serializer.write(
+      final turtle = codec.encode(
         graph,
         customPrefixes: {"test": "http://kalass.de/dart/rdf/test-ontology#"},
       );
@@ -97,7 +97,7 @@ void main() {
     });
 
     test('Converting item from turtle ', () {
-      final parser = rdfCore.getParser(contentType: 'text/turtle');
+      final codec = rdfCore.codec('text/turtle');
       // Create test item
       final turtle = """
 @prefix test: <http://kalass.de/dart/rdf/test-ontology#> .
@@ -109,7 +109,7 @@ void main() {
 """;
 
       // Convert to graph
-      final graph = parser.parse(turtle);
+      final graph = codec.decode(turtle);
       final allSubjects = rdf.graph.deserializeAll(
         graph,
         register:

@@ -130,7 +130,7 @@ final class RdfMapper {
   /// @param rdfCore Optional RDF core instance for string parsing/serialization
   RdfMapper({required RdfMapperRegistry registry, RdfCore? rdfCore})
     : _service = RdfMapperService(registry: registry),
-      _rdfCore = rdfCore ?? RdfCore.withStandardFormats(),
+      _rdfCore = rdfCore ?? RdfCore.withStandardCodecs(),
       _graphOperations = GraphOperations(RdfMapperService(registry: registry));
 
   /// Creates an RDF Mapper facade with a default registry and standard mappers.
@@ -181,7 +181,7 @@ final class RdfMapper {
     String? documentUrl,
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    final graph = _rdfCore.parse(
+    final graph = _rdfCore.decode(
       rdfString,
       contentType: contentType,
       documentUrl: documentUrl,
@@ -205,7 +205,7 @@ final class RdfMapper {
     String? documentUrl,
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    final graph = _rdfCore.parse(
+    final graph = _rdfCore.decode(
       rdfString,
       contentType: contentType,
       documentUrl: documentUrl,
@@ -253,7 +253,7 @@ final class RdfMapper {
     String? documentUrl,
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    final graph = _rdfCore.parse(
+    final graph = _rdfCore.decode(
       rdfString,
       contentType: contentType,
       documentUrl: documentUrl,
@@ -276,7 +276,7 @@ final class RdfMapper {
     String? documentUrl,
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    final graph = _rdfCore.parse(
+    final graph = _rdfCore.decode(
       rdfString,
       contentType: contentType,
       documentUrl: documentUrl,
@@ -330,11 +330,7 @@ final class RdfMapper {
     void Function(RdfMapperRegistry registry)? register,
   }) {
     final graph = this.graph.serialize<T>(instance, register: register);
-    return _rdfCore.serialize(
-      graph,
-      contentType: contentType,
-      baseUri: baseUri,
-    );
+    return _rdfCore.encode(graph, contentType: contentType, baseUri: baseUri);
   }
 
   /// Registers a mapper for bidirectional conversion between Dart objects and RDF.
