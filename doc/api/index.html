@@ -54,13 +54,13 @@
 <p>A powerful library for bidirectional mapping between Dart objects and RDF (Resource Description Framework), built on top of <a href="https://pub.dev/packages/rdf_core"><code>rdf_core</code></a>.</p>
 <h2 id="overview">Overview</h2>
 <p><a href="https://kkalass.github.io/rdf_mapper/">🌐 <strong>Official Homepage</strong></a></p>
-<p><code>rdf_mapper</code> provides an elegant solution for transforming between Dart object models and RDF graphs, similar to an ORM for databases. This enables developers to work with semantic data in an object-oriented manner without manually managing the complexity of RDF serialization and deserialization.</p>
+<p><code>rdf_mapper</code> provides an elegant solution for transforming between Dart object models and RDF graphs, similar to an ORM for databases. This enables developers to work with semantic data in an object-oriented manner without manually managing the complexity of transforming between dart objects and RDF triples.</p>
 <hr>
 <h2 id="part-of-a-whole-family-of-projects">Part of a whole family of projects</h2>
 <p>If you are looking for more rdf-related functionality, have a look at our companion projects:</p>
 <ul>
-<li>basic graph classes as well as turtle/jsonld/n-triple serialization and parsing: <a href="https://github.com/kkalass/rdf_core">rdf_core</a></li>
-<li>parse and serialize rdf/xml format: <a href="https://github.com/kkalass/rdf_xml">rdf_xml</a></li>
+<li>basic graph classes as well as turtle/jsonld/n-triple encoding and decoding: <a href="https://github.com/kkalass/rdf_core">rdf_core</a></li>
+<li>encode and decode rdf/xml format: <a href="https://github.com/kkalass/rdf_xml">rdf_xml</a></li>
 <li>easy-to-use constants for many well-known vocabularies: <a href="https://github.com/kkalass/rdf_vocabularies">rdf_vocabularies</a></li>
 <li>generate your own easy-to-use constants for other vocabularies with a build_runner: <a href="https://github.com/kkalass/rdf_vocabulary_to_dart">rdf_vocabulary_to_dart</a></li>
 </ul>
@@ -84,7 +84,7 @@
 <h2 id="installation">Installation</h2>
 <p>Add the following to your <code>pubspec.yaml</code>:</p>
 <pre class="language-yaml"><code class="language-yaml">dependencies:
-  rdf_mapper: ^0.2.0
+  rdf_mapper: ^0.3.0
 </code></pre>
 <p>Or use the following command:</p>
 <pre class="language-bash"><code class="language-bash">dart pub add rdf_mapper
@@ -261,7 +261,7 @@ void main() {
     ],
   );
 
-  // Convert the book to RDF Turtle format
+  // Convert the book to RDF Turtle codec
   final turtle = rdf.serialize(book);
 
   // Print the resulting Turtle representation
@@ -585,7 +585,7 @@ class RatingMapper implements LiteralTermMapper&lt;Rating&gt; {
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.2.0
+      0.3.0
   </span>
   
 </footer>

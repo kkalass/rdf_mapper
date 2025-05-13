@@ -58,7 +58,7 @@
     <section class="multi-line-signature">
       
       <span class="name ">RdfMapper</span>(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="-param-registry"><span>required</span> <span class="type-annotation"><a href="../../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span>, </span></li>
-<li><span class="parameter" id="-param-rdfCore"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.7.6/rdf/RdfCore-class.html">RdfCore</a>?</span> <span class="parameter-name">rdfCore</span>, </span></li>
+<li><span class="parameter" id="-param-rdfCore"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.8.1/rdf/RdfCore-class.html">RdfCore</a>?</span> <span class="parameter-name">rdfCore</span>, </span></li>
 </ol>})
     </section>
     
@@ -76,7 +76,7 @@ enabling more flexible usage and better testability.</p>
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">RdfMapper({required RdfMapperRegistry registry, RdfCore? rdfCore})
   : _service = RdfMapperService(registry: registry),
-    _rdfCore = rdfCore ?? RdfCore.withStandardFormats(),
+    _rdfCore = rdfCore ?? RdfCore.withStandardCodecs(),
     _graphOperations = GraphOperations(RdfMapperService(registry: registry));</code></pre>
 </section>
 
@@ -105,7 +105,7 @@ enabling more flexible usage and better testability.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.2.0
+      0.3.0
   </span>
   
 </footer>

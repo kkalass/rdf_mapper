@@ -103,7 +103,7 @@ final person = rdfMapper.deserialize&lt;Person&gt;(turtle);
   String? documentUrl,
   void Function(RdfMapperRegistry registry)? register,
 }) {
-  final graph = _rdfCore.parse(
+  final graph = _rdfCore.decode(
     rdfString,
     contentType: contentType,
     documentUrl: documentUrl,
@@ -137,7 +137,7 @@ final person = rdfMapper.deserialize&lt;Person&gt;(turtle);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.2.0
+      0.3.0
   </span>
   
 </footer>

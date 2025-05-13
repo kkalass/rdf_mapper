@@ -118,11 +118,7 @@ final jsonLd = rdfMapper.serialize(
   void Function(RdfMapperRegistry registry)? register,
 }) {
   final graph = this.graph.serialize&lt;T&gt;(instance, register: register);
-  return _rdfCore.serialize(
-    graph,
-    contentType: contentType,
-    baseUri: baseUri,
-  );
+  return _rdfCore.encode(graph, contentType: contentType, baseUri: baseUri);
 }</code></pre>
 </section>
 
@@ -151,7 +147,7 @@ final jsonLd = rdfMapper.serialize(
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.2.0
+      0.3.0
   </span>
   
 </footer>
