@@ -11,7 +11,7 @@ A powerful library for bidirectional mapping between Dart objects and RDF (Resou
 
 [🌐 **Official Homepage**](https://kkalass.github.io/rdf_mapper/)
 
-`rdf_mapper` provides an elegant solution for transforming between Dart object models and RDF graphs, similar to an ORM for databases. This enables developers to work with semantic data in an object-oriented manner without manually managing the complexity of RDF serialization and deserialization.
+`rdf_mapper` provides an elegant solution for transforming between Dart object models and RDF graphs, similar to an ORM for databases. This enables developers to work with semantic data in an object-oriented manner without manually managing the complexity of transforming between dart objects and RDF triples.
 
 ---
 
@@ -19,8 +19,8 @@ A powerful library for bidirectional mapping between Dart objects and RDF (Resou
 
 If you are looking for more rdf-related functionality, have a look at our companion projects:
 
-* basic graph classes as well as turtle/jsonld/n-triple serialization and parsing: [rdf_core](https://github.com/kkalass/rdf_core) 
-* parse and serialize rdf/xml format: [rdf_xml](https://github.com/kkalass/rdf_xml) 
+* basic graph classes as well as turtle/jsonld/n-triple encoding and decoding: [rdf_core](https://github.com/kkalass/rdf_core) 
+* encode and decode rdf/xml format: [rdf_xml](https://github.com/kkalass/rdf_xml) 
 * easy-to-use constants for many well-known vocabularies: [rdf_vocabularies](https://github.com/kkalass/rdf_vocabularies)
 * generate your own easy-to-use constants for other vocabularies with a build_runner: [rdf_vocabulary_to_dart](https://github.com/kkalass/rdf_vocabulary_to_dart)
 
@@ -259,7 +259,7 @@ void main() {
     ],
   );
 
-  // Convert the book to RDF Turtle format
+  // Convert the book to RDF Turtle codec
   final turtle = rdf.serialize(book);
 
   // Print the resulting Turtle representation
