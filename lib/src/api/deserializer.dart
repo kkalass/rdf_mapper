@@ -58,6 +58,12 @@ abstract interface class IriTermDeserializer<T> implements TermDeserializer<T> {
 /// This deserializer is suited for primitive types and other objects that
 /// represent simple values.
 ///
+/// IMPORTANT: This deserializer processes only individual literal terms, not
+/// complete RDF documents. In RDF, literals can only appear as objects in
+/// triples (subject-predicate-object). This deserializer is typically used
+/// as part of a larger deserialization process, such as within a [NodeDeserializer]
+/// implementation for handling property values.
+///
 /// Common use cases include:
 /// - Strings, numbers, booleans, and dates
 /// - Value objects that conceptually represent single values
@@ -99,7 +105,7 @@ sealed class NodeDeserializer<T> extends Deserializer<T> {
   ///
   /// Without a type IRI, deserialization will only work when you explicitly target
   /// a specific subject with a known Dart type, not when using general methods like
-  /// [RdfMapper.deserializeAll].
+  /// [RdfMapper.decodeObjects].
   IriTerm? get typeIri;
 }
 

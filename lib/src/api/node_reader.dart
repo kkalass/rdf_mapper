@@ -84,6 +84,8 @@ class NodeReader {
 
   /// Gets an optional property value from the RDF graph.
   ///
+  /// FIXME: Maybe this should be called `optional<T>()` instead of `get<T>()`?
+  ///
   /// Use this method for properties that might not exist in the graph.
   /// If the property is not found, null is returned. If multiple values are found
   /// when only one is expected, an exception will be thrown (if enforceSingleValue is true).

@@ -55,6 +55,11 @@ abstract interface class IriTermMapper<T>
 /// for seamless conversion between Dart objects and RDF literal terms in both directions.
 /// Literal terms represent concrete data values in RDF like strings, numbers, dates, etc.
 ///
+/// IMPORTANT: Literal terms on their own are not valid RDF - they can only exist as
+/// objects in RDF triples (subject-predicate-object). This mapper cannot be used directly
+/// to serialize/deserialize a complete RDF document from a standalone object. Instead,
+/// literal term mappers are typically used for property values within node mappers.
+///
 /// This mapper type is recommended for:
 /// - Primitive types and their wrappers (String, int, double, DateTime, etc.)
 /// - Custom value types that should be represented as RDF literals

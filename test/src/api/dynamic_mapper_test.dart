@@ -131,7 +131,7 @@ void main() {
       );
 
       // Serialization should work fine
-      final graph = rdfMapper.graph.serialize(parent);
+      final graph = rdfMapper.graph.encodeObject(parent);
       expect(graph.triples.length, greaterThan(0));
 
       // Verify that the child was properly serialized
@@ -155,7 +155,7 @@ void main() {
       ''';
 
       // Single object deserialization works fine
-      final parent = rdfMapper.deserialize<ParentClass>(turtle);
+      final parent = rdfMapper.decodeObject<ParentClass>(turtle);
       expect(parent.name, equals('Parent Name'));
       expect(parent.child.value, equals('Child Value'));
     });
@@ -175,7 +175,7 @@ void main() {
 
       // This will fail because deserializeAll tries to deserialize all subjects,
       // including the child, but no ChildClassMapper is globally registered
-      final result = rdfMapper.deserializeAll(turtle);
+      final result = rdfMapper.decodeObjects(turtle);
       expect(
         result.length,
         equals(1),

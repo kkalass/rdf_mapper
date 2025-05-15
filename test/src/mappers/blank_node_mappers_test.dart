@@ -64,7 +64,7 @@ void main() {
   group('BlankNode Mappers', () {
     test('serializes Dart objects to blank nodes with associated triples', () {
       final chapter = Chapter('Introduction', 1);
-      final graph = rdfMapper.graph.serialize(chapter);
+      final graph = rdfMapper.graph.encodeObject(chapter);
 
       // Verify exactly one blank node was created
       final blankNodes =
@@ -131,9 +131,9 @@ void main() {
       final graph = RdfGraph(triples: triples);
 
       // Deserialize
-      final chapter = rdfMapper.graph.deserializeBySubject<Chapter>(
+      final chapter = rdfMapper.graph.decodeObject<Chapter>(
         graph,
-        blankNode,
+        subject: blankNode,
       );
 
       // Verify properties
@@ -148,7 +148,7 @@ void main() {
 
       // Serialize
       final data = AnonymousData('test data');
-      final graph = rdfMapper.graph.serialize(data);
+      final graph = rdfMapper.graph.encodeObject(data);
 
       // Verify no type triple
       final blankNode = graph.triples.first.subject as BlankNodeTerm;
@@ -170,9 +170,9 @@ void main() {
       );
 
       // Deserialize
-      final deserialized = rdfMapper.graph.deserializeBySubject<AnonymousData>(
+      final deserialized = rdfMapper.graph.decodeObject<AnonymousData>(
         graph,
-        blankNode,
+        subject: blankNode,
       );
       expect(deserialized.content, equals('test data'));
     });
@@ -191,7 +191,7 @@ void main() {
       final document = Document('Test Document', chapters);
 
       // Serialize
-      final graph = rdfMapper.graph.serialize(document);
+      final graph = rdfMapper.graph.encodeObject(document);
 
       // Find document subject
       final documentSubjects =
@@ -217,8 +217,10 @@ void main() {
       }
 
       // Deserialize
-      final deserializedDocument = rdfMapper.graph
-          .deserializeBySubject<Document>(graph, documentSubjects.first);
+      final deserializedDocument = rdfMapper.graph.decodeObject<Document>(
+        graph,
+        subject: documentSubjects.first,
+      );
 
       // Verify document
       expect(deserializedDocument.title, equals('Test Document'));

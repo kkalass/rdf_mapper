@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2025-05-15
+
+### Added
+
+- Comprehensive Codec API for standardized conversion between Dart objects and RDF graphs
+  - Added `RdfMapperCodec`, `RdfMapperEncoder`, and `RdfMapperDecoder` base classes
+  - Added specific implementations for single objects and collections
+  - Added string-based codec variants for direct serialization to RDF formats
+
+### Changed
+
+- Updated rdf_core dependency to 0.9.2
+- Updated rdf_vocabularies to 0.3.0
+- Refactored API for better consistency with Dart's standard library patterns
+  - Renamed `serialize`/`deserialize` methods to `encodeObject`/`decodeObject` in `RdfMapper` and `GraphOperations`
+  - Added collection variants with `encodeObjects`/`decodeObjects`
+
 ## [0.3.0] - 2025-05-08
 
 ### Changed

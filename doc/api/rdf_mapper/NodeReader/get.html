@@ -58,7 +58,7 @@
     <section class="multi-line-signature">
       
 <span class="returntype">T?</span>
-<span class="name ">get</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="get-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.8.1/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, {</span></li>
+<span class="name ">get</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="get-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, {</span></li>
 <li><span class="parameter" id="get-param-enforceSingleValue"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">enforceSingleValue</span> = <span class="default-value">true</span>, </span></li>
 <li><span class="parameter" id="get-param-iriNodeDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/IriNodeDeserializer-class.html">IriNodeDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">iriNodeDeserializer</span>, </span></li>
 <li><span class="parameter" id="get-param-iriTermDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/IriTermDeserializer-class.html">IriTermDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">iriTermDeserializer</span>, </span></li>
@@ -72,6 +72,7 @@
     
 <section class="desc markdown">
   <p>Gets an optional property value from the RDF graph.</p>
+<p>FIXME: Maybe this should be called <code>optional&lt;T&gt;()</code> instead of <code>get&lt;T&gt;()</code>?</p>
 <p>Use this method for properties that might not exist in the graph.
 If the property is not found, null is returned. If multiple values are found
 when only one is expected, an exception will be thrown (if enforceSingleValue is true).</p>
@@ -135,7 +136,7 @@ final publishDate = reader.get&lt;DateTime&gt;(dc.date);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.3.0
+      0.4.0-dev
   </span>
   
 </footer>

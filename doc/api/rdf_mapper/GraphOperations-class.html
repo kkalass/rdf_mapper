@@ -127,8 +127,8 @@ but can also be used independently when string conversion is not needed.</p>
       id="instance-methods">
     <h2>Methods</h2>
     <dl class="callables">
-        <dt id="deserialize" class="callable">
-  <span class="name"><a href="../rdf_mapper/GraphOperations/deserialize.html">deserialize</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="deserialize-param-graph"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.8.1/rdf/RdfGraph-class.html">RdfGraph</a></span> <span class="parameter-name">graph</span>, {</span><span class="parameter" id="deserialize-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?</span>})
+        <dt id="decodeObject" class="callable">
+  <span class="name"><a href="../rdf_mapper/GraphOperations/decodeObject.html">decodeObject</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="decodeObject-param-graph"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfGraph-class.html">RdfGraph</a></span> <span class="parameter-name">graph</span>, {</span><span class="parameter" id="decodeObject-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfSubject-class.html">RdfSubject</a>?</span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="decodeObject-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?</span>})
     <span class="returntype parameter">&#8594; T</span>
   </span>
   
@@ -140,21 +140,8 @@ but can also be used independently when string conversion is not needed.</p>
 
 </dd>
 
-        <dt id="deserializeAll" class="callable">
-  <span class="name"><a href="../rdf_mapper/GraphOperations/deserializeAll.html">deserializeAll</a></span><span class="signature">(<wbr><span class="parameter" id="deserializeAll-param-graph"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.8.1/rdf/RdfGraph-class.html">RdfGraph</a></span> <span class="parameter-name">graph</span>, {</span><span class="parameter" id="deserializeAll-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?</span>})
-    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
-  </span>
-  
-
-</dt>
-<dd>
-  Deserializes all deserializable subjects from an RDF graph into a list of objects.
-  
-
-</dd>
-
-        <dt id="deserializeAllOfType" class="callable">
-  <span class="name"><a href="../rdf_mapper/GraphOperations/deserializeAllOfType.html">deserializeAllOfType</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="deserializeAllOfType-param-graph"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.8.1/rdf/RdfGraph-class.html">RdfGraph</a></span> <span class="parameter-name">graph</span>, {</span><span class="parameter" id="deserializeAllOfType-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?</span>})
+        <dt id="decodeObjects" class="callable">
+  <span class="name"><a href="../rdf_mapper/GraphOperations/decodeObjects.html">decodeObjects</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="decodeObjects-param-graph"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfGraph-class.html">RdfGraph</a></span> <span class="parameter-name">graph</span>, {</span><span class="parameter" id="decodeObjects-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?</span>})
     <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
   </span>
   
@@ -166,15 +153,28 @@ but can also be used independently when string conversion is not needed.</p>
 
 </dd>
 
-        <dt id="deserializeBySubject" class="callable">
-  <span class="name"><a href="../rdf_mapper/GraphOperations/deserializeBySubject.html">deserializeBySubject</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="deserializeBySubject-param-graph"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.8.1/rdf/RdfGraph-class.html">RdfGraph</a></span> <span class="parameter-name">graph</span>, </span><span class="parameter" id="deserializeBySubject-param-subjectId"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.8.1/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subjectId</span>, {</span><span class="parameter" id="deserializeBySubject-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?</span>})
-    <span class="returntype parameter">&#8594; T</span>
+        <dt id="encodeObject" class="callable">
+  <span class="name"><a href="../rdf_mapper/GraphOperations/encodeObject.html">encodeObject</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="encodeObject-param-instance"><span class="type-annotation">T</span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="encodeObject-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?</span>})
+    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfGraph-class.html">RdfGraph</a></span>
   </span>
   
 
 </dt>
 <dd>
-  Deserializes an object of type <code>T</code> from an RDF graph, using a specific subject.
+  Serializes an object of type <code>T</code> to an RDF graph.
+  
+
+</dd>
+
+        <dt id="encodeObjects" class="callable">
+  <span class="name"><a href="../rdf_mapper/GraphOperations/encodeObjects.html">encodeObjects</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="encodeObjects-param-instance"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="encodeObjects-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?</span>})
+    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfGraph-class.html">RdfGraph</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Serializes a collection of objects of type <code>T</code> to an RDF graph.
   
 
 </dd>
@@ -192,15 +192,28 @@ but can also be used independently when string conversion is not needed.</p>
 
 </dd>
 
-        <dt id="serialize" class="callable">
-  <span class="name"><a href="../rdf_mapper/GraphOperations/serialize.html">serialize</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="serialize-param-instance"><span class="type-annotation">T</span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="serialize-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?</span>})
-    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rdf_core/0.8.1/rdf/RdfGraph-class.html">RdfGraph</a></span>
+        <dt id="objectCode" class="callable">
+  <span class="name"><a href="../rdf_mapper/GraphOperations/objectCode.html">objectCode</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="objectCode-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?</span>})
+    <span class="returntype parameter">&#8594; <a href="../rdf_mapper/RdfObjectCodec-class.html">RdfObjectCodec</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
   </span>
   
 
 </dt>
 <dd>
-  Serializes an object or collection of objects to an RDF graph.
+  
+  
+
+</dd>
+
+        <dt id="objectsCodec" class="callable">
+  <span class="name"><a href="../rdf_mapper/GraphOperations/objectsCodec.html">objectsCodec</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="objectsCodec-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?</span>})
+    <span class="returntype parameter">&#8594; <a href="../rdf_mapper/RdfObjectsCodec-class.html">RdfObjectsCodec</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
   
 
 </dd>
@@ -268,7 +281,7 @@ but can also be used independently when string conversion is not needed.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.3.0
+      0.4.0-dev
   </span>
   
 </footer>

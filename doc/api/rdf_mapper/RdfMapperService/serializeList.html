@@ -57,8 +57,8 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://pub.dev/documentation/rdf_core/0.8.1/rdf/RdfGraph-class.html">RdfGraph</a></span>
-<span class="name ">serializeList</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="serializeList-param-instances"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">instances</span>, {</span></li>
+<span class="returntype"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfGraph-class.html">RdfGraph</a></span>
+<span class="name ">serializeList</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="serializeList-param-instances"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">instances</span>, {</span></li>
 <li><span class="parameter" id="serializeList-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-registry"><span class="type-annotation"><a href="../../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span></li>
 </ol>)?, </span></li>
 </ol>})
@@ -89,7 +89,7 @@ final graph = service.serializeList(people);
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">RdfGraph serializeList&lt;T&gt;(
-  List&lt;T&gt; instances, {
+  Iterable&lt;T&gt; instances, {
   void Function(RdfMapperRegistry registry)? register,
 }) {
   _log.fine(&#39;Converting instance of ${T.toString()} to RDF graph&#39;);
@@ -134,7 +134,7 @@ final graph = service.serializeList(people);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.3.0
+      0.4.0-dev
   </span>
   
 </footer>

@@ -59,6 +59,11 @@ abstract interface class IriTermSerializer<T> implements TermSerializer<T> {
 /// which are used to represent concrete values in RDF graphs. This serializer is
 /// suited for primitive types and other objects that represent simple values.
 ///
+/// IMPORTANT: A literal term alone is not a valid complete RDF structure - literals
+/// can only appear as objects in RDF triples (subject-predicate-object). This serializer
+/// is meant to be used as part of a larger serialization process, typically within
+/// a [NodeSerializer] implementation for handling property values.
+///
 /// Common use cases include:
 /// - Strings, numbers, booleans, and dates
 /// - Value objects that conceptually represent single values

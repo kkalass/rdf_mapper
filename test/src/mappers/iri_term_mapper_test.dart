@@ -57,7 +57,7 @@ void main() {
       );
 
       // Serialize to graph
-      final graph = rdfMapper.graph.serialize(container);
+      final graph = rdfMapper.graph.encodeObject(container);
 
       // Verify the main subject properties
       final subjectTriples = graph.findTriples(
@@ -79,7 +79,7 @@ void main() {
 
       // Deserialize from graph
       final deserializedContainer = rdfMapper.graph
-          .deserialize<ResourceContainer>(graph);
+          .decodeObject<ResourceContainer>(graph);
 
       // Verify deserialized properties
       expect(deserializedContainer.id, equals(container.id));
@@ -112,11 +112,11 @@ void main() {
       );
 
       // Serialize to graph
-      final graph = rdfMapper.graph.serialize(container);
+      final graph = rdfMapper.graph.encodeObject(container);
 
       // Deserialize from graph
       final deserializedContainer = rdfMapper.graph
-          .deserialize<MultiReferenceContainer>(graph);
+          .decodeObject<MultiReferenceContainer>(graph);
 
       // Verify deserialized object properties
       expect(deserializedContainer.id, equals(container.id));
@@ -143,7 +143,7 @@ void main() {
       final resource = TransformedResource(id: 'resource-123');
 
       // Serialize to graph
-      final graph = rdfMapper.graph.serialize(resource);
+      final graph = rdfMapper.graph.encodeObject(resource);
 
       // Find the triple with the IRI term
       final identityTriples = graph.findTriples(
@@ -159,7 +159,7 @@ void main() {
 
       // Deserialize from graph
       final deserializedResource = rdfMapper.graph
-          .deserialize<TransformedResource>(graph);
+          .decodeObject<TransformedResource>(graph);
 
       // Verify the transformed URI was correctly extracted back to the simple ID
       expect(deserializedResource.id, equals('resource-123'));
@@ -182,7 +182,7 @@ void main() {
       bob.knows = [PersonReference(uri: alice.id)];
 
       // Serialize the structure to a graph
-      final graph = rdfMapper.graph.serialize([alice, bob]);
+      final graph = rdfMapper.graph.encodeObjects([alice, bob]);
 
       // Verify both subjects are in the graph
       final aliceSubject = graph.findTriples(
@@ -219,9 +219,7 @@ void main() {
       );
 
       // Deserialize all objects from the graph
-      final deserializedPeople = rdfMapper.graph.deserializeAllOfType<Person>(
-        graph,
-      );
+      final deserializedPeople = rdfMapper.graph.decodeObjects<Person>(graph);
       expect(deserializedPeople.length, equals(2));
 
       // Find Alice and Bob in the deserialized list

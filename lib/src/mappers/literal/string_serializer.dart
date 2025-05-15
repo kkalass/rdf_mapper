@@ -8,6 +8,11 @@ import 'package:rdf_mapper/src/mappers/literal/base_rdf_literal_term_serializer.
 /// It can be customized to use a different datatype IRI if needed, which is useful
 /// for specialized string formats like language tags or custom string types.
 ///
+/// Note: This serializer converts to a literal term, which can only exist as an
+/// object in an RDF triple (subject-predicate-object). Strings alone cannot be
+/// serialized as complete RDF documents. This serializer is typically used within
+/// node mappers to handle string property values.
+///
 /// This serializer is pre-registered in the default registry and is automatically
 /// used for serializing String values to RDF.
 ///

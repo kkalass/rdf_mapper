@@ -31,37 +31,29 @@ void main() {
   // --- PRIMARY API: String-based operations ---
 
   // Convert the book to RDF Turtle format
-  final turtle = rdf.serialize(book);
+  final turtle = rdf.encodeObject(book, baseUri: 'http://example.org/book/');
 
   // Print the resulting Turtle representation
   final expectedTurtle = '''
+@base <http://example.org/book/> .
 @prefix schema: <https://schema.org/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://example.org/book/hobbit> a schema:Book;
-    schema:name "The Hobbit";
+<hobbit> a schema:Book;
+    schema:aggregateRating 5;
     schema:author "J.R.R. Tolkien";
     schema:datePublished "1937-09-20T23:00:00.000Z"^^xsd:dateTime;
+    schema:hasPart [ a schema:Chapter ; schema:name "An Unexpected Party" ; schema:position 1 ], [ a schema:Chapter ; schema:name "Roast Mutton" ; schema:position 2 ], [ a schema:Chapter ; schema:name "A Short Rest" ; schema:position 3 ];
     schema:isbn <urn:isbn:9780618260300>;
-    schema:aggregateRating "5"^^xsd:integer;
-    schema:hasPart _:b0, _:b1, _:b2 .
-_:b0 a schema:Chapter;
-    schema:name "An Unexpected Party";
-    schema:position "1"^^xsd:integer .
-_:b1 a schema:Chapter;
-    schema:name "Roast Mutton";
-    schema:position "2"^^xsd:integer .
-_:b2 a schema:Chapter;
-    schema:name "A Short Rest";
-    schema:position "3"^^xsd:integer .
+    schema:name "The Hobbit" .
 ''';
 
   print('Book as RDF Turtle:');
   print(turtle);
-  assert(turtle == expectedTurtle);
+  assert(turtle.trim() == expectedTurtle.trim());
 
   // Deserialize back to a Book object
-  final deserializedBook = rdf.deserialize<Book>(turtle);
+  final deserializedBook = rdf.decodeObject<Book>(turtle);
 
   // Verify it worked correctly
   print('\nDeserialized book:');
@@ -95,7 +87,7 @@ _:b2 a schema:Chapter;
 ''';
 
   // Use the type-safe deserialization for collections
-  final books = rdf.deserializeAllOfType<Book>(multipleBooks);
+  final books = rdf.decodeObjects<Book>(multipleBooks);
 
   print('\nDeserialized multiple books:');
   print('Found ${books.length} books');
@@ -108,11 +100,11 @@ _:b2 a schema:Chapter;
   print('\n=== GRAPH API EXAMPLES ===');
 
   // Convert the book to an RDF graph
-  final bookGraph = rdf.graph.serialize(book);
+  final bookGraph = rdf.graph.encodeObject(book);
   print('Graph contains ${bookGraph.size} triples');
 
   // Deserialize from the graph
-  final bookFromGraph = rdf.graph.deserialize<Book>(bookGraph);
+  final bookFromGraph = rdf.graph.decodeObject<Book>(bookGraph);
   print('Successfully deserialized book from graph: ${bookFromGraph.title}');
 
   // Create a combined graph with more data
@@ -127,11 +119,11 @@ _:b2 a schema:Chapter;
   );
 
   // Serialize multiple books to a single graph
-  final booksGraph = rdf.graph.serialize([book, anotherBook]);
+  final booksGraph = rdf.graph.encodeObjects([book, anotherBook]);
   print('Combined graph contains ${booksGraph.size} triples');
 
   // Retrieve all books from the graph with type safety
-  final booksFromGraph = rdf.graph.deserializeAllOfType<Book>(booksGraph);
+  final booksFromGraph = rdf.graph.decodeObjects<Book>(booksGraph);
   print('Found ${booksFromGraph.length} books in the graph:');
   for (final book in booksFromGraph) {
     print('- ${book.title} (${book.published.year})');

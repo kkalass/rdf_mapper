@@ -21,38 +21,31 @@ void main() {
     test('should expose string-based operations at top level', () {
       // These methods should exist and be callable on the RdfMapper instance
       // ignore: unnecessary_type_check
-      expect(rdfMapper.deserialize is Function, isTrue);
+      expect(rdfMapper.decodeObject is Function, isTrue);
       // ignore: unnecessary_type_check
-      expect(rdfMapper.deserializeBySubject is Function, isTrue);
+      expect(rdfMapper.decodeObjects is Function, isTrue);
       // ignore: unnecessary_type_check
-      expect(rdfMapper.deserializeAll is Function, isTrue);
+      expect(rdfMapper.encodeObject is Function, isTrue);
       // ignore: unnecessary_type_check
-      expect(rdfMapper.deserializeAllOfType is Function, isTrue);
-      // ignore: unnecessary_type_check
-      expect(rdfMapper.serialize is Function, isTrue);
+      expect(rdfMapper.encodeObjects is Function, isTrue);
 
       // Additional verification that methods can be called without errors
-      expect(() => rdfMapper.deserializeAllOfType.runtimeType, returnsNormally);
+      expect(() => rdfMapper.decodeObjects.runtimeType, returnsNormally);
     });
 
     test('should expose graph-based operations under graph property', () {
       // These methods should exist and be callable on the graph property
       // ignore: unnecessary_type_check
-      expect(rdfMapper.graph.deserialize is Function, isTrue);
+      expect(rdfMapper.graph.decodeObject is Function, isTrue);
       // ignore: unnecessary_type_check
-      expect(rdfMapper.graph.deserializeBySubject is Function, isTrue);
+      expect(rdfMapper.graph.decodeObjects is Function, isTrue);
       // ignore: unnecessary_type_check
-      expect(rdfMapper.graph.deserializeAll is Function, isTrue);
+      expect(rdfMapper.graph.encodeObject is Function, isTrue);
       // ignore: unnecessary_type_check
-      expect(rdfMapper.graph.deserializeAllOfType is Function, isTrue);
-      // ignore: unnecessary_type_check
-      expect(rdfMapper.graph.serialize is Function, isTrue);
+      expect(rdfMapper.graph.encodeObjects is Function, isTrue);
 
       // Additional verification that methods can be called without errors
-      expect(
-        () => rdfMapper.graph.deserializeAllOfType.runtimeType,
-        returnsNormally,
-      );
+      expect(() => rdfMapper.graph.decodeObjects.runtimeType, returnsNormally);
     });
   });
 
@@ -72,11 +65,11 @@ void main() {
       );
 
       // String operations
-      final turtle = rdfMapper.serialize(entity);
+      final turtle = rdfMapper.encodeObject(entity);
       expect(turtle, contains('http://example.org/entity/1'));
       expect(turtle, contains('Test Entity'));
 
-      final deserialized = rdfMapper.deserialize<TestEntity>(turtle);
+      final deserialized = rdfMapper.decodeObject<TestEntity>(turtle);
       expect(deserialized.id, equals(entity.id));
       expect(deserialized.name, equals(entity.name));
       expect(deserialized.value, equals(entity.value));
@@ -90,10 +83,10 @@ void main() {
       );
 
       // Graph operations
-      final graph = rdfMapper.graph.serialize(entity);
+      final graph = rdfMapper.graph.encodeObject(entity);
       expect(graph.size, greaterThan(0));
 
-      final deserialized = rdfMapper.graph.deserialize<TestEntity>(graph);
+      final deserialized = rdfMapper.graph.decodeObject<TestEntity>(graph);
       expect(deserialized.id, equals(entity.id));
       expect(deserialized.name, equals(entity.name));
       expect(deserialized.value, equals(entity.value));
@@ -114,19 +107,20 @@ void main() {
       ];
 
       // String operations with list
-      final turtle = rdfMapper.serialize(entities);
+      final turtle = rdfMapper.encodeObjects(entities);
       expect(turtle, contains('http://example.org/entity/1'));
       expect(turtle, contains('http://example.org/entity/2'));
 
-      final deserialized = rdfMapper.deserializeAllOfType<TestEntity>(turtle);
+      final deserialized = rdfMapper.decodeObjects<TestEntity>(turtle);
       expect(deserialized.length, equals(2));
       expect(deserialized[0].name, equals('Entity 1'));
       expect(deserialized[1].name, equals('Entity 2'));
 
       // Graph operations with list
-      final graph = rdfMapper.graph.serialize(entities);
-      final deserializedFromGraph = rdfMapper.graph
-          .deserializeAllOfType<TestEntity>(graph);
+      final graph = rdfMapper.graph.encodeObjects(entities);
+      final deserializedFromGraph = rdfMapper.graph.decodeObjects<TestEntity>(
+        graph,
+      );
       expect(deserializedFromGraph.length, equals(2));
     });
   });

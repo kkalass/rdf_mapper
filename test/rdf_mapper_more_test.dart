@@ -18,11 +18,11 @@ void main() {
       final originalItem = TestItem(name: 'Graph conversion test', age: 42);
 
       // Convert to graph
-      final graph = rdf.graph.serialize<TestItem>(originalItem);
+      final graph = rdf.graph.encodeObject<TestItem>(originalItem);
       expect(graph.triples, isNotEmpty);
 
       // Convert back to item
-      final reconstructedItem = rdf.graph.deserialize<TestItem>(graph);
+      final reconstructedItem = rdf.graph.decodeObject<TestItem>(graph);
 
       // Verify properties match
       expect(reconstructedItem.name, equals(originalItem.name));
@@ -30,13 +30,13 @@ void main() {
     });
 
     test('Converting item to turtle', () {
-      final codec = rdfCore.codec('text/turtle');
+      final codec = rdfCore.codec(contentType: 'text/turtle');
       // Create test item
       final originalItem = TestItem(name: 'Graph Conversion Test', age: 42);
 
       // Convert to graph, using a custom deserializer to provide a custom
       // storage root.
-      final graph = rdf.graph.serialize<TestItem>(
+      final graph = rdf.graph.encodeObject<TestItem>(
         originalItem,
         register:
             (registry) => registry.registerMapper(
@@ -46,28 +46,39 @@ void main() {
       expect(graph.triples, isNotEmpty);
       final turtle = codec.encode(graph);
 
+      print(turtle);
       // Verify generated turtle
       expect(
         turtle,
         equals(
           """
+@prefix to: <http://kalass.de/dart/rdf/test-ontology#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<https://example.com/pod/Graph%20Conversion%20Test> a <http://kalass.de/dart/rdf/test-ontology#TestItem>;
-    <http://kalass.de/dart/rdf/test-ontology#age> 42;
-    <http://kalass.de/dart/rdf/test-ontology#name> "Graph Conversion Test" .
+<https://example.com/pod/Graph%20Conversion%20Test> a to:TestItem;
+    to:age 42;
+    to:name "Graph Conversion Test" .
 """.trim(),
         ),
       );
+
+      // Convert back to graph
+      final graph2 = codec.decode(turtle);
+      expect(graph2, equals(graph));
     });
 
     test('Converting item to turtle with prefixes', () {
-      final codec = rdfCore.codec('text/turtle');
+      final codec = rdfCore.codec(
+        contentType: 'text/turtle',
+        encoderOptions: TurtleEncoderOptions(
+          customPrefixes: {"test": "http://kalass.de/dart/rdf/test-ontology#"},
+        ),
+      );
       // Create test item
       final originalItem = TestItem(name: 'Graph Conversion Test', age: 42);
 
       // Convert to graph
-      final graph = rdf.graph.serialize<TestItem>(
+      final graph = rdf.graph.encodeObject<TestItem>(
         originalItem,
         register:
             (registry) => registry.registerMapper(
@@ -75,11 +86,8 @@ void main() {
             ),
       );
       expect(graph.triples, isNotEmpty);
-      final turtle = codec.encode(
-        graph,
-        customPrefixes: {"test": "http://kalass.de/dart/rdf/test-ontology#"},
-      );
-
+      final turtle = codec.encode(graph);
+      print(turtle);
       // Verify generated turtle
       expect(
         turtle,
@@ -97,7 +105,7 @@ void main() {
     });
 
     test('Converting item from turtle ', () {
-      final codec = rdfCore.codec('text/turtle');
+      final codec = rdfCore.codec(contentType: 'text/turtle');
       // Create test item
       final turtle = """
 @prefix test: <http://kalass.de/dart/rdf/test-ontology#> .
@@ -110,7 +118,7 @@ void main() {
 
       // Convert to graph
       final graph = codec.decode(turtle);
-      final allSubjects = rdf.graph.deserializeAll(
+      final allSubjects = rdf.graph.decodeObjects(
         graph,
         register:
             (registry) => registry.registerMapper(

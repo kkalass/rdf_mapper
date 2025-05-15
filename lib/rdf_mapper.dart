@@ -43,10 +43,10 @@
 /// rdfMapper.registerMapper<Person>(PersonMapper());
 ///
 /// // String-based serialization
-/// final turtle = rdfMapper.serialize(myPerson);
+/// final turtle = rdfMapper.encodeObject(myPerson);
 ///
 /// // String-based deserialization
-/// final person = rdfMapper.deserialize<Person>(turtle);
+/// final person = rdfMapper.decodeObject<Person>(turtle);
 ///
 /// // Graph-based operations
 /// final graph = rdfMapper.graph.serialize(myPerson);
@@ -58,6 +58,7 @@ library rdf_mapper;
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/graph_operations.dart';
 import 'package:rdf_mapper/src/api/mapper.dart';
+import 'package:rdf_mapper/src/codec/rdf_mapper_string_codec.dart';
 
 import 'src/api/rdf_mapper_registry.dart';
 import 'src/api/rdf_mapper_service.dart';
@@ -75,8 +76,10 @@ export 'src/api/rdf_mapper_service.dart';
 export 'src/api/serialization_context.dart';
 export 'src/api/serialization_service.dart';
 export 'src/api/serializer.dart';
-export 'src/util/namespace.dart';
+export 'src/codec/rdf_mapper_codec.dart';
+export 'src/codec/rdf_mapper_string_codec.dart';
 // Exception exports - essential for error handling
+export 'src/exceptions/codec_exceptions.dart';
 export 'src/exceptions/deserialization_exception.dart';
 export 'src/exceptions/deserializer_not_found_exception.dart';
 export 'src/exceptions/property_value_not_found_exception.dart';
@@ -84,17 +87,14 @@ export 'src/exceptions/rdf_mapping_exception.dart';
 export 'src/exceptions/serialization_exception.dart';
 export 'src/exceptions/serializer_not_found_exception.dart';
 export 'src/exceptions/too_many_property_values_exception.dart';
-
 // Standard mapper exports - useful as examples or for extension
 export 'src/mappers/iri/extracting_iri_term_deserializer.dart';
 export 'src/mappers/iri/iri_full_deserializer.dart';
 export 'src/mappers/iri/iri_full_serializer.dart';
 export 'src/mappers/iri/iri_id_serializer.dart';
-
 // Base classes for literal mappers - essential for custom mapper implementation
 export 'src/mappers/literal/base_rdf_literal_term_deserializer.dart';
 export 'src/mappers/literal/base_rdf_literal_term_serializer.dart';
-
 // Standard literal mappers - useful for reference and extension
 export 'src/mappers/literal/bool_deserializer.dart';
 export 'src/mappers/literal/bool_serializer.dart';
@@ -106,6 +106,7 @@ export 'src/mappers/literal/int_deserializer.dart';
 export 'src/mappers/literal/int_serializer.dart';
 export 'src/mappers/literal/string_deserializer.dart';
 export 'src/mappers/literal/string_serializer.dart';
+export 'src/util/namespace.dart';
 
 /// Central facade for the RDF Mapper library, providing access to object mapping and registry operations.
 ///
@@ -114,7 +115,7 @@ export 'src/mappers/literal/string_serializer.dart';
 /// through the [graph] property.
 ///
 /// The API is organized into two main categories:
-/// - Primary API: String-based operations for typical use cases
+/// - Primary API: String-based operations ([encodeObject], [decodeObject], [encodeObjects], [decodeObjects])
 /// - Graph API: Direct graph manipulation through the [graph] property for advanced scenarios
 final class RdfMapper {
   final RdfMapperService _service;
@@ -126,16 +127,42 @@ final class RdfMapper {
   /// Allows dependency injection of both the registry and RDF core components,
   /// enabling more flexible usage and better testability.
   ///
-  /// @param registry The mapper registry to use for serialization/deserialization
-  /// @param rdfCore Optional RDF core instance for string parsing/serialization
+  /// [registry] The mapper registry to use for serialization/deserialization.
+  /// [rdfCore] Optional RDF core instance for string parsing/serialization.
   RdfMapper({required RdfMapperRegistry registry, RdfCore? rdfCore})
     : _service = RdfMapperService(registry: registry),
       _rdfCore = rdfCore ?? RdfCore.withStandardCodecs(),
       _graphOperations = GraphOperations(RdfMapperService(registry: registry));
 
   /// Creates an RDF Mapper facade with a default registry and standard mappers.
+  ///
+  /// Returns a new RdfMapper instance initialized with a default registry.
+  /// This is the simplest way to create an instance for general use.
   factory RdfMapper.withDefaultRegistry() =>
       RdfMapper(registry: RdfMapperRegistry());
+
+  /// Creates an RDF Mapper facade with a custom-configured registry.
+  ///
+  /// This factory allows you to pass a callback function that configures
+  /// the registry with custom mappers or serializers.
+  ///
+  /// [register] A callback function that receives the newly created registry
+  ///   and can register custom mappers on it.
+  ///
+  /// Example:
+  /// ```dart
+  /// final mapper = RdfMapper.withMappers((registry) {
+  ///   registry.registerMapper<Person>(PersonMapper());
+  ///   registry.registerMapper<Book>(BookMapper());
+  /// });
+  /// ```
+  factory RdfMapper.withMappers(
+    void Function(RdfMapperRegistry registry) register,
+  ) {
+    final registry = RdfMapperRegistry();
+    register(registry);
+    return RdfMapper(registry: registry);
+  }
 
   /// Access to the underlying registry for custom mapper registration.
   RdfMapperRegistry get registry => _service.registry;
@@ -148,18 +175,105 @@ final class RdfMapper {
 
   // ---- PRIMARY API: STRING-BASED OPERATIONS ----
 
+  /// Returns a codec for converting between objects of type [T] and RDF strings.
+  ///
+  /// The returned codec handles the entire conversion pipeline while preserving
+  /// all important options:
+  /// - For encoding: Object → RDF Graph → String
+  /// - For decoding: String → RDF Graph → Object
+  ///
+  /// This provides a functional-style API that can be composed with other converters
+  /// when needed.
+  ///
+  /// Note that you either need to register a [IriNodeMapper] for the type [T]
+  /// globally before using this codec or pass a [register] function to the codec
+  /// which registers this mapper (and any further custom ones, if applicable).
+  ///
+  ///
+  /// Example:
+  /// ```dart
+  /// final codec = rdfMapper.objectCodec<Person>();
+  /// final turtle = codec.encode(person, baseUri: 'http://example.org/');
+  /// final person2 = codec.decode(turtle, documentUrl: 'http://example.org/');
+  /// ```
+  ///
+  /// [contentType] specifies the RDF format (e.g., 'text/turtle', 'application/ld+json').
+  /// If not specified, defaults to that format that was registered first in the RdfCodecRegistry - usually 'text/turtle'.
+  RdfObjectStringCodec<T> objectCodec<T>({
+    String? contentType,
+    void Function(RdfMapperRegistry registry)? register,
+    RdfGraphDecoderOptions? stringDecoderOptions,
+    RdfGraphEncoderOptions? stringEncoderOptions,
+  }) {
+    return RdfObjectStringCodec<T>(
+      objectCodec: _graphOperations.objectCode<T>(register: register),
+      graphCodec: _rdfCore.codec(
+        contentType: contentType,
+        encoderOptions: stringEncoderOptions,
+        decoderOptions: stringDecoderOptions,
+      ),
+    );
+  }
+
+  /// Returns a codec for handling collections of type [T] and RDF strings.
+  ///
+  /// The returned codec handles the entire conversion pipeline while preserving
+  /// all important options:
+  /// - For encoding: Iterable<Object> → RDF Graph → String
+  /// - For decoding: String → RDF Graph → Iterable<Object>
+  ///
+  /// This codec is specifically designed for working with collections of objects,
+  /// allowing efficient batch processing of multiple entities in a single operation.
+  ///
+  /// Note that it is perfectly fine to use [Object] for [T] here, the actual type
+  /// will be inferred from the input. The decoder will rely on
+  /// `rdf:type` to find the correct mapper for each object.
+  ///
+  /// IMPORTANT: When using this method, the type [T] must be mapped using an
+  /// [IriNodeMapper] either globally in the [RdfMapper] instance or locally by
+  /// providing a register callback and register it there.
+  ///
+  /// [contentType] specifies the RDF format (e.g., 'text/turtle', 'application/ld+json').
+  /// If not specified, defaults to the format registered first in the RdfCodecRegistry.
+  /// [register] allows temporary registration of custom mappers for this codec.
+  /// [stringDecoderOptions] and [stringEncoderOptions] configure string encoding/decoding.
+  RdfObjectsStringCodec<T> objectsCodec<T>({
+    String? contentType,
+    void Function(RdfMapperRegistry registry)? register,
+    RdfGraphDecoderOptions? stringDecoderOptions,
+    RdfGraphEncoderOptions? stringEncoderOptions,
+  }) {
+    return RdfObjectsStringCodec<T>(
+      objectsCodec: _graphOperations.objectsCodec<T>(register: register),
+      graphCodec: _rdfCore.codec(
+        contentType: contentType,
+        encoderOptions: stringEncoderOptions,
+        decoderOptions: stringDecoderOptions,
+      ),
+    );
+  }
+
   /// Deserializes an object of type [T] from an RDF string representation.
   ///
   /// This method parses the provided [rdfString] into an RDF graph using the specified
   /// [contentType], then deserializes it into an object of type [T] using registered mappers.
   ///
-  /// [contentType] should be a MIME type like 'text/turtle' or 'application/ld+json'.
-  /// If not specified, the contentType will be auto-detected.
+  /// IMPORTANT: When using this method, the type [T] must be mapped using an
+  /// [IriNodeMapper] either globally in the [RdfMapper] instance or locally by
+  /// providing a register callback and register it there.
   ///
+  /// Simple types like String, int, etc. that
+  /// use [LiteralTermMapper] cannot be directly deserialized as complete RDF documents,
+  /// since RDF literals can only exist as objects within triples, not as standalone
+  /// subjects. Attempting to use this method with literal types will result in errors.
+  ///
+  /// [rdfString] The RDF string representation to deserialize.
+  /// [subject] Optional specific subject to deserialize from the graph.
+  /// [contentType] MIME type like 'text/turtle' or 'application/ld+json'.
+  ///   If not specified, the contentType will be auto-detected.
   /// [documentUrl] Optional base URI for resolving relative references in the document.
-  ///
-  /// The [register] callback allows temporary registration of custom mappers
-  /// for this operation without affecting the global registry.
+  /// [register] Callback function to temporarily register custom mappers.
+  /// [stringDecoderOptions] Additional options for string decoding.
   ///
   /// Usage:
   /// ```dart
@@ -173,60 +287,48 @@ final class RdfMapper {
   ///     foaf:age 30 .
   /// ''';
   ///
-  /// final person = rdfMapper.deserialize<Person>(turtle);
+  /// final person = rdfMapper.decodeObject<Person>(turtle);
   /// ```
-  T deserialize<T>(
+  T decodeObject<T>(
     String rdfString, {
+    RdfSubject? subject,
     String? contentType,
     String? documentUrl,
     void Function(RdfMapperRegistry registry)? register,
+    RdfGraphDecoderOptions? stringDecoderOptions,
   }) {
-    final graph = _rdfCore.decode(
-      rdfString,
+    return objectCodec<T>(
       contentType: contentType,
-      documentUrl: documentUrl,
-    );
-    return _graphOperations.deserialize<T>(graph, register: register);
-  }
-
-  /// Deserializes an object of type [T] from an RDF string, identified by the subject.
-  ///
-  /// This method is similar to [deserialize] but allows specifying a particular subject
-  /// to deserialize when the RDF representation contains multiple subjects.
-  ///
-  /// [contentType] should be a MIME type like 'text/turtle' or 'application/ld+json'.
-  /// If not specified, the contentType will be auto-detected.
-  ///
-  /// [documentUrl] Optional base URI for resolving relative references in the document.
-  T deserializeBySubject<T>(
-    String rdfString,
-    RdfSubject subject, {
-    String? contentType,
-    String? documentUrl,
-    void Function(RdfMapperRegistry registry)? register,
-  }) {
-    final graph = _rdfCore.decode(
-      rdfString,
-      contentType: contentType,
-      documentUrl: documentUrl,
-    );
-    return _graphOperations.deserializeBySubject<T>(
-      graph,
-      subject,
       register: register,
-    );
+      stringDecoderOptions: stringDecoderOptions,
+    ).decode(rdfString, documentUrl: documentUrl, subject: subject);
   }
 
   /// Deserializes all subjects from an RDF string into a list of objects.
   ///
   /// This method parses the RDF string and deserializes all subjects in the graph
-  /// into objects using the registered mappers. The resulting list may contain
-  /// objects of different types.
+  /// into objects using the registered mappers. The resulting list contains
+  /// only objects of type [T].
   ///
-  /// [contentType] should be a MIME type like 'text/turtle' or 'application/ld+json'.
-  /// If not specified, the contentType will be auto-detected.
+  /// Note that it is perfectly fine to use [Object] for [T] here, the actual type
+  /// will be inferred from the input. The decoder will rely on
+  /// `rdf:type` to find the correct mapper for each object.
   ///
+  /// IMPORTANT: When using this method, the type [T] must be mapped using an
+  /// [IriNodeMapper] either globally in the [RdfMapper] instance or locally by
+  /// providing a register callback and register it there.
+  ///
+  /// Simple types like String, int, etc. that
+  /// use [LiteralTermMapper] cannot be directly deserialized as complete RDF documents,
+  /// since RDF literals can only exist as objects within triples, not as standalone
+  /// subjects. Attempting to use this method with literal types will result in errors.
+  ///
+  /// [rdfString] The RDF string representation to deserialize.
+  /// [contentType] MIME type like 'text/turtle' or 'application/ld+json'.
+  ///   If not specified, the contentType will be auto-detected.
   /// [documentUrl] Optional base URI for resolving relative references in the document.
+  /// [register] Callback function to temporarily register custom mappers.
+  /// [stringDecoderOptions] Additional options for string decoding.
   ///
   /// Usage:
   /// ```dart
@@ -243,45 +345,20 @@ final class RdfMapper {
   ///     foaf:age 28 .
   /// ''';
   ///
-  /// final people = rdfMapper.deserializeAll(turtle)
-  ///   .whereType<Person>()
-  ///   .toList();
+  /// final people = rdfMapper.decodeObjects<Person>(turtle);
   /// ```
-  List<Object> deserializeAll(
+  List<T> decodeObjects<T>(
     String rdfString, {
     String? contentType,
     String? documentUrl,
     void Function(RdfMapperRegistry registry)? register,
+    RdfGraphDecoderOptions? stringDecoderOptions,
   }) {
-    final graph = _rdfCore.decode(
-      rdfString,
+    return objectsCodec<T>(
       contentType: contentType,
-      documentUrl: documentUrl,
-    );
-    return _graphOperations.deserializeAll(graph, register: register);
-  }
-
-  /// Deserializes all subjects of type [T] from an RDF string.
-  ///
-  /// This method is a type-safe variant of [deserializeAll] that filters
-  /// the results to only include objects of the specified type.
-  ///
-  /// [contentType] should be a MIME type like 'text/turtle' or 'application/ld+json'.
-  /// If not specified, the contentType will be auto-detected.
-  ///
-  /// [documentUrl] Optional base URI for resolving relative references in the document.
-  List<T> deserializeAllOfType<T>(
-    String rdfString, {
-    String? contentType,
-    String? documentUrl,
-    void Function(RdfMapperRegistry registry)? register,
-  }) {
-    final graph = _rdfCore.decode(
-      rdfString,
-      contentType: contentType,
-      documentUrl: documentUrl,
-    );
-    return _graphOperations.deserializeAllOfType<T>(graph, register: register);
+      register: register,
+      stringDecoderOptions: stringDecoderOptions,
+    ).decode(rdfString, documentUrl: documentUrl).toList();
   }
 
   /// Serializes a Dart object or collection to an RDF string representation.
@@ -290,47 +367,95 @@ final class RdfMapper {
   /// - For a single object, it creates a graph with that object's triples
   /// - For an Iterable of objects, it combines all objects into a single graph
   ///
-  /// Parameters:
-  /// - [instance]: The object or collection of objects to serialize
-  /// - [contentType]: MIME type for output format (e.g., 'text/turtle', 'application/ld+json')
-  ///   If omitted, defaults to 'text/turtle'
-  /// - [baseUri]: Optional base URI for the RDF document, used for relative IRI resolution
-  /// - [register]: Callback function to temporarily register additional mappers for this operation
+  /// IMPORTANT: When using this method, the type [T] must be mapped using an
+  /// [IriNodeMapper] either globally in the [RdfMapper] instance or locally by
+  /// providing a register callback and register it there.
+  ///
+  /// Simple types like String, int, etc. that
+  /// use [LiteralTermMapper] cannot be directly serialized as complete RDF documents,
+  /// since RDF literals can only exist as objects within triples, not as standalone
+  /// subjects. Attempting to use this method with literal types will result in errors.
+  ///
+  /// [instance] The object to serialize.
+  /// [contentType] MIME type for output format (e.g., 'text/turtle', 'application/ld+json').
+  ///   If omitted, defaults to 'text/turtle'.
+  /// [baseUri] Optional base URI for the RDF document, used for relative IRI resolution.
+  /// [stringEncoderOptions] Additional options for string encoding.
+  /// [register] Callback function to temporarily register additional mappers for this operation.
   ///
   /// Returns a string containing the serialized RDF representation.
   ///
-  /// Example with single instance:
+  /// Example:
   /// ```dart
   /// final person = Person(
   ///   id: 'http://example.org/person/1',
   ///   name: 'Alice',
   /// );
   ///
-  /// final turtle = rdfMapper.serialize(person);
+  /// final turtle = rdfMapper.encodeObject(person);
   /// ```
   ///
-  /// Example with multiple instances:
+  /// Throws [SerializerNotFoundException] if no suitable mapper is registered for the instance type.
+  String encodeObject<T>(
+    T instance, {
+    String? contentType,
+    String? baseUri,
+    RdfGraphEncoderOptions? stringEncoderOptions,
+    void Function(RdfMapperRegistry registry)? register,
+  }) {
+    // Use the codec approach with the appropriate type
+    return objectCodec<T>(
+      contentType: contentType,
+      stringEncoderOptions: stringEncoderOptions,
+      register: register,
+    ).encode(instance, baseUri: baseUri);
+  }
+
+  /// Serializes a collection of Dart objects to an RDF string representation.
+  ///
+  /// This method is similar to [encodeObject] but optimized for collections of objects.
+  /// It combines all objects into a single RDF graph before serializing to a string.
+  ///
+  /// IMPORTANT: When using this method, the type [T] must be mapped using an
+  /// [IriNodeMapper] either globally in the [RdfMapper] instance or locally by
+  /// providing a register callback.
+  ///
+  /// [instance] The collection of objects to serialize.
+  /// [contentType] MIME type for output format (e.g., 'text/turtle', 'application/ld+json').
+  ///   If omitted, defaults to 'text/turtle'.
+  /// [baseUri] Optional base URI for the RDF document, used for relative IRI resolution.
+  /// [stringEncoderOptions] Additional options for string encoding.
+  /// [register] Callback function to temporarily register additional mappers for this operation.
+  ///
+  /// Returns a string containing the serialized RDF representation of all objects.
+  ///
+  /// Example:
   /// ```dart
   /// final people = [
   ///   Person(id: 'http://example.org/person/1', name: 'John Doe'),
   ///   Person(id: 'http://example.org/person/2', name: 'Jane Smith')
   /// ];
   ///
-  /// final jsonLd = rdfMapper.serialize(
+  /// final jsonLd = rdfMapper.encodeObjects(
   ///   people,
   ///   contentType: 'application/ld+json',
   /// );
   /// ```
   ///
   /// Throws [SerializerNotFoundException] if no suitable mapper is registered for the instance type.
-  String serialize<T>(
-    T instance, {
+  String encodeObjects<T>(
+    Iterable<T> instance, {
     String? contentType,
     String? baseUri,
+    RdfGraphEncoderOptions? stringEncoderOptions,
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    final graph = this.graph.serialize<T>(instance, register: register);
-    return _rdfCore.encode(graph, contentType: contentType, baseUri: baseUri);
+    // Use the codec approach with the appropriate type
+    return objectsCodec<T>(
+      contentType: contentType,
+      stringEncoderOptions: stringEncoderOptions,
+      register: register,
+    ).encode(instance, baseUri: baseUri);
   }
 
   /// Registers a mapper for bidirectional conversion between Dart objects and RDF.
@@ -356,27 +481,26 @@ final class RdfMapper {
   /// Example with IriNodeMapper:
   /// ```dart
   /// class PersonMapper implements IriNodeMapper<Person> {
-  ///   static final foaf = Namespace('http://xmlns.com/foaf/0.1/');
-  ///   static final rdf = Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
   ///
   ///   @override
   ///   RdfIriNode toRdfNode(Person instance, SerializationContext context) {
-  ///     return context.nodeBuilder(Uri.parse(instance.id))
-  ///       .iri(rdf('type'), foaf('Person'))
-  ///       .literal(foaf('name'), instance.name)
+  ///     return context.nodeBuilder(IriTerm(instance.id))
+  ///       .literal(FoafPerson.name, instance.name)
   ///       .build();
   ///   }
   ///
   ///   @override
-  ///   Person fromRdfNode(RdfSubject subject, DeserializationContext context) {
+  ///   Person fromRdfNode(IriTerm subject, DeserializationContext context) {
   ///     return Person(
-  ///       id: subject.iri.toString(),
-  ///       name: context.reader.require<String>(foaf('name')),
+  ///       // you can of course also parse the iri to extract the actual id
+  ///       // and then create the full IRI from the id in toRdfNode
+  ///       id: subject.iri,
+  ///       name: context.reader.require<String>(FoafPerson.name),
   ///     );
   ///   }
   ///
   ///   @override
-  ///   RdfIriReference typeIri() => foaf('Person');
+  ///   IriTerm get typeIri => FoafPerson.classIri;
   /// }
   ///
   /// // Register the mapper

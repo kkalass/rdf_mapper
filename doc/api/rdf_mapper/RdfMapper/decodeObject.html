@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the decodeObject method from the RdfMapper class, for the Dart programming language.">
+  <title>decodeObject method - RdfMapper class - rdf_mapper library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper">rdf_mapper.dart</a></li>
+    <li><a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a></li>
+    <li class="self-crumb">decodeObject&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
+  </ol>
+  <div class="self-name">decodeObject</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button" title="Toggle brightness">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        dark_mode
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        light_mode
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="rdf_mapper&#47;RdfMapper-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">decodeObject&lt;<wbr><span class="type-parameter">T</span>&gt;</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype">T</span>
+<span class="name ">decodeObject</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="decodeObject-param-rdfString"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">rdfString</span>, {</span></li>
+<li><span class="parameter" id="decodeObject-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfSubject-class.html">RdfSubject</a>?</span> <span class="parameter-name">subject</span>, </span></li>
+<li><span class="parameter" id="decodeObject-param-contentType"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">contentType</span>, </span></li>
+<li><span class="parameter" id="decodeObject-param-documentUrl"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">documentUrl</span>, </span></li>
+<li><span class="parameter" id="decodeObject-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-registry"><span class="type-annotation"><a href="../../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span></li>
+</ol>)?, </span></li>
+<li><span class="parameter" id="decodeObject-param-stringDecoderOptions"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfGraphDecoderOptions-class.html">RdfGraphDecoderOptions</a>?</span> <span class="parameter-name">stringDecoderOptions</span>, </span></li>
+</ol>})
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Deserializes an object of type <code>T</code> from an RDF string representation.</p>
+<p>This method parses the provided <code>rdfString</code> into an RDF graph using the specified
+<code>contentType</code>, then deserializes it into an object of type <code>T</code> using registered mappers.</p>
+<p>IMPORTANT: When using this method, the type <code>T</code> must be mapped using an
+<a href="../../rdf_mapper/IriNodeMapper-class.html">IriNodeMapper</a> either globally in the <a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a> instance or locally by
+providing a register callback and register it there.</p>
+<p>Simple types like String, int, etc. that
+use <a href="../../rdf_mapper/LiteralTermMapper-class.html">LiteralTermMapper</a> cannot be directly deserialized as complete RDF documents,
+since RDF literals can only exist as objects within triples, not as standalone
+subjects. Attempting to use this method with literal types will result in errors.</p>
+<p><code>contentType</code> should be a MIME type like 'text/turtle' or 'application/ld+json'.
+If not specified, the contentType will be auto-detected.</p>
+<p><code>documentUrl</code> Optional base URI for resolving relative references in the document.</p>
+<p>The <code>register</code> callback allows temporary registration of custom mappers
+for this operation without affecting the global registry.</p>
+<p>Usage:</p>
+<pre class="language-dart"><code class="language-dart">// Register a mapper for the Person class
+rdfMapper.registerMapper&lt;Person&gt;(PersonMapper());
+
+final turtle = '''
+  @prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+  &lt;http://example.org/person/1&gt; a foaf:Person ;
+    foaf:name "John Doe" ;
+    foaf:age 30 .
+''';
+
+final person = rdfMapper.deserialize&lt;Person&gt;(turtle);
+</code></pre>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">T decodeObject&lt;T&gt;(
+  String rdfString, {
+  RdfSubject? subject,
+  String? contentType,
+  String? documentUrl,
+  void Function(RdfMapperRegistry registry)? register,
+  RdfGraphDecoderOptions? stringDecoderOptions,
+}) {
+  return objectCodec&lt;T&gt;(
+    contentType: contentType,
+    register: register,
+    stringDecoderOptions: stringDecoderOptions,
+  ).decode(rdfString, documentUrl: documentUrl, subject: subject);
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a></li>
+    <li class="self-crumb">decodeObject&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
+</ol>
+
+    <h5>RdfMapper class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    rdf_mapper
+      0.4.0-dev
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

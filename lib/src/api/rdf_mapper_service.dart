@@ -311,7 +311,7 @@ final class RdfMapperService {
   /// @return A combined RDF graph containing all objects' triples
   /// @throws SerializerNotFoundException if no serializer is found for any object's type
   RdfGraph serializeList<T>(
-    List<T> instances, {
+    Iterable<T> instances, {
     void Function(RdfMapperRegistry registry)? register,
   }) {
     _log.fine('Converting instance of ${T.toString()} to RDF graph');

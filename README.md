@@ -50,7 +50,7 @@ Add the following to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  rdf_mapper: ^0.3.0
+  rdf_mapper: ^0.4.0
 ```
 
 Or use the following command:
@@ -83,7 +83,7 @@ final person = Person(
   age: 30,
 );
 
-final turtle = rdfMapper.serialize(person);
+final turtle = rdfMapper.encodeObject(person);
 print(turtle);
 ```
 
@@ -100,7 +100,7 @@ final turtleInput = '''
 ''';
 
 // Deserialize an object
-final person = rdfMapper.deserialize<Person>(turtleInput);
+final person = rdfMapper.decodeObject<Person>(turtleInput);
 print('Name: ${person.name}, Age: ${person.age}');
 ```
 
@@ -179,27 +179,27 @@ Working directly with RDF graphs (instead of strings):
 
 ```dart
 // Graph-based serialization
-final graph = rdfMapper.graph.serialize(person);
+final graph = rdfMapper.graph.encodeObject(person);
 
 // Graph-based deserialization
-final personFromGraph = rdfMapper.graph.deserialize<Person>(graph);
+final personFromGraph = rdfMapper.graph.decodeObject<Person>(graph);
 ```
 
 ### Deserializing Multiple Objects
 
 ```dart
 // Deserialize all objects in a graph
-final objects = rdfMapper.deserializeAll(turtleInput);
+final objects = rdfMapper.decodeObjects(turtleInput);
 
 // Only objects of a specific type
-final people = rdfMapper.deserializeAllOfType<Person>(turtleInput);
+final people = rdfMapper.decodeObjects<Person>(turtleInput);
 ```
 
 ### Temporary Mapper Registration
 
 ```dart
 // Temporary mapper for a single operation
-final result = rdfMapper.deserialize<CustomType>(
+final result = rdfMapper.decodeObject<CustomType>(
   input, 
   register: (registry) {
     registry.registerMapper<CustomType>(CustomTypeMapper());
@@ -260,34 +260,26 @@ void main() {
   );
 
   // Convert the book to RDF Turtle codec
-  final turtle = rdf.serialize(book);
+  final turtle = rdf.encodeObject(book);
 
   // Print the resulting Turtle representation
   final expectedTurtle = '''
-  @prefix schema: <https://schema.org/> .
-  @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix book: <http://example.org/book/> .
+@prefix schema: <https://schema.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-  <http://example.org/book/hobbit> a schema:Book;
-    schema:name "The Hobbit";
+book:hobbit a schema:Book;
+    schema:aggregateRating 5;
     schema:author "J.R.R. Tolkien";
     schema:datePublished "1937-09-20T23:00:00.000Z"^^xsd:dateTime;
+    schema:hasPart [ a schema:Chapter ; schema:name "An Unexpected Party" ; schema:position 1 ], [ a schema:Chapter ; schema:name "Roast Mutton" ; schema:position 2 ], [ a schema:Chapter ; schema:name "A Short Rest" ; schema:position 3 ];
     schema:isbn <urn:isbn:9780618260300>;
-    schema:aggregateRating "5"^^xsd:integer;
-    schema:hasPart _:b0, _:b1, _:b2 .
-  _:b0 a schema:Chapter;
-    schema:name "An Unexpected Party";
-    schema:position "1"^^xsd:integer .
-  _:b1 a schema:Chapter;
-    schema:name "Roast Mutton";
-    schema:position "2"^^xsd:integer .
-  _:b2 a schema:Chapter;
-    schema:name "A Short Rest";
-    schema:position "3"^^xsd:integer .
+    schema:name "The Hobbit" .
   ''';
 
   print('Book as RDF Turtle:');
   print(turtle);
-  assert(turtle == expectedTurtle);
+  assert(turtle.trim() == expectedTurtle.trim());
 }
 
 // --- Domain Model ---

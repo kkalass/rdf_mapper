@@ -76,7 +76,7 @@ through the <a href="../rdf_mapper/RdfMapper/graph.html">graph</a> property.</p>
     <h2>Constructors</h2>
     <dl class="constructor-summary-list">
         <dt id="RdfMapper" class="callable">
-          <span class="name"><a href="../rdf_mapper/RdfMapper/RdfMapper.html">RdfMapper</a></span><span class="signature">({<span class="parameter" id="-param-registry"><span>required</span> <span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span>, </span><span class="parameter" id="-param-rdfCore"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.8.1/rdf/RdfCore-class.html">RdfCore</a>?</span> <span class="parameter-name">rdfCore</span></span>})</span>
+          <span class="name"><a href="../rdf_mapper/RdfMapper/RdfMapper.html">RdfMapper</a></span><span class="signature">({<span class="parameter" id="-param-registry"><span>required</span> <span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span>, </span><span class="parameter" id="-param-rdfCore"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfCore-class.html">RdfCore</a>?</span> <span class="parameter-name">rdfCore</span></span>})</span>
         </dt>
         <dd>
           Creates an RDF Mapper facade with custom components.
@@ -86,6 +86,13 @@ through the <a href="../rdf_mapper/RdfMapper/graph.html">graph</a> property.</p>
         </dt>
         <dd>
           Creates an RDF Mapper facade with a default registry and standard mappers.
+            <div class="constructor-modifier features">factory</div>
+        </dd>
+        <dt id="RdfMapper.withMappers" class="callable">
+          <span class="name"><a href="../rdf_mapper/RdfMapper/RdfMapper.withMappers.html">RdfMapper.withMappers</a></span><span class="signature">(<span class="parameter" id="withMappers-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)</span>)</span>
+        </dt>
+        <dd>
+          
             <div class="constructor-modifier features">factory</div>
         </dd>
     </dl>
@@ -153,8 +160,8 @@ through the <a href="../rdf_mapper/RdfMapper/graph.html">graph</a> property.</p>
       id="instance-methods">
     <h2>Methods</h2>
     <dl class="callables">
-        <dt id="deserialize" class="callable">
-  <span class="name"><a href="../rdf_mapper/RdfMapper/deserialize.html">deserialize</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="deserialize-param-rdfString"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">rdfString</span>, {</span><span class="parameter" id="deserialize-param-contentType"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">contentType</span>, </span><span class="parameter" id="deserialize-param-documentUrl"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">documentUrl</span>, </span><span class="parameter" id="deserialize-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?</span>})
+        <dt id="decodeObject" class="callable">
+  <span class="name"><a href="../rdf_mapper/RdfMapper/decodeObject.html">decodeObject</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="decodeObject-param-rdfString"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">rdfString</span>, {</span><span class="parameter" id="decodeObject-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfSubject-class.html">RdfSubject</a>?</span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="decodeObject-param-contentType"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">contentType</span>, </span><span class="parameter" id="decodeObject-param-documentUrl"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">documentUrl</span>, </span><span class="parameter" id="decodeObject-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?, </span><span class="parameter" id="decodeObject-param-stringDecoderOptions"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfGraphDecoderOptions-class.html">RdfGraphDecoderOptions</a>?</span> <span class="parameter-name">stringDecoderOptions</span></span>})
     <span class="returntype parameter">&#8594; T</span>
   </span>
   
@@ -166,9 +173,9 @@ through the <a href="../rdf_mapper/RdfMapper/graph.html">graph</a> property.</p>
 
 </dd>
 
-        <dt id="deserializeAll" class="callable">
-  <span class="name"><a href="../rdf_mapper/RdfMapper/deserializeAll.html">deserializeAll</a></span><span class="signature">(<wbr><span class="parameter" id="deserializeAll-param-rdfString"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">rdfString</span>, {</span><span class="parameter" id="deserializeAll-param-contentType"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">contentType</span>, </span><span class="parameter" id="deserializeAll-param-documentUrl"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">documentUrl</span>, </span><span class="parameter" id="deserializeAll-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?</span>})
-    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span>&gt;</span></span>
+        <dt id="decodeObjects" class="callable">
+  <span class="name"><a href="../rdf_mapper/RdfMapper/decodeObjects.html">decodeObjects</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="decodeObjects-param-rdfString"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">rdfString</span>, {</span><span class="parameter" id="decodeObjects-param-contentType"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">contentType</span>, </span><span class="parameter" id="decodeObjects-param-documentUrl"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">documentUrl</span>, </span><span class="parameter" id="decodeObjects-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?, </span><span class="parameter" id="decodeObjects-param-stringDecoderOptions"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfGraphDecoderOptions-class.html">RdfGraphDecoderOptions</a>?</span> <span class="parameter-name">stringDecoderOptions</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
   </span>
   
 
@@ -179,28 +186,28 @@ through the <a href="../rdf_mapper/RdfMapper/graph.html">graph</a> property.</p>
 
 </dd>
 
-        <dt id="deserializeAllOfType" class="callable">
-  <span class="name"><a href="../rdf_mapper/RdfMapper/deserializeAllOfType.html">deserializeAllOfType</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="deserializeAllOfType-param-rdfString"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">rdfString</span>, {</span><span class="parameter" id="deserializeAllOfType-param-contentType"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">contentType</span>, </span><span class="parameter" id="deserializeAllOfType-param-documentUrl"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">documentUrl</span>, </span><span class="parameter" id="deserializeAllOfType-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?</span>})
-    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+        <dt id="encodeObject" class="callable">
+  <span class="name"><a href="../rdf_mapper/RdfMapper/encodeObject.html">encodeObject</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="encodeObject-param-instance"><span class="type-annotation">T</span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="encodeObject-param-contentType"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">contentType</span>, </span><span class="parameter" id="encodeObject-param-baseUri"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">baseUri</span>, </span><span class="parameter" id="encodeObject-param-stringEncoderOptions"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfGraphEncoderOptions-class.html">RdfGraphEncoderOptions</a>?</span> <span class="parameter-name">stringEncoderOptions</span>, </span><span class="parameter" id="encodeObject-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?</span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
   </span>
   
 
 </dt>
 <dd>
-  Deserializes all subjects of type <code>T</code> from an RDF string.
+  Serializes a Dart object or collection to an RDF string representation.
   
 
 </dd>
 
-        <dt id="deserializeBySubject" class="callable">
-  <span class="name"><a href="../rdf_mapper/RdfMapper/deserializeBySubject.html">deserializeBySubject</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="deserializeBySubject-param-rdfString"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">rdfString</span>, </span><span class="parameter" id="deserializeBySubject-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.8.1/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, {</span><span class="parameter" id="deserializeBySubject-param-contentType"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">contentType</span>, </span><span class="parameter" id="deserializeBySubject-param-documentUrl"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">documentUrl</span>, </span><span class="parameter" id="deserializeBySubject-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?</span>})
-    <span class="returntype parameter">&#8594; T</span>
+        <dt id="encodeObjects" class="callable">
+  <span class="name"><a href="../rdf_mapper/RdfMapper/encodeObjects.html">encodeObjects</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="encodeObjects-param-instance"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="encodeObjects-param-contentType"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">contentType</span>, </span><span class="parameter" id="encodeObjects-param-baseUri"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">baseUri</span>, </span><span class="parameter" id="encodeObjects-param-stringEncoderOptions"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfGraphEncoderOptions-class.html">RdfGraphEncoderOptions</a>?</span> <span class="parameter-name">stringEncoderOptions</span>, </span><span class="parameter" id="encodeObjects-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?</span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
   </span>
   
 
 </dt>
 <dd>
-  Deserializes an object of type <code>T</code> from an RDF string, identified by the subject.
+  
   
 
 </dd>
@@ -218,6 +225,32 @@ through the <a href="../rdf_mapper/RdfMapper/graph.html">graph</a> property.</p>
 
 </dd>
 
+        <dt id="objectCodec" class="callable">
+  <span class="name"><a href="../rdf_mapper/RdfMapper/objectCodec.html">objectCodec</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="objectCodec-param-contentType"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">contentType</span>, </span><span class="parameter" id="objectCodec-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?, </span><span class="parameter" id="objectCodec-param-stringDecoderOptions"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfGraphDecoderOptions-class.html">RdfGraphDecoderOptions</a>?</span> <span class="parameter-name">stringDecoderOptions</span>, </span><span class="parameter" id="objectCodec-param-stringEncoderOptions"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfGraphEncoderOptions-class.html">RdfGraphEncoderOptions</a>?</span> <span class="parameter-name">stringEncoderOptions</span></span>})
+    <span class="returntype parameter">&#8594; <a href="../rdf_mapper/RdfObjectStringCodec-class.html">RdfObjectStringCodec</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Returns a codec for converting between objects of type <code>T</code> and RDF strings.
+  
+
+</dd>
+
+        <dt id="objectsCodec" class="callable">
+  <span class="name"><a href="../rdf_mapper/RdfMapper/objectsCodec.html">objectsCodec</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr>{<span class="parameter" id="objectsCodec-param-contentType"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">contentType</span>, </span><span class="parameter" id="objectsCodec-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?, </span><span class="parameter" id="objectsCodec-param-stringDecoderOptions"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfGraphDecoderOptions-class.html">RdfGraphDecoderOptions</a>?</span> <span class="parameter-name">stringDecoderOptions</span>, </span><span class="parameter" id="objectsCodec-param-stringEncoderOptions"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfGraphEncoderOptions-class.html">RdfGraphEncoderOptions</a>?</span> <span class="parameter-name">stringEncoderOptions</span></span>})
+    <span class="returntype parameter">&#8594; <a href="../rdf_mapper/RdfObjectsStringCodec-class.html">RdfObjectsStringCodec</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
         <dt id="registerMapper" class="callable">
   <span class="name"><a href="../rdf_mapper/RdfMapper/registerMapper.html">registerMapper</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="registerMapper-param-mapper"><span class="type-annotation"><a href="../rdf_mapper/Mapper-class.html">Mapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">mapper</span></span>)
     <span class="returntype parameter">&#8594; void</span>
@@ -227,19 +260,6 @@ through the <a href="../rdf_mapper/RdfMapper/graph.html">graph</a> property.</p>
 </dt>
 <dd>
   Registers a mapper for bidirectional conversion between Dart objects and RDF.
-  
-
-</dd>
-
-        <dt id="serialize" class="callable">
-  <span class="name"><a href="../rdf_mapper/RdfMapper/serialize.html">serialize</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="serialize-param-instance"><span class="type-annotation">T</span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="serialize-param-contentType"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">contentType</span>, </span><span class="parameter" id="serialize-param-baseUri"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">baseUri</span>, </span><span class="parameter" id="serialize-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?</span>})
-    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
-  </span>
-  
-
-</dt>
-<dd>
-  Serializes a Dart object or collection to an RDF string representation.
   
 
 </dd>
@@ -307,7 +327,7 @@ through the <a href="../rdf_mapper/RdfMapper/graph.html">graph</a> property.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.3.0
+      0.4.0-dev
   </span>
   
 </footer>

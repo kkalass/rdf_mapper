@@ -231,7 +231,7 @@ void main() {
           ] .
       ''';
 
-        final objects = rdfMapper.deserializeAll(turtle);
+        final objects = rdfMapper.decodeObjects(turtle);
 
         // Should get only the person, not the address
         expect(objects.length, equals(1));
@@ -263,7 +263,7 @@ void main() {
           ex:city "Anytown" .
       ''';
 
-        final objects = rdfMapper.deserializeAll(turtle);
+        final objects = rdfMapper.decodeObjects(turtle);
 
         // Should get only the person, as the address is referenced
         expect(objects.length, equals(1));
@@ -288,7 +288,7 @@ void main() {
           ex:name "Jane Smith" .
       ''';
 
-        final objects = rdfMapper.deserializeAll(turtle);
+        final objects = rdfMapper.decodeObjects(turtle);
 
         // Should get both persons
         expect(objects.length, equals(2));
@@ -333,7 +333,7 @@ void main() {
           ex:contactValue "john@example.org" .
       ''';
 
-      final objects = rdfMapper.deserializeAll(turtle);
+      final objects = rdfMapper.decodeObjects(turtle);
 
       // Should get persons , but not the standalone address nor the contact (it's referenced)
       expect(objects.length, equals(2));
@@ -383,7 +383,7 @@ void main() {
           ],
         );
 
-        final objects = rdfMapper.graph.deserializeAll(graph);
+        final objects = rdfMapper.graph.decodeObjects(graph);
 
         // Should get zero objects as blank nodes are always filtered
         expect(objects.length, equals(1));

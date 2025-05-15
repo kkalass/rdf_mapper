@@ -32,7 +32,7 @@ void main() {
 
         // This simulates what happens in GraphOperations.serialize when iterating
         // through instances of dynamic type
-        final graph = operations.serialize(instance);
+        final graph = operations.encodeObject(instance);
 
         // Verify that the serialization worked correctly
         expect(graph.triples.length, equals(2)); // Name triple + type triple

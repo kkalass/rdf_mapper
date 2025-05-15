@@ -69,12 +69,12 @@ void main() {
         );
 
         // Serialize to graph
-        final graph = rdfMapper.graph.serialize(person);
+        final graph = rdfMapper.graph.encodeObject(person);
 
         // Check for the person name triple
         final nameTriples = graph.findTriples(
           subject: IriTerm('http://example.org/person/1'),
-          predicate: TestPersonMapper.givenNamePredicate,
+          predicate: SchemaPerson.givenName,
         );
         // At least one name triple should exist
         expect(nameTriples.isNotEmpty, isTrue);
@@ -134,12 +134,12 @@ void main() {
         triples: [
           Triple(
             subjectId,
-            TestPersonMapper.givenNamePredicate,
+            SchemaPerson.givenName,
             LiteralTerm.string('John Doe'),
           ),
           Triple(
             subjectId,
-            TestPersonMapper.agePredicate,
+            SchemaPerson.foafAge,
             LiteralTerm.typed('30', 'integer'),
           ),
           Triple(subjectId, Rdf.type, IriTerm('https://schema.org/Person')),
@@ -147,9 +147,9 @@ void main() {
       );
 
       // Deserialize from graph
-      final person = rdfMapper.graph.deserializeBySubject<TestPerson>(
+      final person = rdfMapper.graph.decodeObject<TestPerson>(
         graph,
-        subjectId,
+        subject: subjectId,
       );
 
       // Verify the object properties
@@ -169,12 +169,12 @@ void main() {
         triples: [
           Triple(
             subjectId,
-            TestPersonMapper.givenNamePredicate,
+            SchemaPerson.givenName,
             LiteralTerm.string('John Doe'),
           ),
           Triple(
             subjectId,
-            TestPersonMapper.agePredicate,
+            SchemaPerson.foafAge,
             LiteralTerm.typed('30', 'integer'),
           ),
           Triple(subjectId, Rdf.type, SchemaPerson.classIri),
@@ -182,7 +182,7 @@ void main() {
       );
 
       // Deserialize from graph
-      final person = rdfMapper.graph.deserialize<TestPerson>(graph);
+      final person = rdfMapper.graph.decodeObject<TestPerson>(graph);
 
       // Verify the object properties
       expect(person, isNotNull);
@@ -212,12 +212,12 @@ void main() {
         ];
 
         // Serialize to graph
-        final graph = rdfMapper.graph.serialize(people);
+        final graph = rdfMapper.graph.encodeObjects(people);
 
         // Check for John's name property
         final johnNameTriples = graph.findTriples(
           subject: IriTerm('http://example.org/person/1'),
-          predicate: TestPersonMapper.givenNamePredicate,
+          predicate: SchemaPerson.givenName,
         );
 
         // At least one name triple should exist for John
@@ -237,7 +237,7 @@ void main() {
         // Check for Jane's name property
         final janeNameTriples = graph.findTriples(
           subject: IriTerm('http://example.org/person/2'),
-          predicate: TestPersonMapper.givenNamePredicate,
+          predicate: SchemaPerson.givenName,
         );
 
         // At least one name triple should exist for Jane
@@ -302,7 +302,7 @@ void main() {
         );
 
         // Deserialize all subjects from graph
-        final objects = rdfMapper.graph.deserializeAll(graph);
+        final objects = rdfMapper.graph.decodeObjects(graph);
 
         // Verify we got both persons
         expect(objects.length, equals(2));
@@ -335,7 +335,7 @@ void main() {
       );
 
       // Serialize to graph using a temporary mapper registration
-      final graph = rdfMapper.graph.serialize<TestPerson>(
+      final graph = rdfMapper.graph.encodeObject<TestPerson>(
         person,
         register: (registry) {
           registry.registerMapper<TestPerson>(TestPersonMapper());
@@ -367,7 +367,7 @@ void main() {
         );
 
         // Convert to string with default format (Turtle)
-        final turtle = rdfMapper.serialize(person);
+        final turtle = rdfMapper.encodeObject(person);
 
         // Verify the Turtle string contains expected content
         expect(turtle, contains('<http://example.org/person/1>'));
@@ -400,7 +400,7 @@ void main() {
         );
 
         // Convert to string with default format (Turtle)
-        final turtle = rdfMapper.serialize(person);
+        final turtle = rdfMapper.encodeObject(person);
 
         final expectedTurtle = """
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
@@ -434,7 +434,7 @@ void main() {
         ''';
 
         // Deserialize from string with default format (Turtle)
-        final person = rdfMapper.deserialize<TestPerson>(turtle);
+        final person = rdfMapper.decodeObject<TestPerson>(turtle);
 
         // Verify the object properties
         expect(person, isNotNull);
@@ -467,7 +467,7 @@ _:b0 a schema:PostalAddress;
     schema:addressCountry "USA" .
 """;
         // Convert from string with detected format (Turtle)
-        final person = rdfMapper.deserialize(turtle);
+        final person = rdfMapper.decodeObject(turtle);
 
         // Create a test object
         final expectedPerson = TestPerson(
@@ -508,7 +508,7 @@ _:b0 a schema:PostalAddress;
         ''';
 
         // Deserialize all subjects from Turtle string
-        final objects = rdfMapper.deserializeAll(
+        final objects = rdfMapper.decodeObjects(
           turtle,
           contentType: 'text/turtle',
         );
@@ -556,7 +556,10 @@ _:b0 a schema:PostalAddress;
         ];
 
         // Convert to Turtle format
-        final turtle = rdfMapper.serialize(people, contentType: 'text/turtle');
+        final turtle = rdfMapper.encodeObjects(
+          people,
+          contentType: 'text/turtle',
+        );
 
         // Verify the Turtle string contains content from both persons
         expect(turtle, contains('<http://example.org/person/1>'));
@@ -584,13 +587,13 @@ _:b0 a schema:PostalAddress;
                 ),
                 Triple(
                   IriTerm('http://example.org/testperson'),
-                  TestPersonMapper.givenNamePredicate,
+                  SchemaPerson.givenName,
                   LiteralTerm.string('Test Person'),
                 ),
                 Triple(
                   IriTerm('http://example.org/testperson'),
-                  TestPersonMapper.agePredicate,
-                  LiteralTerm.typed("42", "integer"),
+                  SchemaPerson.foafAge,
+                  LiteralTerm.integer(42),
                 ),
               ],
               serialized: "TEST SERIALIZATION RESULT",
@@ -603,14 +606,14 @@ _:b0 a schema:PostalAddress;
       customRdfMapper.registerMapper<TestPerson>(TestPersonMapper());
 
       // Test parsing using the mock
-      final person = customRdfMapper.deserialize<TestPerson>(
+      final person = customRdfMapper.decodeObject<TestPerson>(
         'THIS CONTENT IS IGNORED BY THE MOCK',
       );
       expect(person.name, equals('Test Person'));
       expect(person.age, equals(42));
 
       // Test serialization using the mock
-      final serialized = customRdfMapper.serialize(
+      final serialized = customRdfMapper.encodeObject(
         person,
         contentType: 'application/predefined-results',
       );
@@ -647,7 +650,7 @@ _:b0 a schema:PostalAddress;
           name: 'Test',
           age: 25,
         );
-        final graph = rdfMapper.graph.serialize(person);
+        final graph = rdfMapper.graph.encodeObject(person);
         expect(graph.triples, isNotEmpty);
       },
     );
@@ -778,7 +781,7 @@ _:b0 a schema:PostalAddress;
       ''';
 
         // Deserialize all subjects from the graph
-        final objects = rdfMapper.deserializeAll(
+        final objects = rdfMapper.decodeObjects(
           turtle,
           contentType: 'text/turtle',
         );
@@ -866,7 +869,7 @@ _:b0 a schema:PostalAddress;
       ''';
 
         // Deserialize all subjects from the graph
-        final objects = rdfMapper.deserializeAll(
+        final objects = rdfMapper.decodeObjects(
           turtle,
           contentType: 'text/turtle',
         );
@@ -1057,9 +1060,9 @@ class CompanyMapper implements IriNodeMapper<Company> {
 // Update TestPersonMapper to include employer
 class EmployeeMapper implements IriNodeMapper<Employee> {
   static final addressPredicate = SchemaPerson.address;
-  static final employerPredicate = worksForPredicate;
+  static final employerPredicate = SchemaPerson.worksFor;
   static final givenNamePredicate = SchemaPerson.givenName;
-  static final agePredicate = IriTerm('http://xmlns.com/foaf/0.1/age');
+  static final agePredicate = SchemaPerson.foafAge;
 
   @override
   final IriTerm typeIri = SchemaPerson.classIri;
@@ -1153,6 +1156,9 @@ class _PredefinedResultsParser extends RdfGraphDecoder {
   RdfGraph convert(String input, {String? documentUrl}) {
     return graph;
   }
+
+  @override
+  RdfGraphDecoder withOptions(RdfGraphDecoderOptions options) => this;
 }
 
 class _PredefinedResultsSerializer extends RdfGraphEncoder {
@@ -1167,6 +1173,9 @@ class _PredefinedResultsSerializer extends RdfGraphEncoder {
   }) {
     return serialized;
   }
+
+  @override
+  RdfGraphEncoder withOptions(RdfGraphEncoderOptions options) => this;
 }
 
 class _PredefinedResultsCodec extends RdfGraphCodec {
@@ -1205,6 +1214,12 @@ class _PredefinedResultsCodec extends RdfGraphCodec {
 
   @override
   Set<String> get supportedMimeTypes => {_contentType};
+
+  @override
+  RdfGraphCodec withOptions({
+    RdfGraphEncoderOptions? encoder,
+    RdfGraphDecoderOptions? decoder,
+  }) => this;
 }
 
 // Test model class
@@ -1244,11 +1259,6 @@ class TestPerson {
 
 // Test mapper implementation
 class TestPersonMapper implements IriNodeMapper<TestPerson> {
-  static final addressPredicate = SchemaPerson.address;
-  static final employerPredicate = SchemaPerson.worksFor;
-  static final givenNamePredicate = SchemaPerson.givenName;
-  static final agePredicate = SchemaPerson.foafAge;
-
   @override
   final IriTerm typeIri = SchemaPerson.classIri;
 
@@ -1256,10 +1266,10 @@ class TestPersonMapper implements IriNodeMapper<TestPerson> {
   TestPerson fromRdfNode(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     final id = subject.iri;
-    final name = reader.require<String>(givenNamePredicate);
-    final age = reader.require<int>(agePredicate);
-    final address = reader.get<Address>(addressPredicate);
-    final employer = reader.get<Company>(employerPredicate);
+    final name = reader.require<String>(SchemaPerson.givenName);
+    final age = reader.require<int>(SchemaPerson.foafAge);
+    final address = reader.get<Address>(SchemaPerson.address);
+    final employer = reader.get<Company>(SchemaPerson.worksFor);
 
     return TestPerson(
       id: id,
@@ -1278,10 +1288,10 @@ class TestPersonMapper implements IriNodeMapper<TestPerson> {
   }) {
     return context
         .nodeBuilder(IriTerm(person.id))
-        .literal(givenNamePredicate, person.name)
-        .literal(agePredicate, person.age)
-        .childNodeIfNotNull(addressPredicate, person.address)
-        .childNodeIfNotNull(employerPredicate, person.employer)
+        .literal(SchemaPerson.givenName, person.name)
+        .literal(SchemaPerson.foafAge, person.age)
+        .childNodeIfNotNull(SchemaPerson.address, person.address)
+        .childNodeIfNotNull(SchemaPerson.worksFor, person.employer)
         .build();
   }
 }

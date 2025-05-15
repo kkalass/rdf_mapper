@@ -10,6 +10,11 @@ import 'package:rdf_mapper/src/api/deserializer.dart';
 /// It can be configured to also accept literals with language tags (rdf:langString),
 /// or to use a completely different datatype IRI.
 ///
+/// Note: This deserializer handles literal terms from RDF triples, not standalone RDF
+/// documents. In RDF, literals can only appear as objects in triples (subject-predicate-object).
+/// This deserializer is typically used when extracting string property values during
+/// the deserialization of more complex entities.
+///
 /// This deserializer is pre-registered in the default registry and is automatically
 /// used for deserializing string literals in RDF data.
 ///
