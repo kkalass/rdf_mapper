@@ -56,6 +56,14 @@
 </h1></div>
 
     
+<section class="desc markdown">
+  <p>A codec for converting between collections of Dart objects and RDF graphs.</p>
+<p>Similar to <a href="../rdf_mapper/RdfObjectCodec-class.html">RdfObjectCodec</a>, but specialized for handling collections of objects.
+This codec handles the conversion of multiple objects of type <code>T</code> to a single
+RDF graph and vice versa.</p>
+<p>This is particularly useful for working with RDF datasets that contain multiple
+related entities, such as a list of people or a collection of interlinked resources.</p>
+</section>
 
 
     <section>
@@ -65,7 +73,7 @@
   <dd>
     <ul class="gt-separated dark clazz-relationships">
       <li><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></li>
-        <li><a href="https://api.flutter.dev/flutter/dart-convert/Codec-class.html">Codec</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>, <span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfGraph-class.html">RdfGraph</a></span>&gt;</span></li>
+        <li><a href="https://api.flutter.dev/flutter/dart-convert/Codec-class.html">Codec</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>, <span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfGraph-class.html">RdfGraph</a></span>&gt;</span></li>
       <li>RdfObjectsCodec</li>
     </ul>
   </dd>
@@ -106,7 +114,7 @@
 
 </dt>
 <dd>
-  Returns the decoder of <code>this</code>, converting from <code>T</code> to <code>S</code>.
+  Returns the decoder component of this codec.
   <div class="features"><span class="feature">no setter</span><span class="feature">override</span></div>
 
 </dd>
@@ -118,7 +126,7 @@
 
 </dt>
 <dd>
-  Returns the encoder from <code>S</code> to <code>T</code>.
+  Returns the encoder component of this codec.
   <div class="features"><span class="feature">no setter</span><span class="feature">override</span></div>
 
 </dd>
@@ -137,7 +145,7 @@
 
         <dt id="inverted" class="property inherited">
   <span class="name"><a href="https://api.flutter.dev/flutter/dart-convert/Codec/inverted.html">inverted</a></span>
-  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-convert/Codec-class.html">Codec</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfGraph-class.html">RdfGraph</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-convert/Codec-class.html">Codec</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfGraph-class.html">RdfGraph</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>&gt;</span></span>
   
 
 </dt>
@@ -169,33 +177,33 @@
     <h2>Methods</h2>
     <dl class="callables">
         <dt id="decode" class="callable">
-  <span class="name"><a href="../rdf_mapper/RdfObjectsCodec/decode.html">decode</a></span><span class="signature">(<wbr><span class="parameter" id="decode-param-input"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfGraph-class.html">RdfGraph</a></span> <span class="parameter-name">input</span>, {</span><span class="parameter" id="decode-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?</span>})
+  <span class="name"><a href="../rdf_mapper/RdfObjectsCodec/decode.html">decode</a></span><span class="signature">(<wbr><span class="parameter" id="decode-param-input"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfGraph-class.html">RdfGraph</a></span> <span class="parameter-name">input</span>, {</span><span class="parameter" id="decode-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?</span>})
     <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
   </span>
   
 
 </dt>
 <dd>
-  Decodes <code>encoded</code> data.
+  Decodes an RDF graph to a collection of Dart objects.
   <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
         <dt id="encode" class="callable">
   <span class="name"><a href="../rdf_mapper/RdfObjectsCodec/encode.html">encode</a></span><span class="signature">(<wbr><span class="parameter" id="encode-param-input"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">input</span>, {</span><span class="parameter" id="encode-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<span class="parameter" id="param-registry"><span class="type-annotation"><a href="../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span>)?</span>})
-    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfGraph-class.html">RdfGraph</a></span>
+    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfGraph-class.html">RdfGraph</a></span>
   </span>
   
 
 </dt>
 <dd>
-  Encodes <code>input</code>.
+  Encodes a collection of Dart objects to an RDF graph.
   <div class="features"><span class="feature">override</span></div>
 
 </dd>
 
         <dt id="fuse" class="callable inherited">
-  <span class="name"><a href="https://api.flutter.dev/flutter/dart-convert/Codec/fuse.html">fuse</a></span><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="fuse-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-convert/Codec-class.html">Codec</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfGraph-class.html">RdfGraph</a></span>, <span class="type-parameter">R</span>&gt;</span></span> <span class="parameter-name">other</span></span>)
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-convert/Codec/fuse.html">fuse</a></span><span class="signature">&lt;<wbr><span class="type-parameter">R</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="fuse-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-convert/Codec-class.html">Codec</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfGraph-class.html">RdfGraph</a></span>, <span class="type-parameter">R</span>&gt;</span></span> <span class="parameter-name">other</span></span>)
     <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-convert/Codec-class.html">Codec</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>, <span class="type-parameter">R</span>&gt;</span></span>
   </span>
   
@@ -283,7 +291,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.4.0-dev
+      0.4.0
   </span>
   
 </footer>

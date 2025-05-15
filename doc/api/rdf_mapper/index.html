@@ -102,10 +102,10 @@ final rdfMapper = RdfMapper.withDefaultRegistry();
 rdfMapper.registerMapper&lt;Person&gt;(PersonMapper());
 
 // String-based serialization
-final turtle = rdfMapper.serialize(myPerson);
+final turtle = rdfMapper.encodeObject(myPerson);
 
 // String-based deserialization
-final person = rdfMapper.deserialize&lt;Person&gt;(turtle);
+final person = rdfMapper.decodeObject&lt;Person&gt;(turtle);
 
 // Graph-based operations
 final graph = rdfMapper.graph.serialize(myPerson);
@@ -374,7 +374,7 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 </dd>
 
           <dt id="NodeBuilder">
-  <span class="name "><a href="../rdf_mapper/NodeBuilder-class.html">NodeBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S extends <a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfSubject-class.html">RdfSubject</a></span>&gt;</span></span> 
+  <span class="name "><a href="../rdf_mapper/NodeBuilder-class.html">NodeBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S extends <a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a></span>&gt;</span></span> 
 
 </dt>
 <dd>
@@ -418,7 +418,7 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 
 </dt>
 <dd>
-  
+  Base class for RDF mapping codecs that convert between Dart objects and RDF graphs.
 </dd>
 
           <dt id="RdfMapperDecoder">
@@ -426,7 +426,7 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 
 </dt>
 <dd>
-  
+  Decoder component of the RDF mapper codec system.
 </dd>
 
           <dt id="RdfMapperEncoder">
@@ -434,7 +434,7 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 
 </dt>
 <dd>
-  
+  Encoder component of the RDF mapper codec system.
 </dd>
 
           <dt id="RdfMapperRegistry">
@@ -482,7 +482,7 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 
 </dt>
 <dd>
-  
+  A codec for converting between collections of Dart objects and RDF graphs.
 </dd>
 
           <dt id="RdfObjectsDecoder">
@@ -614,23 +614,6 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 
 
 
-    <section class="summary offset-anchor" id="properties">
-      <h2>Properties</h2>
-      <dl class="properties">
-          <dt id="rdfMapper" class="property">
-  <span class="name"><a href="../rdf_mapper/rdfMapper.html">rdfMapper</a></span>
-  <span class="signature">&#8596; <a href="../rdf_mapper/RdfMapper-class.html">RdfMapper</a></span>
-  
-
-</dt>
-<dd>
-  Similar to global json codec, but for RDF and typed Dart objects.
-  <div class="features"><span class="feature">getter/setter pair</span></div>
-
-</dd>
-
-      </dl>
-    </section>
 
 
 
@@ -738,7 +721,7 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.4.0-dev
+      0.4.0
   </span>
   
 </footer>

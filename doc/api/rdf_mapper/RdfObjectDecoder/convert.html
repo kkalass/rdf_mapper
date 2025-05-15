@@ -63,8 +63,8 @@
     </ol>
   </div>
 <span class="returntype">T</span>
-<span class="name ">convert</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="convert-param-input"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfGraph-class.html">RdfGraph</a></span> <span class="parameter-name">input</span>, {</span></li>
-<li><span class="parameter" id="convert-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfSubject-class.html">RdfSubject</a>?</span> <span class="parameter-name">subject</span>, </span></li>
+<span class="name ">convert</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="convert-param-input"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfGraph-class.html">RdfGraph</a></span> <span class="parameter-name">input</span>, {</span></li>
+<li><span class="parameter" id="convert-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a>?</span> <span class="parameter-name">subject</span>, </span></li>
 </ol>})
 
       <div class="features"><span class="feature">override</span></div>
@@ -72,7 +72,9 @@
     </section>
     
 <section class="desc markdown">
-  <p>Converts <code>input</code> and returns the result of the conversion.</p>
+  <p>Converts an RDF graph to a Dart object.</p>
+<p>If <code>subject</code> is provided, only that specific subject from the graph will be
+deserialized. Otherwise, the decoder will attempt to find a suitable subject.</p>
 </section>
 
 
@@ -80,6 +82,10 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">@override
+&#47;&#47;&#47; Converts an RDF graph to a Dart object.
+&#47;&#47;&#47;
+&#47;&#47;&#47; If [subject] is provided, only that specific subject from the graph will be
+&#47;&#47;&#47; deserialized. Otherwise, the decoder will attempt to find a suitable subject.
 T convert(RdfGraph input, {RdfSubject? subject}) {
   if (subject != null) {
     return _service.deserializeBySubject(input, subject, register: _register);
@@ -113,7 +119,7 @@ T convert(RdfGraph input, {RdfSubject? subject}) {
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.4.0-dev
+      0.4.0
   </span>
   
 </footer>

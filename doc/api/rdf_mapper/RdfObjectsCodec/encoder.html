@@ -75,14 +75,14 @@
     </section>
     
 <section class="desc markdown">
-  <p>Returns the encoder from <code>S</code> to <code>T</code>.</p>
-<p>It may be stateful and should not be reused.</p>
+  <p>Returns the encoder component of this codec.</p>
 </section>
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">@override
+&#47;&#47;&#47; Returns the encoder component of this codec.
 RdfObjectsEncoder&lt;T&gt; get encoder =&gt; RdfObjectsEncoder(_service, _register);</code></pre>
 </section>
 
@@ -113,7 +113,7 @@ RdfObjectsEncoder&lt;T&gt; get encoder =&gt; RdfObjectsEncoder(_service, _regist
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.4.0-dev
+      0.4.0
   </span>
   
 </footer>

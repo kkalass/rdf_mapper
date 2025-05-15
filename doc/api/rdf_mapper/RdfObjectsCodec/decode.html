@@ -58,7 +58,7 @@
     <section class="multi-line-signature">
       
 <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
-<span class="name ">decode</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="decode-param-input"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfGraph-class.html">RdfGraph</a></span> <span class="parameter-name">input</span>, {</span></li>
+<span class="name ">decode</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="decode-param-input"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfGraph-class.html">RdfGraph</a></span> <span class="parameter-name">input</span>, {</span></li>
 <li><span class="parameter" id="decode-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-registry"><span class="type-annotation"><a href="../../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span></li>
 </ol>)?, </span></li>
 </ol>})
@@ -68,8 +68,9 @@
     </section>
     
 <section class="desc markdown">
-  <p>Decodes <code>encoded</code> data.</p>
-<p>The input is decoded as if by <code>decoder.convert</code>.</p>
+  <p>Decodes an RDF graph to a collection of Dart objects.</p>
+<p>This convenience method delegates to the decoder, extracting all subjects
+of type <code>T</code> from the graph and converting them to Dart objects.</p>
 </section>
 
 
@@ -109,7 +110,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.4.0-dev
+      0.4.0
   </span>
   
 </footer>

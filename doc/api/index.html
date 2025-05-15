@@ -84,7 +84,7 @@
 <h2 id="installation">Installation</h2>
 <p>Add the following to your <code>pubspec.yaml</code>:</p>
 <pre class="language-yaml"><code class="language-yaml">dependencies:
-  rdf_mapper: ^0.3.0
+  rdf_mapper: ^0.4.0
 </code></pre>
 <p>Or use the following command:</p>
 <pre class="language-bash"><code class="language-bash">dart pub add rdf_mapper
@@ -107,7 +107,7 @@ final person = Person(
   age: 30,
 );
 
-final turtle = rdfMapper.serialize(person);
+final turtle = rdfMapper.encodeObject(person);
 print(turtle);
 </code></pre>
 <h3 id="deserialization">Deserialization</h3>
@@ -121,7 +121,7 @@ final turtleInput = '''
 ''';
 
 // Deserialize an object
-final person = rdfMapper.deserialize&lt;Person&gt;(turtleInput);
+final person = rdfMapper.decodeObject&lt;Person&gt;(turtleInput);
 print('Name: ${person.name}, Age: ${person.age}');
 </code></pre>
 <h3 id="model-and-mapper-classes-for-above-examples">Model and Mapper classes for above examples</h3>
@@ -197,21 +197,21 @@ class PersonMapper implements IriNodeMapper&lt;Person&gt; {
 <h3 id="working-with-graphs">Working with Graphs</h3>
 <p>Working directly with RDF graphs (instead of strings):</p>
 <pre class="language-dart"><code class="language-dart">// Graph-based serialization
-final graph = rdfMapper.graph.serialize(person);
+final graph = rdfMapper.graph.encodeObject(person);
 
 // Graph-based deserialization
-final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
+final personFromGraph = rdfMapper.graph.decodeObject&lt;Person&gt;(graph);
 </code></pre>
 <h3 id="deserializing-multiple-objects">Deserializing Multiple Objects</h3>
 <pre class="language-dart"><code class="language-dart">// Deserialize all objects in a graph
-final objects = rdfMapper.deserializeAll(turtleInput);
+final objects = rdfMapper.decodeObjects(turtleInput);
 
 // Only objects of a specific type
-final people = rdfMapper.deserializeAllOfType&lt;Person&gt;(turtleInput);
+final people = rdfMapper.decodeObjects&lt;Person&gt;(turtleInput);
 </code></pre>
 <h3 id="temporary-mapper-registration">Temporary Mapper Registration</h3>
 <pre class="language-dart"><code class="language-dart">// Temporary mapper for a single operation
-final result = rdfMapper.deserialize&lt;CustomType&gt;(
+final result = rdfMapper.decodeObject&lt;CustomType&gt;(
   input, 
   register: (registry) {
     registry.registerMapper&lt;CustomType&gt;(CustomTypeMapper());
@@ -262,34 +262,26 @@ void main() {
   );
 
   // Convert the book to RDF Turtle codec
-  final turtle = rdf.serialize(book);
+  final turtle = rdf.encodeObject(book);
 
   // Print the resulting Turtle representation
   final expectedTurtle = '''
-  @prefix schema: &lt;https://schema.org/&gt; .
-  @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+@prefix book: &lt;http://example.org/book/&gt; .
+@prefix schema: &lt;https://schema.org/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
 
-  &lt;http://example.org/book/hobbit&gt; a schema:Book;
-    schema:name "The Hobbit";
+book:hobbit a schema:Book;
+    schema:aggregateRating 5;
     schema:author "J.R.R. Tolkien";
     schema:datePublished "1937-09-20T23:00:00.000Z"^^xsd:dateTime;
+    schema:hasPart [ a schema:Chapter ; schema:name "An Unexpected Party" ; schema:position 1 ], [ a schema:Chapter ; schema:name "Roast Mutton" ; schema:position 2 ], [ a schema:Chapter ; schema:name "A Short Rest" ; schema:position 3 ];
     schema:isbn &lt;urn:isbn:9780618260300&gt;;
-    schema:aggregateRating "5"^^xsd:integer;
-    schema:hasPart _:b0, _:b1, _:b2 .
-  _:b0 a schema:Chapter;
-    schema:name "An Unexpected Party";
-    schema:position "1"^^xsd:integer .
-  _:b1 a schema:Chapter;
-    schema:name "Roast Mutton";
-    schema:position "2"^^xsd:integer .
-  _:b2 a schema:Chapter;
-    schema:name "A Short Rest";
-    schema:position "3"^^xsd:integer .
+    schema:name "The Hobbit" .
   ''';
 
   print('Book as RDF Turtle:');
   print(turtle);
-  assert(turtle == expectedTurtle);
+  assert(turtle.trim() == expectedTurtle.trim());
 }
 
 // --- Domain Model ---
@@ -585,7 +577,7 @@ class RatingMapper implements LiteralTermMapper&lt;Rating&gt; {
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.4.0-dev
+      0.4.0
   </span>
   
 </footer>

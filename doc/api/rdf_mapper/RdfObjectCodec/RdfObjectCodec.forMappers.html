@@ -63,6 +63,27 @@
 </ol>})
     </section>
     
+<section class="desc markdown">
+  <p>Creates a new codec from an optional <a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a> instance or a register function.</p>
+<p>This factory provides a convenient way to create a codec with a custom mapper
+configuration without having to manually create the mapper service.</p>
+<p>Either <code>register</code> or <code>rdfMapper</code> must be provided:</p>
+<ul>
+<li>If only <code>register</code> is provided, a new registry will be created and the
+function will be called to register the necessary mappers.</li>
+<li>If only <code>rdfMapper</code> is provided, the codec will use its registry.</li>
+<li>If both are provided, the <code>register</code> function will be called with
+the <code>rdfMapper</code>'s registry.</li>
+</ul>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final codec = RdfObjectCodec&lt;Person&gt;.forMappers(
+  register: (registry) {
+    registry.registerMapper&lt;Person&gt;(PersonMapper());
+  },
+);
+</code></pre>
+<p>Throws <a href="https://api.flutter.dev/flutter/dart-core/ArgumentError-class.html">ArgumentError</a> if neither <code>register</code> nor <code>rdfMapper</code> is provided.</p>
+</section>
 
 
     
@@ -80,7 +101,8 @@
 
   var registry = rdfMapper == null ? RdfMapperRegistry() : rdfMapper.registry;
   if (register != null &amp;&amp; rdfMapper != null) {
-    register(registry);
+    &#47;&#47; we need to clone the registry to avoid modifying the original
+    registry = registry.clone();
   }
   if (register != null) {
     register(registry);
@@ -114,7 +136,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.4.0-dev
+      0.4.0
   </span>
   
 </footer>

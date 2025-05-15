@@ -58,8 +58,8 @@
     <section class="multi-line-signature">
       
 <span class="returntype">T</span>
-<span class="name ">decode</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="decode-param-input"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfGraph-class.html">RdfGraph</a></span> <span class="parameter-name">input</span>, {</span></li>
-<li><span class="parameter" id="decode-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.1/rdf/RdfSubject-class.html">RdfSubject</a>?</span> <span class="parameter-name">subject</span>, </span></li>
+<span class="name ">decode</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="decode-param-input"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfGraph-class.html">RdfGraph</a></span> <span class="parameter-name">input</span>, {</span></li>
+<li><span class="parameter" id="decode-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a>?</span> <span class="parameter-name">subject</span>, </span></li>
 </ol>})
 
       <div class="features"><span class="feature">override</span></div>
@@ -67,8 +67,11 @@
     </section>
     
 <section class="desc markdown">
-  <p>Decodes <code>encoded</code> data.</p>
-<p>The input is decoded as if by <code>decoder.convert</code>.</p>
+  <p>Decodes an RDF graph to a Dart object.</p>
+<p>This is a convenience method that delegates to the decoder.</p>
+<p>The optional <code>subject</code> parameter allows for specifying a particular subject
+in the graph to decode. If not provided, the decoder will attempt to find
+a suitable subject automatically.</p>
 </section>
 
 
@@ -104,7 +107,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.4.0-dev
+      0.4.0
   </span>
   
 </footer>

@@ -91,27 +91,26 @@ Used for object references and URIs</p>
 </ul>
 <p>Example with IriNodeMapper:</p>
 <pre class="language-dart"><code class="language-dart">class PersonMapper implements IriNodeMapper&lt;Person&gt; {
-  static final foaf = Namespace('http://xmlns.com/foaf/0.1/');
-  static final rdf = Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
 
   @override
   RdfIriNode toRdfNode(Person instance, SerializationContext context) {
-    return context.nodeBuilder(Uri.parse(instance.id))
-      .iri(rdf('type'), foaf('Person'))
-      .literal(foaf('name'), instance.name)
+    return context.nodeBuilder(IriTerm(instance.id))
+      .literal(FoafPerson.name, instance.name)
       .build();
   }
 
   @override
-  Person fromRdfNode(RdfSubject subject, DeserializationContext context) {
+  Person fromRdfNode(IriTerm subject, DeserializationContext context) {
     return Person(
-      id: subject.iri.toString(),
-      name: context.reader.require&lt;String&gt;(foaf('name')),
+      // you can of course also parse the iri to extract the actual id
+      // and then create the full IRI from the id in toRdfNode
+      id: subject.iri,
+      name: context.reader.require&lt;String&gt;(FoafPerson.name),
     );
   }
 
   @override
-  RdfIriReference typeIri() =&gt; foaf('Person');
+  IriTerm get typeIri =&gt; FoafPerson.classIri;
 }
 
 // Register the mapper
@@ -153,7 +152,7 @@ rdfMapper.registerMapper&lt;Person&gt;(PersonMapper());
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.4.0-dev
+      0.4.0
   </span>
   
 </footer>
