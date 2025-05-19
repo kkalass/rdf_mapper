@@ -1,8 +1,10 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
+import 'package:rdf_mapper/src/api/deserializer.dart';
 import 'package:rdf_mapper/src/api/node_builder.dart';
 import 'package:rdf_mapper/src/api/node_reader.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
+import 'package:rdf_mapper/src/api/serializer.dart';
 import 'package:rdf_mapper/src/exceptions/deserialization_exception.dart';
 import 'package:rdf_mapper/src/mappers/iri/extracting_iri_term_deserializer.dart';
 import 'package:rdf_mapper/src/mappers/iri/iri_full_deserializer.dart';
@@ -35,11 +37,27 @@ class MockSerializationContext extends SerializationContext {
   NodeBuilder<S> nodeBuilder<S extends RdfSubject>(S subject) {
     throw UnimplementedError();
   }
+
+  @override
+  LiteralTerm toLiteralTerm<T>(
+    T value, {
+    LiteralTermSerializer<T>? serializer,
+  }) {
+    throw UnimplementedError();
+  }
 }
 
 class MockDeserializationContext extends DeserializationContext {
   @override
   NodeReader reader(RdfSubject subject) {
+    throw UnimplementedError();
+  }
+
+  @override
+  T fromLiteralTerm<T>(
+    LiteralTerm term, {
+    LiteralTermDeserializer<T>? deserializer,
+  }) {
     throw UnimplementedError();
   }
 }

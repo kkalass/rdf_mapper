@@ -188,7 +188,7 @@ class Rating {
 // --- Mappers ---
 
 // IRI-based entity mapper
-class BookMapper implements IriNodeMapper<Book> {
+class BookMapper implements GlobalResourceMapper<Book> {
   static final titlePredicate = SchemaBook.name;
   static final authorPredicate = SchemaBook.author;
   static final publishedPredicate = SchemaBook.datePublished;
@@ -247,7 +247,7 @@ class BookMapper implements IriNodeMapper<Book> {
 }
 
 // Blank node-based entity mapper
-class ChapterMapper implements BlankNodeMapper<Chapter> {
+class ChapterMapper implements LocalResourceMapper<Chapter> {
   static final titlePredicate = SchemaChapter.name;
   static final numberPredicate = SchemaChapter.position;
 

@@ -1,4 +1,5 @@
 import 'package:rdf_core/rdf_core.dart';
+import 'package:rdf_mapper/src/api/deserializer.dart';
 import 'package:rdf_mapper/src/api/node_reader.dart';
 
 /// Context for deserialization operations in the RDF mapping process.
@@ -42,4 +43,9 @@ abstract class DeserializationContext {
   /// @param subject The subject term (IRI or blank node) to read properties from
   /// @return A NodeReader instance for fluent property access
   NodeReader reader(RdfSubject subject);
+
+  T fromLiteralTerm<T>(
+    LiteralTerm term, {
+    LiteralTermDeserializer<T>? deserializer,
+  });
 }

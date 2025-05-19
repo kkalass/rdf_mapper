@@ -145,7 +145,7 @@ class TestItem {
   TestItem({required this.name, required this.age});
 }
 
-final class TestItemRdfMapper implements IriNodeMapper<TestItem> {
+final class TestItemRdfMapper implements GlobalResourceMapper<TestItem> {
   final String storageRoot;
 
   TestItemRdfMapper({required this.storageRoot});

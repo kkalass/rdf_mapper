@@ -27,7 +27,7 @@ class ChildClass {
 }
 
 /// Mapper for ParentClass which dynamically provides a mapper for ChildClass
-class ParentClassMapper implements IriNodeMapper<ParentClass> {
+class ParentClassMapper implements GlobalResourceMapper<ParentClass> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/ParentClass');
 
@@ -69,7 +69,7 @@ class ParentClassMapper implements IriNodeMapper<ParentClass> {
 }
 
 /// Mapper for ChildClass that requires context from parent
-class ChildClassMapper implements IriNodeMapper<ChildClass> {
+class ChildClassMapper implements GlobalResourceMapper<ChildClass> {
   final String parentId;
 
   ChildClassMapper({required this.parentId});

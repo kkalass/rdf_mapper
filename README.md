@@ -120,7 +120,7 @@ class Person {
 }
 
 // Create a custom mapper
-class PersonMapper implements IriNodeMapper<Person> {
+class PersonMapper implements GlobalResourceMapper<Person> {
   @override
   IriTerm? get typeIri => SchemaPerson.classIri;
   
@@ -158,8 +158,8 @@ The library is built around several core concepts:
   - `LiteralTermMapper`: For literal values (strings, numbers, dates)
 
 - **Node Mappers**: For complex objects with multiple properties
-  - `IriNodeMapper`: For objects with globally unique identifiers
-  - `BlankNodeMapper`: For anonymous objects or auxiliary structures
+  - `GlobalResourceMapper`: For objects with globally unique identifiers
+  - `LocalResourceMapper`: For anonymous objects or auxiliary structures
 
 ### Context Classes
 
@@ -340,7 +340,7 @@ class Rating {
 // --- Mappers ---
 
 // IRI-based entity mapper
-class BookMapper implements IriNodeMapper<Book> {
+class BookMapper implements GlobalResourceMapper<Book> {
   static final titlePredicate = SchemaBook.name;
   static final authorPredicate = SchemaBook.author;
   static final publishedPredicate = SchemaBook.datePublished;
@@ -399,7 +399,7 @@ class BookMapper implements IriNodeMapper<Book> {
 }
 
 // Blank node-based entity mapper
-class ChapterMapper implements BlankNodeMapper<Chapter> {
+class ChapterMapper implements LocalResourceMapper<Chapter> {
   static final titlePredicate = SchemaChapter.name;
   static final numberPredicate = SchemaChapter.position;
 

@@ -21,7 +21,7 @@ class Chapter {
   int get hashCode => title.hashCode ^ number.hashCode;
 }
 
-class ChapterMapper implements BlankNodeMapper<Chapter> {
+class ChapterMapper implements LocalResourceMapper<Chapter> {
   static final titlePredicate = IriTerm('http://example.org/title');
   static final numberPredicate = IriTerm('http://example.org/number');
 
@@ -239,7 +239,7 @@ class AnonymousData {
   AnonymousData(this.content);
 }
 
-class AnonymousMapper implements BlankNodeMapper<AnonymousData> {
+class AnonymousMapper implements LocalResourceMapper<AnonymousData> {
   static final contentPredicate = IriTerm('http://example.org/content');
 
   @override
@@ -274,7 +274,7 @@ class Document {
   Document(this.title, this.chapters);
 }
 
-class DocumentMapper implements IriNodeMapper<Document> {
+class DocumentMapper implements GlobalResourceMapper<Document> {
   static final titlePredicate = IriTerm('http://example.org/title');
   static final chaptersPredicate = IriTerm('http://example.org/chapters');
 

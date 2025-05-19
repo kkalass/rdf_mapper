@@ -73,7 +73,7 @@ class Contact {
 }
 
 // Mappers
-class PersonMapper implements IriNodeMapper<Person> {
+class PersonMapper implements GlobalResourceMapper<Person> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
@@ -112,7 +112,7 @@ class PersonMapper implements IriNodeMapper<Person> {
   }
 }
 
-class AddressMapper implements BlankNodeMapper<Address> {
+class AddressMapper implements LocalResourceMapper<Address> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Address');
 
@@ -142,7 +142,7 @@ class AddressMapper implements BlankNodeMapper<Address> {
   }
 }
 
-class ContactMapper implements IriNodeMapper<Contact> {
+class ContactMapper implements GlobalResourceMapper<Contact> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Contact');
 
@@ -173,7 +173,7 @@ class ContactMapper implements IriNodeMapper<Contact> {
 }
 
 // Standalone address mapper for IRI-based addresses (not blank nodes)
-class StandaloneAddressMapper implements IriNodeMapper<Address> {
+class StandaloneAddressMapper implements GlobalResourceMapper<Address> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Address');
 

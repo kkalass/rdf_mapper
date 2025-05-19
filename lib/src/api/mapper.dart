@@ -30,7 +30,7 @@ sealed class Mapper<T> {}
 ///
 /// Example usage scenarios: complex nested structures, intermediate nodes in
 /// object relationships, or helper objects that don't need independent identity.
-abstract interface class BlankNodeMapper<T>
+abstract interface class LocalResourceMapper<T>
     implements Mapper<T>, BlankNodeDeserializer<T>, BlankNodeSerializer<T> {}
 
 /// Bidirectional mapper between Dart objects and RDF IRI terms.
@@ -44,7 +44,7 @@ abstract interface class BlankNodeMapper<T>
 /// - Converting between IRI strings and typed objects
 /// - Working with identifier types or wrapper classes
 ///
-/// Unlike [IriNodeMapper], this mapper only deals with the IRI itself, not with
+/// Unlike [GlobalResourceMapper], this mapper only deals with the IRI itself, not with
 /// the associated triples that describe the resource the IRI identifies.
 abstract interface class IriTermMapper<T>
     implements Mapper<T>, IriTermSerializer<T>, IriTermDeserializer<T> {}
@@ -86,5 +86,5 @@ abstract interface class LiteralTermMapper<T>
 /// - Objects with complex property relationships
 ///
 /// This is the most commonly implemented mapper type for domain model classes.
-abstract interface class IriNodeMapper<T>
+abstract interface class GlobalResourceMapper<T>
     implements Mapper<T>, IriNodeSerializer<T>, IriNodeDeserializer<T> {}

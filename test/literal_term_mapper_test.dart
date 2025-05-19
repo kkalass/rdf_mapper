@@ -200,7 +200,7 @@ class TestPerson {
 }
 
 // Test mapper for Person
-class TestPersonMapper implements IriNodeMapper<TestPerson> {
+class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   static final IriTerm personTypeIri = FoafPerson.classIri;
   static final IriTerm namePredicate = FoafPerson.name;
   static final IriTerm agePredicate = FoafPerson.age;
@@ -246,7 +246,7 @@ class TestCollectionContainer {
 
 // Test mapper for collection container
 class TestCollectionContainerMapper
-    implements IriNodeMapper<TestCollectionContainer> {
+    implements GlobalResourceMapper<TestCollectionContainer> {
   static final IriTerm containerTypeIri = IriTerm(
     'http://example.org/CollectionContainer',
   );

@@ -1,5 +1,6 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/node_builder.dart';
+import 'package:rdf_mapper/src/api/serializer.dart';
 
 /// Context for serialization operations in the RDF mapping process.
 ///
@@ -42,4 +43,6 @@ abstract class SerializationContext {
   /// @param subject The subject term (IRI or blank node) for the node
   /// @return A NodeBuilder instance for fluent API construction
   NodeBuilder<S> nodeBuilder<S extends RdfSubject>(S subject);
+
+  LiteralTerm toLiteralTerm<T>(T value, {LiteralTermSerializer<T>? serializer});
 }

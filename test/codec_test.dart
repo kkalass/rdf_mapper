@@ -299,7 +299,7 @@ class TestCompany {
 }
 
 // Test mappers
-class TestPersonMapper implements IriNodeMapper<TestPerson> {
+class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   static final _ns = Namespace('http://example.org/ns#');
 
   @override
@@ -331,7 +331,7 @@ class TestPersonMapper implements IriNodeMapper<TestPerson> {
           .build();
 }
 
-class TestAddressMapper implements BlankNodeMapper<TestAddress> {
+class TestAddressMapper implements LocalResourceMapper<TestAddress> {
   static final _ns = Namespace('http://example.org/ns#');
 
   @override
@@ -360,7 +360,7 @@ class TestAddressMapper implements BlankNodeMapper<TestAddress> {
           .build();
 }
 
-class TestCompanyMapper implements IriNodeMapper<TestCompany> {
+class TestCompanyMapper implements GlobalResourceMapper<TestCompany> {
   static final _ns = Namespace('http://example.org/ns#');
 
   @override

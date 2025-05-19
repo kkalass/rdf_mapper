@@ -795,7 +795,7 @@ class Person {
   String toString() => 'Person($id, $name)';
 }
 
-class AddressMapper implements IriNodeMapper<Address> {
+class AddressMapper implements GlobalResourceMapper<Address> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Address');
 
@@ -819,7 +819,7 @@ class AddressMapper implements IriNodeMapper<Address> {
   }
 }
 
-class PersonMapper implements IriNodeMapper<Person> {
+class PersonMapper implements GlobalResourceMapper<Person> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
@@ -858,7 +858,7 @@ class TestPerson {
   TestPerson({required this.id, required this.name, required this.age});
 }
 
-class TestPersonMapper implements IriNodeMapper<TestPerson> {
+class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   @override
   final IriTerm typeIri = IriTerm('http://xmlns.com/foaf/0.1/Person');
 

@@ -23,6 +23,27 @@ class SerializationContextImpl extends SerializationContext
     return NodeBuilder<S>(subject, this);
   }
 
+  @override
+  LiteralTerm toLiteralTerm<T>(
+    T instance, {
+    LiteralTermSerializer<T>? serializer,
+  }) {
+    if (instance == null) {
+      throw ArgumentError(
+        'Instance cannot be null for literal serialization, the caller should handle null values.',
+      );
+    }
+    final ser =
+        _getSerializerFallbackToRuntimeType(
+          serializer,
+          instance,
+          _registry.getLiteralTermSerializer,
+          _registry.getLiteralTermSerializerByType,
+        )!;
+
+    return ser.toRdfTerm(instance, this);
+  }
+
   /// This method is used to look up serializers for types.
   /// It first tries to find a serializer for the exact type T.
   /// If that fails (likely because T is nullable), it tries to find a serializer
@@ -144,20 +165,7 @@ class SerializationContextImpl extends SerializationContext
     T instance, {
     LiteralTermSerializer<T>? serializer,
   }) {
-    if (instance == null) {
-      throw ArgumentError(
-        'Instance cannot be null for literal serialization, the caller should handle null values.',
-      );
-    }
-    final ser =
-        _getSerializerFallbackToRuntimeType(
-          serializer,
-          instance,
-          _registry.getLiteralTermSerializer,
-          _registry.getLiteralTermSerializerByType,
-        )!;
-
-    var term = ser.toRdfTerm(instance, this);
+    var term = toLiteralTerm(instance, serializer: serializer);
     return Triple(subject, predicate, term);
   }
 

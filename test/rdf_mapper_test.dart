@@ -1026,7 +1026,7 @@ class CompanyReferenceMapper implements IriTermMapper<CompanyReference> {
 }
 
 // Test mapper for Company class
-class CompanyMapper implements IriNodeMapper<Company> {
+class CompanyMapper implements GlobalResourceMapper<Company> {
   static final namePredicate = SchemaOrganization.name;
   static final addressPredicate = SchemaOrganization.address;
 
@@ -1058,7 +1058,7 @@ class CompanyMapper implements IriNodeMapper<Company> {
 }
 
 // Update TestPersonMapper to include employer
-class EmployeeMapper implements IriNodeMapper<Employee> {
+class EmployeeMapper implements GlobalResourceMapper<Employee> {
   static final addressPredicate = SchemaPerson.address;
   static final employerPredicate = SchemaPerson.worksFor;
   static final givenNamePredicate = SchemaPerson.givenName;
@@ -1102,7 +1102,7 @@ class EmployeeMapper implements IriNodeMapper<Employee> {
 }
 
 class EmployeeWithCompanyReferenceMapper
-    implements IriNodeMapper<EmployeeWithCompanyReference> {
+    implements GlobalResourceMapper<EmployeeWithCompanyReference> {
   static final addressPredicate = SchemaPerson.address;
   static final employerPredicate = worksForPredicate;
   static final givenNamePredicate = SchemaPerson.givenName;
@@ -1258,7 +1258,7 @@ class TestPerson {
 }
 
 // Test mapper implementation
-class TestPersonMapper implements IriNodeMapper<TestPerson> {
+class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   @override
   final IriTerm typeIri = SchemaPerson.classIri;
 
@@ -1297,7 +1297,7 @@ class TestPersonMapper implements IriNodeMapper<TestPerson> {
 }
 
 // Implementation des Address-Mappers für Blank Nodes
-class AddressMapper implements BlankNodeMapper<Address> {
+class AddressMapper implements LocalResourceMapper<Address> {
   static final streetAddressPredicate = SchemaPostalAddress.streetAddress;
   static final addressLocalityPredicate = SchemaPostalAddress.addressLocality;
   static final postalCodePredicate = SchemaPostalAddress.postalCode;

@@ -185,7 +185,7 @@ final class RdfMapper {
   /// This provides a functional-style API that can be composed with other converters
   /// when needed.
   ///
-  /// Note that you either need to register a [IriNodeMapper] for the type [T]
+  /// Note that you either need to register a [GlobalResourceMapper] for the type [T]
   /// globally before using this codec or pass a [register] function to the codec
   /// which registers this mapper (and any further custom ones, if applicable).
   ///
@@ -230,7 +230,7 @@ final class RdfMapper {
   /// `rdf:type` to find the correct mapper for each object.
   ///
   /// IMPORTANT: When using this method, the type [T] must be mapped using an
-  /// [IriNodeMapper] either globally in the [RdfMapper] instance or locally by
+  /// [GlobalResourceMapper] either globally in the [RdfMapper] instance or locally by
   /// providing a register callback and register it there.
   ///
   /// [contentType] specifies the RDF format (e.g., 'text/turtle', 'application/ld+json').
@@ -259,7 +259,7 @@ final class RdfMapper {
   /// [contentType], then deserializes it into an object of type [T] using registered mappers.
   ///
   /// IMPORTANT: When using this method, the type [T] must be mapped using an
-  /// [IriNodeMapper] either globally in the [RdfMapper] instance or locally by
+  /// [GlobalResourceMapper] either globally in the [RdfMapper] instance or locally by
   /// providing a register callback and register it there.
   ///
   /// Simple types like String, int, etc. that
@@ -315,7 +315,7 @@ final class RdfMapper {
   /// `rdf:type` to find the correct mapper for each object.
   ///
   /// IMPORTANT: When using this method, the type [T] must be mapped using an
-  /// [IriNodeMapper] either globally in the [RdfMapper] instance or locally by
+  /// [GlobalResourceMapper] either globally in the [RdfMapper] instance or locally by
   /// providing a register callback and register it there.
   ///
   /// Simple types like String, int, etc. that
@@ -368,7 +368,7 @@ final class RdfMapper {
   /// - For an Iterable of objects, it combines all objects into a single graph
   ///
   /// IMPORTANT: When using this method, the type [T] must be mapped using an
-  /// [IriNodeMapper] either globally in the [RdfMapper] instance or locally by
+  /// [GlobalResourceMapper] either globally in the [RdfMapper] instance or locally by
   /// providing a register callback and register it there.
   ///
   /// Simple types like String, int, etc. that
@@ -417,7 +417,7 @@ final class RdfMapper {
   /// It combines all objects into a single RDF graph before serializing to a string.
   ///
   /// IMPORTANT: When using this method, the type [T] must be mapped using an
-  /// [IriNodeMapper] either globally in the [RdfMapper] instance or locally by
+  /// [GlobalResourceMapper] either globally in the [RdfMapper] instance or locally by
   /// providing a register callback.
   ///
   /// [instance] The collection of objects to serialize.
@@ -466,10 +466,10 @@ final class RdfMapper {
   ///
   /// The registry supports four distinct mapper types based on RDF node characteristics:
   ///
-  /// - [IriNodeMapper]: Maps objects to/from IRI subjects (identified by URIs)
+  /// - [GlobalResourceMapper]: Maps objects to/from IRI subjects (identified by URIs)
   ///   Used for entity objects with identity and complex properties
   ///
-  /// - [BlankNodeMapper]: Maps objects to/from blank node subjects
+  /// - [LocalResourceMapper]: Maps objects to/from blank node subjects
   ///   Used for embedded objects without their own identity
   ///
   /// - [LiteralTermMapper]: Maps objects to/from RDF literal terms
@@ -478,9 +478,9 @@ final class RdfMapper {
   /// - [IriTermMapper]: Maps objects to/from IRI reference terms
   ///   Used for object references and URIs
   ///
-  /// Example with IriNodeMapper:
+  /// Example with GlobalResourceMapper:
   /// ```dart
-  /// class PersonMapper implements IriNodeMapper<Person> {
+  /// class PersonMapper implements GlobalResourceMapper<Person> {
   ///
   ///   @override
   ///   RdfIriNode toRdfNode(Person instance, SerializationContext context) {
