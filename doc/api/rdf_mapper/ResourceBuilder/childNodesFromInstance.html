@@ -62,7 +62,7 @@
 <li><span class="parameter" id="childNodesFromInstance-param-toIterable"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">toIterable</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-"><span class="type-annotation">A</span></span></li>
 </ol>), </span></li>
 <li><span class="parameter" id="childNodesFromInstance-param-instance"><span class="type-annotation">A</span> <span class="parameter-name">instance</span>, {</span></li>
-<li><span class="parameter" id="childNodesFromInstance-param-serializer"><span class="type-annotation"><a href="../../rdf_mapper/NodeSerializer-class.html">NodeSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">serializer</span>, </span></li>
+<li><span class="parameter" id="childNodesFromInstance-param-serializer"><span class="type-annotation"><a href="../../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">serializer</span>, </span></li>
 </ol>})
 
       
@@ -92,7 +92,7 @@ builder.childNodesFromInstance(schema.hasPart, (book) =&gt; book.chapters, curre
   RdfPredicate predicate,
   Iterable&lt;T&gt; Function(A) toIterable,
   A instance, {
-  NodeSerializer&lt;T&gt;? serializer,
+  ResourceSerializer&lt;T&gt;? serializer,
 }) {
   _triples.addAll(
     _service.childNodesFromInstance(
@@ -132,7 +132,7 @@ builder.childNodesFromInstance(schema.hasPart, (book) =&gt; book.chapters, curre
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.0
+      0.6.1
   </span>
   
 </footer>

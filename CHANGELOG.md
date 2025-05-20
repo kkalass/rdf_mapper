@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Relaxed Dart SDK requirement from 3.7 to 3.6
-- **Breaking Change** Renamed `BlankNodeDeserializer` to `LocalResourceDeserializer` and `IriNodeDeserializer` to `GlobalResourceDeserializer` as well as `BlankResourceSerializer` to ` LocalResourceSerializer` and `GlobalResourceSerializer` to `GlobalResourceSerializer`
+- **Breaking Change** Renamed `BlankNodeDeserializer` to `LocalResourceDeserializer` and `IriNodeDeserializer` to `GlobalResourceDeserializer` as well as `BlankNodeSerializer` to ` LocalResourceSerializer` and `GlobalNodeSerializer` to `GlobalResourceSerializer`
 - **Breaking Change** Renamed `getList` and `literalList` etc. to make it clearer that those are actually not mapped to dart Lists, but merely to multi-value predicates (e.g. mutliple triples with the same subject and predicate). Also changed the type of those from List to Iterable.
 
 ## [0.5.0] - 2025-05-22

@@ -88,11 +88,11 @@ are implemented and registers the mapper with all relevant registries.</p>
   switch (mapper) {
     case GlobalResourceMapper&lt;T&gt;():
       _registerGlobalResourceDeserializer(mapper);
-      _registerNodeSerializer(mapper);
+      _registerResourceSerializer(mapper);
       break;
     case LocalResourceMapper&lt;T&gt;():
       _registerLocalResourceDeserializer&lt;T&gt;(mapper);
-      _registerNodeSerializer&lt;T&gt;(mapper);
+      _registerResourceSerializer&lt;T&gt;(mapper);
       break;
     case LiteralTermMapper&lt;T&gt;():
       _registerLiteralTermSerializer&lt;T&gt;(mapper);
@@ -131,7 +131,7 @@ are implemented and registers the mapper with all relevant registries.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.0
+      0.6.1
   </span>
   
 </footer>

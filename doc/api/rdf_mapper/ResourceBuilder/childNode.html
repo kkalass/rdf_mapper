@@ -60,7 +60,7 @@
 <span class="returntype"><a href="../../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
 <span class="name ">childNode</span>&lt;<wbr><span class="type-parameter">V</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="childNode-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span></li>
 <li><span class="parameter" id="childNode-param-value"><span class="type-annotation">V</span> <span class="parameter-name">value</span>, {</span></li>
-<li><span class="parameter" id="childNode-param-serializer"><span class="type-annotation"><a href="../../rdf_mapper/NodeSerializer-class.html">NodeSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span>?</span> <span class="parameter-name">serializer</span>, </span></li>
+<li><span class="parameter" id="childNode-param-serializer"><span class="type-annotation"><a href="../../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span>?</span> <span class="parameter-name">serializer</span>, </span></li>
 </ol>})
 
       
@@ -90,7 +90,7 @@ builder.childNode(schema.author, person);
   <pre class="language-dart"><code class="language-dart">ResourceBuilder&lt;S&gt; childNode&lt;V&gt;(
   RdfPredicate predicate,
   V value, {
-  NodeSerializer&lt;V&gt;? serializer,
+  ResourceSerializer&lt;V&gt;? serializer,
 }) {
   _triples.addAll(
     _service.childNode(_subject, predicate, value, serializer: serializer),
@@ -124,7 +124,7 @@ builder.childNode(schema.author, person);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.0
+      0.6.1
   </span>
   
 </footer>

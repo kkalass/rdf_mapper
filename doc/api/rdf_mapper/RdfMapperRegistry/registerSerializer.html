@@ -73,7 +73,7 @@ its implementation type and registers it for the appropriate Dart type.</p>
 <ul>
 <li>IriTermSerializer: For serializing objects to IRI terms</li>
 <li>LiteralTermSerializer: For serializing objects to literal terms</li>
-<li>NodeSerializer: For serializing objects to RDF nodes (subjects with triples)</li>
+<li>ResourceSerializer: For serializing objects to RDF nodes (subjects with triples)</li>
 </ul>
 <p>@param serializer The serializer to register</p>
 </section>
@@ -90,8 +90,8 @@ its implementation type and registers it for the appropriate Dart type.</p>
     case LiteralTermSerializer&lt;T&gt;():
       _registerLiteralTermSerializer(serializer);
       break;
-    case NodeSerializer&lt;T&gt;():
-      _registerNodeSerializer(serializer);
+    case ResourceSerializer&lt;T&gt;():
+      _registerResourceSerializer(serializer);
       break;
   }
 }</code></pre>
@@ -122,7 +122,7 @@ its implementation type and registers it for the appropriate Dart type.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.0
+      0.6.1
   </span>
   
 </footer>
