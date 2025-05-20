@@ -107,7 +107,7 @@ final graph = service.serialize(person);
   }
   final context = SerializationContextImpl(registry: registry);
 
-  return RdfGraph(triples: context.node&lt;T&gt;(instance));
+  return RdfGraph(triples: context.resource&lt;T&gt;(instance));
 }</code></pre>
 </section>
 
@@ -136,7 +136,7 @@ final graph = service.serialize(person);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.1
+      0.6.2
   </span>
   
 </footer>

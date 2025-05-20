@@ -138,7 +138,7 @@ final organizations = objects.whereType&lt;Organization&gt;().toList();
 
     try {
       &#47;&#47; Deserialize the object and track it by subject
-      final obj = context.deserializeNode(subject, type);
+      final obj = context.deserializeResource(subject, type);
       deserializedObjects[subject] = obj;
     } on DeserializerNotFoundException {
       &#47;&#47; Record this subject as failed to deserialize
@@ -213,7 +213,7 @@ final organizations = objects.whereType&lt;Organization&gt;().toList();
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.1
+      0.6.2
   </span>
   
 </footer>

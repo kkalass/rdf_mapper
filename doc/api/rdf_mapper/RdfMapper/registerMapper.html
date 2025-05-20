@@ -93,17 +93,17 @@ Used for object references and URIs</p>
 <pre class="language-dart"><code class="language-dart">class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
 
   @override
-  (IriTerm, List&lt;Triple&gt;) toRdfNode(Person instance, SerializationContext context, {RdfSubject? parentSubject}) {
+  (IriTerm, List&lt;Triple&gt;) toRdfResource(Person instance, SerializationContext context, {RdfSubject? parentSubject}) {
     return context.resourceBuilder(IriTerm(instance.id))
       .literal(FoafPerson.name, instance.name)
       .build();
   }
 
   @override
-  Person fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Person fromRdfResource(IriTerm subject, DeserializationContext context) {
     return Person(
       // you can of course also parse the iri to extract the actual id
-      // and then create the full IRI from the id in toRdfNode
+      // and then create the full IRI from the id in toRdfResource
       id: subject.iri,
       name: context.reader.require&lt;String&gt;(FoafPerson.name),
     );
@@ -152,7 +152,7 @@ rdfMapper.registerMapper&lt;Person&gt;(PersonMapper());
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.1
+      0.6.2
   </span>
   
 </footer>

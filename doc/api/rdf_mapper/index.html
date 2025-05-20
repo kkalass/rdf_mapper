@@ -87,8 +87,8 @@ The API is organized into:</p>
 </ul>
 <h2 id="key-concepts">Key Concepts</h2>
 <ul>
-<li><strong>Terms vs Nodes</strong>: The library distinguishes between RDF Terms (single values like IRIs or Literals) and
-Nodes (subjects with their associated triples)</li>
+<li><strong>Terms vs Resources</strong>: The library distinguishes between RDF Terms (single values like IRIs or Literals) and
+Resources (subjects with their associated triples)</li>
 <li><strong>Mappers</strong>: Combined serializers and deserializers for bidirectional conversion</li>
 <li><strong>Context</strong>: Provides access to the current graph and related utilities during (de)serialization</li>
 </ul>
@@ -338,7 +338,7 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 
 </dt>
 <dd>
-  Deserializes an RDF blank node to a Dart object.
+  Deserializes an RDF local resource to a Dart object.
 </dd>
 
           <dt id="LocalResourceMapper">
@@ -346,7 +346,7 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 
 </dt>
 <dd>
-  Bidirectional mapper between Dart objects and RDF blank node subjects.
+  Bidirectional mapper between Dart objects and RDF local resources.
 </dd>
 
           <dt id="LocalResourceSerializer">
@@ -538,7 +538,7 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 
 </dt>
 <dd>
-  Reader for fluent RDF node deserialization.
+  Reader for fluent RDF resource deserialization.
 </dd>
 
           <dt id="ResourceSerializer">
@@ -721,7 +721,7 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.1
+      0.6.2
   </span>
   
 </footer>

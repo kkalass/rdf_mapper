@@ -84,7 +84,7 @@
 <h2 id="installation">Installation</h2>
 <p>Add the following to your <code>pubspec.yaml</code>:</p>
 <pre class="language-yaml"><code class="language-yaml">dependencies:
-  rdf_mapper: ^0.6.1
+  rdf_mapper: ^0.6.2
 </code></pre>
 <p>Or use the following command:</p>
 <pre class="language-bash"><code class="language-bash">dart pub add rdf_mapper
@@ -143,7 +143,7 @@ class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
   IriTerm? get typeIri =&gt; SchemaPerson.classIri;
   
   @override
-  (IriTerm, List&lt;Triple&gt;) toRdfNode(Person value, SerializationContext context, {RdfSubject? parentSubject}) {
+  (IriTerm, List&lt;Triple&gt;) toRdfResource(Person value, SerializationContext context, {RdfSubject? parentSubject}) {
 
     // convert dart objects to triples using the fluent builder API
     return context.resourceBuilder(IriTerm(value.id))
@@ -153,7 +153,7 @@ class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
   }
   
   @override
-  Person fromRdfNode(IriTerm term, DeserializationContext context) {
+  Person fromRdfResource(IriTerm term, DeserializationContext context) {
     final reader = context.reader(term);
     
     return Person(
@@ -190,8 +190,8 @@ class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
 </ul>
 <h3 id="fluent-apis">Fluent APIs</h3>
 <ul>
-<li><code>ResourceBuilder</code>: For conveniently creating RDF nodes with a fluent API</li>
-<li><code>ResourceReader</code>: For easily accessing RDF node properties</li>
+<li><code>ResourceBuilder</code>: For conveniently creating RDF resources with a fluent API</li>
+<li><code>ResourceReader</code>: For easily accessing RDF resource properties</li>
 </ul>
 <h2 id="advanced-usage">Advanced Usage</h2>
 <h3 id="working-with-graphs">Working with Graphs</h3>
@@ -368,7 +368,7 @@ class BookMapper implements GlobalResourceMapper&lt;Book&gt; {
   }
 
   @override
-  Book fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Book fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return Book(
       // Extract just the identifier part from the IRI
@@ -383,7 +383,7 @@ class BookMapper implements GlobalResourceMapper&lt;Book&gt; {
   }
 
   @override
-  (IriTerm, List&lt;Triple&gt;) toRdfNode(
+  (IriTerm, List&lt;Triple&gt;) toRdfResource(
     Book book,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -395,7 +395,7 @@ class BookMapper implements GlobalResourceMapper&lt;Book&gt; {
         .literal&lt;DateTime&gt;(publishedPredicate, book.published)
         .iri&lt;ISBN&gt;(isbnPredicate, book.isbn)
         .literal&lt;Rating&gt;(ratingPredicate, book.rating)
-        .childNodes(chapterPredicate, book.chapters)
+        .childResources(chapterPredicate, book.chapters)
         .build();
   }
 }
@@ -409,7 +409,7 @@ class ChapterMapper implements LocalResourceMapper&lt;Chapter&gt; {
   final IriTerm typeIri = SchemaChapter.classIri;
 
   @override
-  Chapter fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
+  Chapter fromRdfResource(BlankNodeTerm term, DeserializationContext context) {
     final reader = context.reader(term);
     return Chapter(
       reader.require&lt;String&gt;(titlePredicate),
@@ -418,7 +418,7 @@ class ChapterMapper implements LocalResourceMapper&lt;Chapter&gt; {
   }
 
   @override
-  (BlankNodeTerm, List&lt;Triple&gt;) toRdfNode(
+  (BlankNodeTerm, List&lt;Triple&gt;) toRdfResource(
     Chapter chapter,
     SerializationContext ctxt, {
     RdfSubject? parentSubject,
@@ -577,7 +577,7 @@ class RatingMapper implements LiteralTermMapper&lt;Rating&gt; {
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.1
+      0.6.2
   </span>
   
 </footer>

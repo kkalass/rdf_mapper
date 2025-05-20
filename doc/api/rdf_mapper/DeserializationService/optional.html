@@ -79,10 +79,10 @@ instead of throwing an exception.</p>
 <li><code>subject</code> The subject IRI of the object we are working with</li>
 <li><code>predicate</code> The predicate IRI of the property</li>
 <li><code>enforceSingleValue</code> If true, throws an exception when multiple values exist</li>
-<li><code>globalResourceDeserializer</code> Optional custom deserializer for IRI nodes</li>
+<li><code>globalResourceDeserializer</code> Optional custom deserializer for global resources</li>
 <li><code>iriTermDeserializer</code> Optional custom deserializer for IRI terms</li>
 <li><code>literalTermDeserializer</code> Optional custom deserializer for literal terms</li>
-<li><code>localResourceDeserializer</code> Optional custom deserializer for blank nodes</li>
+<li><code>localResourceDeserializer</code> Optional custom deserializer for local resources</li>
 </ul>
 <p>Returns the property value converted to the requested type, or null if not found.</p>
 <p>Throws <a href="../../rdf_mapper/TooManyPropertyValuesException-class.html">TooManyPropertyValuesException</a> if multiple values exist and <code>enforceSingleValue</code> is true.</p>
@@ -128,7 +128,7 @@ instead of throwing an exception.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.1
+      0.6.2
   </span>
   
 </footer>
