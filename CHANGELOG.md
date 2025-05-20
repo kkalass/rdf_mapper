@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Breaking Change**: Renamed `IriNodeMapper` to `GlobalResourceMapper` and `BlankNodeMapper` to `LocalResourceMapper` for more clarity, since those do not map the identifier (aka Node) but the entire resource (aka the collection of triples with the same subject). Likewise, renamed `NodeBuilder` to `ResourceBuilder` and `NodeReader` to `ResourceReader`.
 
+- **Breaking Change**: Renamed `ResourceReader.get` to  `ResourceReader.optional` and `ResourceReader.getMany` to `ResourceReader.collect`.
+
 ### Added
 
 - Improved documentation for resource mapping concepts

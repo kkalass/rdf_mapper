@@ -827,7 +827,9 @@ class PersonMapper implements GlobalResourceMapper<Person> {
   Person fromRdfNode(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     final name = reader.require<String>(IriTerm('http://example.org/name'));
-    final address = reader.get<Address>(IriTerm('http://example.org/address'));
+    final address = reader.optional<Address>(
+      IriTerm('http://example.org/address'),
+    );
     return Person(id: subject.iri, name: name, address: address);
   }
 
@@ -868,11 +870,13 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
     final reader = context.reader(term);
 
     // Get name property
-    final name = reader.get<String>(IriTerm('http://xmlns.com/foaf/0.1/name'));
+    final name = reader.optional<String>(
+      IriTerm('http://xmlns.com/foaf/0.1/name'),
+    );
 
     // Get age property
     final age =
-        reader.get<int>(IriTerm('http://xmlns.com/foaf/0.1/age')) ??
+        reader.optional<int>(IriTerm('http://xmlns.com/foaf/0.1/age')) ??
         0; // Default age to 0 if not present
 
     return TestPerson(id: id, name: name ?? 'Unknown', age: age);

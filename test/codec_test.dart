@@ -312,7 +312,7 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
       id: subject.iri,
       name: reader.require<String>(_ns('name')),
       age: reader.require<int>(_ns('age')),
-      address: reader.get<TestAddress>(_ns('address')),
+      address: reader.optional<TestAddress>(_ns('address')),
     );
   }
 

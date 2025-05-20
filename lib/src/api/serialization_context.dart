@@ -1,5 +1,5 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/src/api/node_builder.dart';
+import 'package:rdf_mapper/src/api/resource_builder.dart';
 import 'package:rdf_mapper/src/api/serializer.dart';
 
 /// Context for serialization operations in the RDF mapping process.

@@ -2,7 +2,7 @@ import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
 import 'package:rdf_mapper/src/api/deserialization_service.dart';
 import 'package:rdf_mapper/src/api/deserializer.dart';
-import 'package:rdf_mapper/src/api/node_reader.dart';
+import 'package:rdf_mapper/src/api/resource_reader.dart';
 import 'package:rdf_mapper/src/exceptions/property_value_not_found_exception.dart';
 import 'package:rdf_mapper/src/exceptions/too_many_property_values_exception.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
@@ -79,7 +79,7 @@ class DeserializationContextImpl extends DeserializationContext
   }
 
   @override
-  T? get<T>(
+  T? optional<T>(
     RdfSubject subject,
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
@@ -111,7 +111,7 @@ class DeserializationContextImpl extends DeserializationContext
   }
 
   @override
-  R getMany<T, R>(
+  R collect<T, R>(
     RdfSubject subject,
     RdfPredicate predicate,
     R Function(Iterable<T>) collector, {
@@ -143,7 +143,7 @@ class DeserializationContextImpl extends DeserializationContext
     LiteralTermDeserializer<T>? literalTermDeserializer,
     BlankNodeDeserializer<T>? blankNodeDeserializer,
   }) {
-    var result = get<T>(
+    var result = optional<T>(
       subject,
       predicate,
       enforceSingleValue: enforceSingleValue,
@@ -171,7 +171,7 @@ class DeserializationContextImpl extends DeserializationContext
     IriNodeDeserializer<T>? nodeDeserializer,
     LiteralTermDeserializer<T>? literalTermDeserializer,
     BlankNodeDeserializer<T>? blankNodeDeserializer,
-  }) => getMany<T, List<T>>(
+  }) => collect<T, List<T>>(
     subject,
     predicate,
     (it) => it.toList(),
@@ -191,7 +191,7 @@ class DeserializationContextImpl extends DeserializationContext
     IriNodeDeserializer<MapEntry<K, V>>? iriNodeDeserializer,
     LiteralTermDeserializer<MapEntry<K, V>>? literalTermDeserializer,
     BlankNodeDeserializer<MapEntry<K, V>>? blankNodeDeserializer,
-  }) => getMany<MapEntry<K, V>, Map<K, V>>(
+  }) => collect<MapEntry<K, V>, Map<K, V>>(
     subject,
     predicate,
     (it) => Map<K, V>.fromEntries(it),

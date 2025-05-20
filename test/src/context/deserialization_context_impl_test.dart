@@ -79,7 +79,7 @@ void main() {
 
   group('DeserializationContextImpl', () {
     test('getPropertyValue returns null for non-existent properties', () {
-      final value = context.get<String>(
+      final value = context.optional<String>(
         subject,
         IriTerm('http://example.org/nonexistent'),
       );
@@ -87,7 +87,7 @@ void main() {
     });
 
     test('getPropertyValue correctly retrieves string values', () {
-      final value = context.get<String>(
+      final value = context.optional<String>(
         subject,
         IriTerm('http://example.org/name'),
       );
@@ -95,7 +95,7 @@ void main() {
     });
 
     test('getPropertyValue correctly retrieves integer values', () {
-      final value = context.get<int>(
+      final value = context.optional<int>(
         subject,
         IriTerm('http://example.org/age'),
       );
@@ -103,7 +103,7 @@ void main() {
     });
 
     test('getPropertyValue correctly retrieves boolean values', () {
-      final value = context.get<bool>(
+      final value = context.optional<bool>(
         subject,
         IriTerm('http://example.org/active'),
       );
@@ -114,7 +114,7 @@ void main() {
       // Register custom IRI deserializer
       registry.registerDeserializer<String>(CustomIriDeserializer());
 
-      final value = context.get<String>(
+      final value = context.optional<String>(
         subject,
         IriTerm('http://example.org/friend'),
       );
@@ -135,8 +135,10 @@ void main() {
       'getPropertyValue throws exception for multi-valued properties when enforceSingleValue is true',
       () {
         expect(
-          () =>
-              context.get<String>(subject, IriTerm('http://example.org/tags')),
+          () => context.optional<String>(
+            subject,
+            IriTerm('http://example.org/tags'),
+          ),
           throwsA(isA<TooManyPropertyValuesException>()),
         );
       },
@@ -145,7 +147,7 @@ void main() {
     test(
       'getPropertyValue allows multi-valued properties when enforceSingleValue is false',
       () {
-        final value = context.get<String>(
+        final value = context.optional<String>(
           subject,
           IriTerm('http://example.org/tags'),
           enforceSingleValue: false,
@@ -155,7 +157,7 @@ void main() {
     );
 
     test('getPropertyValues collects all values for a property', () {
-      final values = context.getMany<String, List<String>>(
+      final values = context.collect<String, List<String>>(
         subject,
         IriTerm('http://example.org/tags'),
         (values) => values.toList(),
@@ -182,7 +184,7 @@ void main() {
           CustomBlankNodeDeserializer(),
         );
 
-        final address = context.get<TestAddress>(
+        final address = context.optional<TestAddress>(
           subject,
           IriTerm('http://example.org/address'),
         );
@@ -210,7 +212,7 @@ void main() {
     test('getPropertyValue uses custom deserializers when provided', () {
       final customLiteralDeserializer = CustomStringDeserializer();
 
-      final value = context.get<String>(
+      final value = context.optional<String>(
         subject,
         IriTerm('http://example.org/name'),
         literalTermDeserializer: customLiteralDeserializer,

@@ -6,7 +6,7 @@
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:rdf_core/rdf_core.dart' as _i4;
 import 'package:rdf_mapper/src/api/deserialization_context.dart' as _i3;
-import 'package:rdf_mapper/src/api/node_reader.dart' as _i2;
+import 'package:rdf_mapper/src/api/resource_reader.dart' as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values

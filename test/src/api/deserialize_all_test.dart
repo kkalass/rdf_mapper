@@ -86,7 +86,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
     final reader = context.reader(subject);
     // Use require to ensure these properties are present
     final name = reader.require<String>(namePredicate);
-    final address = reader.get<Address>(addressPredicate);
+    final address = reader.optional<Address>(addressPredicate);
     final contacts = reader.getList<Contact>(contactPredicate);
 
     return Person(

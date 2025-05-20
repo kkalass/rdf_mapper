@@ -21,7 +21,7 @@ import 'package:rdf_mapper/src/api/deserializer.dart';
 /// final reader = context.reader(subject);
 /// final title = reader.require<String>(dc.title);
 /// final author = reader.require<String>(dc.creator);
-/// final description = reader.get<String>(dc.description); // Optional
+/// final description = reader.optional<String>(dc.description); // Optional
 /// ```
 ///
 /// More complex example with nested structures:
@@ -84,16 +84,14 @@ class ResourceReader {
 
   /// Gets an optional property value from the RDF graph.
   ///
-  /// FIXME: Maybe this should be called `optional<T>()` instead of `get<T>()`?
-  ///
   /// Use this method for properties that might not exist in the graph.
   /// If the property is not found, null is returned. If multiple values are found
   /// when only one is expected, an exception will be thrown (if enforceSingleValue is true).
   ///
   /// Example:
   /// ```dart
-  /// final description = reader.get<String>(dc.description);
-  /// final publishDate = reader.get<DateTime>(dc.date);
+  /// final description = reader.optional<String>(dc.description);
+  /// final publishDate = reader.optional<DateTime>(dc.date);
   /// ```
   ///
   /// @param predicate The predicate IRI for the property to read
@@ -101,7 +99,7 @@ class ResourceReader {
   /// @param deserializers Optional custom deserializers to use for conversion
   /// @return The property value converted to the requested type, or null if not found
   /// @throws TooManyPropertyValuesException if multiple values exist and enforceSingleValue is true
-  T? get<T>(
+  T? optional<T>(
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
     IriNodeDeserializer<T>? iriNodeDeserializer,
@@ -109,7 +107,7 @@ class ResourceReader {
     LiteralTermDeserializer<T>? literalTermDeserializer,
     BlankNodeDeserializer<T>? blankNodeDeserializer,
   }) {
-    return _service.get<T>(
+    return _service.optional<T>(
       _subject,
       predicate,
       enforceSingleValue: enforceSingleValue,
@@ -192,7 +190,7 @@ class ResourceReader {
   ///
   /// Example for calculating an average:
   /// ```dart
-  /// final avgScore = reader.getMany<double, double>(
+  /// final avgScore = reader.collect<double, double>(
   ///   schema.rating,
   ///   (scores) => scores.isEmpty ? 0 : scores.reduce((a, b) => a + b) / scores.length
   /// );
@@ -202,7 +200,7 @@ class ResourceReader {
   /// @param collector A function to process the collected values
   /// @param deserializers Optional custom deserializers to use for conversion
   /// @return The result of the collector function
-  R getMany<T, R>(
+  R collect<T, R>(
     RdfPredicate predicate,
     R Function(Iterable<T>) collector, {
     IriNodeDeserializer<T>? iriNodeDeserializer,
@@ -210,7 +208,7 @@ class ResourceReader {
     LiteralTermDeserializer<T>? literalTermDeserializer,
     BlankNodeDeserializer<T>? blankNodeDeserializer,
   }) {
-    return _service.getMany<T, R>(
+    return _service.collect<T, R>(
       _subject,
       predicate,
       collector,

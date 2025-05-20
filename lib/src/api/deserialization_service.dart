@@ -30,7 +30,7 @@ abstract class DeserializationService {
   ///
   /// Similar to [require], but returns null if the property is not found
   /// instead of throwing an exception.
-  T? get<T>(
+  T? optional<T>(
     RdfSubject subject,
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
@@ -41,7 +41,7 @@ abstract class DeserializationService {
   });
 
   /// Gets multiple property values and collects them with a custom collector function
-  R getMany<T, R>(
+  R collect<T, R>(
     RdfSubject subject,
     RdfPredicate predicate,
     R Function(Iterable<T>) collector, {

@@ -1038,7 +1038,7 @@ class CompanyMapper implements GlobalResourceMapper<Company> {
     final reader = context.reader(subject);
     final id = subject.iri;
     final name = reader.require<String>(namePredicate);
-    final address = reader.get<Address>(addressPredicate);
+    final address = reader.optional<Address>(addressPredicate);
 
     return Company(id: id, name: name, address: address);
   }
@@ -1073,8 +1073,8 @@ class EmployeeMapper implements GlobalResourceMapper<Employee> {
     final id = subject.iri;
     final name = reader.require<String>(givenNamePredicate);
     final age = reader.require<int>(agePredicate);
-    final address = reader.get<Address>(addressPredicate);
-    final employer = reader.get<Company>(employerPredicate);
+    final address = reader.optional<Address>(addressPredicate);
+    final employer = reader.optional<Company>(employerPredicate);
 
     return Employee(
       id: id,
@@ -1120,8 +1120,8 @@ class EmployeeWithCompanyReferenceMapper
     final id = subject.iri;
     final name = reader.require<String>(givenNamePredicate);
     final age = reader.require<int>(agePredicate);
-    final address = reader.get<Address>(addressPredicate);
-    final employer = reader.get<CompanyReference>(employerPredicate);
+    final address = reader.optional<Address>(addressPredicate);
+    final employer = reader.optional<CompanyReference>(employerPredicate);
 
     return EmployeeWithCompanyReference(
       id: id,
@@ -1268,8 +1268,8 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
     final id = subject.iri;
     final name = reader.require<String>(SchemaPerson.givenName);
     final age = reader.require<int>(SchemaPerson.foafAge);
-    final address = reader.get<Address>(SchemaPerson.address);
-    final employer = reader.get<Company>(SchemaPerson.worksFor);
+    final address = reader.optional<Address>(SchemaPerson.address);
+    final employer = reader.optional<Company>(SchemaPerson.worksFor);
 
     return TestPerson(
       id: id,
