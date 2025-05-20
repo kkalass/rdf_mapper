@@ -34,7 +34,7 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 ///     .literal(foaf.name, 'John Doe')
 ///     .literal(foaf.age, 30)
 ///     .childNode(foaf.address, address)
-///     .childNodeList(foaf.knows, friends)
+///     .childNodes(foaf.knows, friends)
 ///     .build();
 /// ```
 class ResourceBuilder<S extends RdfSubject> {
@@ -81,7 +81,7 @@ class ResourceBuilder<S extends RdfSubject> {
   /// Example:
   /// ```dart
   /// // Extracts all tags from a post and adds them as dc:subject properties
-  /// builder.literals(dc.subject, (post) => post.tags, blogPost);
+  /// builder.literalsFromInstance(dc.subject, (post) => post.tags, blogPost);
   /// ```
   ///
   /// @param predicate The predicate for the properties
@@ -89,14 +89,14 @@ class ResourceBuilder<S extends RdfSubject> {
   /// @param instance The source object to extract values from
   /// @param serializer Optional serializer for the value type
   /// @return This builder for method chaining
-  ResourceBuilder<S> literals<A, T>(
+  ResourceBuilder<S> literalsFromInstance<A, T>(
     RdfPredicate predicate,
     Iterable<T> Function(A) toIterable,
     A instance, {
     LiteralTermSerializer<T>? serializer,
   }) {
     _triples.addAll(
-      _service.literals(
+      _service.literalsFromInstance(
         _subject,
         predicate,
         toIterable,
@@ -115,7 +115,7 @@ class ResourceBuilder<S extends RdfSubject> {
   /// Example:
   /// ```dart
   /// // Extracts all collaborators from a project and adds them as dc:contributor properties
-  /// builder.iris(dc.contributor, (project) => project.collaborators, currentProject);
+  /// builder.irisFromInstance(dc.contributor, (project) => project.collaborators, currentProject);
   /// ```
   ///
   /// @param predicate The predicate for the properties
@@ -123,14 +123,14 @@ class ResourceBuilder<S extends RdfSubject> {
   /// @param instance The source object to extract values from
   /// @param serializer Optional serializer for the value type
   /// @return This builder for method chaining
-  ResourceBuilder<S> iris<A, T>(
+  ResourceBuilder<S> irisFromInstance<A, T>(
     RdfPredicate predicate,
     Iterable<T> Function(A) toIterable,
     A instance, {
     IriTermSerializer<T>? serializer,
   }) {
     _triples.addAll(
-      _service.iris(
+      _service.irisFromInstance(
         _subject,
         predicate,
         toIterable,
@@ -149,7 +149,7 @@ class ResourceBuilder<S extends RdfSubject> {
   /// Example:
   /// ```dart
   /// // Extracts all chapters from a book and adds them as structured content
-  /// builder.childNodes(schema.hasPart, (book) => book.chapters, currentBook);
+  /// builder.childNodesFromInstance(schema.hasPart, (book) => book.chapters, currentBook);
   /// ```
   ///
   /// @param predicate The predicate for the relationships
@@ -157,14 +157,14 @@ class ResourceBuilder<S extends RdfSubject> {
   /// @param instance The source object to extract values from
   /// @param serializer Optional serializer for the child node type
   /// @return This builder for method chaining
-  ResourceBuilder<S> childNodes<A, T>(
+  ResourceBuilder<S> childNodesFromInstance<A, T>(
     RdfPredicate predicate,
     Iterable<T> Function(A) toIterable,
     A instance, {
     NodeSerializer<T>? serializer,
   }) {
     _triples.addAll(
-      _service.childNodes(
+      _service.childNodesFromInstance(
         _subject,
         predicate,
         toIterable,
@@ -262,25 +262,26 @@ class ResourceBuilder<S extends RdfSubject> {
   ///
   /// Use this method to add a collection of objects as related nodes. Each object
   /// in the collection will be serialized to its own set of RDF triples and linked
-  /// to the current subject via the specified predicate.
+  /// to the current subject via the specified predicate. Note that in RDF
+  /// terms this corresponds to multi-value properties, not to collections or lists.
   ///
   /// Example:
   /// ```dart
-  /// builder.childNodeList(foaf.knows, friends);
-  /// builder.childNodeList(schema.author, authors);
+  /// builder.childNodes(foaf.knows, friends);
+  /// builder.childNodes(schema.author, authors);
   /// ```
   ///
   /// @param predicate The predicate for the relationships
   /// @param values The collection of child node values
   /// @param serializer Optional serializer for the child node type
   /// @return This builder for method chaining
-  ResourceBuilder<S> childNodeList<V>(
+  ResourceBuilder<S> childNodes<V>(
     RdfPredicate predicate,
     Iterable<V> values, {
     NodeSerializer<V>? serializer,
   }) {
     _triples.addAll(
-      _service.childNodeList(
+      _service.childNodes(
         _subject,
         predicate,
         values,
@@ -325,13 +326,13 @@ class ResourceBuilder<S extends RdfSubject> {
   /// @param predicate The predicate for the properties
   /// @param values The collection of literal values
   /// @param serializer Optional serializer for the value type
-  ResourceBuilder<S> literalList<V>(
+  ResourceBuilder<S> literals<V>(
     RdfPredicate predicate,
     Iterable<V> values, {
     LiteralTermSerializer<V>? serializer,
   }) {
     _triples.addAll(
-      _service.literalList(_subject, predicate, values, serializer: serializer),
+      _service.literals(_subject, predicate, values, serializer: serializer),
     );
     return this;
   }
@@ -341,13 +342,13 @@ class ResourceBuilder<S extends RdfSubject> {
   /// @param predicate The predicate for the properties
   /// @param values The collection of values to be serialized as IRIs
   /// @param serializer Optional serializer for the value type
-  ResourceBuilder<S> iriList<V>(
+  ResourceBuilder<S> iris<V>(
     RdfPredicate predicate,
     Iterable<V> values, {
     IriTermSerializer<V>? serializer,
   }) {
     _triples.addAll(
-      _service.iriList(_subject, predicate, values, serializer: serializer),
+      _service.iris(_subject, predicate, values, serializer: serializer),
     );
     return this;
   }
@@ -409,13 +410,13 @@ class ResourceBuilder<S extends RdfSubject> {
   /// @param values The optional collection of child node values
   /// @param serializer Optional serializer for the child node type
   /// @return This builder instance for method chaining
-  ResourceBuilder<S> childNodeListIfNotEmpty<V>(
+  ResourceBuilder<S> childNodesIfNotEmpty<V>(
     RdfPredicate predicate,
     Iterable<V>? values, {
     NodeSerializer<V>? serializer,
   }) {
     if (values != null && values.isNotEmpty) {
-      childNodeList(predicate, values, serializer: serializer);
+      childNodes(predicate, values, serializer: serializer);
     }
     return this;
   }

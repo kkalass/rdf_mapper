@@ -18,7 +18,7 @@ abstract class SerializationService {
   });
 
   /// Creates triples for multiple literal objects derived from a source object.
-  List<Triple> literals<A, T>(
+  List<Triple> literalsFromInstance<A, T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> Function(A) toIterable,
@@ -27,7 +27,7 @@ abstract class SerializationService {
   });
 
   /// Creates triples for a collection of literal objects.
-  List<Triple> literalList<T>(
+  List<Triple> literals<T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> instance, {
@@ -43,7 +43,7 @@ abstract class SerializationService {
   });
 
   /// Creates triples for multiple IRI objects derived from a source object.
-  List<Triple> iris<A, T>(
+  List<Triple> irisFromInstance<A, T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> Function(A) toIterable,
@@ -52,7 +52,7 @@ abstract class SerializationService {
   });
 
   /// Creates triples for a collection of IRI objects.
-  List<Triple> iriList<T>(
+  List<Triple> iris<T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> instance, {
@@ -68,7 +68,7 @@ abstract class SerializationService {
   });
 
   /// Creates triples for multiple child nodes derived from a source object.
-  List<Triple> childNodes<A, T>(
+  List<Triple> childNodesFromInstance<A, T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> Function(A p1) toIterable,
@@ -77,7 +77,7 @@ abstract class SerializationService {
   });
 
   /// Creates triples for a collection of child nodes.
-  List<Triple> childNodeList<T>(
+  List<Triple> childNodes<T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> instance, {

@@ -239,7 +239,7 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
 // Test model classes for collections
 class TestCollectionContainer {
   final String id;
-  final List<String> stringList;
+  final Iterable<String> stringList;
 
   TestCollectionContainer({required this.id, required this.stringList});
 }
@@ -265,7 +265,7 @@ class TestCollectionContainerMapper
     final reader = context.reader(subject);
 
     // Read the string list directly
-    final stringList = reader.getList<String>(stringListPredicate);
+    final stringList = reader.getValues<String>(stringListPredicate);
 
     return TestCollectionContainer(id: subject.iri, stringList: stringList);
   }

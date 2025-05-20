@@ -222,7 +222,7 @@ class SerializationContextImpl extends SerializationContext
   }
 
   /// Creates triples for multiple literal objects derived from a source object.
-  List<Triple> literals<A, T>(
+  List<Triple> literalsFromInstance<A, T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> Function(A) toIterable,
@@ -236,20 +236,20 @@ class SerializationContextImpl extends SerializationContext
           .toList();
 
   /// Creates triples for a collection of literal objects.
-  List<Triple> literalList<T>(
+  List<Triple> literals<T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> instance, {
     LiteralTermSerializer<T>? serializer,
   }) =>
-      literals<Iterable<T>, T>(
+      literalsFromInstance<Iterable<T>, T>(
         subject,
         predicate,
         (it) => it,
         instance,
         serializer: serializer,
       );
-  List<Triple> iris<A, T>(
+  List<Triple> irisFromInstance<A, T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> Function(A) toIterable,
@@ -261,20 +261,20 @@ class SerializationContextImpl extends SerializationContext
           .toList();
 
   /// Creates triples for a collection of IRI objects.
-  List<Triple> iriList<T>(
+  List<Triple> iris<T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> instance, {
     IriTermSerializer<T>? serializer,
   }) =>
-      iris<Iterable<T>, T>(
+      irisFromInstance<Iterable<T>, T>(
         subject,
         predicate,
         (it) => it,
         instance,
         serializer: serializer,
       );
-  List<Triple> childNodes<A, T>(
+  List<Triple> childNodesFromInstance<A, T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> Function(A p1) toIterable,
@@ -289,13 +289,13 @@ class SerializationContextImpl extends SerializationContext
           .toList();
 
   /// Creates triples for a collection of child nodes.
-  List<Triple> childNodeList<T>(
+  List<Triple> childNodes<T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> instance, {
     NodeSerializer<T>? serializer,
   }) =>
-      childNodes(
+      childNodesFromInstance(
         subject,
         predicate,
         (it) => it,
@@ -310,7 +310,7 @@ class SerializationContextImpl extends SerializationContext
     Map<K, V> instance,
     NodeSerializer<MapEntry<K, V>> entrySerializer,
   ) =>
-      childNodes<Map<K, V>, MapEntry<K, V>>(
+      childNodesFromInstance<Map<K, V>, MapEntry<K, V>>(
         subject,
         predicate,
         (it) => it.entries,

@@ -9,7 +9,7 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 ///
 /// The deserializer system is divided into two main branches:
 /// - [TermDeserializer]: For converting single RDF terms to objects
-/// - [NodeDeserializer]: For converting subjects with associated triples to objects
+/// - [ResourceDeserializer]: For converting subjects with associated triples to objects
 ///
 /// This serves as a semantic marker to group all deserializers in the system.
 /// It doesn't define any methods itself but acts as a common ancestor.
@@ -61,7 +61,7 @@ abstract interface class IriTermDeserializer<T> implements TermDeserializer<T> {
 /// IMPORTANT: This deserializer processes only individual literal terms, not
 /// complete RDF documents. In RDF, literals can only appear as objects in
 /// triples (subject-predicate-object). This deserializer is typically used
-/// as part of a larger deserialization process, such as within a [NodeDeserializer]
+/// as part of a larger deserialization process, such as within a [ResourceDeserializer]
 /// implementation for handling property values.
 ///
 /// Common use cases include:
@@ -92,7 +92,7 @@ abstract interface class LiteralTermDeserializer<T>
 /// The two main specializations are:
 /// - [LocalResourceDeserializer]: For anonymous resources using blank nodes
 /// - [GlobalResourceDeserializer]: For identifiable resources using IRIs
-sealed class NodeDeserializer<T> extends Deserializer<T> {
+sealed class ResourceDeserializer<T> extends Deserializer<T> {
   /// The IRI of the RDF type this deserializer can handle.
   ///
   /// This is used for type-based lookup of deserializers during automatic deserialization.
@@ -120,7 +120,7 @@ sealed class NodeDeserializer<T> extends Deserializer<T> {
 /// - Nested structures
 /// - Objects whose identity is only significant within the local graph
 abstract interface class LocalResourceDeserializer<T>
-    implements NodeDeserializer<T> {
+    implements ResourceDeserializer<T> {
   /// Converts a blank node to a value.
   ///
   /// This method reads a blank node and its associated triples from the graph
@@ -144,7 +144,7 @@ abstract interface class LocalResourceDeserializer<T>
 /// - Resources might be referenced by other resources
 /// - The object represents a significant domain entity
 abstract interface class GlobalResourceDeserializer<T>
-    implements NodeDeserializer<T> {
+    implements ResourceDeserializer<T> {
   /// Converts an IRI-identified node to an object of type T.
   ///
   /// This method reads an IRI subject and its associated triples from the graph

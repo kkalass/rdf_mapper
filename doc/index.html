@@ -383,7 +383,7 @@ class BookMapper implements GlobalResourceMapper&lt;Book&gt; {
         .literal&lt;DateTime&gt;(publishedPredicate, book.published)
         .iri&lt;ISBN&gt;(isbnPredicate, book.isbn)
         .literal&lt;Rating&gt;(ratingPredicate, book.rating)
-        .childNodeList(chapterPredicate, book.chapters)
+        .childNodes(chapterPredicate, book.chapters)
         .build();
   }
   

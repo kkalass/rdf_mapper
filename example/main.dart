@@ -140,7 +140,8 @@ class Book {
   final DateTime published;
   final ISBN isbn;
   final Rating rating;
-  final List<Chapter> chapters;
+  // TODO: once we properly support rdf:List, we can use List<Chapter>
+  final Iterable<Chapter> chapters;
 
   Book({
     required this.id,
@@ -224,7 +225,7 @@ class BookMapper implements GlobalResourceMapper<Book> {
       published: reader.require<DateTime>(publishedPredicate),
       isbn: reader.require<ISBN>(isbnPredicate),
       rating: reader.require<Rating>(ratingPredicate),
-      chapters: reader.getList<Chapter>(chapterPredicate),
+      chapters: reader.getValues<Chapter>(chapterPredicate),
     );
   }
 
@@ -241,7 +242,7 @@ class BookMapper implements GlobalResourceMapper<Book> {
         .literal<DateTime>(publishedPredicate, book.published)
         .iri<ISBN>(isbnPredicate, book.isbn)
         .literal<Rating>(ratingPredicate, book.rating)
-        .childNodeList(chapterPredicate, book.chapters)
+        .childNodes(chapterPredicate, book.chapters)
         .build();
   }
 }

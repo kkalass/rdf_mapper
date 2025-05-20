@@ -278,7 +278,7 @@ class ResourceContainer {
 class MultiReferenceContainer {
   final String id;
   final String name;
-  final List<ResourceReference> resources;
+  final Iterable<ResourceReference> resources;
 
   MultiReferenceContainer({
     required this.id,
@@ -397,7 +397,7 @@ class MultiReferenceContainerMapper
   ) {
     final reader = context.reader(subject);
     final name = reader.require<String>(IriTerm('http://example.org/name'));
-    final resources = reader.getList<ResourceReference>(
+    final resources = reader.getValues<ResourceReference>(
       IriTerm('http://example.org/resources'),
     );
 
@@ -475,7 +475,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
     final reader = context.reader(subject);
     final name = reader.require<String>(IriTerm('http://example.org/name'));
     final knows = reader
-        .getList<ResourceReference>(IriTerm('http://example.org/knows'))
+        .getValues<ResourceReference>(IriTerm('http://example.org/knows'))
         .map((ref) => PersonReference(uri: ref.uri))
         .toList();
 

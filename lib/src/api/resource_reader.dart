@@ -148,18 +148,18 @@ class ResourceReader {
   /// * [literalTermDeserializer] Optional custom deserializer for literal terms
   /// * [localResourceDeserializer] Optional custom deserializer for local resources (identifiable by [BlankNodeTerm] only)
   ///
-  /// Returns a list of property values converted to the requested type.
-  List<T> getList<T>(
+  /// Returns an iterable of property values converted to the requested type.
+  Iterable<T> getValues<T>(
     RdfPredicate predicate, {
     GlobalResourceDeserializer<T>? globalResourceDeserializer,
     IriTermDeserializer<T>? iriTermDeserializer,
     LiteralTermDeserializer<T>? literalTermDeserializer,
     LocalResourceDeserializer<T>? localResourceDeserializer,
   }) {
-    return _service.getList<T>(
+    return _service.getValues<T>(
       _subject,
       predicate,
-      nodeDeserializer: globalResourceDeserializer,
+      globalResourceDeserializer: globalResourceDeserializer,
       iriTermDeserializer: iriTermDeserializer,
       literalTermDeserializer: literalTermDeserializer,
       localResourceDeserializer: localResourceDeserializer,

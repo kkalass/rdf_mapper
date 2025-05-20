@@ -38,7 +38,7 @@ void main() {
 
         final (_, triples) = context
             .resourceBuilder(subject)
-            .literals(predicate, (c) => c.tags, container)
+            .literalsFromInstance(predicate, (c) => c.tags, container)
             .build();
 
         expect(triples.length, equals(3));
@@ -72,7 +72,7 @@ void main() {
 
         final (_, triples) = context
             .resourceBuilder(subject)
-            .iris(predicate, (c) => c.relatedIds, container)
+            .irisFromInstance(predicate, (c) => c.relatedIds, container)
             .build();
 
         expect(triples.length, equals(3));
@@ -113,7 +113,7 @@ void main() {
 
         final (_, triples) = context
             .resourceBuilder(subject)
-            .childNodes(predicate, (c) => c.people, container)
+            .childNodesFromInstance(predicate, (c) => c.people, container)
             .build();
 
         // Should have:
@@ -179,17 +179,17 @@ void main() {
             IriTerm('http://example.org/type'),
             IriTerm('http://example.org/Container'),
           )
-          .literals(
+          .literalsFromInstance(
             IriTerm('http://example.org/tag'),
             (c) => c.tags,
             container,
           )
-          .iris(
+          .irisFromInstance(
             IriTerm('http://example.org/related'),
             (c) => c.relatedIds,
             container,
           )
-          .childNodes(
+          .childNodesFromInstance(
             IriTerm('http://example.org/hasMember'),
             (c) => c.people,
             container,

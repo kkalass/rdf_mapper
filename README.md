@@ -292,7 +292,7 @@ class Book {
   final DateTime published;
   final ISBN isbn;
   final Rating rating;
-  final List<Chapter> chapters;
+  final Iterable<Chapter> chapters;
 
   Book({
     required this.id,
@@ -376,7 +376,7 @@ class BookMapper implements GlobalResourceMapper<Book> {
       published: reader.require<DateTime>(publishedPredicate),
       isbn: reader.require<ISBN>(isbnPredicate),
       rating: reader.require<Rating>(ratingPredicate),
-      chapters: reader.getList<Chapter>(chapterPredicate),
+      chapters: reader.getValues<Chapter>(chapterPredicate),
     );
   }
 
@@ -393,7 +393,7 @@ class BookMapper implements GlobalResourceMapper<Book> {
         .literal<DateTime>(publishedPredicate, book.published)
         .iri<ISBN>(isbnPredicate, book.isbn)
         .literal<Rating>(ratingPredicate, book.rating)
-        .childNodeList(chapterPredicate, book.chapters)
+        .childNodes(chapterPredicate, book.chapters)
         .build();
   }
 }
@@ -496,7 +496,7 @@ RDF Mapper provides specific exceptions to help diagnose mapping issues:
 ## 🛣️ Roadmap / Next Steps
 
 - Detect cycles, optimally support them.
-- Properly Support Collection for serialization and derserialization - map multiple triples to Sets, not Lists
+- Properly Support Collection (`rdf:first` / `rdf:rest` / `rdf:nil` pattern) for serialization and derserialization as dart List.
 - Implement default behaviour for nodes without mapper ((Json-LD?) Maps)
 - Support generating mappers based on annotations
 - Support "any" feature and annotation which puts the remaining properties of a node into a (Json-LD?) Map that is a property of the dart class

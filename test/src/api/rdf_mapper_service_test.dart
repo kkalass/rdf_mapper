@@ -701,7 +701,7 @@ void main() {
 class Document {
   final String id;
   final String title;
-  final List<String> tags;
+  final Iterable<String> tags;
 
   Document({required this.id, required this.title, this.tags = const []});
 }
@@ -723,7 +723,7 @@ class DocumentDeserializer implements GlobalResourceDeserializer<Document> {
     final title = reader.require<String>(IriTerm('http://example.org/title'));
 
     final tagNames = reader
-        .getList<Tag>(IriTerm('http://example.org/tag'))
+        .getValues<Tag>(IriTerm('http://example.org/tag'))
         .map((tag) => tag.name)
         .toList();
 
@@ -741,7 +741,7 @@ class DocumentWithTagReferencesDeserializer
     final reader = context.reader(subject);
     final title = reader.require<String>(IriTerm('http://example.org/title'));
 
-    final tagIris = reader.getList<String>(
+    final tagIris = reader.getValues<String>(
       IriTerm('http://example.org/tag'),
       iriTermDeserializer: IriStringDeserializer(),
     );

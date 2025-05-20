@@ -168,7 +168,7 @@ void main() {
     });
 
     test('getPropertyValueList is a convenient shorthand for lists', () {
-      final values = context.getList<String>(
+      final values = context.getValues<String>(
         subject,
         IriTerm('http://example.org/tags'),
       );

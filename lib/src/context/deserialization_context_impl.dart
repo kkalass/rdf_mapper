@@ -164,20 +164,20 @@ class DeserializationContextImpl extends DeserializationContext
   /// Gets a list of property values
   ///
   /// Convenience method that collects multiple property values into a List.
-  List<T> getList<T>(
+  Iterable<T> getValues<T>(
     RdfSubject subject,
     RdfPredicate predicate, {
     IriTermDeserializer<T>? iriTermDeserializer,
-    GlobalResourceDeserializer<T>? nodeDeserializer,
+    GlobalResourceDeserializer<T>? globalResourceDeserializer,
     LiteralTermDeserializer<T>? literalTermDeserializer,
     LocalResourceDeserializer<T>? localResourceDeserializer,
   }) =>
-      collect<T, List<T>>(
+      collect<T, Iterable<T>>(
         subject,
         predicate,
         (it) => it.toList(),
         iriTermDeserializer: iriTermDeserializer,
-        globalResourceDeserializer: nodeDeserializer,
+        globalResourceDeserializer: globalResourceDeserializer,
         literalTermDeserializer: literalTermDeserializer,
         localResourceDeserializer: localResourceDeserializer,
       );

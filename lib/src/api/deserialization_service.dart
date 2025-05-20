@@ -9,7 +9,7 @@ import 'package:rdf_mapper/src/api/deserializer.dart';
 /// The service defines methods to access and convert RDF property values:
 /// * [require] for mandatory properties that must exist
 /// * [optional] for properties that may not exist
-/// * [getList] for collecting multiple values as a list
+/// * [getValues] for collecting multiple values as a list
 /// * [getMap] for collecting values as a map
 /// * [collect] for custom processing of multiple values
 abstract class DeserializationService {
@@ -95,16 +95,16 @@ abstract class DeserializationService {
   /// * [subject] The subject IRI of the object we are working with
   /// * [predicate] The predicate IRI for the properties to read
   /// * [iriTermDeserializer] Optional custom deserializer for IRI terms
-  /// * [nodeDeserializer] Optional custom deserializer for IRI nodes (renamed from globalResourceDeserializer for backward compatibility)
+  /// * [globalResourceDeserializer] Optional custom deserializer for IRI nodes (renamed from globalResourceDeserializer for backward compatibility)
   /// * [literalTermDeserializer] Optional custom deserializer for literal terms
   /// * [localResourceDeserializer] Optional custom deserializer for blank nodes
   ///
   /// Returns a list of property values converted to the requested type.
-  List<T> getList<T>(
+  Iterable<T> getValues<T>(
     RdfSubject subject,
     RdfPredicate predicate, {
     IriTermDeserializer<T>? iriTermDeserializer,
-    GlobalResourceDeserializer<T>? nodeDeserializer,
+    GlobalResourceDeserializer<T>? globalResourceDeserializer,
     LiteralTermDeserializer<T>? literalTermDeserializer,
     LocalResourceDeserializer<T>? localResourceDeserializer,
   });

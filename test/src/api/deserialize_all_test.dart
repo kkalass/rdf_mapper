@@ -8,7 +8,7 @@ class Person {
   final String id;
   final String name;
   final Address? address;
-  final List<Contact> contacts;
+  final Iterable<Contact> contacts;
 
   Person({
     required this.id,
@@ -87,7 +87,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
     // Use require to ensure these properties are present
     final name = reader.require<String>(namePredicate);
     final address = reader.optional<Address>(addressPredicate);
-    final contacts = reader.getList<Contact>(contactPredicate);
+    final contacts = reader.getValues<Contact>(contactPredicate);
 
     return Person(
       id: subject.iri,
@@ -107,7 +107,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
         .resourceBuilder(IriTerm(value.id))
         .literal(namePredicate, value.name)
         .childNodeIfNotNull(addressPredicate, value.address)
-        .childNodeList(contactPredicate, value.contacts)
+        .childNodes(contactPredicate, value.contacts)
         .build();
   }
 }
@@ -354,8 +354,9 @@ void main() {
       expect(persons[1].name, equals('John Doe'));
       expect(persons[1].address!.city, equals('Hometown'));
       // Verify the contact
-      expect(persons[1].contacts, hasLength(1));
-      expect(persons[1].contacts[0].type, equals('email'));
+      var contacts = persons[1].contacts.toList();
+      expect(contacts, hasLength(1));
+      expect(contacts[0].type, equals('email'));
     });
 
     test(

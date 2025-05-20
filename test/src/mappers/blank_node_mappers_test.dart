@@ -222,10 +222,11 @@ void main() {
 
       // Verify document
       expect(deserializedDocument.title, equals('Test Document'));
+      var deserChapters = deserializedDocument.chapters.toList();
       expect(deserializedDocument.chapters.length, equals(3));
-      expect(deserializedDocument.chapters[0].title, equals('Chapter 1'));
-      expect(deserializedDocument.chapters[1].title, equals('Chapter 2'));
-      expect(deserializedDocument.chapters[2].title, equals('Chapter 3'));
+      expect(deserChapters[0].title, equals('Chapter 1'));
+      expect(deserChapters[1].title, equals('Chapter 2'));
+      expect(deserChapters[2].title, equals('Chapter 3'));
     });
   });
 }
@@ -267,7 +268,7 @@ class AnonymousMapper implements LocalResourceMapper<AnonymousData> {
 
 class Document {
   final String title;
-  final List<Chapter> chapters;
+  final Iterable<Chapter> chapters;
 
   Document(this.title, this.chapters);
 }
@@ -284,7 +285,7 @@ class DocumentMapper implements GlobalResourceMapper<Document> {
     final reader = context.reader(term);
     return Document(
       reader.require<String>(titlePredicate),
-      reader.getList<Chapter>(chaptersPredicate),
+      reader.getValues<Chapter>(chaptersPredicate),
     );
   }
 
@@ -298,11 +299,11 @@ class DocumentMapper implements GlobalResourceMapper<Document> {
     final docId =
         'http://example.org/documents/${document.title.replaceAll(' ', '_')}';
 
-    // Use the childNodeList method to properly handle the chapters
+    // Use the childNodes method to properly handle the chapters
     return context
         .resourceBuilder(IriTerm(docId))
         .literal(titlePredicate, document.title)
-        .childNodeList(chaptersPredicate, document.chapters)
+        .childNodes(chaptersPredicate, document.chapters)
         .build();
   }
 }
