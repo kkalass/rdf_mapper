@@ -46,7 +46,7 @@ void main() {
       expect(graph.triples, isNotEmpty);
       final turtle = codec.encode(graph);
 
-      print(turtle);
+      //print(turtle);
       // Verify generated turtle
       expect(
         turtle,
@@ -87,7 +87,7 @@ void main() {
       );
       expect(graph.triples, isNotEmpty);
       final turtle = codec.encode(graph);
-      print(turtle);
+      //print(turtle);
       // Verify generated turtle
       expect(
         turtle,
