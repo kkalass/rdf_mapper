@@ -198,8 +198,12 @@ final class RdfMapper {
   /// final person2 = codec.decode(turtle, documentUrl: 'http://example.org/');
   /// ```
   ///
-  /// [contentType] specifies the RDF format (e.g., 'text/turtle', 'application/ld+json').
-  /// If not specified, defaults to that format that was registered first in the RdfCodecRegistry - usually 'text/turtle'.
+  /// Parameters:
+  /// * [contentType] - Specifies the RDF format (e.g., 'text/turtle', 'application/ld+json').
+  ///   If not specified, defaults to the format that was registered first in the RdfCodecRegistry - usually 'text/turtle'.
+  /// * [register] - Allows temporary registration of custom mappers for this codec.
+  /// * [stringDecoderOptions] - Additional options for string decoding.
+  /// * [stringEncoderOptions] - Additional options for string encoding.
   RdfObjectStringCodec<T> objectCodec<T>({
     String? contentType,
     void Function(RdfMapperRegistry registry)? register,
@@ -230,14 +234,16 @@ final class RdfMapper {
   /// will be inferred from the input. The decoder will rely on
   /// `rdf:type` to find the correct mapper for each object.
   ///
-  /// IMPORTANT: When using this method, the type [T] must be mapped using an
+  /// IMPORTANT: When using this method, the type [T] must be mapped using a
   /// [GlobalResourceMapper] either globally in the [RdfMapper] instance or locally by
   /// providing a register callback and register it there.
   ///
-  /// [contentType] specifies the RDF format (e.g., 'text/turtle', 'application/ld+json').
-  /// If not specified, defaults to the format registered first in the RdfCodecRegistry.
-  /// [register] allows temporary registration of custom mappers for this codec.
-  /// [stringDecoderOptions] and [stringEncoderOptions] configure string encoding/decoding.
+  /// Parameters:
+  /// * [contentType] - Specifies the RDF format (e.g., 'text/turtle', 'application/ld+json').
+  ///   If not specified, defaults to the format registered first in the RdfCodecRegistry.
+  /// * [register] - Allows temporary registration of custom mappers for this codec.
+  /// * [stringDecoderOptions] - Additional options for string decoding.
+  /// * [stringEncoderOptions] - Additional options for string encoding.
   RdfObjectsStringCodec<T> objectsCodec<T>({
     String? contentType,
     void Function(RdfMapperRegistry registry)? register,
@@ -259,7 +265,7 @@ final class RdfMapper {
   /// This method parses the provided [rdfString] into an RDF graph using the specified
   /// [contentType], then deserializes it into an object of type [T] using registered mappers.
   ///
-  /// IMPORTANT: When using this method, the type [T] must be mapped using an
+  /// IMPORTANT: When using this method, the type [T] must be mapped using a
   /// [GlobalResourceMapper] either globally in the [RdfMapper] instance or locally by
   /// providing a register callback and register it there.
   ///
@@ -268,13 +274,14 @@ final class RdfMapper {
   /// since RDF literals can only exist as objects within triples, not as standalone
   /// subjects. Attempting to use this method with literal types will result in errors.
   ///
-  /// [rdfString] The RDF string representation to deserialize.
-  /// [subject] Optional specific subject to deserialize from the graph.
-  /// [contentType] MIME type like 'text/turtle' or 'application/ld+json'.
+  /// Parameters:
+  /// * [rdfString] - The RDF string representation to deserialize.
+  /// * [subject] - Optional specific subject to deserialize from the graph.
+  /// * [contentType] - MIME type like 'text/turtle' or 'application/ld+json'.
   ///   If not specified, the contentType will be auto-detected.
-  /// [documentUrl] Optional base URI for resolving relative references in the document.
-  /// [register] Callback function to temporarily register custom mappers.
-  /// [stringDecoderOptions] Additional options for string decoding.
+  /// * [documentUrl] - Optional base URI for resolving relative references in the document.
+  /// * [register] - Callback function to temporarily register custom mappers.
+  /// * [stringDecoderOptions] - Additional options for string decoding.
   ///
   /// Usage:
   /// ```dart
@@ -315,7 +322,7 @@ final class RdfMapper {
   /// will be inferred from the input. The decoder will rely on
   /// `rdf:type` to find the correct mapper for each object.
   ///
-  /// IMPORTANT: When using this method, the type [T] must be mapped using an
+  /// IMPORTANT: When using this method, the type [T] must be mapped using a
   /// [GlobalResourceMapper] either globally in the [RdfMapper] instance or locally by
   /// providing a register callback and register it there.
   ///
@@ -326,10 +333,13 @@ final class RdfMapper {
   ///
   /// [rdfString] The RDF string representation to deserialize.
   /// [contentType] MIME type like 'text/turtle' or 'application/ld+json'.
+  /// Parameters:
+  /// * [rdfString] - The RDF string representation to deserialize.
+  /// * [contentType] - MIME type like 'text/turtle' or 'application/ld+json'.
   ///   If not specified, the contentType will be auto-detected.
-  /// [documentUrl] Optional base URI for resolving relative references in the document.
-  /// [register] Callback function to temporarily register custom mappers.
-  /// [stringDecoderOptions] Additional options for string decoding.
+  /// * [documentUrl] - Optional base URI for resolving relative references in the document.
+  /// * [register] - Callback function to temporarily register custom mappers.
+  /// * [stringDecoderOptions] - Additional options for string decoding.
   ///
   /// Usage:
   /// ```dart
@@ -368,7 +378,7 @@ final class RdfMapper {
   /// - For a single object, it creates a graph with that object's triples
   /// - For an Iterable of objects, it combines all objects into a single graph
   ///
-  /// IMPORTANT: When using this method, the type [T] must be mapped using an
+  /// IMPORTANT: When using this method, the type [T] must be mapped using a
   /// [GlobalResourceMapper] either globally in the [RdfMapper] instance or locally by
   /// providing a register callback and register it there.
   ///
@@ -377,12 +387,13 @@ final class RdfMapper {
   /// since RDF literals can only exist as objects within triples, not as standalone
   /// subjects. Attempting to use this method with literal types will result in errors.
   ///
-  /// [instance] The object to serialize.
-  /// [contentType] MIME type for output format (e.g., 'text/turtle', 'application/ld+json').
+  /// Parameters:
+  /// * [instance] - The object to serialize.
+  /// * [contentType] - MIME type for output format (e.g., 'text/turtle', 'application/ld+json').
   ///   If omitted, defaults to 'text/turtle'.
-  /// [baseUri] Optional base URI for the RDF document, used for relative IRI resolution.
-  /// [stringEncoderOptions] Additional options for string encoding.
-  /// [register] Callback function to temporarily register additional mappers for this operation.
+  /// * [baseUri] - Optional base URI for the RDF document, used for relative IRI resolution.
+  /// * [stringEncoderOptions] - Additional options for string encoding.
+  /// * [register] - Callback function to temporarily register additional mappers for this operation.
   ///
   /// Returns a string containing the serialized RDF representation.
   ///
@@ -417,16 +428,17 @@ final class RdfMapper {
   /// This method is similar to [encodeObject] but optimized for collections of objects.
   /// It combines all objects into a single RDF graph before serializing to a string.
   ///
-  /// IMPORTANT: When using this method, the type [T] must be mapped using an
+  /// IMPORTANT: When using this method, the type [T] must be mapped using a
   /// [GlobalResourceMapper] either globally in the [RdfMapper] instance or locally by
   /// providing a register callback.
   ///
-  /// [instance] The collection of objects to serialize.
-  /// [contentType] MIME type for output format (e.g., 'text/turtle', 'application/ld+json').
+  /// Parameters:
+  /// * [instance] - The collection of objects to serialize.
+  /// * [contentType] - MIME type for output format (e.g., 'text/turtle', 'application/ld+json').
   ///   If omitted, defaults to 'text/turtle'.
-  /// [baseUri] Optional base URI for the RDF document, used for relative IRI resolution.
-  /// [stringEncoderOptions] Additional options for string encoding.
-  /// [register] Callback function to temporarily register additional mappers for this operation.
+  /// * [baseUri] - Optional base URI for the RDF document, used for relative IRI resolution.
+  /// * [stringEncoderOptions] - Additional options for string encoding.
+  /// * [register] - Callback function to temporarily register additional mappers for this operation.
   ///
   /// Returns a string containing the serialized RDF representation of all objects.
   ///
