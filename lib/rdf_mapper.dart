@@ -130,9 +130,10 @@ final class RdfMapper {
   /// [registry] The mapper registry to use for serialization/deserialization.
   /// [rdfCore] Optional RDF core instance for string parsing/serialization.
   RdfMapper({required RdfMapperRegistry registry, RdfCore? rdfCore})
-    : _service = RdfMapperService(registry: registry),
-      _rdfCore = rdfCore ?? RdfCore.withStandardCodecs(),
-      _graphOperations = GraphOperations(RdfMapperService(registry: registry));
+      : _service = RdfMapperService(registry: registry),
+        _rdfCore = rdfCore ?? RdfCore.withStandardCodecs(),
+        _graphOperations =
+            GraphOperations(RdfMapperService(registry: registry));
 
   /// Creates an RDF Mapper facade with a default registry and standard mappers.
   ///

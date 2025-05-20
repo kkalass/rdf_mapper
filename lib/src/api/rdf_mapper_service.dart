@@ -39,7 +39,7 @@ final class RdfMapperService {
   ///
   /// @param registry The registry containing mappers for different types
   RdfMapperService({required RdfMapperRegistry registry})
-    : _registry = registry;
+      : _registry = registry;
 
   /// Access to the underlying registry for registering custom mappers.
   ///
@@ -236,11 +236,10 @@ final class RdfMapperService {
       // Only throw if this failed subject isn't referenced by other objects
       // (meaning it's a root node)
       if (!subjectReferences.contains(subject)) {
-        final type =
-            graph
-                .findTriples(subject: subject, predicate: Rdf.type)
-                .firstOrNull
-                ?.object;
+        final type = graph
+            .findTriples(subject: subject, predicate: Rdf.type)
+            .firstOrNull
+            ?.object;
 
         throw DeserializerNotFoundException.forTypeIri(
           "IriNodeDeserializer",
@@ -322,10 +321,9 @@ final class RdfMapperService {
       register(registry);
     }
     final context = SerializationContextImpl(registry: registry);
-    var triples =
-        instances.expand((instance) {
-          return context.node(instance);
-        }).toList();
+    var triples = instances.expand((instance) {
+      return context.node(instance);
+    }).toList();
 
     return RdfGraph(triples: triples);
   }

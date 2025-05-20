@@ -25,7 +25,7 @@ import 'package:rdf_mapper/src/api/resource_reader.dart' as _i2;
 class _FakeResourceReader_0 extends _i1.SmartFake
     implements _i2.ResourceReader {
   _FakeResourceReader_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 /// A class which mocks [DeserializationContext].
@@ -38,13 +38,11 @@ class MockDeserializationContext extends _i1.Mock
   }
 
   @override
-  _i2.ResourceReader reader(_i4.RdfSubject? subject) =>
-      (super.noSuchMethod(
-            Invocation.method(#reader, [subject]),
-            returnValue: _FakeResourceReader_0(
-              this,
-              Invocation.method(#reader, [subject]),
-            ),
-          )
-          as _i2.ResourceReader);
+  _i2.ResourceReader reader(_i4.RdfSubject? subject) => (super.noSuchMethod(
+        Invocation.method(#reader, [subject]),
+        returnValue: _FakeResourceReader_0(
+          this,
+          Invocation.method(#reader, [subject]),
+        ),
+      ) as _i2.ResourceReader);
 }

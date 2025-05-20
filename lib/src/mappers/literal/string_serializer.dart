@@ -31,5 +31,5 @@ final class StringSerializer extends BaseRdfLiteralTermSerializer<String> {
   ///
   /// @param datatype Optional custom datatype IRI (defaults to xsd:string)
   StringSerializer({IriTerm? datatype})
-    : super(datatype: datatype ?? Xsd.string, convertToString: (s) => s);
+      : super(datatype: datatype ?? Xsd.string, convertToString: (s) => s);
 }

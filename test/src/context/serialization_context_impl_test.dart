@@ -33,14 +33,13 @@ void main() {
         final triples = context.node(person);
 
         // Count the number of type triples
-        final typeTriples =
-            triples
-                .where(
-                  (triple) =>
-                      triple.predicate == Rdf.type &&
-                      triple.subject == IriTerm(person.id),
-                )
-                .toList();
+        final typeTriples = triples
+            .where(
+              (triple) =>
+                  triple.predicate == Rdf.type &&
+                  triple.subject == IriTerm(person.id),
+            )
+            .toList();
 
         // Verify there's exactly one type triple, not two
         expect(typeTriples.length, equals(1));
@@ -63,14 +62,13 @@ void main() {
       final triples = context.node(person);
 
       // Count the number of type triples
-      final typeTriples =
-          triples
-              .where(
-                (triple) =>
-                    triple.predicate == Rdf.type &&
-                    triple.subject == IriTerm(person.id),
-              )
-              .toList();
+      final typeTriples = triples
+          .where(
+            (triple) =>
+                triple.predicate == Rdf.type &&
+                triple.subject == IriTerm(person.id),
+          )
+          .toList();
 
       // Verify there's exactly one type triple added by the context
       expect(typeTriples.length, equals(1));
@@ -94,14 +92,13 @@ void main() {
       final triples = context.childNode(parentSubject, predicate, person);
 
       // Count the number of type triples for the person
-      final typeTriples =
-          triples
-              .where(
-                (triple) =>
-                    triple.predicate == Rdf.type &&
-                    triple.subject == IriTerm(person.id),
-              )
-              .toList();
+      final typeTriples = triples
+          .where(
+            (triple) =>
+                triple.predicate == Rdf.type &&
+                triple.subject == IriTerm(person.id),
+          )
+          .toList();
 
       // Verify there's exactly one type triple, not two
       expect(typeTriples.length, equals(1));

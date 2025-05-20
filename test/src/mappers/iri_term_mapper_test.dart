@@ -78,8 +78,8 @@ void main() {
       );
 
       // Deserialize from graph
-      final deserializedContainer = rdfMapper.graph
-          .decodeObject<ResourceContainer>(graph);
+      final deserializedContainer =
+          rdfMapper.graph.decodeObject<ResourceContainer>(graph);
 
       // Verify deserialized properties
       expect(deserializedContainer.id, equals(container.id));
@@ -115,8 +115,8 @@ void main() {
       final graph = rdfMapper.graph.encodeObject(container);
 
       // Deserialize from graph
-      final deserializedContainer = rdfMapper.graph
-          .decodeObject<MultiReferenceContainer>(graph);
+      final deserializedContainer =
+          rdfMapper.graph.decodeObject<MultiReferenceContainer>(graph);
 
       // Verify deserialized object properties
       expect(deserializedContainer.id, equals(container.id));
@@ -158,8 +158,8 @@ void main() {
       );
 
       // Deserialize from graph
-      final deserializedResource = rdfMapper.graph
-          .decodeObject<TransformedResource>(graph);
+      final deserializedResource =
+          rdfMapper.graph.decodeObject<TransformedResource>(graph);
 
       // Verify the transformed URI was correctly extracted back to the simple ID
       expect(deserializedResource.id, equals('resource-123'));
@@ -474,11 +474,10 @@ class PersonMapper implements GlobalResourceMapper<Person> {
   Person fromRdfNode(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     final name = reader.require<String>(IriTerm('http://example.org/name'));
-    final knows =
-        reader
-            .getList<ResourceReference>(IriTerm('http://example.org/knows'))
-            .map((ref) => PersonReference(uri: ref.uri))
-            .toList();
+    final knows = reader
+        .getList<ResourceReference>(IriTerm('http://example.org/knows'))
+        .map((ref) => PersonReference(uri: ref.uri))
+        .toList();
 
     final person = Person(id: subject.iri, name: name);
     person.knows = knows;

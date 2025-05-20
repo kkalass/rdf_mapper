@@ -11,8 +11,8 @@ class RdfObjectsStringCodec<T> extends Codec<Iterable<T>, String> {
   RdfObjectsStringCodec({
     required RdfObjectsCodec<T> objectsCodec,
     required RdfGraphCodec graphCodec,
-  }) : _objectsCodec = objectsCodec,
-       _graphCodec = graphCodec;
+  })  : _objectsCodec = objectsCodec,
+        _graphCodec = graphCodec;
 
   @override
   RdfObjectsStringEncoder<T> get encoder =>
@@ -73,8 +73,8 @@ class RdfObjectStringCodec<T> extends Codec<T, String> {
   RdfObjectStringCodec({
     required RdfObjectCodec<T> objectCodec,
     required RdfGraphCodec graphCodec,
-  }) : _objectCodec = objectCodec,
-       _graphCodec = graphCodec;
+  })  : _objectCodec = objectCodec,
+        _graphCodec = graphCodec;
 
   factory RdfObjectStringCodec.forMappers({
     String? contentType,

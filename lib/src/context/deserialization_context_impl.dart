@@ -16,8 +16,8 @@ class DeserializationContextImpl extends DeserializationContext
   DeserializationContextImpl({
     required RdfGraph graph,
     required RdfMapperRegistry registry,
-  }) : _graph = graph,
-       _registry = registry;
+  })  : _graph = graph,
+        _registry = registry;
 
   /// Implementation of the reader method to support fluent API.
   @override
@@ -171,15 +171,16 @@ class DeserializationContextImpl extends DeserializationContext
     IriNodeDeserializer<T>? nodeDeserializer,
     LiteralTermDeserializer<T>? literalTermDeserializer,
     BlankNodeDeserializer<T>? blankNodeDeserializer,
-  }) => collect<T, List<T>>(
-    subject,
-    predicate,
-    (it) => it.toList(),
-    iriTermDeserializer: iriTermDeserializer,
-    iriNodeDeserializer: nodeDeserializer,
-    literalTermDeserializer: literalTermDeserializer,
-    blankNodeDeserializer: blankNodeDeserializer,
-  );
+  }) =>
+      collect<T, List<T>>(
+        subject,
+        predicate,
+        (it) => it.toList(),
+        iriTermDeserializer: iriTermDeserializer,
+        iriNodeDeserializer: nodeDeserializer,
+        literalTermDeserializer: literalTermDeserializer,
+        blankNodeDeserializer: blankNodeDeserializer,
+      );
 
   /// Gets a map of property values
   ///
@@ -191,15 +192,16 @@ class DeserializationContextImpl extends DeserializationContext
     IriNodeDeserializer<MapEntry<K, V>>? iriNodeDeserializer,
     LiteralTermDeserializer<MapEntry<K, V>>? literalTermDeserializer,
     BlankNodeDeserializer<MapEntry<K, V>>? blankNodeDeserializer,
-  }) => collect<MapEntry<K, V>, Map<K, V>>(
-    subject,
-    predicate,
-    (it) => Map<K, V>.fromEntries(it),
-    iriTermDeserializer: iriTermDeserializer,
-    iriNodeDeserializer: iriNodeDeserializer,
-    literalTermDeserializer: literalTermDeserializer,
-    blankNodeDeserializer: blankNodeDeserializer,
-  );
+  }) =>
+      collect<MapEntry<K, V>, Map<K, V>>(
+        subject,
+        predicate,
+        (it) => Map<K, V>.fromEntries(it),
+        iriTermDeserializer: iriTermDeserializer,
+        iriNodeDeserializer: iriNodeDeserializer,
+        literalTermDeserializer: literalTermDeserializer,
+        blankNodeDeserializer: blankNodeDeserializer,
+      );
 }
 
 /// A specialized deserialization context that tracks subject processing order.

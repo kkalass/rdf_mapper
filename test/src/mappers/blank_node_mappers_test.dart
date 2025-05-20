@@ -67,11 +67,10 @@ void main() {
       final graph = rdfMapper.graph.encodeObject(chapter);
 
       // Verify exactly one blank node was created
-      final blankNodes =
-          graph.triples
-              .map((t) => t.subject)
-              .whereType<BlankNodeTerm>()
-              .toSet();
+      final blankNodes = graph.triples
+          .map((t) => t.subject)
+          .whereType<BlankNodeTerm>()
+          .toSet();
       expect(blankNodes.length, equals(1));
 
       final blankNode = blankNodes.first;
@@ -194,14 +193,13 @@ void main() {
       final graph = rdfMapper.graph.encodeObject(document);
 
       // Find document subject
-      final documentSubjects =
-          graph
-              .findTriples(
-                predicate: DocumentMapper.titlePredicate,
-                object: LiteralTerm.string('Test Document'),
-              )
-              .map((t) => t.subject)
-              .toList();
+      final documentSubjects = graph
+          .findTriples(
+            predicate: DocumentMapper.titlePredicate,
+            object: LiteralTerm.string('Test Document'),
+          )
+          .map((t) => t.subject)
+          .toList();
       expect(documentSubjects.length, equals(1));
 
       // Find chapters

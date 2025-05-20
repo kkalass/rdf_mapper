@@ -139,6 +139,7 @@ sealed class NodeSerializer<T> extends Serializer<T> {
 /// - Objects whose identity is only significant within the local graph
 abstract interface class BlankNodeSerializer<T> implements NodeSerializer<T> {
   @override
+
   /// Converts a value to a blank node with associated triples.
   ///
   /// The implementation must generate a unique blank node term and a set of
@@ -167,6 +168,7 @@ abstract interface class BlankNodeSerializer<T> implements NodeSerializer<T> {
 /// - The object represents a significant domain entity
 abstract interface class IriNodeSerializer<T> implements NodeSerializer<T> {
   @override
+
   /// Converts a value to an IRI-identified node with associated triples.
   ///
   /// The implementation must:

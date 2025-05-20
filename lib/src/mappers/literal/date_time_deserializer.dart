@@ -25,8 +25,8 @@ final class DateTimeDeserializer
   ///
   /// @param datatype Optional custom datatype IRI (defaults to xsd:dateTime)
   DateTimeDeserializer({IriTerm? datatype})
-    : super(
-        datatype: datatype ?? Xsd.dateTime,
-        convertFromLiteral: (term, _) => DateTime.parse(term.value).toUtc(),
-      );
+      : super(
+          datatype: datatype ?? Xsd.dateTime,
+          convertFromLiteral: (term, _) => DateTime.parse(term.value).toUtc(),
+        );
 }

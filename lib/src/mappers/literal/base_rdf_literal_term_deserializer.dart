@@ -32,7 +32,7 @@ abstract class BaseRdfLiteralTermDeserializer<T>
     implements LiteralTermDeserializer<T> {
   final IriTerm _datatype;
   final T Function(LiteralTerm term, DeserializationContext context)
-  _convertFromLiteral;
+      _convertFromLiteral;
 
   /// Creates a new base literal term deserializer.
   ///
@@ -42,9 +42,9 @@ abstract class BaseRdfLiteralTermDeserializer<T>
   BaseRdfLiteralTermDeserializer({
     required IriTerm datatype,
     required T Function(LiteralTerm term, DeserializationContext context)
-    convertFromLiteral,
-  }) : _datatype = datatype,
-       _convertFromLiteral = convertFromLiteral;
+        convertFromLiteral,
+  })  : _datatype = datatype,
+        _convertFromLiteral = convertFromLiteral;
 
   /// Converts an RDF literal term to a value of type T.
   ///

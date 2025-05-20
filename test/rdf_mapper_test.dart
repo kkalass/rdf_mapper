@@ -228,9 +228,8 @@ void main() {
           (t) =>
               t.object is LiteralTerm &&
               (t.object as LiteralTerm).value == 'John Doe',
-          orElse:
-              () =>
-                  throw TestFailure('Expected name triple for John not found'),
+          orElse: () =>
+              throw TestFailure('Expected name triple for John not found'),
         );
         expect(johnNameTriple, isNotNull);
 
@@ -248,9 +247,8 @@ void main() {
           (t) =>
               t.object is LiteralTerm &&
               (t.object as LiteralTerm).value == 'Jane Smith',
-          orElse:
-              () =>
-                  throw TestFailure('Expected name triple for Jane not found'),
+          orElse: () =>
+              throw TestFailure('Expected name triple for Jane not found'),
         );
         expect(janeNameTriple, isNotNull);
       },
@@ -1190,9 +1188,9 @@ class _PredefinedResultsCodec extends RdfGraphCodec {
     required this.serialized,
     bool canParse = true,
     String contentType = 'application/predefined-results',
-  }) : _canParse = canParse,
-       _contentType = contentType,
-       _parsedGraph = RdfGraph(triples: parsed);
+  })  : _canParse = canParse,
+        _contentType = contentType,
+        _parsedGraph = RdfGraph(triples: parsed);
 
   @override
   bool canParse(String content) {
@@ -1219,7 +1217,8 @@ class _PredefinedResultsCodec extends RdfGraphCodec {
   RdfGraphCodec withOptions({
     RdfGraphEncoderOptions? encoder,
     RdfGraphDecoderOptions? decoder,
-  }) => this;
+  }) =>
+      this;
 }
 
 // Test model class

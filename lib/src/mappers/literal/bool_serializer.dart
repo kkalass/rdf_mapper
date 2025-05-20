@@ -26,8 +26,8 @@ final class BoolSerializer extends BaseRdfLiteralTermSerializer<bool> {
   ///
   /// @param datatype Optional custom datatype IRI (defaults to xsd:boolean)
   BoolSerializer({IriTerm? datatype})
-    : super(
-        datatype: datatype ?? Xsd.boolean,
-        convertToString: (b) => b.toString(),
-      );
+      : super(
+          datatype: datatype ?? Xsd.boolean,
+          convertToString: (b) => b.toString(),
+        );
 }

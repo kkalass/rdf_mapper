@@ -345,9 +345,8 @@ void main() {
       ); // Address should be filtered out
 
       // Verify that both persons have their addresses correctly
-      final persons =
-          objects.whereType<Person>().toList()
-            ..sort((a, b) => a.name.compareTo(b.name));
+      final persons = objects.whereType<Person>().toList()
+        ..sort((a, b) => a.name.compareTo(b.name));
 
       expect(persons[0].name, equals('Jane Smith'));
       expect(persons[0].address!.city, equals('Worktown'));

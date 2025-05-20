@@ -91,7 +91,7 @@ final class RdfMapperRegistry {
   final Map<IriTerm, IriNodeDeserializer<dynamic>> _iriNodeDeserializersByType =
       {};
   final Map<IriTerm, BlankNodeDeserializer<dynamic>>
-  _blankNodeDeserializersByType = {};
+      _blankNodeDeserializersByType = {};
 
   /// Creates a new RDF mapper registry with standard mappers pre-registered.
   ///

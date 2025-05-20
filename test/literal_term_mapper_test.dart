@@ -173,8 +173,8 @@ void main() {
         }
 
         // Deserialize the graph back to an object
-        final deserializedContainer = rdfMapper.graph
-            .decodeObject<TestCollectionContainer>(graph);
+        final deserializedContainer =
+            rdfMapper.graph.decodeObject<TestCollectionContainer>(graph);
 
         // Verify all properties were correctly round-tripped
         expect(deserializedContainer.id, equals(container.id));

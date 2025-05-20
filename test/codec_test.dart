@@ -214,11 +214,9 @@ void main() {
       // Create a codec for collections
       final codec = rdfMapper.objectsCodec<Object>(
         contentType: 'text/turtle',
-        register:
-            (reg) =>
-                reg
-                  ..registerMapper(TestPersonMapper())
-                  ..registerMapper(TestCompanyMapper()),
+        register: (reg) => reg
+          ..registerMapper(TestPersonMapper())
+          ..registerMapper(TestCompanyMapper()),
       );
 
       // Create a mixed collection

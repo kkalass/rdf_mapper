@@ -15,7 +15,7 @@ class SerializationContextImpl extends SerializationContext
   final RdfMapperRegistry _registry;
 
   SerializationContextImpl({required RdfMapperRegistry registry})
-    : _registry = registry;
+      : _registry = registry;
 
   /// Implementation of the resourceBuilder method to support fluent API.
   @override
@@ -33,13 +33,12 @@ class SerializationContextImpl extends SerializationContext
         'Instance cannot be null for literal serialization, the caller should handle null values.',
       );
     }
-    final ser =
-        _getSerializerFallbackToRuntimeType(
-          serializer,
-          instance,
-          _registry.getLiteralTermSerializer,
-          _registry.getLiteralTermSerializerByType,
-        )!;
+    final ser = _getSerializerFallbackToRuntimeType(
+      serializer,
+      instance,
+      _registry.getLiteralTermSerializer,
+      _registry.getLiteralTermSerializerByType,
+    )!;
 
     return ser.toRdfTerm(instance, this);
   }
@@ -131,7 +130,8 @@ class SerializationContextImpl extends SerializationContext
     RdfSubject subject,
     RdfPredicate predicate,
     RdfObject object,
-  ) => Triple(subject, predicate, object);
+  ) =>
+      Triple(subject, predicate, object);
 
   @override
   Triple iri<T>(
@@ -146,13 +146,12 @@ class SerializationContextImpl extends SerializationContext
       );
     }
     // Try to get serializer directly for type T if provided or available
-    final ser =
-        _getSerializerFallbackToRuntimeType(
-          serializer,
-          instance,
-          _registry.getIriTermSerializer,
-          _registry.getIriTermSerializerByType,
-        )!;
+    final ser = _getSerializerFallbackToRuntimeType(
+      serializer,
+      instance,
+      _registry.getIriTermSerializer,
+      _registry.getIriTermSerializerByType,
+    )!;
 
     var term = ser.toRdfTerm(instance, this);
     return Triple(subject, predicate, term);
@@ -242,13 +241,14 @@ class SerializationContextImpl extends SerializationContext
     RdfPredicate predicate,
     Iterable<T> instance, {
     LiteralTermSerializer<T>? serializer,
-  }) => literals<Iterable<T>, T>(
-    subject,
-    predicate,
-    (it) => it,
-    instance,
-    serializer: serializer,
-  );
+  }) =>
+      literals<Iterable<T>, T>(
+        subject,
+        predicate,
+        (it) => it,
+        instance,
+        serializer: serializer,
+      );
   List<Triple> iris<A, T>(
     RdfSubject subject,
     RdfPredicate predicate,
@@ -266,13 +266,14 @@ class SerializationContextImpl extends SerializationContext
     RdfPredicate predicate,
     Iterable<T> instance, {
     IriTermSerializer<T>? serializer,
-  }) => iris<Iterable<T>, T>(
-    subject,
-    predicate,
-    (it) => it,
-    instance,
-    serializer: serializer,
-  );
+  }) =>
+      iris<Iterable<T>, T>(
+        subject,
+        predicate,
+        (it) => it,
+        instance,
+        serializer: serializer,
+      );
   List<Triple> childNodes<A, T>(
     RdfSubject subject,
     RdfPredicate predicate,
@@ -293,13 +294,14 @@ class SerializationContextImpl extends SerializationContext
     RdfPredicate predicate,
     Iterable<T> instance, {
     NodeSerializer<T>? serializer,
-  }) => childNodes(
-    subject,
-    predicate,
-    (it) => it,
-    instance,
-    serializer: serializer,
-  );
+  }) =>
+      childNodes(
+        subject,
+        predicate,
+        (it) => it,
+        instance,
+        serializer: serializer,
+      );
 
   /// Creates triples for a map of child nodes.
   List<Triple> childNodeMap<K, V>(
@@ -307,11 +309,12 @@ class SerializationContextImpl extends SerializationContext
     RdfPredicate predicate,
     Map<K, V> instance,
     NodeSerializer<MapEntry<K, V>> entrySerializer,
-  ) => childNodes<Map<K, V>, MapEntry<K, V>>(
-    subject,
-    predicate,
-    (it) => it.entries,
-    instance,
-    serializer: entrySerializer,
-  );
+  ) =>
+      childNodes<Map<K, V>, MapEntry<K, V>>(
+        subject,
+        predicate,
+        (it) => it.entries,
+        instance,
+        serializer: entrySerializer,
+      );
 }

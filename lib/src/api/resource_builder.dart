@@ -51,7 +51,7 @@ class ResourceBuilder<S extends RdfSubject> {
   /// @param service The serialization service for converting objects to RDF
   /// @param initialTriples Optional list of initial triples to include
   ResourceBuilder(this._subject, this._service, {List<Triple>? initialTriples})
-    : _triples = initialTriples ?? [];
+      : _triples = initialTriples ?? [];
 
   /// Adds a constant object property to the node.
   ///

@@ -30,8 +30,8 @@ final class DoubleSerializer extends BaseRdfLiteralTermSerializer<double> {
   ///
   /// @param datatype Optional custom datatype IRI (defaults to xsd:decimal)
   DoubleSerializer({IriTerm? datatype})
-    : super(
-        datatype: datatype ?? Xsd.decimal,
-        convertToString: (d) => d.toString(),
-      );
+      : super(
+          datatype: datatype ?? Xsd.decimal,
+          convertToString: (d) => d.toString(),
+        );
 }

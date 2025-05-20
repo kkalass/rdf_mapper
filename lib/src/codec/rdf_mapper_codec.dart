@@ -101,8 +101,8 @@ class RdfObjectCodec<T> extends Codec<T, RdfGraph> {
   RdfObjectCodec({
     required RdfMapperService service,
     void Function(RdfMapperRegistry registry)? register,
-  }) : _service = service,
-       _register = register;
+  })  : _service = service,
+        _register = register;
 
   /// Creates a new codec from an optional [RdfMapper] instance or a register function.
   ///
@@ -181,6 +181,7 @@ class RdfObjectEncoder<T> extends Converter<T, RdfGraph> {
   RdfObjectEncoder(this._service, this._register);
 
   @override
+
   /// Converts a Dart object to an RDF graph.
   ///
   /// Uses the mapper service to serialize the object according to its registered mappers.
@@ -199,6 +200,7 @@ class RdfObjectDecoder<T> extends Converter<RdfGraph, T> {
   RdfObjectDecoder(this._service, this._register);
 
   @override
+
   /// Converts an RDF graph to a Dart object.
   ///
   /// If [subject] is provided, only that specific subject from the graph will be
@@ -230,10 +232,11 @@ class RdfObjectsCodec<T> extends Codec<Iterable<T>, RdfGraph> {
   RdfObjectsCodec({
     required RdfMapperService service,
     void Function(RdfMapperRegistry registry)? register,
-  }) : _service = service,
-       _register = register;
+  })  : _service = service,
+        _register = register;
 
   @override
+
   /// Returns the encoder component of this codec.
   RdfObjectsEncoder<T> get encoder => RdfObjectsEncoder(_service, _register);
 
@@ -249,6 +252,7 @@ class RdfObjectsCodec<T> extends Codec<Iterable<T>, RdfGraph> {
   }
 
   @override
+
   /// Returns the decoder component of this codec.
   RdfObjectsDecoder<T> get decoder => RdfObjectsDecoder(_service, _register);
 

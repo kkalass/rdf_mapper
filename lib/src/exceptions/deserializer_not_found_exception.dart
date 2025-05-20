@@ -21,14 +21,14 @@ class DeserializerNotFoundException extends RdfMappingException {
   /// @param serializerType The type of deserializer that was being looked up
   /// @param type The Dart type for which no deserializer was found
   DeserializerNotFoundException(this._serializerType, Type type)
-    : _t = type.toString();
+      : _t = type.toString();
 
   /// Creates a new exception for when a deserializer for an RDF type IRI is not found.
   ///
   /// @param serializerType The type of deserializer that was being looked up
   /// @param type The RDF type IRI for which no deserializer was found
   DeserializerNotFoundException.forTypeIri(this._serializerType, IriTerm type)
-    : _t = type.iri;
+      : _t = type.iri;
 
   @override
   String toString() =>

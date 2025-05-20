@@ -38,10 +38,9 @@ void main() {
       // storage root.
       final graph = rdf.graph.encodeObject<TestItem>(
         originalItem,
-        register:
-            (registry) => registry.registerMapper(
-              TestItemRdfMapper(storageRoot: storageRootForTest),
-            ),
+        register: (registry) => registry.registerMapper(
+          TestItemRdfMapper(storageRoot: storageRootForTest),
+        ),
       );
       expect(graph.triples, isNotEmpty);
       final turtle = codec.encode(graph);
@@ -58,7 +57,8 @@ void main() {
 <https://example.com/pod/Graph%20Conversion%20Test> a to:TestItem;
     to:age 42;
     to:name "Graph Conversion Test" .
-""".trim(),
+"""
+              .trim(),
         ),
       );
 
@@ -80,10 +80,9 @@ void main() {
       // Convert to graph
       final graph = rdf.graph.encodeObject<TestItem>(
         originalItem,
-        register:
-            (registry) => registry.registerMapper(
-              TestItemRdfMapper(storageRoot: storageRootForTest),
-            ),
+        register: (registry) => registry.registerMapper(
+          TestItemRdfMapper(storageRoot: storageRootForTest),
+        ),
       );
       expect(graph.triples, isNotEmpty);
       final turtle = codec.encode(graph);
@@ -99,7 +98,8 @@ void main() {
 <https://example.com/pod/Graph%20Conversion%20Test> a test:TestItem;
     test:age 42;
     test:name "Graph Conversion Test" .
-""".trim(),
+"""
+              .trim(),
         ),
       );
     });
@@ -120,10 +120,9 @@ void main() {
       final graph = codec.decode(turtle);
       final allSubjects = rdf.graph.decodeObjects(
         graph,
-        register:
-            (registry) => registry.registerMapper(
-              TestItemRdfMapper(storageRoot: storageRootForTest),
-            ),
+        register: (registry) => registry.registerMapper(
+          TestItemRdfMapper(storageRoot: storageRootForTest),
+        ),
       );
 
       // Verify generated turtle

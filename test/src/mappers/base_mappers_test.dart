@@ -46,10 +46,10 @@ class MockDeserializationContext extends DeserializationContext {
 // Concrete implementation for testing BaseRdfLiteralTermSerializer
 class TestPointSerializer extends BaseRdfLiteralTermSerializer<Point> {
   TestPointSerializer({IriTerm? datatype})
-    : super(
-        datatype: datatype ?? Xsd.string,
-        convertToString: (point) => '${point.x},${point.y}',
-      );
+      : super(
+          datatype: datatype ?? Xsd.string,
+          convertToString: (point) => '${point.x},${point.y}',
+        );
 }
 
 // Custom language tag serializer implementation
@@ -57,7 +57,7 @@ class LangTaggedSerializer extends BaseRdfLiteralTermSerializer<String> {
   final String langTag;
 
   LangTaggedSerializer(this.langTag)
-    : super(datatype: Xsd.string, convertToString: (value) => value);
+      : super(datatype: Xsd.string, convertToString: (value) => value);
 
   @override
   LiteralTerm toRdfTerm(String value, SerializationContext context) {
@@ -68,19 +68,20 @@ class LangTaggedSerializer extends BaseRdfLiteralTermSerializer<String> {
 // Concrete implementation for testing BaseRdfLiteralTermDeserializer
 class TestPointDeserializer extends BaseRdfLiteralTermDeserializer<Point> {
   TestPointDeserializer({IriTerm? datatype})
-    : super(
-        datatype: datatype ?? Xsd.string,
-        convertFromLiteral: (term, _) {
-          final parts = term.value.split(',');
-          return Point(int.parse(parts[0]), int.parse(parts[1]));
-        },
-      );
+      : super(
+          datatype: datatype ?? Xsd.string,
+          convertFromLiteral: (term, _) {
+            final parts = term.value.split(',');
+            return Point(int.parse(parts[0]), int.parse(parts[1]));
+          },
+        );
 }
 
 // Deserializer that accepts language-tagged literals
 class LangTagTestDeserializer extends BaseRdfLiteralTermDeserializer<String> {
   LangTagTestDeserializer()
-    : super(datatype: Xsd.string, convertFromLiteral: (term, _) => term.value);
+      : super(
+            datatype: Xsd.string, convertFromLiteral: (term, _) => term.value);
 
   @override
   String fromRdfTerm(LiteralTerm term, DeserializationContext context) {
@@ -282,27 +283,26 @@ class Color {
 
 class ColorSerializer extends BaseRdfLiteralTermSerializer<Color> {
   ColorSerializer()
-    : super(
-        datatype: IriTerm('http://example.org/color'),
-        convertToString:
-            (color) =>
-                '#${color.red.toRadixString(16).padLeft(2, '0')}'
-                '${color.green.toRadixString(16).padLeft(2, '0')}'
-                '${color.blue.toRadixString(16).padLeft(2, '0')}',
-      );
+      : super(
+          datatype: IriTerm('http://example.org/color'),
+          convertToString: (color) =>
+              '#${color.red.toRadixString(16).padLeft(2, '0')}'
+              '${color.green.toRadixString(16).padLeft(2, '0')}'
+              '${color.blue.toRadixString(16).padLeft(2, '0')}',
+        );
 }
 
 class ColorDeserializer extends BaseRdfLiteralTermDeserializer<Color> {
   ColorDeserializer()
-    : super(
-        datatype: IriTerm('http://example.org/color'),
-        convertFromLiteral: (term, _) {
-          // Parse hex color (e.g., #FF0080)
-          final hexStr = term.value.substring(1); // Remove # prefix
-          final red = int.parse(hexStr.substring(0, 2), radix: 16);
-          final green = int.parse(hexStr.substring(2, 4), radix: 16);
-          final blue = int.parse(hexStr.substring(4, 6), radix: 16);
-          return Color(red, green, blue);
-        },
-      );
+      : super(
+          datatype: IriTerm('http://example.org/color'),
+          convertFromLiteral: (term, _) {
+            // Parse hex color (e.g., #FF0080)
+            final hexStr = term.value.substring(1); // Remove # prefix
+            final red = int.parse(hexStr.substring(0, 2), radix: 16);
+            final green = int.parse(hexStr.substring(2, 4), radix: 16);
+            final blue = int.parse(hexStr.substring(4, 6), radix: 16);
+            return Color(red, green, blue);
+          },
+        );
 }

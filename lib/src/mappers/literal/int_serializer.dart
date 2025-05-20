@@ -26,8 +26,8 @@ final class IntSerializer extends BaseRdfLiteralTermSerializer<int> {
   ///
   /// @param datatype Optional custom datatype IRI (defaults to xsd:integer)
   IntSerializer({IriTerm? datatype})
-    : super(
-        datatype: datatype ?? Xsd.integer,
-        convertToString: (i) => i.toString(),
-      );
+      : super(
+          datatype: datatype ?? Xsd.integer,
+          convertToString: (i) => i.toString(),
+        );
 }

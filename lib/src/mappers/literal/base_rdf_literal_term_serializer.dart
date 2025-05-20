@@ -39,8 +39,8 @@ abstract class BaseRdfLiteralTermSerializer<T>
   BaseRdfLiteralTermSerializer({
     required IriTerm datatype,
     String Function(T value)? convertToString,
-  }) : _datatype = datatype,
-       _convertToString = convertToString ?? ((value) => value.toString());
+  })  : _datatype = datatype,
+        _convertToString = convertToString ?? ((value) => value.toString());
 
   /// Converts a value to an RDF literal term.
   ///

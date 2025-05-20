@@ -36,11 +36,10 @@ void main() {
         final predicate = IriTerm('http://example.org/tag');
         final container = TestContainer(tags: ['tag1', 'tag2', 'tag3']);
 
-        final (_, triples) =
-            context
-                .resourceBuilder(subject)
-                .literals(predicate, (c) => c.tags, container)
-                .build();
+        final (_, triples) = context
+            .resourceBuilder(subject)
+            .literals(predicate, (c) => c.tags, container)
+            .build();
 
         expect(triples.length, equals(3));
         expect(
@@ -71,11 +70,10 @@ void main() {
           ],
         );
 
-        final (_, triples) =
-            context
-                .resourceBuilder(subject)
-                .iris(predicate, (c) => c.relatedIds, container)
-                .build();
+        final (_, triples) = context
+            .resourceBuilder(subject)
+            .iris(predicate, (c) => c.relatedIds, container)
+            .build();
 
         expect(triples.length, equals(3));
         expect(
@@ -113,11 +111,10 @@ void main() {
           ],
         );
 
-        final (_, triples) =
-            context
-                .resourceBuilder(subject)
-                .childNodes(predicate, (c) => c.people, container)
-                .build();
+        final (_, triples) = context
+            .resourceBuilder(subject)
+            .childNodes(predicate, (c) => c.people, container)
+            .build();
 
         // Should have:
         // - 2 triples linking subject to each person
@@ -126,10 +123,9 @@ void main() {
         expect(triples.length, equals(6));
 
         // Check link triples from subject to people
-        final linkTriples =
-            triples
-                .where((t) => t.subject == subject && t.predicate == predicate)
-                .toList();
+        final linkTriples = triples
+            .where((t) => t.subject == subject && t.predicate == predicate)
+            .toList();
 
         expect(linkTriples.length, equals(2));
         expect(
@@ -141,13 +137,11 @@ void main() {
         );
 
         // Check name triples for each person
-        final nameTriples =
-            triples
-                .where(
-                  (t) =>
-                      t.predicate == IriTerm('http://xmlns.com/foaf/0.1/name'),
-                )
-                .toList();
+        final nameTriples = triples
+            .where(
+              (t) => t.predicate == IriTerm('http://xmlns.com/foaf/0.1/name'),
+            )
+            .toList();
 
         expect(nameTriples.length, equals(2));
         expect(
@@ -178,30 +172,29 @@ void main() {
       final personSerializer = TestPersonSerializer();
       registry.registerSerializer<TestPerson>(personSerializer);
 
-      final (_, triples) =
-          context
-              .resourceBuilder(subject)
-              .literal(IriTerm('http://example.org/title'), 'Test Resource')
-              .constant(
-                IriTerm('http://example.org/type'),
-                IriTerm('http://example.org/Container'),
-              )
-              .literals(
-                IriTerm('http://example.org/tag'),
-                (c) => c.tags,
-                container,
-              )
-              .iris(
-                IriTerm('http://example.org/related'),
-                (c) => c.relatedIds,
-                container,
-              )
-              .childNodes(
-                IriTerm('http://example.org/hasMember'),
-                (c) => c.people,
-                container,
-              )
-              .build();
+      final (_, triples) = context
+          .resourceBuilder(subject)
+          .literal(IriTerm('http://example.org/title'), 'Test Resource')
+          .constant(
+            IriTerm('http://example.org/type'),
+            IriTerm('http://example.org/Container'),
+          )
+          .literals(
+            IriTerm('http://example.org/tag'),
+            (c) => c.tags,
+            container,
+          )
+          .iris(
+            IriTerm('http://example.org/related'),
+            (c) => c.relatedIds,
+            container,
+          )
+          .childNodes(
+            IriTerm('http://example.org/hasMember'),
+            (c) => c.people,
+            container,
+          )
+          .build();
 
       // 1 title + 1 type + 2 tags + 1 related + 1 link to person + 1 person name + 1 person type = 8 triples
       expect(triples.length, equals(8));

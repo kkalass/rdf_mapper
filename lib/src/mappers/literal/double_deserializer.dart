@@ -27,8 +27,8 @@ final class DoubleDeserializer extends BaseRdfLiteralTermDeserializer<double> {
   ///
   /// @param datatype Optional custom datatype IRI (defaults to xsd:decimal)
   DoubleDeserializer({IriTerm? datatype})
-    : super(
-        datatype: datatype ?? Xsd.decimal,
-        convertFromLiteral: (term, _) => double.parse(term.value),
-      );
+      : super(
+          datatype: datatype ?? Xsd.decimal,
+          convertFromLiteral: (term, _) => double.parse(term.value),
+        );
 }

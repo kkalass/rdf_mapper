@@ -373,24 +373,22 @@ void main() {
 
       expect(
         (graph
-                    .findTriples(
-                      subject: IriTerm('http://example.org/person/1'),
-                      predicate: IriTerm('http://xmlns.com/foaf/0.1/name'),
-                    )[0]
-                    .object
-                as LiteralTerm)
+                .findTriples(
+                  subject: IriTerm('http://example.org/person/1'),
+                  predicate: IriTerm('http://xmlns.com/foaf/0.1/name'),
+                )[0]
+                .object as LiteralTerm)
             .value,
         equals('John Doe'),
       );
 
       expect(
         (graph
-                    .findTriples(
-                      subject: IriTerm('http://example.org/person/2'),
-                      predicate: IriTerm('http://xmlns.com/foaf/0.1/name'),
-                    )[0]
-                    .object
-                as LiteralTerm)
+                .findTriples(
+                  subject: IriTerm('http://example.org/person/2'),
+                  predicate: IriTerm('http://xmlns.com/foaf/0.1/name'),
+                )[0]
+                .object as LiteralTerm)
             .value,
         equals('Jane Smith'),
       );
@@ -483,9 +481,8 @@ void main() {
         expect(objects.whereType<Address>().length, equals(0));
 
         // Verify person references are correct
-        final people =
-            objects.cast<Person>().toList()
-              ..sort((a, b) => a.name.compareTo(b.name));
+        final people = objects.cast<Person>().toList()
+          ..sort((a, b) => a.name.compareTo(b.name));
 
         expect(people[0].name, equals('Jane'));
         expect(people[0].address?.city, equals('San Francisco'));
@@ -725,11 +722,10 @@ class DocumentDeserializer implements IriNodeDeserializer<Document> {
     final reader = context.reader(subject);
     final title = reader.require<String>(IriTerm('http://example.org/title'));
 
-    final tagNames =
-        reader
-            .getList<Tag>(IriTerm('http://example.org/tag'))
-            .map((tag) => tag.name)
-            .toList();
+    final tagNames = reader
+        .getList<Tag>(IriTerm('http://example.org/tag'))
+        .map((tag) => tag.name)
+        .toList();
 
     return Document(id: subject.iri, title: title, tags: tagNames);
   }
@@ -877,7 +873,7 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
     // Get age property
     final age =
         reader.optional<int>(IriTerm('http://xmlns.com/foaf/0.1/age')) ??
-        0; // Default age to 0 if not present
+            0; // Default age to 0 if not present
 
     return TestPerson(id: id, name: name ?? 'Unknown', age: age);
   }

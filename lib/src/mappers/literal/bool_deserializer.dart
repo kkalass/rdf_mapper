@@ -31,20 +31,20 @@ final class BoolDeserializer extends BaseRdfLiteralTermDeserializer<bool> {
   ///
   /// @param datatype Optional custom datatype IRI (defaults to xsd:boolean)
   BoolDeserializer({IriTerm? datatype})
-    : super(
-        datatype: datatype ?? Xsd.boolean,
-        convertFromLiteral: (term, _) {
-          final value = term.value.toLowerCase();
+      : super(
+          datatype: datatype ?? Xsd.boolean,
+          convertFromLiteral: (term, _) {
+            final value = term.value.toLowerCase();
 
-          if (value == 'true' || value == '1') {
-            return true;
-          } else if (value == 'false' || value == '0') {
-            return false;
-          }
+            if (value == 'true' || value == '1') {
+              return true;
+            } else if (value == 'false' || value == '0') {
+              return false;
+            }
 
-          throw DeserializationException(
-            'Failed to parse boolean: ${term.value}',
-          );
-        },
-      );
+            throw DeserializationException(
+              'Failed to parse boolean: ${term.value}',
+            );
+          },
+        );
 }

@@ -40,8 +40,8 @@ final class StringDeserializer implements LiteralTermDeserializer<String> {
   /// @param datatype Optional custom datatype IRI (defaults to xsd:string)
   /// @param acceptLangString When true, also accepts literals with rdf:langString datatype
   StringDeserializer({IriTerm? datatype, bool acceptLangString = false})
-    : _datatype = datatype ?? Xsd.string,
-      _acceptLangString = acceptLangString;
+      : _datatype = datatype ?? Xsd.string,
+        _acceptLangString = acceptLangString;
 
   /// Converts an RDF literal term to a Dart string.
   ///
