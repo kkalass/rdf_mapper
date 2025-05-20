@@ -188,7 +188,7 @@ class Rating {
 // --- Mappers ---
 
 // IRI-based entity mapper
-class BookMapper implements IriNodeMapper<Book> {
+class BookMapper implements GlobalResourceMapper<Book> {
   static final titlePredicate = SchemaBook.name;
   static final authorPredicate = SchemaBook.author;
   static final publishedPredicate = SchemaBook.datePublished;
@@ -235,7 +235,7 @@ class BookMapper implements IriNodeMapper<Book> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .nodeBuilder(IriTerm(_createIriFromId(book.id)))
+        .resourceBuilder(IriTerm(_createIriFromId(book.id)))
         .literal(titlePredicate, book.title)
         .literal(authorPredicate, book.author)
         .literal<DateTime>(publishedPredicate, book.published)
@@ -247,7 +247,7 @@ class BookMapper implements IriNodeMapper<Book> {
 }
 
 // Blank node-based entity mapper
-class ChapterMapper implements BlankNodeMapper<Chapter> {
+class ChapterMapper implements LocalResourceMapper<Chapter> {
   static final titlePredicate = SchemaChapter.name;
   static final numberPredicate = SchemaChapter.position;
 
@@ -270,7 +270,7 @@ class ChapterMapper implements BlankNodeMapper<Chapter> {
     RdfSubject? parentSubject,
   }) {
     return ctxt
-        .nodeBuilder(BlankNodeTerm())
+        .resourceBuilder(BlankNodeTerm())
         .literal(titlePredicate, chapter.title)
         .literal<int>(numberPredicate, chapter.number)
         .build();

@@ -21,8 +21,8 @@ class DeserializationContextImpl extends DeserializationContext
 
   /// Implementation of the reader method to support fluent API.
   @override
-  NodeReader reader(RdfSubject subject) {
-    return NodeReader(subject, this);
+  ResourceReader reader(RdfSubject subject) {
+    return ResourceReader(subject, this);
   }
 
   Object deserializeNode(RdfSubject subjectIri, IriTerm typeIri) {
@@ -61,16 +61,21 @@ class DeserializationContextImpl extends DeserializationContext
             iriTermDeserializer ?? _registry.getIriTermDeserializer<T>();
         return deser.fromRdfTerm(term, context);
       case LiteralTerm _:
-        var deser =
-            literalTermDeserializer ??
-            _registry.getLiteralTermDeserializer<T>();
-        return deser.fromRdfTerm(term, context);
+        return fromLiteralTerm(term, deserializer: literalTermDeserializer);
       case BlankNodeTerm _:
         var deser =
             blankNodeDeserializer ?? _registry.getBlankNodeDeserializer<T>();
         _onDeserializeNode(term);
         return deser.fromRdfNode(term, context);
     }
+  }
+
+  T fromLiteralTerm<T>(
+    LiteralTerm term, {
+    LiteralTermDeserializer<T>? deserializer,
+  }) {
+    var deser = deserializer ?? _registry.getLiteralTermDeserializer<T>();
+    return deser.fromRdfTerm(term, this);
   }
 
   @override

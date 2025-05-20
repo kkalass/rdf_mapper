@@ -4,7 +4,7 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 
 /// Builder for fluent RDF node serialization.
 ///
-/// The NodeBuilder provides a convenient fluent API for constructing RDF nodes
+/// The ResourceBuilder provides a convenient fluent API for constructing RDF nodes
 /// with their associated triples. It simplifies the process of building complex
 /// RDF structures by maintaining the current subject context and offering methods
 /// to add various types of predicates and objects.
@@ -21,7 +21,7 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 /// Basic example:
 /// ```dart
 /// final (subject, triples) = context
-///     .nodeBuilder(IriTerm('http://example.org/resource'))
+///     .resourceBuilder(IriTerm('http://example.org/resource'))
 ///     .literal(dc.title, 'The Title')
 ///     .literal(dc.creator, 'The Author')
 ///     .build();
@@ -30,27 +30,27 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 /// More complex example with nested objects:
 /// ```dart
 /// final (person, triples) = context
-///     .nodeBuilder(IriTerm('http://example.org/person/1'))
+///     .resourceBuilder(IriTerm('http://example.org/person/1'))
 ///     .literal(foaf.name, 'John Doe')
 ///     .literal(foaf.age, 30)
 ///     .childNode(foaf.address, address)
 ///     .childNodeList(foaf.knows, friends)
 ///     .build();
 /// ```
-class NodeBuilder<S extends RdfSubject> {
+class ResourceBuilder<S extends RdfSubject> {
   final S _subject;
   final List<Triple> _triples;
   final SerializationService _service;
 
-  /// Creates a new NodeBuilder for the fluent API.
+  /// Creates a new ResourceBuilder for the fluent API.
   ///
   /// This constructor is typically not called directly. Instead, create a
-  /// builder through the [SerializationContext.nodeBuilder] method.
+  /// builder through the [SerializationContext.resourceBuilder] method.
   ///
   /// @param subject The RDF subject to build properties for
   /// @param service The serialization service for converting objects to RDF
   /// @param initialTriples Optional list of initial triples to include
-  NodeBuilder(this._subject, this._service, {List<Triple>? initialTriples})
+  ResourceBuilder(this._subject, this._service, {List<Triple>? initialTriples})
     : _triples = initialTriples ?? [];
 
   /// Adds a constant object property to the node.
@@ -68,7 +68,7 @@ class NodeBuilder<S extends RdfSubject> {
   /// @param predicate The predicate IRI for the property
   /// @param object The RDF object term to add
   /// @return This builder for method chaining
-  NodeBuilder<S> constant(RdfPredicate predicate, RdfObject object) {
+  ResourceBuilder<S> constant(RdfPredicate predicate, RdfObject object) {
     _triples.add(_service.constant(_subject, predicate, object));
     return this;
   }
@@ -89,7 +89,7 @@ class NodeBuilder<S extends RdfSubject> {
   /// @param instance The source object to extract values from
   /// @param serializer Optional serializer for the value type
   /// @return This builder for method chaining
-  NodeBuilder<S> literals<A, T>(
+  ResourceBuilder<S> literals<A, T>(
     RdfPredicate predicate,
     Iterable<T> Function(A) toIterable,
     A instance, {
@@ -123,7 +123,7 @@ class NodeBuilder<S extends RdfSubject> {
   /// @param instance The source object to extract values from
   /// @param serializer Optional serializer for the value type
   /// @return This builder for method chaining
-  NodeBuilder<S> iris<A, T>(
+  ResourceBuilder<S> iris<A, T>(
     RdfPredicate predicate,
     Iterable<T> Function(A) toIterable,
     A instance, {
@@ -157,7 +157,7 @@ class NodeBuilder<S extends RdfSubject> {
   /// @param instance The source object to extract values from
   /// @param serializer Optional serializer for the child node type
   /// @return This builder for method chaining
-  NodeBuilder<S> childNodes<A, T>(
+  ResourceBuilder<S> childNodes<A, T>(
     RdfPredicate predicate,
     Iterable<T> Function(A) toIterable,
     A instance, {
@@ -191,7 +191,7 @@ class NodeBuilder<S extends RdfSubject> {
   /// @param value The literal value to add
   /// @param serializer Optional custom serializer for the value type
   /// @return This builder for method chaining
-  NodeBuilder<S> literal<V>(
+  ResourceBuilder<S> literal<V>(
     RdfPredicate predicate,
     V value, {
     LiteralTermSerializer<V>? serializer,
@@ -218,7 +218,7 @@ class NodeBuilder<S extends RdfSubject> {
   /// @param value The value to be serialized as an IRI
   /// @param serializer Optional custom serializer for the value type
   /// @return This builder for method chaining
-  NodeBuilder<S> iri<V>(
+  ResourceBuilder<S> iri<V>(
     RdfPredicate predicate,
     V value, {
     IriTermSerializer<V>? serializer,
@@ -247,7 +247,7 @@ class NodeBuilder<S extends RdfSubject> {
   /// @param value The child node object to serialize
   /// @param serializer Optional custom serializer for the child object type
   /// @return This builder for method chaining
-  NodeBuilder<S> childNode<V>(
+  ResourceBuilder<S> childNode<V>(
     RdfPredicate predicate,
     V value, {
     NodeSerializer<V>? serializer,
@@ -274,7 +274,7 @@ class NodeBuilder<S extends RdfSubject> {
   /// @param values The collection of child node values
   /// @param serializer Optional serializer for the child node type
   /// @return This builder for method chaining
-  NodeBuilder<S> childNodeList<V>(
+  ResourceBuilder<S> childNodeList<V>(
     RdfPredicate predicate,
     Iterable<V> values, {
     NodeSerializer<V>? serializer,
@@ -309,7 +309,7 @@ class NodeBuilder<S extends RdfSubject> {
   /// @param instance The map to serialize
   /// @param entrySerializer The serializer for map entries
   /// @return This builder for method chaining
-  NodeBuilder<S> childNodeMap<K, V>(
+  ResourceBuilder<S> childNodeMap<K, V>(
     RdfPredicate predicate,
     Map<K, V> instance,
     NodeSerializer<MapEntry<K, V>> entrySerializer,
@@ -325,7 +325,7 @@ class NodeBuilder<S extends RdfSubject> {
   /// @param predicate The predicate for the properties
   /// @param values The collection of literal values
   /// @param serializer Optional serializer for the value type
-  NodeBuilder<S> literalList<V>(
+  ResourceBuilder<S> literalList<V>(
     RdfPredicate predicate,
     Iterable<V> values, {
     LiteralTermSerializer<V>? serializer,
@@ -341,7 +341,7 @@ class NodeBuilder<S extends RdfSubject> {
   /// @param predicate The predicate for the properties
   /// @param values The collection of values to be serialized as IRIs
   /// @param serializer Optional serializer for the value type
-  NodeBuilder<S> iriList<V>(
+  ResourceBuilder<S> iriList<V>(
     RdfPredicate predicate,
     Iterable<V> values, {
     IriTermSerializer<V>? serializer,
@@ -358,7 +358,7 @@ class NodeBuilder<S extends RdfSubject> {
   /// @param value The optional literal value
   /// @param serializer Optional serializer for the value type
   /// @return This builder instance for method chaining
-  NodeBuilder<S> literalIfNotNull<V>(
+  ResourceBuilder<S> literalIfNotNull<V>(
     RdfPredicate predicate,
     V? value, {
     LiteralTermSerializer<V>? serializer,
@@ -375,7 +375,7 @@ class NodeBuilder<S extends RdfSubject> {
   /// @param value The optional value to be serialized as an IRI
   /// @param serializer Optional serializer for the value type
   /// @return This builder instance for method chaining
-  NodeBuilder<S> iriIfNotNull<V>(
+  ResourceBuilder<S> iriIfNotNull<V>(
     RdfPredicate predicate,
     V? value, {
     IriTermSerializer<V>? serializer,
@@ -392,7 +392,7 @@ class NodeBuilder<S extends RdfSubject> {
   /// @param value The optional child node value
   /// @param serializer Optional serializer for the child node type
   /// @return This builder instance for method chaining
-  NodeBuilder<S> childNodeIfNotNull<V>(
+  ResourceBuilder<S> childNodeIfNotNull<V>(
     RdfPredicate predicate,
     V? value, {
     NodeSerializer<V>? serializer,
@@ -409,7 +409,7 @@ class NodeBuilder<S extends RdfSubject> {
   /// @param values The optional collection of child node values
   /// @param serializer Optional serializer for the child node type
   /// @return This builder instance for method chaining
-  NodeBuilder<S> childNodeListIfNotEmpty<V>(
+  ResourceBuilder<S> childNodeListIfNotEmpty<V>(
     RdfPredicate predicate,
     Iterable<V>? values, {
     NodeSerializer<V>? serializer,
@@ -427,9 +427,9 @@ class NodeBuilder<S extends RdfSubject> {
   /// @param condition The condition that determines if the action should be applied
   /// @param action The action to apply to the builder if the condition is true
   /// @return This builder instance for method chaining
-  NodeBuilder<S> when(
+  ResourceBuilder<S> when(
     bool condition,
-    void Function(NodeBuilder<S> builder) action,
+    void Function(ResourceBuilder<S> builder) action,
   ) {
     if (condition) {
       action(this);

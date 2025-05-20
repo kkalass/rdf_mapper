@@ -17,10 +17,31 @@ class SerializationContextImpl extends SerializationContext
   SerializationContextImpl({required RdfMapperRegistry registry})
     : _registry = registry;
 
-  /// Implementation of the nodeBuilder method to support fluent API.
+  /// Implementation of the resourceBuilder method to support fluent API.
   @override
-  NodeBuilder<S> nodeBuilder<S extends RdfSubject>(S subject) {
-    return NodeBuilder<S>(subject, this);
+  ResourceBuilder<S> resourceBuilder<S extends RdfSubject>(S subject) {
+    return ResourceBuilder<S>(subject, this);
+  }
+
+  @override
+  LiteralTerm toLiteralTerm<T>(
+    T instance, {
+    LiteralTermSerializer<T>? serializer,
+  }) {
+    if (instance == null) {
+      throw ArgumentError(
+        'Instance cannot be null for literal serialization, the caller should handle null values.',
+      );
+    }
+    final ser =
+        _getSerializerFallbackToRuntimeType(
+          serializer,
+          instance,
+          _registry.getLiteralTermSerializer,
+          _registry.getLiteralTermSerializerByType,
+        )!;
+
+    return ser.toRdfTerm(instance, this);
   }
 
   /// This method is used to look up serializers for types.
@@ -144,20 +165,7 @@ class SerializationContextImpl extends SerializationContext
     T instance, {
     LiteralTermSerializer<T>? serializer,
   }) {
-    if (instance == null) {
-      throw ArgumentError(
-        'Instance cannot be null for literal serialization, the caller should handle null values.',
-      );
-    }
-    final ser =
-        _getSerializerFallbackToRuntimeType(
-          serializer,
-          instance,
-          _registry.getLiteralTermSerializer,
-          _registry.getLiteralTermSerializerByType,
-        )!;
-
-    var term = ser.toRdfTerm(instance, this);
+    var term = toLiteralTerm(instance, serializer: serializer);
     return Triple(subject, predicate, term);
   }
 

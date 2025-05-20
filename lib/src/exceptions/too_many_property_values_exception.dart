@@ -5,7 +5,7 @@ import 'package:rdf_mapper/src/exceptions/rdf_mapping_exception.dart';
 ///
 /// This exception occurs during deserialization when a property is expected to have
 /// at most one value, but multiple values are found in the RDF graph. This typically
-/// happens when using methods like [NodeReader.require] or [NodeReader.get] with
+/// happens when using methods like [ResourceReader.require] or [ResourceReader.get] with
 /// the default enforceSingleValue parameter set to true.
 ///
 /// The exception contains detailed information about the subject, predicate, and

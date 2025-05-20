@@ -27,7 +27,7 @@ class ChildClass {
 }
 
 /// Mapper for ParentClass which dynamically provides a mapper for ChildClass
-class ParentClassMapper implements IriNodeMapper<ParentClass> {
+class ParentClassMapper implements GlobalResourceMapper<ParentClass> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/ParentClass');
 
@@ -56,7 +56,7 @@ class ParentClassMapper implements IriNodeMapper<ParentClass> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .nodeBuilder(IriTerm(value.id))
+        .resourceBuilder(IriTerm(value.id))
         .literal(namePredicate, value.name)
         .childNode(
           childPredicate,
@@ -69,7 +69,7 @@ class ParentClassMapper implements IriNodeMapper<ParentClass> {
 }
 
 /// Mapper for ChildClass that requires context from parent
-class ChildClassMapper implements IriNodeMapper<ChildClass> {
+class ChildClassMapper implements GlobalResourceMapper<ChildClass> {
   final String parentId;
 
   ChildClassMapper({required this.parentId});
@@ -98,7 +98,7 @@ class ChildClassMapper implements IriNodeMapper<ChildClass> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .nodeBuilder(IriTerm(value.id))
+        .resourceBuilder(IriTerm(value.id))
         .literal(valuePredicate, value.value)
         .literal(parentIdPredicate, value.parentId)
         .build();

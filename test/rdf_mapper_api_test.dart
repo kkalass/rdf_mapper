@@ -136,7 +136,7 @@ class TestEntity {
   TestEntity({required this.id, required this.name, required this.value});
 }
 
-class TestEntityMapper implements IriNodeMapper<TestEntity> {
+class TestEntityMapper implements GlobalResourceMapper<TestEntity> {
   static final namePredicate = IriTerm('http://schema.org/name');
   static final valuePredicate = IriTerm('http://schema.org/value');
 
@@ -160,7 +160,7 @@ class TestEntityMapper implements IriNodeMapper<TestEntity> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .nodeBuilder(IriTerm(entity.id))
+        .resourceBuilder(IriTerm(entity.id))
         .literal(namePredicate, entity.name)
         .literal(valuePredicate, entity.value)
         .build();

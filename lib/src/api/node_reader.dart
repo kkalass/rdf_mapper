@@ -4,7 +4,7 @@ import 'package:rdf_mapper/src/api/deserializer.dart';
 
 /// Reader for fluent RDF node deserialization.
 ///
-/// The NodeReader provides a convenient fluent API for extracting data from RDF nodes
+/// The ResourceReader provides a convenient fluent API for extracting data from RDF nodes
 /// during deserialization. It simplifies the process of reading properties from a graph
 /// by maintaining the current subject context and offering methods to retrieve and
 /// convert RDF property values to Dart objects.
@@ -32,18 +32,18 @@ import 'package:rdf_mapper/src/api/deserializer.dart';
 /// final address = reader.require<Address>(foaf.address);
 /// final friends = reader.getList<Person>(foaf.knows);
 /// ```
-class NodeReader {
+class ResourceReader {
   final RdfSubject _subject;
   final DeserializationService _service;
 
-  /// Creates a new NodeReader for the fluent API.
+  /// Creates a new ResourceReader for the fluent API.
   ///
   /// This constructor is typically not called directly. Instead, create a
   /// reader through the [DeserializationContext.reader] method.
   ///
   /// @param subject The RDF subject to read properties from
   /// @param service The deserialization service for converting RDF to objects
-  NodeReader(this._subject, this._service);
+  ResourceReader(this._subject, this._service);
 
   /// Gets a required property value from the RDF graph.
   ///

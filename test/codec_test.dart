@@ -299,7 +299,7 @@ class TestCompany {
 }
 
 // Test mappers
-class TestPersonMapper implements IriNodeMapper<TestPerson> {
+class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   static final _ns = Namespace('http://example.org/ns#');
 
   @override
@@ -323,7 +323,7 @@ class TestPersonMapper implements IriNodeMapper<TestPerson> {
     RdfSubject? parentSubject,
   }) =>
       context
-          .nodeBuilder(IriTerm(instance.id))
+          .resourceBuilder(IriTerm(instance.id))
           .iri(Rdf.type, _ns('Person').iri)
           .literal(_ns('name'), instance.name)
           .literal(_ns('age'), instance.age)
@@ -331,7 +331,7 @@ class TestPersonMapper implements IriNodeMapper<TestPerson> {
           .build();
 }
 
-class TestAddressMapper implements BlankNodeMapper<TestAddress> {
+class TestAddressMapper implements LocalResourceMapper<TestAddress> {
   static final _ns = Namespace('http://example.org/ns#');
 
   @override
@@ -353,14 +353,14 @@ class TestAddressMapper implements BlankNodeMapper<TestAddress> {
     RdfSubject? parentSubject,
   }) =>
       context
-          .nodeBuilder(BlankNodeTerm())
+          .resourceBuilder(BlankNodeTerm())
           .iri(Rdf.type, _ns('Address').iri)
           .literal(_ns('street'), instance.street)
           .literal(_ns('city'), instance.city)
           .build();
 }
 
-class TestCompanyMapper implements IriNodeMapper<TestCompany> {
+class TestCompanyMapper implements GlobalResourceMapper<TestCompany> {
   static final _ns = Namespace('http://example.org/ns#');
 
   @override
@@ -383,7 +383,7 @@ class TestCompanyMapper implements IriNodeMapper<TestCompany> {
     RdfSubject? parentSubject,
   }) =>
       context
-          .nodeBuilder(IriTerm(instance.id))
+          .resourceBuilder(IriTerm(instance.id))
           .iri(Rdf.type, _ns('Company').iri)
           .literal(_ns('name'), instance.name)
           .literal(_ns('foundedYear'), instance.foundedYear)

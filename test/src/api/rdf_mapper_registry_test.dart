@@ -299,7 +299,7 @@ class TestSubjectSerializer implements IriNodeSerializer<CustomType> {
   }
 }
 
-class TestSubjectMapper implements IriNodeMapper<CustomType> {
+class TestSubjectMapper implements GlobalResourceMapper<CustomType> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/CustomType');
 
@@ -326,7 +326,8 @@ class TestSubjectMapper implements IriNodeMapper<CustomType> {
   }
 }
 
-class AnotherTestSubjectMapper implements IriNodeMapper<AnotherCustomType> {
+class AnotherTestSubjectMapper
+    implements GlobalResourceMapper<AnotherCustomType> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/AnotherCustomType');
 

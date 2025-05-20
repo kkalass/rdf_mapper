@@ -310,14 +310,30 @@ class PersonReference {
 // Simple context implementations for isolated tests
 class CustomSerializationContext extends SerializationContext {
   @override
-  NodeBuilder<S> nodeBuilder<S extends RdfSubject>(S subject) {
+  ResourceBuilder<S> resourceBuilder<S extends RdfSubject>(S subject) {
+    throw UnimplementedError();
+  }
+
+  @override
+  LiteralTerm toLiteralTerm<T>(
+    T value, {
+    LiteralTermSerializer<T>? serializer,
+  }) {
     throw UnimplementedError();
   }
 }
 
 class CustomDeserializationContext extends DeserializationContext {
   @override
-  NodeReader reader(RdfSubject subject) {
+  ResourceReader reader(RdfSubject subject) {
+    throw UnimplementedError();
+  }
+
+  @override
+  T fromLiteralTerm<T>(
+    LiteralTerm term, {
+    LiteralTermDeserializer<T>? deserializer,
+  }) {
     throw UnimplementedError();
   }
 }
@@ -336,7 +352,8 @@ class ResourceReferenceMapper implements IriTermMapper<ResourceReference> {
   }
 }
 
-class ResourceContainerMapper implements IriNodeMapper<ResourceContainer> {
+class ResourceContainerMapper
+    implements GlobalResourceMapper<ResourceContainer> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/ResourceContainer');
 
@@ -361,7 +378,7 @@ class ResourceContainerMapper implements IriNodeMapper<ResourceContainer> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .nodeBuilder(IriTerm(value.id))
+        .resourceBuilder(IriTerm(value.id))
         .literal(IriTerm('http://example.org/name'), value.name)
         .iri(IriTerm('http://example.org/resource'), value.resource)
         .build();
@@ -369,7 +386,7 @@ class ResourceContainerMapper implements IriNodeMapper<ResourceContainer> {
 }
 
 class MultiReferenceContainerMapper
-    implements IriNodeMapper<MultiReferenceContainer> {
+    implements GlobalResourceMapper<MultiReferenceContainer> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/MultiReferenceContainer');
 
@@ -398,7 +415,7 @@ class MultiReferenceContainerMapper
     RdfSubject? parentSubject,
   }) {
     final builder = context
-        .nodeBuilder(IriTerm(value.id))
+        .resourceBuilder(IriTerm(value.id))
         .literal(IriTerm('http://example.org/name'), value.name);
 
     for (final resource in value.resources) {
@@ -409,7 +426,8 @@ class MultiReferenceContainerMapper
   }
 }
 
-class TransformedResourceMapper implements IriNodeMapper<TransformedResource> {
+class TransformedResourceMapper
+    implements GlobalResourceMapper<TransformedResource> {
   static const String baseUri = 'http://example.org/resources/';
 
   @override
@@ -442,13 +460,13 @@ class TransformedResourceMapper implements IriNodeMapper<TransformedResource> {
     final identity = ResourceReference(uri: identityUri);
 
     return context
-        .nodeBuilder(IriTerm(identityUri))
+        .resourceBuilder(IriTerm(identityUri))
         .iri(IriTerm('http://example.org/identity'), identity)
         .build();
   }
 }
 
-class PersonMapper implements IriNodeMapper<Person> {
+class PersonMapper implements GlobalResourceMapper<Person> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
@@ -474,7 +492,7 @@ class PersonMapper implements IriNodeMapper<Person> {
     RdfSubject? parentSubject,
   }) {
     final builder = context
-        .nodeBuilder(IriTerm(value.id))
+        .resourceBuilder(IriTerm(value.id))
         .literal(IriTerm('http://example.org/name'), value.name);
 
     for (final personRef in value.knows) {

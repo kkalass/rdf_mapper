@@ -180,19 +180,19 @@ final class RdfMapperRegistry {
   /// are implemented and registers the mapper with all relevant registries.
   ///
   /// Supported mapper types:
-  /// - IriNodeMapper: Combined IriNodeSerializer/IriNodeDeserializer
-  /// - BlankNodeMapper: Combined BlankNodeSerializer/BlankNodeDeserializer
+  /// - GlobalResourceMapper: Combined IriNodeSerializer/IriNodeDeserializer
+  /// - LocalResourceMapper: Combined BlankNodeSerializer/BlankNodeDeserializer
   /// - LiteralTermMapper: Combined LiteralTermSerializer/LiteralTermDeserializer
   /// - IriTermMapper: Combined IriTermSerializer/IriTermDeserializer
   ///
   /// @param mapper The mapper to register
   void registerMapper<T>(Mapper<T> mapper) {
     switch (mapper) {
-      case IriNodeMapper<T>():
+      case GlobalResourceMapper<T>():
         _registerIriNodeDeserializer(mapper);
         _registerNodeSerializer(mapper);
         break;
-      case BlankNodeMapper<T>():
+      case LocalResourceMapper<T>():
         _registerBlankNodeDeserializer<T>(mapper);
         _registerNodeSerializer<T>(mapper);
         break;

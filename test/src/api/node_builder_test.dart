@@ -16,14 +16,14 @@ void main() {
     context = contextImpl;
   });
 
-  group('NodeBuilder', () {
+  group('ResourceBuilder', () {
     test('constant method should add direct RDF object term', () {
       final subject = IriTerm('http://example.org/resource/1');
       final predicate = IriTerm('http://example.org/predicate');
       final object = IriTerm('http://example.org/object');
 
       final (_, triples) =
-          context.nodeBuilder(subject).constant(predicate, object).build();
+          context.resourceBuilder(subject).constant(predicate, object).build();
 
       expect(triples.length, equals(1));
       expect(triples.first, equals(Triple(subject, predicate, object)));
@@ -38,7 +38,7 @@ void main() {
 
         final (_, triples) =
             context
-                .nodeBuilder(subject)
+                .resourceBuilder(subject)
                 .literals(predicate, (c) => c.tags, container)
                 .build();
 
@@ -73,7 +73,7 @@ void main() {
 
         final (_, triples) =
             context
-                .nodeBuilder(subject)
+                .resourceBuilder(subject)
                 .iris(predicate, (c) => c.relatedIds, container)
                 .build();
 
@@ -115,7 +115,7 @@ void main() {
 
         final (_, triples) =
             context
-                .nodeBuilder(subject)
+                .resourceBuilder(subject)
                 .childNodes(predicate, (c) => c.people, container)
                 .build();
 
@@ -180,7 +180,7 @@ void main() {
 
       final (_, triples) =
           context
-              .nodeBuilder(subject)
+              .resourceBuilder(subject)
               .literal(IriTerm('http://example.org/title'), 'Test Resource')
               .constant(
                 IriTerm('http://example.org/type'),
@@ -241,7 +241,7 @@ class TestPersonSerializer implements IriNodeSerializer<TestPerson> {
     RdfSubject? parentSubject,
   }) =>
       context
-          .nodeBuilder(IriTerm(value.id))
+          .resourceBuilder(IriTerm(value.id))
           .literal(IriTerm('http://xmlns.com/foaf/0.1/name'), value.name)
           .build();
 }

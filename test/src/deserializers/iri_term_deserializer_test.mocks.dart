@@ -22,8 +22,9 @@ import 'package:rdf_mapper/src/api/node_reader.dart' as _i2;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeNodeReader_0 extends _i1.SmartFake implements _i2.NodeReader {
-  _FakeNodeReader_0(Object parent, Invocation parentInvocation)
+class _FakeResourceReader_0 extends _i1.SmartFake
+    implements _i2.ResourceReader {
+  _FakeResourceReader_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
@@ -37,13 +38,13 @@ class MockDeserializationContext extends _i1.Mock
   }
 
   @override
-  _i2.NodeReader reader(_i4.RdfSubject? subject) =>
+  _i2.ResourceReader reader(_i4.RdfSubject? subject) =>
       (super.noSuchMethod(
             Invocation.method(#reader, [subject]),
-            returnValue: _FakeNodeReader_0(
+            returnValue: _FakeResourceReader_0(
               this,
               Invocation.method(#reader, [subject]),
             ),
           )
-          as _i2.NodeReader);
+          as _i2.ResourceReader);
 }

@@ -45,7 +45,7 @@ final class GraphOperations {
   /// deserializer for type [T].
   ///
   /// IMPORTANT: When using this method, the type [T] must be mapped using an
-  /// [IriNodeMapper] either globally in the [RdfMapper] instance or locally by
+  /// [GlobalResourceMapper] either globally in the [RdfMapper] instance or locally by
   /// providing a register callback and register it there.
   ///
   /// Simple types like String, int, etc. that
@@ -81,7 +81,7 @@ final class GraphOperations {
   /// is perfectly valid to call this method with Object as the type parameter,
   ///
   /// IMPORTANT: When using this method, the type [T] must be mapped using an
-  /// [IriNodeMapper] either globally in the [RdfMapper] instance or locally by
+  /// [GlobalResourceMapper] either globally in the [RdfMapper] instance or locally by
   /// providing a register callback and register it there.
   ///
   /// Simple types like String, int, etc. that
@@ -122,7 +122,7 @@ final class GraphOperations {
   /// registered mappers, producing a graph of RDF triples.
   ///
   /// IMPORTANT: When using this method, the type [T] must be mapped using an
-  /// [IriNodeMapper] either globally in the [RdfMapper] instance or locally by
+  /// [GlobalResourceMapper] either globally in the [RdfMapper] instance or locally by
   /// providing a register callback and register it there.
   ///
   /// Simple types like String, int, etc. that
@@ -146,7 +146,7 @@ final class GraphOperations {
   /// using registered mappers, combining them into a single graph.
   ///
   /// IMPORTANT: When using this method, the type [T] must be mapped using an
-  /// [IriNodeMapper] either globally in the [RdfMapper] instance or locally by
+  /// [GlobalResourceMapper] either globally in the [RdfMapper] instance or locally by
   /// providing a register callback and register it there.
   ///
   /// Simple types like String, int, etc. that

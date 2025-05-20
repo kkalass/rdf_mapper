@@ -145,7 +145,7 @@ class TestItem {
   TestItem({required this.name, required this.age});
 }
 
-final class TestItemRdfMapper implements IriNodeMapper<TestItem> {
+final class TestItemRdfMapper implements GlobalResourceMapper<TestItem> {
   final String storageRoot;
 
   TestItemRdfMapper({required this.storageRoot});
@@ -178,7 +178,7 @@ final class TestItemRdfMapper implements IriNodeMapper<TestItem> {
       "$storageRoot${Uri.encodeComponent(instance.name)}",
     );
     return context
-        .nodeBuilder(itemIri)
+        .resourceBuilder(itemIri)
         .literal(
           IriTerm("http://kalass.de/dart/rdf/test-ontology#name"),
           instance.name,

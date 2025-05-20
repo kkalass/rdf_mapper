@@ -101,7 +101,7 @@ class Person {
   String toString() => 'Person(name: $name, age: $age)';
 }</code></pre>
                         <pre class="code-content" id="mapper-tab"><code class="language-dart">// Custom mapper for bidirectional conversion
-class PersonMapper implements IriNodeMapper&lt;Person&gt; {
+class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
   // Define predicates as fields for readability
   final IriTerm namePredicate = IriTerm('http://xmlns.com/foaf/0.1/name');
   final IriTerm agePredicate = IriTerm('http://xmlns.com/foaf/0.1/age');
@@ -118,7 +118,7 @@ class PersonMapper implements IriNodeMapper&lt;Person&gt; {
       {RdfSubject? parentSubject}) {
 
     // Using fluent builder API for clean triple creation
-    return context.nodeBuilder(IriTerm(value.id))
+    return context.resourceBuilder(IriTerm(value.id))
       .literal(namePredicate, value.name)
       .literal(agePredicate, value.age)
       .build();
@@ -356,7 +356,7 @@ class Rating {
                         
                         <div class="tab-pane" id="mapper">
                             <pre class="code-block"><code class="language-dart">// Book mapper - maps Book objects to IRI nodes
-class BookMapper implements IriNodeMapper&lt;Book&gt; {
+class BookMapper implements GlobalResourceMapper&lt;Book&gt; {
   // Property predicates for semantic clarity
   static final titlePredicate = SchemaBook.name;
   static final authorPredicate = SchemaBook.author;
@@ -377,7 +377,7 @@ class BookMapper implements IriNodeMapper&lt;Book&gt; {
     RdfSubject? parentSubject,
   }) {
     return context
-        .nodeBuilder(IriTerm('$bookIriPrefix${book.id}'))
+        .resourceBuilder(IriTerm('$bookIriPrefix${book.id}'))
         .literal(titlePredicate, book.title)
         .literal(authorPredicate, book.author)
         .literal&lt;DateTime&gt;(publishedPredicate, book.published)
@@ -412,7 +412,7 @@ class BookMapper implements IriNodeMapper&lt;Book&gt; {
 }
 
 // Chapter mapper - maps Chapters to blank nodes
-class ChapterMapper implements BlankNodeMapper&lt;Chapter&gt; {
+class ChapterMapper implements LocalResourceMapper&lt;Chapter&gt; {
   static final titlePredicate = SchemaChapter.name;
   static final numberPredicate = SchemaChapter.position;
 
@@ -425,7 +425,7 @@ class ChapterMapper implements BlankNodeMapper&lt;Chapter&gt; {
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    return context.nodeBuilder()
+    return context.resourceBuilder()
       .literal(titlePredicate, chapter.title)
       .literal(numberPredicate, chapter.number)
       .build();
@@ -496,22 +496,22 @@ class RatingMapper implements LiteralTermMapper&lt;Rating&gt; {
                             <li>
                                 <span class="architecture-highlight">Node Mappers</span>: For complex objects with multiple properties
                                 <ul>
-                                    <li><code>IriNodeMapper</code>: For objects with globally unique identifiers</li>
-                                    <li><code>BlankNodeMapper</code>: For anonymous objects or auxiliary structures</li>
+                                    <li><code>GlobalResourceMapper</code>: For objects with globally unique identifiers</li>
+                                    <li><code>LocalResourceMapper</code>: For anonymous objects or auxiliary structures</li>
                                 </ul>
                             </li>
                         </ul>
                         
                         <h3>Context Classes</h3>
                         <ul class="architecture-list">
-                            <li><code>SerializationContext</code>: Provides access to the NodeBuilder</li>
-                            <li><code>DeserializationContext</code>: Provides access to the NodeReader</li>
+                            <li><code>SerializationContext</code>: Provides access to the ResourceBuilder</li>
+                            <li><code>DeserializationContext</code>: Provides access to the ResourceReader</li>
                         </ul>
                         
                         <h3>Fluent APIs</h3>
                         <ul class="architecture-list">
-                            <li><code>NodeBuilder</code>: For conveniently creating RDF nodes</li>
-                            <li><code>NodeReader</code>: For easily accessing RDF node properties</li>
+                            <li><code>ResourceBuilder</code>: For conveniently creating RDF nodes</li>
+                            <li><code>ResourceReader</code>: For easily accessing RDF node properties</li>
                         </ul>
                     </div>
                     <div class="architecture-diagram">

@@ -1026,7 +1026,7 @@ class CompanyReferenceMapper implements IriTermMapper<CompanyReference> {
 }
 
 // Test mapper for Company class
-class CompanyMapper implements IriNodeMapper<Company> {
+class CompanyMapper implements GlobalResourceMapper<Company> {
   static final namePredicate = SchemaOrganization.name;
   static final addressPredicate = SchemaOrganization.address;
 
@@ -1050,7 +1050,7 @@ class CompanyMapper implements IriNodeMapper<Company> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .nodeBuilder(IriTerm(company.id))
+        .resourceBuilder(IriTerm(company.id))
         .literal(namePredicate, company.name)
         .childNodeIfNotNull(addressPredicate, company.address)
         .build();
@@ -1058,7 +1058,7 @@ class CompanyMapper implements IriNodeMapper<Company> {
 }
 
 // Update TestPersonMapper to include employer
-class EmployeeMapper implements IriNodeMapper<Employee> {
+class EmployeeMapper implements GlobalResourceMapper<Employee> {
   static final addressPredicate = SchemaPerson.address;
   static final employerPredicate = SchemaPerson.worksFor;
   static final givenNamePredicate = SchemaPerson.givenName;
@@ -1092,7 +1092,7 @@ class EmployeeMapper implements IriNodeMapper<Employee> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .nodeBuilder(IriTerm(person.id))
+        .resourceBuilder(IriTerm(person.id))
         .literal(givenNamePredicate, person.name)
         .literal(agePredicate, person.age)
         .childNodeIfNotNull(addressPredicate, person.address)
@@ -1102,7 +1102,7 @@ class EmployeeMapper implements IriNodeMapper<Employee> {
 }
 
 class EmployeeWithCompanyReferenceMapper
-    implements IriNodeMapper<EmployeeWithCompanyReference> {
+    implements GlobalResourceMapper<EmployeeWithCompanyReference> {
   static final addressPredicate = SchemaPerson.address;
   static final employerPredicate = worksForPredicate;
   static final givenNamePredicate = SchemaPerson.givenName;
@@ -1139,7 +1139,7 @@ class EmployeeWithCompanyReferenceMapper
     RdfSubject? parentSubject,
   }) {
     return context
-        .nodeBuilder(IriTerm(person.id))
+        .resourceBuilder(IriTerm(person.id))
         .literal(givenNamePredicate, person.name)
         .literal(agePredicate, person.age)
         .childNodeIfNotNull(addressPredicate, person.address)
@@ -1258,7 +1258,7 @@ class TestPerson {
 }
 
 // Test mapper implementation
-class TestPersonMapper implements IriNodeMapper<TestPerson> {
+class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   @override
   final IriTerm typeIri = SchemaPerson.classIri;
 
@@ -1287,7 +1287,7 @@ class TestPersonMapper implements IriNodeMapper<TestPerson> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .nodeBuilder(IriTerm(person.id))
+        .resourceBuilder(IriTerm(person.id))
         .literal(SchemaPerson.givenName, person.name)
         .literal(SchemaPerson.foafAge, person.age)
         .childNodeIfNotNull(SchemaPerson.address, person.address)
@@ -1297,7 +1297,7 @@ class TestPersonMapper implements IriNodeMapper<TestPerson> {
 }
 
 // Implementation des Address-Mappers für Blank Nodes
-class AddressMapper implements BlankNodeMapper<Address> {
+class AddressMapper implements LocalResourceMapper<Address> {
   static final streetAddressPredicate = SchemaPostalAddress.streetAddress;
   static final addressLocalityPredicate = SchemaPostalAddress.addressLocality;
   static final postalCodePredicate = SchemaPostalAddress.postalCode;
@@ -1331,7 +1331,7 @@ class AddressMapper implements BlankNodeMapper<Address> {
   }) {
     // Create a blank node subject
     return context
-        .nodeBuilder(BlankNodeTerm())
+        .resourceBuilder(BlankNodeTerm())
         .literal(streetAddressPredicate, value.street)
         .literal(addressLocalityPredicate, value.city)
         .literal(postalCodePredicate, value.zipCode)

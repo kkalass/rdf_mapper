@@ -73,7 +73,7 @@ class Contact {
 }
 
 // Mappers
-class PersonMapper implements IriNodeMapper<Person> {
+class PersonMapper implements GlobalResourceMapper<Person> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
@@ -104,7 +104,7 @@ class PersonMapper implements IriNodeMapper<Person> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .nodeBuilder(IriTerm(value.id))
+        .resourceBuilder(IriTerm(value.id))
         .literal(namePredicate, value.name)
         .childNodeIfNotNull(addressPredicate, value.address)
         .childNodeList(contactPredicate, value.contacts)
@@ -112,7 +112,7 @@ class PersonMapper implements IriNodeMapper<Person> {
   }
 }
 
-class AddressMapper implements BlankNodeMapper<Address> {
+class AddressMapper implements LocalResourceMapper<Address> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Address');
 
@@ -135,14 +135,14 @@ class AddressMapper implements BlankNodeMapper<Address> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .nodeBuilder(BlankNodeTerm())
+        .resourceBuilder(BlankNodeTerm())
         .literal(streetPredicate, value.street)
         .literal(cityPredicate, value.city)
         .build();
   }
 }
 
-class ContactMapper implements IriNodeMapper<Contact> {
+class ContactMapper implements GlobalResourceMapper<Contact> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Contact');
 
@@ -165,7 +165,7 @@ class ContactMapper implements IriNodeMapper<Contact> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .nodeBuilder(IriTerm(value.id))
+        .resourceBuilder(IriTerm(value.id))
         .literal(typePredicate, value.type)
         .literal(valuePredicate, value.value)
         .build();
@@ -173,7 +173,7 @@ class ContactMapper implements IriNodeMapper<Contact> {
 }
 
 // Standalone address mapper for IRI-based addresses (not blank nodes)
-class StandaloneAddressMapper implements IriNodeMapper<Address> {
+class StandaloneAddressMapper implements GlobalResourceMapper<Address> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Address');
 
@@ -196,7 +196,7 @@ class StandaloneAddressMapper implements IriNodeMapper<Address> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .nodeBuilder(IriTerm('http://example.org/address/1'))
+        .resourceBuilder(IriTerm('http://example.org/address/1'))
         .literal(streetPredicate, value.street)
         .literal(cityPredicate, value.city)
         .build();

@@ -200,7 +200,7 @@ class TestPerson {
 }
 
 // Test mapper for Person
-class TestPersonMapper implements IriNodeMapper<TestPerson> {
+class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   static final IriTerm personTypeIri = FoafPerson.classIri;
   static final IriTerm namePredicate = FoafPerson.name;
   static final IriTerm agePredicate = FoafPerson.age;
@@ -225,7 +225,7 @@ class TestPersonMapper implements IriNodeMapper<TestPerson> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .nodeBuilder(IriTerm(instance.id))
+        .resourceBuilder(IriTerm(instance.id))
         .constant(
           IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
           personTypeIri,
@@ -246,7 +246,7 @@ class TestCollectionContainer {
 
 // Test mapper for collection container
 class TestCollectionContainerMapper
-    implements IriNodeMapper<TestCollectionContainer> {
+    implements GlobalResourceMapper<TestCollectionContainer> {
   static final IriTerm containerTypeIri = IriTerm(
     'http://example.org/CollectionContainer',
   );
@@ -277,7 +277,7 @@ class TestCollectionContainerMapper
     RdfSubject? parentSubject,
   }) {
     // Create builder with subject
-    final builder = context.nodeBuilder(IriTerm(instance.id));
+    final builder = context.resourceBuilder(IriTerm(instance.id));
 
     // Add type triple
     builder.constant(

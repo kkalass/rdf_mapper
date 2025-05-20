@@ -21,7 +21,7 @@ class Chapter {
   int get hashCode => title.hashCode ^ number.hashCode;
 }
 
-class ChapterMapper implements BlankNodeMapper<Chapter> {
+class ChapterMapper implements LocalResourceMapper<Chapter> {
   static final titlePredicate = IriTerm('http://example.org/title');
   static final numberPredicate = IriTerm('http://example.org/number');
 
@@ -44,7 +44,7 @@ class ChapterMapper implements BlankNodeMapper<Chapter> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .nodeBuilder(BlankNodeTerm())
+        .resourceBuilder(BlankNodeTerm())
         .literal(titlePredicate, chapter.title)
         .literal<int>(numberPredicate, chapter.number)
         .build();
@@ -239,7 +239,7 @@ class AnonymousData {
   AnonymousData(this.content);
 }
 
-class AnonymousMapper implements BlankNodeMapper<AnonymousData> {
+class AnonymousMapper implements LocalResourceMapper<AnonymousData> {
   static final contentPredicate = IriTerm('http://example.org/content');
 
   @override
@@ -261,7 +261,7 @@ class AnonymousMapper implements BlankNodeMapper<AnonymousData> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .nodeBuilder(BlankNodeTerm())
+        .resourceBuilder(BlankNodeTerm())
         .literal(contentPredicate, data.content)
         .build();
   }
@@ -274,7 +274,7 @@ class Document {
   Document(this.title, this.chapters);
 }
 
-class DocumentMapper implements IriNodeMapper<Document> {
+class DocumentMapper implements GlobalResourceMapper<Document> {
   static final titlePredicate = IriTerm('http://example.org/title');
   static final chaptersPredicate = IriTerm('http://example.org/chapters');
 
@@ -302,7 +302,7 @@ class DocumentMapper implements IriNodeMapper<Document> {
 
     // Use the childNodeList method to properly handle the chapters
     return context
-        .nodeBuilder(IriTerm(docId))
+        .resourceBuilder(IriTerm(docId))
         .literal(titlePredicate, document.title)
         .childNodeList(chaptersPredicate, document.chapters)
         .build();
