@@ -7,7 +7,7 @@ import 'package:rdf_mapper/src/exceptions/too_many_property_values_exception.dar
 /// Reader for fluent RDF resource deserialization.
 ///
 /// The ResourceReader provides a convenient fluent API for extracting data from RDF resources
-/// during deserialization. It simplifies the process of reading properties from a graph
+/// during deserialization. It simplifies the process of reading properties from an RDF graph
 /// by maintaining the current subject context and offering methods to retrieve and
 /// convert RDF property values to Dart objects.
 ///
@@ -21,18 +21,18 @@ import 'package:rdf_mapper/src/exceptions/too_many_property_values_exception.dar
 /// Basic example:
 /// ```dart
 /// final reader = context.reader(subject);
-/// final title = reader.require<String>(dc.title);
-/// final author = reader.require<String>(dc.creator);
-/// final description = reader.optional<String>(dc.description); // Optional
+/// final title = reader.require<String>(Dc.title);
+/// final author = reader.require<String>(Dc.creator);
+/// final description = reader.optional<String>(Dc.description); // Optional
 /// ```
 ///
 /// More complex example with nested structures:
 /// ```dart
 /// final reader = context.reader(subject);
-/// final name = reader.require<String>(foaf.name);
-/// final age = reader.require<int>(foaf.age);
-/// final address = reader.require<Address>(foaf.address);
-/// final friends = reader.getList<Person>(foaf.knows);
+/// final name = reader.require<String>(Foaf.name);
+/// final age = reader.require<int>(Foaf.age);
+/// final address = reader.require<Address>(Foaf.address);
+/// final friends = reader.getValues<Person>(Foaf.knows);
 /// ```
 class ResourceReader {
   final RdfSubject _subject;
@@ -43,8 +43,9 @@ class ResourceReader {
   /// This constructor is typically not called directly. Instead, create a
   /// reader through the [DeserializationContext.reader] method.
   ///
-  /// * [_subject] The RDF subject to read properties from
-  /// * [_service] The deserialization service for converting RDF to objects
+  /// Parameters:
+  /// * [_subject] - The RDF subject to read properties from
+  /// * [_service] - The deserialization service for converting RDF to objects
   ResourceReader(this._subject, this._service);
 
   /// Gets a required property value from the RDF graph.
@@ -55,16 +56,17 @@ class ResourceReader {
   ///
   /// Example:
   /// ```dart
-  /// final title = reader.require<String>(dc.title);
-  /// final author = reader.require<Person>(dc.creator);
+  /// final title = reader.require<String>(Dc.title);
+  /// final author = reader.require<Person>(Dc.creator);
   /// ```
   ///
-  /// * [predicate] The predicate IRI for the property to read
-  /// * [enforceSingleValue] If true, throws an exception when multiple values exist
-  /// * [globalResourceDeserializer] Optional custom deserializer for global resources (identifiable by [IriTerm])
-  /// * [iriTermDeserializer] Optional custom deserializer for IRI terms
-  /// * [literalTermDeserializer] Optional custom deserializer for literal terms
-  /// * [localResourceDeserializer] Optional custom deserializer for local resources (identifiable by [BlankNodeTerm] only)
+  /// Parameters:
+  /// * [predicate] - The predicate IRI for the property to read
+  /// * [enforceSingleValue] - If true, throws an exception when multiple values exist
+  /// * [globalResourceDeserializer] - Optional custom deserializer for global resources (identifiable by [IriTerm])
+  /// * [iriTermDeserializer] - Optional custom deserializer for IRI terms
+  /// * [literalTermDeserializer] - Optional custom deserializer for literal terms
+  /// * [localResourceDeserializer] - Optional custom deserializer for local resources (identifiable by [BlankNodeTerm] only)
   ///
   /// Returns the property value converted to the requested type.
   ///
@@ -97,16 +99,17 @@ class ResourceReader {
   ///
   /// Example:
   /// ```dart
-  /// final description = reader.optional<String>(dc.description);
-  /// final publishDate = reader.optional<DateTime>(dc.date);
+  /// final description = reader.optional<String>(Dc.description);
+  /// final publishDate = reader.optional<DateTime>(Dc.date);
   /// ```
   ///
-  /// * [predicate] The predicate IRI for the property to read
-  /// * [enforceSingleValue] If true, throws an exception when multiple values exist
-  /// * [globalResourceDeserializer] Optional custom deserializer for global resources (identifiable by [IriTerm])
-  /// * [iriTermDeserializer] Optional custom deserializer for IRI terms
-  /// * [literalTermDeserializer] Optional custom deserializer for literal terms
-  /// * [localResourceDeserializer] Optional custom deserializer for local resources (identifiable by [BlankNodeTerm] only)
+  /// Parameters:
+  /// * [predicate] - The predicate IRI for the property to read
+  /// * [enforceSingleValue] - If true, throws an exception when multiple values exist
+  /// * [globalResourceDeserializer] - Optional custom deserializer for global resources (identifiable by [IriTerm])
+  /// * [iriTermDeserializer] - Optional custom deserializer for IRI terms
+  /// * [literalTermDeserializer] - Optional custom deserializer for literal terms
+  /// * [localResourceDeserializer] - Optional custom deserializer for local resources (identifiable by [BlankNodeTerm] only)
   ///
   /// Returns the property value converted to the requested type, or null if not found.
   ///
@@ -130,23 +133,24 @@ class ResourceReader {
     );
   }
 
-  /// Gets multiple property values as a list.
+  /// Gets multiple property values as an iterable.
   ///
   /// Use this method for properties that may have multiple values, such as
   /// tags, categories, related resources, or other collections. Returns an
-  /// empty list if no values are found.
+  /// empty iterable if no values are found.
   ///
   /// Example:
   /// ```dart
-  /// final tags = reader.getList<String>(dc.subject);
-  /// final authors = reader.getList<Person>(dc.creator);
+  /// final tags = reader.getValues<String>(Dc.subject);
+  /// final authors = reader.getValues<Person>(Dc.creator);
   /// ```
   ///
-  /// * [predicate] The predicate IRI for the properties to read
-  /// * [globalResourceDeserializer] Optional custom deserializer for global resources (identifiable by [IriTerm])
-  /// * [iriTermDeserializer] Optional custom deserializer for IRI terms
-  /// * [literalTermDeserializer] Optional custom deserializer for literal terms
-  /// * [localResourceDeserializer] Optional custom deserializer for local resources (identifiable by [BlankNodeTerm] only)
+  /// Parameters:
+  /// * [predicate] - The predicate IRI for the properties to read
+  /// * [globalResourceDeserializer] - Optional custom deserializer for global resources (identifiable by [IriTerm])
+  /// * [iriTermDeserializer] - Optional custom deserializer for IRI terms
+  /// * [literalTermDeserializer] - Optional custom deserializer for literal terms
+  /// * [localResourceDeserializer] - Optional custom deserializer for local resources (identifiable by [BlankNodeTerm] only)
   ///
   /// Returns an iterable of property values converted to the requested type.
   Iterable<T> getValues<T>(
@@ -174,15 +178,16 @@ class ResourceReader {
   ///
   /// Example:
   /// ```dart
-  /// final translations = reader.getMap<String, String>(schema.translation);
-  /// final metadata = reader.getMap<String, Object>(dc.metadata);
+  /// final translations = reader.getMap<String, String>(Schema.translation);
+  /// final metadata = reader.getMap<String, Object>(Dc.metadata);
   /// ```
   ///
-  /// * [predicate] The predicate IRI for the properties to read
-  /// * [globalResourceDeserializer] Optional custom deserializer for global resources (identifiable by [IriTerm])
-  /// * [iriTermDeserializer] Optional custom deserializer for IRI terms
-  /// * [literalTermDeserializer] Optional custom deserializer for literal terms
-  /// * [localResourceDeserializer] Optional custom deserializer for local resources (identifiable by [BlankNodeTerm] only)
+  /// Parameters:
+  /// * [predicate] - The predicate IRI for the properties to read
+  /// * [globalResourceDeserializer] - Optional custom deserializer for global resources (identifiable by [IriTerm])
+  /// * [iriTermDeserializer] - Optional custom deserializer for IRI terms
+  /// * [literalTermDeserializer] - Optional custom deserializer for literal terms
+  /// * [localResourceDeserializer] - Optional custom deserializer for local resources (identifiable by [BlankNodeTerm] only)
   ///
   /// Returns a map constructed from the property values.
   Map<K, V> getMap<K, V>(
@@ -211,17 +216,18 @@ class ResourceReader {
   /// Example for calculating an average:
   /// ```dart
   /// final avgScore = reader.collect<double, double>(
-  ///   schema.rating,
+  ///   Schema.rating,
   ///   (scores) => scores.isEmpty ? 0 : scores.reduce((a, b) => a + b) / scores.length
   /// );
   /// ```
   ///
-  /// * [predicate] The predicate IRI for the properties to read
-  /// * [collector] A function to process the collected values
-  /// * [globalResourceDeserializer] Optional custom deserializer for global resources (identifiable by [IriTerm])
-  /// * [iriTermDeserializer] Optional custom deserializer for IRI terms
-  /// * [literalTermDeserializer] Optional custom deserializer for literal terms
-  /// * [localResourceDeserializer] Optional custom deserializer for local resources (identifiable by [BlankNodeTerm] only)
+  /// Parameters:
+  /// * [predicate] - The predicate IRI for the properties to read
+  /// * [collector] - A function to process the collected values
+  /// * [globalResourceDeserializer] - Optional custom deserializer for global resources (identifiable by [IriTerm])
+  /// * [iriTermDeserializer] - Optional custom deserializer for IRI terms
+  /// * [literalTermDeserializer] - Optional custom deserializer for literal terms
+  /// * [localResourceDeserializer] - Optional custom deserializer for local resources (identifiable by [BlankNodeTerm] only)
   ///
   /// Returns the result of the collector function.
   R collect<T, R>(
