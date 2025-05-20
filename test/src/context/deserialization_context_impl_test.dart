@@ -181,7 +181,7 @@ void main() {
       'fromRdf correctly converts BlankNode values with custom deserializer',
       () {
         registry.registerDeserializer<TestAddress>(
-          CustomBlankNodeDeserializer(),
+          CustomLocalResourceDeserializer(),
         );
 
         final address = context.optional<TestAddress>(
@@ -240,7 +240,7 @@ class TestAddress {
   TestAddress({required this.city});
 }
 
-class TestPersonDeserializer implements IriNodeDeserializer<TestPerson> {
+class TestPersonDeserializer implements GlobalResourceDeserializer<TestPerson> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
@@ -264,8 +264,8 @@ class CustomStringDeserializer implements LiteralTermDeserializer<String> {
   }
 }
 
-class CustomBlankNodeDeserializer
-    implements BlankNodeDeserializer<TestAddress> {
+class CustomLocalResourceDeserializer
+    implements LocalResourceDeserializer<TestAddress> {
   @override
   IriTerm? get typeIri => null;
   @override

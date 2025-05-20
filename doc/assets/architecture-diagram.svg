@@ -109,8 +109,9 @@
 			(IriTerm, LiteralTerm)</text>
 
 		<!-- Node Mapper mit Zeilenumbruch für bessere Lesbarkeit -->
-		<text x="340" y="540" text-anchor="start" font-family="Inter, sans-serif" font-size="12">• Node
-			(IriNode, BlankNode)</text>
+		<text x="340" y="540" text-anchor="start" font-family="Inter, sans-serif" font-size="12">•
+			Resource
+			(GlobalResource, LocalResource)</text>
 
 		<!-- Arrows and Flow Labels with background for better visibility -->
 		<!-- Serialization Flow (Dart to RDF) -->

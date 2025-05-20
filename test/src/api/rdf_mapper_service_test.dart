@@ -713,7 +713,7 @@ class Tag {
   Tag({required this.id, required this.name});
 }
 
-class DocumentDeserializer implements IriNodeDeserializer<Document> {
+class DocumentDeserializer implements GlobalResourceDeserializer<Document> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Document');
 
@@ -732,7 +732,7 @@ class DocumentDeserializer implements IriNodeDeserializer<Document> {
 }
 
 class DocumentWithTagReferencesDeserializer
-    implements IriNodeDeserializer<Document> {
+    implements GlobalResourceDeserializer<Document> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Document');
 
@@ -750,7 +750,7 @@ class DocumentWithTagReferencesDeserializer
   }
 }
 
-class TagDeserializer implements IriNodeDeserializer<Tag> {
+class TagDeserializer implements GlobalResourceDeserializer<Tag> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Tag');
 

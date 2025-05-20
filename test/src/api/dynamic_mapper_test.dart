@@ -43,7 +43,7 @@ class ParentClassMapper implements GlobalResourceMapper<ParentClass> {
       childPredicate,
       // Dynamically register a mapper for ChildClass that needs parent context
       // This simulates a scenario where the child mapper needs properties from the parent
-      iriNodeDeserializer: ChildClassMapper(parentId: subject.iri),
+      globalResourceDeserializer: ChildClassMapper(parentId: subject.iri),
     );
 
     return ParentClass(id: subject.iri, name: name, child: child);

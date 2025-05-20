@@ -10,7 +10,7 @@ import 'package:rdf_mapper/src/exceptions/rdf_mapping_exception.dart';
 /// 1. When attempting to deserialize to a specific Dart type but no deserializer is registered for it
 /// 2. When encountering an RDF type IRI (from an rdf:type predicate) that has no registered deserializer
 ///
-/// The exception contains information about which deserializer type was sought (e.g., IriNodeDeserializer)
+/// The exception contains information about which deserializer type was sought (e.g., GlobalResourceDeserializer)
 /// and the target type that couldn't be handled.
 class DeserializerNotFoundException extends RdfMappingException {
   final String _t;

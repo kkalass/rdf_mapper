@@ -628,7 +628,7 @@ _:b0 a schema:PostalAddress;
         // Verify mapper is not registered initially
         expect(rdfMapper.registry.hasNodeSerializerFor<TestPerson>(), isFalse);
         expect(
-          rdfMapper.registry.hasIriNodeDeserializerFor<TestPerson>(),
+          rdfMapper.registry.hasGlobalResourceDeserializerFor<TestPerson>(),
           isFalse,
         );
 
@@ -638,7 +638,7 @@ _:b0 a schema:PostalAddress;
         // Verify mapper is now registered
         expect(rdfMapper.registry.hasNodeSerializerFor<TestPerson>(), isTrue);
         expect(
-          rdfMapper.registry.hasIriNodeDeserializerFor<TestPerson>(),
+          rdfMapper.registry.hasGlobalResourceDeserializerFor<TestPerson>(),
           isTrue,
         );
 
@@ -716,7 +716,7 @@ _:b0 a schema:PostalAddress;
 
         // Verify deserializer is not registered initially
         expect(
-          rdfMapper.registry.hasBlankNodeDeserializerFor<Address>(),
+          rdfMapper.registry.hasLocalResourceDeserializerFor<Address>(),
           isFalse,
         );
         expect(rdfMapper.registry.hasNodeSerializerFor<Address>(), isFalse);
@@ -726,7 +726,7 @@ _:b0 a schema:PostalAddress;
 
         // Verify deserializer is now registered
         expect(
-          rdfMapper.registry.hasBlankNodeDeserializerFor<Address>(),
+          rdfMapper.registry.hasLocalResourceDeserializerFor<Address>(),
           isTrue,
         );
         expect(rdfMapper.registry.hasNodeSerializerFor<Address>(), isTrue);

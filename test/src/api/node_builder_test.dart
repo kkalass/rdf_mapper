@@ -223,7 +223,7 @@ class TestPerson {
   TestPerson({required this.id, required this.name});
 }
 
-class TestPersonSerializer implements IriNodeSerializer<TestPerson> {
+class TestPersonSerializer implements GlobalResourceSerializer<TestPerson> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 

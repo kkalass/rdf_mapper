@@ -29,10 +29,10 @@ class DeserializationContextImpl extends DeserializationContext
     var context = this;
     switch (subjectIri) {
       case BlankNodeTerm _:
-        var ser = _registry.getBlankNodeDeserializerByType(typeIri);
+        var ser = _registry.getLocalResourceDeserializerByType(typeIri);
         return ser.fromRdfNode(subjectIri, context);
       case IriTerm _:
-        var ser = _registry.getIriNodeDeserializerByType(typeIri);
+        var ser = _registry.getGlobalResourceDeserializerByType(typeIri);
         return ser.fromRdfNode(subjectIri, context);
     }
   }
@@ -43,17 +43,17 @@ class DeserializationContextImpl extends DeserializationContext
   T deserialize<T>(
     RdfTerm term,
     IriTermDeserializer<T>? iriTermDeserializer,
-    IriNodeDeserializer<T>? iriNodeDeserializer,
+    GlobalResourceDeserializer<T>? globalResourceDeserializer,
     LiteralTermDeserializer<T>? literalTermDeserializer,
-    BlankNodeDeserializer<T>? blankNodeDeserializer,
+    LocalResourceDeserializer<T>? localResourceDeserializer,
   ) {
     var context = this;
     switch (term) {
       case IriTerm _:
-        if (iriNodeDeserializer != null ||
-            _registry.hasIriNodeDeserializerFor<T>()) {
-          var deser =
-              iriNodeDeserializer ?? _registry.getIriNodeDeserializer<T>();
+        if (globalResourceDeserializer != null ||
+            _registry.hasGlobalResourceDeserializerFor<T>()) {
+          var deser = globalResourceDeserializer ??
+              _registry.getGlobalResourceDeserializer<T>();
           _onDeserializeNode(term);
           return deser.fromRdfNode(term, context);
         }
@@ -63,8 +63,8 @@ class DeserializationContextImpl extends DeserializationContext
       case LiteralTerm _:
         return fromLiteralTerm(term, deserializer: literalTermDeserializer);
       case BlankNodeTerm _:
-        var deser =
-            blankNodeDeserializer ?? _registry.getBlankNodeDeserializer<T>();
+        var deser = localResourceDeserializer ??
+            _registry.getLocalResourceDeserializer<T>();
         _onDeserializeNode(term);
         return deser.fromRdfNode(term, context);
     }
@@ -84,9 +84,9 @@ class DeserializationContextImpl extends DeserializationContext
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
     IriTermDeserializer<T>? iriTermDeserializer,
-    IriNodeDeserializer<T>? iriNodeDeserializer,
+    GlobalResourceDeserializer<T>? globalResourceDeserializer,
     LiteralTermDeserializer<T>? literalTermDeserializer,
-    BlankNodeDeserializer<T>? blankNodeDeserializer,
+    LocalResourceDeserializer<T>? localResourceDeserializer,
   }) {
     final triples = _graph.findTriples(subject: subject, predicate: predicate);
     if (triples.isEmpty) {
@@ -104,9 +104,9 @@ class DeserializationContextImpl extends DeserializationContext
     return deserialize<T>(
       rdfObject,
       iriTermDeserializer,
-      iriNodeDeserializer,
+      globalResourceDeserializer,
       literalTermDeserializer,
-      blankNodeDeserializer,
+      localResourceDeserializer,
     );
   }
 
@@ -116,18 +116,18 @@ class DeserializationContextImpl extends DeserializationContext
     RdfPredicate predicate,
     R Function(Iterable<T>) collector, {
     IriTermDeserializer<T>? iriTermDeserializer,
-    IriNodeDeserializer<T>? iriNodeDeserializer,
+    GlobalResourceDeserializer<T>? globalResourceDeserializer,
     LiteralTermDeserializer<T>? literalTermDeserializer,
-    BlankNodeDeserializer<T>? blankNodeDeserializer,
+    LocalResourceDeserializer<T>? localResourceDeserializer,
   }) {
     final triples = _graph.findTriples(subject: subject, predicate: predicate);
     final convertedTriples = triples.map(
       (triple) => deserialize(
         triple.object,
         iriTermDeserializer,
-        iriNodeDeserializer,
+        globalResourceDeserializer,
         literalTermDeserializer,
-        blankNodeDeserializer,
+        localResourceDeserializer,
       ),
     );
     return collector(convertedTriples);
@@ -139,18 +139,18 @@ class DeserializationContextImpl extends DeserializationContext
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
     IriTermDeserializer<T>? iriTermDeserializer,
-    IriNodeDeserializer<T>? iriNodeDeserializer,
+    GlobalResourceDeserializer<T>? globalResourceDeserializer,
     LiteralTermDeserializer<T>? literalTermDeserializer,
-    BlankNodeDeserializer<T>? blankNodeDeserializer,
+    LocalResourceDeserializer<T>? localResourceDeserializer,
   }) {
     var result = optional<T>(
       subject,
       predicate,
       enforceSingleValue: enforceSingleValue,
       iriTermDeserializer: iriTermDeserializer,
-      iriNodeDeserializer: iriNodeDeserializer,
+      globalResourceDeserializer: globalResourceDeserializer,
       literalTermDeserializer: literalTermDeserializer,
-      blankNodeDeserializer: blankNodeDeserializer,
+      localResourceDeserializer: localResourceDeserializer,
     );
     if (result == null) {
       throw PropertyValueNotFoundException(
@@ -168,18 +168,18 @@ class DeserializationContextImpl extends DeserializationContext
     RdfSubject subject,
     RdfPredicate predicate, {
     IriTermDeserializer<T>? iriTermDeserializer,
-    IriNodeDeserializer<T>? nodeDeserializer,
+    GlobalResourceDeserializer<T>? nodeDeserializer,
     LiteralTermDeserializer<T>? literalTermDeserializer,
-    BlankNodeDeserializer<T>? blankNodeDeserializer,
+    LocalResourceDeserializer<T>? localResourceDeserializer,
   }) =>
       collect<T, List<T>>(
         subject,
         predicate,
         (it) => it.toList(),
         iriTermDeserializer: iriTermDeserializer,
-        iriNodeDeserializer: nodeDeserializer,
+        globalResourceDeserializer: nodeDeserializer,
         literalTermDeserializer: literalTermDeserializer,
-        blankNodeDeserializer: blankNodeDeserializer,
+        localResourceDeserializer: localResourceDeserializer,
       );
 
   /// Gets a map of property values
@@ -189,18 +189,18 @@ class DeserializationContextImpl extends DeserializationContext
     RdfSubject subject,
     RdfPredicate predicate, {
     IriTermDeserializer<MapEntry<K, V>>? iriTermDeserializer,
-    IriNodeDeserializer<MapEntry<K, V>>? iriNodeDeserializer,
+    GlobalResourceDeserializer<MapEntry<K, V>>? globalResourceDeserializer,
     LiteralTermDeserializer<MapEntry<K, V>>? literalTermDeserializer,
-    BlankNodeDeserializer<MapEntry<K, V>>? blankNodeDeserializer,
+    LocalResourceDeserializer<MapEntry<K, V>>? localResourceDeserializer,
   }) =>
       collect<MapEntry<K, V>, Map<K, V>>(
         subject,
         predicate,
         (it) => Map<K, V>.fromEntries(it),
         iriTermDeserializer: iriTermDeserializer,
-        iriNodeDeserializer: iriNodeDeserializer,
+        globalResourceDeserializer: globalResourceDeserializer,
         literalTermDeserializer: literalTermDeserializer,
-        blankNodeDeserializer: blankNodeDeserializer,
+        localResourceDeserializer: localResourceDeserializer,
       );
 }
 

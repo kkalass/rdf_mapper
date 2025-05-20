@@ -116,7 +116,7 @@ class TestPerson {
 
 // Test serializer that explicitly adds a type triple
 class TestPersonSerializerWithTypeTriple
-    implements IriNodeSerializer<TestPerson> {
+    implements GlobalResourceSerializer<TestPerson> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
@@ -145,7 +145,7 @@ class TestPersonSerializerWithTypeTriple
 
 // Test serializer that doesn't add a type triple
 class TestPersonSerializerWithoutTypeTriple
-    implements IriNodeSerializer<TestPerson> {
+    implements GlobalResourceSerializer<TestPerson> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 

@@ -69,7 +69,7 @@ class TestItem {
 }
 
 // Test serializer
-class TestItemSerializer implements IriNodeSerializer<TestItem> {
+class TestItemSerializer implements GlobalResourceSerializer<TestItem> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/TestItem');
 

@@ -90,8 +90,8 @@ abstract interface class LiteralTermDeserializer<T>
 /// multiple properties that are represented as subjects with properties in RDF.
 ///
 /// The two main specializations are:
-/// - [BlankNodeDeserializer]: For anonymous resources using blank nodes
-/// - [IriNodeDeserializer]: For identifiable resources using IRIs
+/// - [LocalResourceDeserializer]: For anonymous resources using blank nodes
+/// - [GlobalResourceDeserializer]: For identifiable resources using IRIs
 sealed class NodeDeserializer<T> extends Deserializer<T> {
   /// The IRI of the RDF type this deserializer can handle.
   ///
@@ -119,7 +119,7 @@ sealed class NodeDeserializer<T> extends Deserializer<T> {
 /// - Helper or component objects
 /// - Nested structures
 /// - Objects whose identity is only significant within the local graph
-abstract interface class BlankNodeDeserializer<T>
+abstract interface class LocalResourceDeserializer<T>
     implements NodeDeserializer<T> {
   /// Converts a blank node to a value.
   ///
@@ -143,7 +143,8 @@ abstract interface class BlankNodeDeserializer<T>
 /// - Objects have stable, persistent identifiers
 /// - Resources might be referenced by other resources
 /// - The object represents a significant domain entity
-abstract interface class IriNodeDeserializer<T> implements NodeDeserializer<T> {
+abstract interface class GlobalResourceDeserializer<T>
+    implements NodeDeserializer<T> {
   /// Converts an IRI-identified node to an object of type T.
   ///
   /// This method reads an IRI subject and its associated triples from the graph

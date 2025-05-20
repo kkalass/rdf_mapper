@@ -64,9 +64,10 @@ final class RdfMapperRegistry {
   RdfMapperRegistry clone() {
     final copy = RdfMapperRegistry._empty();
     copy._nodeSerializers.addAll(_nodeSerializers);
-    copy._iriNodeDeserializersByType.addAll(_iriNodeDeserializersByType);
-    copy._iriNodeDeserializers.addAll(_iriNodeDeserializers);
-    copy._blankNodeDeserializers.addAll(_blankNodeDeserializers);
+    copy._globalResourceDeserializersByType
+        .addAll(_globalResourceDeserializersByType);
+    copy._globalResourceDeserializers.addAll(_globalResourceDeserializers);
+    copy._localResourceDeserializers.addAll(_localResourceDeserializers);
     copy._iriTermSerializers.addAll(_iriTermSerializers);
     copy._iriTermDeserializers.addAll(_iriTermDeserializers);
     copy._literalTermSerializers.addAll(_literalTermSerializers);
@@ -79,19 +80,21 @@ final class RdfMapperRegistry {
 
   // Type-based registries
   final Map<Type, IriTermDeserializer<dynamic>> _iriTermDeserializers = {};
-  final Map<Type, IriNodeDeserializer<dynamic>> _iriNodeDeserializers = {};
+  final Map<Type, GlobalResourceDeserializer<dynamic>>
+      _globalResourceDeserializers = {};
   final Map<Type, IriTermSerializer<dynamic>> _iriTermSerializers = {};
-  final Map<Type, BlankNodeDeserializer<dynamic>> _blankNodeDeserializers = {};
+  final Map<Type, LocalResourceDeserializer<dynamic>>
+      _localResourceDeserializers = {};
   final Map<Type, LiteralTermDeserializer<dynamic>> _literalTermDeserializers =
       {};
   final Map<Type, LiteralTermSerializer<dynamic>> _literalTermSerializers = {};
   final Map<Type, NodeSerializer<dynamic>> _nodeSerializers = {};
 
   // RDF type IRI-based registries (for dynamic type resolution during deserialization)
-  final Map<IriTerm, IriNodeDeserializer<dynamic>> _iriNodeDeserializersByType =
-      {};
-  final Map<IriTerm, BlankNodeDeserializer<dynamic>>
-      _blankNodeDeserializersByType = {};
+  final Map<IriTerm, GlobalResourceDeserializer<dynamic>>
+      _globalResourceDeserializersByType = {};
+  final Map<IriTerm, LocalResourceDeserializer<dynamic>>
+      _localResourceDeserializersByType = {};
 
   /// Creates a new RDF mapper registry with standard mappers pre-registered.
   ///
@@ -152,8 +155,8 @@ final class RdfMapperRegistry {
   /// Supported deserializer types:
   /// - IriTermDeserializer: For deserializing IRI terms to objects
   /// - LiteralTermDeserializer: For deserializing literal terms to objects
-  /// - BlankNodeDeserializer: For deserializing blank nodes to objects
-  /// - IriNodeDeserializer: For deserializing IRI subjects with triples to objects
+  /// - LocalResourceDeserializer: For deserializing blank nodes to objects
+  /// - GlobalResourceDeserializer: For deserializing IRI subjects with triples to objects
   ///
   /// @param deserializer The deserializer to register
   void registerDeserializer<T>(Deserializer<T> deserializer) {
@@ -164,11 +167,11 @@ final class RdfMapperRegistry {
       case LiteralTermDeserializer<T>():
         _registerLiteralTermDeserializer(deserializer);
         break;
-      case BlankNodeDeserializer<T>():
-        _registerBlankNodeDeserializer(deserializer);
+      case LocalResourceDeserializer<T>():
+        _registerLocalResourceDeserializer(deserializer);
         break;
-      case IriNodeDeserializer<T>():
-        _registerIriNodeDeserializer(deserializer);
+      case GlobalResourceDeserializer<T>():
+        _registerGlobalResourceDeserializer(deserializer);
         break;
     }
   }
@@ -180,8 +183,8 @@ final class RdfMapperRegistry {
   /// are implemented and registers the mapper with all relevant registries.
   ///
   /// Supported mapper types:
-  /// - GlobalResourceMapper: Combined IriNodeSerializer/IriNodeDeserializer
-  /// - LocalResourceMapper: Combined BlankNodeSerializer/BlankNodeDeserializer
+  /// - GlobalResourceMapper: Combined GlobalResourceSerializer/GlobalResourceDeserializer
+  /// - LocalResourceMapper: Combined LocalResourceSerializer/LocalResourceDeserializer
   /// - LiteralTermMapper: Combined LiteralTermSerializer/LiteralTermDeserializer
   /// - IriTermMapper: Combined IriTermSerializer/IriTermDeserializer
   ///
@@ -189,11 +192,11 @@ final class RdfMapperRegistry {
   void registerMapper<T>(Mapper<T> mapper) {
     switch (mapper) {
       case GlobalResourceMapper<T>():
-        _registerIriNodeDeserializer(mapper);
+        _registerGlobalResourceDeserializer(mapper);
         _registerNodeSerializer(mapper);
         break;
       case LocalResourceMapper<T>():
-        _registerBlankNodeDeserializer<T>(mapper);
+        _registerLocalResourceDeserializer<T>(mapper);
         _registerNodeSerializer<T>(mapper);
         break;
       case LiteralTermMapper<T>():
@@ -229,23 +232,25 @@ final class RdfMapperRegistry {
     _literalTermSerializers[T] = serializer;
   }
 
-  void _registerBlankNodeDeserializer<T>(
-    BlankNodeDeserializer<T> deserializer,
+  void _registerLocalResourceDeserializer<T>(
+    LocalResourceDeserializer<T> deserializer,
   ) {
     _log.fine('Registering BlankNode deserializer for type ${T.toString()}');
-    _blankNodeDeserializers[T] = deserializer;
+    _localResourceDeserializers[T] = deserializer;
     var typeIri = deserializer.typeIri;
     if (typeIri != null) {
-      _blankNodeDeserializersByType[typeIri] = deserializer;
+      _localResourceDeserializersByType[typeIri] = deserializer;
     }
   }
 
-  void _registerIriNodeDeserializer<T>(IriNodeDeserializer<T> deserializer) {
-    _log.fine('Registering IriNodeDeserializer for type ${T.toString()}');
-    _iriNodeDeserializers[T] = deserializer;
+  void _registerGlobalResourceDeserializer<T>(
+      GlobalResourceDeserializer<T> deserializer) {
+    _log.fine(
+        'Registering GlobalResourceDeserializer for type ${T.toString()}');
+    _globalResourceDeserializers[T] = deserializer;
     var typeIri = deserializer.typeIri;
     if (typeIri != null) {
-      _iriNodeDeserializersByType[typeIri] = deserializer;
+      _globalResourceDeserializersByType[typeIri] = deserializer;
     }
   }
 
@@ -265,19 +270,20 @@ final class RdfMapperRegistry {
     return deserializer as IriTermDeserializer<T>;
   }
 
-  IriNodeDeserializer<T> getIriNodeDeserializer<T>() {
-    final deserializer = _iriNodeDeserializers[T];
+  GlobalResourceDeserializer<T> getGlobalResourceDeserializer<T>() {
+    final deserializer = _globalResourceDeserializers[T];
     if (deserializer == null) {
-      throw DeserializerNotFoundException('IriNodeDeserializer', T);
+      throw DeserializerNotFoundException('GlobalResourceDeserializer', T);
     }
-    return deserializer as IriNodeDeserializer<T>;
+    return deserializer as GlobalResourceDeserializer<T>;
   }
 
-  IriNodeDeserializer<dynamic> getIriNodeDeserializerByType(IriTerm typeIri) {
-    final deserializer = _iriNodeDeserializersByType[typeIri];
+  GlobalResourceDeserializer<dynamic> getGlobalResourceDeserializerByType(
+      IriTerm typeIri) {
+    final deserializer = _globalResourceDeserializersByType[typeIri];
     if (deserializer == null) {
       throw DeserializerNotFoundException.forTypeIri(
-        'IriNodeDeserializer',
+        'GlobalResourceDeserializer',
         typeIri,
       );
     }
@@ -342,21 +348,21 @@ final class RdfMapperRegistry {
     return serializer as LiteralTermSerializer<T>;
   }
 
-  BlankNodeDeserializer<T> getBlankNodeDeserializer<T>() {
-    final deserializer = _blankNodeDeserializers[T];
+  LocalResourceDeserializer<T> getLocalResourceDeserializer<T>() {
+    final deserializer = _localResourceDeserializers[T];
     if (deserializer == null) {
-      throw DeserializerNotFoundException('BlankNodeDeserializer', T);
+      throw DeserializerNotFoundException('LocalResourceDeserializer', T);
     }
-    return deserializer as BlankNodeDeserializer<T>;
+    return deserializer as LocalResourceDeserializer<T>;
   }
 
-  BlankNodeDeserializer<dynamic> getBlankNodeDeserializerByType(
+  LocalResourceDeserializer<dynamic> getLocalResourceDeserializerByType(
     IriTerm typeIri,
   ) {
-    final deserializer = _blankNodeDeserializersByType[typeIri];
+    final deserializer = _localResourceDeserializersByType[typeIri];
     if (deserializer == null) {
       throw DeserializerNotFoundException.forTypeIri(
-        'BlankNodeDeserializer',
+        'LocalResourceDeserializer',
         typeIri,
       );
     }
@@ -392,13 +398,14 @@ final class RdfMapperRegistry {
   ///
   /// @return true if a mapper is registered for type T, false otherwise
   bool hasIriTermDeserializerFor<T>() => _iriTermDeserializers.containsKey(T);
-  bool hasIriNodeDeserializerFor<T>() => _iriNodeDeserializers.containsKey(T);
-  bool hasIriNodeDeserializerForType(IriTerm typeIri) =>
-      _iriNodeDeserializersByType.containsKey(typeIri);
+  bool hasGlobalResourceDeserializerFor<T>() =>
+      _globalResourceDeserializers.containsKey(T);
+  bool hasGlobalResourceDeserializerForType(IriTerm typeIri) =>
+      _globalResourceDeserializersByType.containsKey(typeIri);
   bool hasLiteralTermDeserializerFor<T>() =>
       _literalTermDeserializers.containsKey(T);
-  bool hasBlankNodeDeserializerFor<T>() =>
-      _blankNodeDeserializers.containsKey(T);
+  bool hasLocalResourceDeserializerFor<T>() =>
+      _localResourceDeserializers.containsKey(T);
   bool hasIriTermSerializerFor<T>() => _iriTermSerializers.containsKey(T);
   bool hasLiteralTermSerializerFor<T>() =>
       _literalTermSerializers.containsKey(T);

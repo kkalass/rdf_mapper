@@ -92,19 +92,19 @@ void main() {
         registry.registerDeserializer<CustomType>(deserializer);
 
         // Verify registration by type
-        expect(registry.hasIriNodeDeserializerFor<CustomType>(), isTrue);
+        expect(registry.hasGlobalResourceDeserializerFor<CustomType>(), isTrue);
         expect(
-          registry.getIriNodeDeserializer<CustomType>(),
+          registry.getGlobalResourceDeserializer<CustomType>(),
           equals(deserializer),
         );
 
         // Verify registration by typeIri
         expect(
-          registry.hasIriNodeDeserializerForType(deserializer.typeIri),
+          registry.hasGlobalResourceDeserializerForType(deserializer.typeIri),
           isTrue,
         );
         expect(
-          registry.getIriNodeDeserializerByType(deserializer.typeIri),
+          registry.getGlobalResourceDeserializerByType(deserializer.typeIri),
           equals(deserializer),
         );
       },
@@ -130,13 +130,15 @@ void main() {
       expect(registry.getNodeSerializer<CustomType>(), equals(mapper));
 
       // Verify deserializer registration
-      expect(registry.hasIriNodeDeserializerFor<CustomType>(), isTrue);
-      expect(registry.getIriNodeDeserializer<CustomType>(), equals(mapper));
+      expect(registry.hasGlobalResourceDeserializerFor<CustomType>(), isTrue);
+      expect(
+          registry.getGlobalResourceDeserializer<CustomType>(), equals(mapper));
 
       // Verify typeIri registration
-      expect(registry.hasIriNodeDeserializerForType(mapper.typeIri), isTrue);
+      expect(registry.hasGlobalResourceDeserializerForType(mapper.typeIri),
+          isTrue);
       expect(
-        registry.getIriNodeDeserializerByType(mapper.typeIri),
+        registry.getGlobalResourceDeserializerByType(mapper.typeIri),
         equals(mapper),
       );
     });
@@ -150,14 +152,14 @@ void main() {
 
     test('getSubjectDeserializer throws when deserializer not found', () {
       expect(
-        () => registry.getIriNodeDeserializer<CustomType>(),
+        () => registry.getGlobalResourceDeserializer<CustomType>(),
         throwsA(isA<DeserializerNotFoundException>()),
       );
     });
 
     test('getSubjectDeserializerByType throws when deserializer not found', () {
       expect(
-        () => registry.getIriNodeDeserializerByType(
+        () => registry.getGlobalResourceDeserializerByType(
           IriTerm('http://example.org/UnknownType'),
         ),
         throwsA(isA<DeserializerNotFoundException>()),
@@ -187,7 +189,7 @@ void main() {
 
     test('getBlankNodeTermDeserializer throws when deserializer not found', () {
       expect(
-        () => registry.getBlankNodeDeserializer<CustomType>(),
+        () => registry.getLocalResourceDeserializer<CustomType>(),
         throwsA(isA<DeserializerNotFoundException>()),
       );
     });
@@ -210,7 +212,8 @@ void main() {
 
       // Verify all mappers were copied
       expect(clonedRegistry.hasNodeSerializerFor<CustomType>(), isTrue);
-      expect(clonedRegistry.hasIriNodeDeserializerFor<CustomType>(), isTrue);
+      expect(clonedRegistry.hasGlobalResourceDeserializerFor<CustomType>(),
+          isTrue);
       expect(clonedRegistry.hasLiteralTermSerializerFor<CustomType>(), isTrue);
       expect(
         clonedRegistry.hasLiteralTermDeserializerFor<CustomType>(),
@@ -267,7 +270,8 @@ class TestLiteralSerializer implements LiteralTermSerializer<CustomType> {
   }
 }
 
-class TestSubjectDeserializer implements IriNodeDeserializer<CustomType> {
+class TestSubjectDeserializer
+    implements GlobalResourceDeserializer<CustomType> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/CustomType');
 
@@ -277,7 +281,7 @@ class TestSubjectDeserializer implements IriNodeDeserializer<CustomType> {
   }
 }
 
-class TestSubjectSerializer implements IriNodeSerializer<CustomType> {
+class TestSubjectSerializer implements GlobalResourceSerializer<CustomType> {
   @override
   final IriTerm typeIri = IriTerm('http://example.org/CustomType');
 

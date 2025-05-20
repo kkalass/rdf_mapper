@@ -89,8 +89,8 @@ abstract interface class LiteralTermSerializer<T> implements TermSerializer<T> {
 /// entities and objects with multiple properties that need to be represented in RDF.
 ///
 /// The two main specializations are:
-/// - [BlankNodeSerializer]: For anonymous resources using blank nodes
-/// - [IriNodeSerializer]: For identifiable resources using IRIs
+/// - [LocalResourceSerializer]: For anonymous resources using blank nodes
+/// - [GlobalResourceSerializer]: For identifiable resources using IRIs
 sealed class NodeSerializer<T> extends Serializer<T> {
   /// The IRI of the type of the subject.
   ///
@@ -137,7 +137,8 @@ sealed class NodeSerializer<T> extends Serializer<T> {
 /// - Helper or component objects
 /// - Nested structures
 /// - Objects whose identity is only significant within the local graph
-abstract interface class BlankNodeSerializer<T> implements NodeSerializer<T> {
+abstract interface class LocalResourceSerializer<T>
+    implements NodeSerializer<T> {
   @override
 
   /// Converts a value to a blank node with associated triples.
@@ -166,7 +167,8 @@ abstract interface class BlankNodeSerializer<T> implements NodeSerializer<T> {
 /// - Objects need stable, persistent identifiers
 /// - Resources might be referenced by other resources
 /// - The object represents a significant domain entity
-abstract interface class IriNodeSerializer<T> implements NodeSerializer<T> {
+abstract interface class GlobalResourceSerializer<T>
+    implements NodeSerializer<T> {
   @override
 
   /// Converts a value to an IRI-identified node with associated triples.

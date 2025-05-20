@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Relaxed Dart SDK requirement from 3.7 to 3.6
+- **Breaking Change** Renamed `BlankNodeDeserializer` to `LocalResourceDeserializer` and `IriNodeDeserializer` to `GlobalResourceDeserializer` as well as `BlankNodeSerializer` to ` LocalResourceSerializer` and `GlobalResourceSerializer` to `GlobalResourceSerializer`
 
 ## [0.5.0] - 2025-05-22
 

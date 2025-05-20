@@ -5,6 +5,13 @@ import 'package:rdf_mapper/src/api/deserializer.dart';
 ///
 /// This service encapsulates the low-level operations needed during RDF deserialization.
 /// It provides the foundation for both direct deserialization and the Reader API.
+///
+/// The service defines methods to access and convert RDF property values:
+/// * [require] for mandatory properties that must exist
+/// * [optional] for properties that may not exist
+/// * [getList] for collecting multiple values as a list
+/// * [getMap] for collecting values as a map
+/// * [collect] for custom processing of multiple values
 abstract class DeserializationService {
   /// Gets a required property value from the RDF graph
   ///
@@ -12,66 +19,114 @@ abstract class DeserializationService {
   /// This method retrieves the object value for the given subject-predicate pair
   /// and throws an exception if the value cannot be found.
   ///
-  /// @param subject The subject IRI of the object we are working with
-  /// @param predicate The predicate IRI of the property
-  /// @param enforceSingleValue If true, we will throw an exception if there is more than one matching term.
-  /// @return The object value of the property
+  /// * [subject] The subject IRI of the object we are working with
+  /// * [predicate] The predicate IRI of the property
+  /// * [enforceSingleValue] If true, throws an exception when multiple values exist
+  /// * [globalResourceDeserializer] Optional custom deserializer for IRI nodes
+  /// * [iriTermDeserializer] Optional custom deserializer for IRI terms
+  /// * [literalTermDeserializer] Optional custom deserializer for literal terms
+  /// * [localResourceDeserializer] Optional custom deserializer for blank nodes
+  ///
+  /// Returns the property value converted to the requested type.
+  ///
+  /// Throws [PropertyValueNotFoundException] if the property doesn't exist.
+  /// Throws [TooManyPropertyValuesException] if multiple values exist and [enforceSingleValue] is true.
   T require<T>(
     RdfSubject subject,
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
-    IriNodeDeserializer<T>? iriNodeDeserializer,
+    GlobalResourceDeserializer<T>? globalResourceDeserializer,
     IriTermDeserializer<T>? iriTermDeserializer,
     LiteralTermDeserializer<T>? literalTermDeserializer,
-    BlankNodeDeserializer<T>? blankNodeDeserializer,
+    LocalResourceDeserializer<T>? localResourceDeserializer,
   });
 
   /// Gets an optional property value from the RDF graph
   ///
   /// Similar to [require], but returns null if the property is not found
   /// instead of throwing an exception.
+  ///
+  /// * [subject] The subject IRI of the object we are working with
+  /// * [predicate] The predicate IRI of the property
+  /// * [enforceSingleValue] If true, throws an exception when multiple values exist
+  /// * [globalResourceDeserializer] Optional custom deserializer for IRI nodes
+  /// * [iriTermDeserializer] Optional custom deserializer for IRI terms
+  /// * [literalTermDeserializer] Optional custom deserializer for literal terms
+  /// * [localResourceDeserializer] Optional custom deserializer for blank nodes
+  ///
+  /// Returns the property value converted to the requested type, or null if not found.
+  ///
+  /// Throws [TooManyPropertyValuesException] if multiple values exist and [enforceSingleValue] is true.
   T? optional<T>(
     RdfSubject subject,
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
     IriTermDeserializer<T>? iriTermDeserializer,
-    IriNodeDeserializer<T>? iriNodeDeserializer,
+    GlobalResourceDeserializer<T>? globalResourceDeserializer,
     LiteralTermDeserializer<T>? literalTermDeserializer,
-    BlankNodeDeserializer<T>? blankNodeDeserializer,
+    LocalResourceDeserializer<T>? localResourceDeserializer,
   });
 
   /// Gets multiple property values and collects them with a custom collector function
+  ///
+  /// * [subject] The subject IRI of the object we are working with
+  /// * [predicate] The predicate IRI of the property
+  /// * [collector] A function to process the collected values
+  /// * [globalResourceDeserializer] Optional custom deserializer for IRI nodes
+  /// * [iriTermDeserializer] Optional custom deserializer for IRI terms
+  /// * [literalTermDeserializer] Optional custom deserializer for literal terms
+  /// * [localResourceDeserializer] Optional custom deserializer for blank nodes
+  ///
+  /// Returns the result of the collector function.
   R collect<T, R>(
     RdfSubject subject,
     RdfPredicate predicate,
     R Function(Iterable<T>) collector, {
     IriTermDeserializer<T>? iriTermDeserializer,
-    IriNodeDeserializer<T>? iriNodeDeserializer,
+    GlobalResourceDeserializer<T>? globalResourceDeserializer,
     LiteralTermDeserializer<T>? literalTermDeserializer,
-    BlankNodeDeserializer<T>? blankNodeDeserializer,
+    LocalResourceDeserializer<T>? localResourceDeserializer,
   });
 
   /// Gets a list of property values
   ///
   /// Convenience method that collects multiple property values into a List.
+  ///
+  /// * [subject] The subject IRI of the object we are working with
+  /// * [predicate] The predicate IRI for the properties to read
+  /// * [iriTermDeserializer] Optional custom deserializer for IRI terms
+  /// * [nodeDeserializer] Optional custom deserializer for IRI nodes (renamed from globalResourceDeserializer for backward compatibility)
+  /// * [literalTermDeserializer] Optional custom deserializer for literal terms
+  /// * [localResourceDeserializer] Optional custom deserializer for blank nodes
+  ///
+  /// Returns a list of property values converted to the requested type.
   List<T> getList<T>(
     RdfSubject subject,
     RdfPredicate predicate, {
     IriTermDeserializer<T>? iriTermDeserializer,
-    IriNodeDeserializer<T>? nodeDeserializer,
+    GlobalResourceDeserializer<T>? nodeDeserializer,
     LiteralTermDeserializer<T>? literalTermDeserializer,
-    BlankNodeDeserializer<T>? blankNodeDeserializer,
+    LocalResourceDeserializer<T>? localResourceDeserializer,
   });
 
   /// Gets a map of property values
   ///
   /// Convenience method that collects multiple property values into a Map.
+  ///
+  /// * [subject] The subject IRI of the object we are working with
+  /// * [predicate] The predicate IRI of the property
+  /// * [globalResourceDeserializer] Optional custom deserializer for IRI nodes containing MapEntry values
+  /// * [iriTermDeserializer] Optional custom deserializer for IRI terms containing MapEntry values
+  /// * [literalTermDeserializer] Optional custom deserializer for literal terms containing MapEntry values
+  /// * [localResourceDeserializer] Optional custom deserializer for blank nodes containing MapEntry values
+  ///
+  /// Returns a map constructed from the property values.
   Map<K, V> getMap<K, V>(
     RdfSubject subject,
     RdfPredicate predicate, {
     IriTermDeserializer<MapEntry<K, V>>? iriTermDeserializer,
-    IriNodeDeserializer<MapEntry<K, V>>? iriNodeDeserializer,
+    GlobalResourceDeserializer<MapEntry<K, V>>? globalResourceDeserializer,
     LiteralTermDeserializer<MapEntry<K, V>>? literalTermDeserializer,
-    BlankNodeDeserializer<MapEntry<K, V>>? blankNodeDeserializer,
+    LocalResourceDeserializer<MapEntry<K, V>>? localResourceDeserializer,
   });
 }

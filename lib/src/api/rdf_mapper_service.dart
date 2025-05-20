@@ -242,7 +242,7 @@ final class RdfMapperService {
             ?.object;
 
         throw DeserializerNotFoundException.forTypeIri(
-          "IriNodeDeserializer",
+          "GlobalResourceDeserializer",
           type as IriTerm,
         );
       }
