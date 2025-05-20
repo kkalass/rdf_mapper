@@ -9,7 +9,7 @@ import 'package:rdf_mapper/src/api/serialization_context.dart';
 ///
 /// The serializer system is divided into two main branches:
 /// - [TermSerializer]: For converting objects to single RDF terms
-/// - [NodeSerializer]: For converting objects to subjects with associated triples
+/// - [ResourceSerializer]: For converting objects to subjects with associated triples
 ///
 /// This serves as a semantic marker to group all serializers in the system.
 /// It doesn't define any methods itself but acts as a common ancestor.
@@ -62,7 +62,7 @@ abstract interface class IriTermSerializer<T> implements TermSerializer<T> {
 /// IMPORTANT: A literal term alone is not a valid complete RDF structure - literals
 /// can only appear as objects in RDF triples (subject-predicate-object). This serializer
 /// is meant to be used as part of a larger serialization process, typically within
-/// a [NodeSerializer] implementation for handling property values.
+/// a [ResourceSerializer] implementation for handling property values.
 ///
 /// Common use cases include:
 /// - Strings, numbers, booleans, and dates
@@ -91,7 +91,7 @@ abstract interface class LiteralTermSerializer<T> implements TermSerializer<T> {
 /// The two main specializations are:
 /// - [LocalResourceSerializer]: For anonymous resources using blank nodes
 /// - [GlobalResourceSerializer]: For identifiable resources using IRIs
-sealed class NodeSerializer<T> extends Serializer<T> {
+sealed class ResourceSerializer<T> extends Serializer<T> {
   /// The IRI of the type of the subject.
   ///
   /// This is used to add an 'rdf:type' triple when serializing to RDF.
@@ -138,7 +138,7 @@ sealed class NodeSerializer<T> extends Serializer<T> {
 /// - Nested structures
 /// - Objects whose identity is only significant within the local graph
 abstract interface class LocalResourceSerializer<T>
-    implements NodeSerializer<T> {
+    implements ResourceSerializer<T> {
   @override
 
   /// Converts a value to a blank node with associated triples.
@@ -168,7 +168,7 @@ abstract interface class LocalResourceSerializer<T>
 /// - Resources might be referenced by other resources
 /// - The object represents a significant domain entity
 abstract interface class GlobalResourceSerializer<T>
-    implements NodeSerializer<T> {
+    implements ResourceSerializer<T> {
   @override
 
   /// Converts a value to an IRI-identified node with associated triples.

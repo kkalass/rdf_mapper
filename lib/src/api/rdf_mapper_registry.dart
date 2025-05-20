@@ -63,7 +63,7 @@ final class RdfMapperRegistry {
   /// @return A new registry with the same mappers as this one
   RdfMapperRegistry clone() {
     final copy = RdfMapperRegistry._empty();
-    copy._nodeSerializers.addAll(_nodeSerializers);
+    copy._resourceSerializers.addAll(_resourceSerializers);
     copy._globalResourceDeserializersByType
         .addAll(_globalResourceDeserializersByType);
     copy._globalResourceDeserializers.addAll(_globalResourceDeserializers);
@@ -88,7 +88,7 @@ final class RdfMapperRegistry {
   final Map<Type, LiteralTermDeserializer<dynamic>> _literalTermDeserializers =
       {};
   final Map<Type, LiteralTermSerializer<dynamic>> _literalTermSerializers = {};
-  final Map<Type, NodeSerializer<dynamic>> _nodeSerializers = {};
+  final Map<Type, ResourceSerializer<dynamic>> _resourceSerializers = {};
 
   // RDF type IRI-based registries (for dynamic type resolution during deserialization)
   final Map<IriTerm, GlobalResourceDeserializer<dynamic>>
@@ -130,7 +130,7 @@ final class RdfMapperRegistry {
   /// Supported serializer types:
   /// - IriTermSerializer: For serializing objects to IRI terms
   /// - LiteralTermSerializer: For serializing objects to literal terms
-  /// - NodeSerializer: For serializing objects to RDF nodes (subjects with triples)
+  /// - ResourceSerializer: For serializing objects to RDF nodes (subjects with triples)
   ///
   /// @param serializer The serializer to register
   void registerSerializer<T>(Serializer<T> serializer) {
@@ -141,8 +141,8 @@ final class RdfMapperRegistry {
       case LiteralTermSerializer<T>():
         _registerLiteralTermSerializer(serializer);
         break;
-      case NodeSerializer<T>():
-        _registerNodeSerializer(serializer);
+      case ResourceSerializer<T>():
+        _registerResourceSerializer(serializer);
         break;
     }
   }
@@ -193,11 +193,11 @@ final class RdfMapperRegistry {
     switch (mapper) {
       case GlobalResourceMapper<T>():
         _registerGlobalResourceDeserializer(mapper);
-        _registerNodeSerializer(mapper);
+        _registerResourceSerializer(mapper);
         break;
       case LocalResourceMapper<T>():
         _registerLocalResourceDeserializer<T>(mapper);
-        _registerNodeSerializer<T>(mapper);
+        _registerResourceSerializer<T>(mapper);
         break;
       case LiteralTermMapper<T>():
         _registerLiteralTermSerializer<T>(mapper);
@@ -254,9 +254,9 @@ final class RdfMapperRegistry {
     }
   }
 
-  void _registerNodeSerializer<T>(NodeSerializer<T> serializer) {
+  void _registerResourceSerializer<T>(ResourceSerializer<T> serializer) {
     _log.fine('Registering Subject serializer for type ${T.toString()}');
-    _nodeSerializers[T] = serializer;
+    _resourceSerializers[T] = serializer;
   }
 
   /// Gets the deserializer for a specific type
@@ -369,12 +369,12 @@ final class RdfMapperRegistry {
     return deserializer;
   }
 
-  NodeSerializer<T> getNodeSerializer<T>() {
-    final serializer = _nodeSerializers[T];
+  ResourceSerializer<T> getResourceSerializer<T>() {
+    final serializer = _resourceSerializers[T];
     if (serializer == null) {
-      throw SerializerNotFoundException('NodeSerializer', T);
+      throw SerializerNotFoundException('ResourceSerializer', T);
     }
-    return serializer as NodeSerializer<T>;
+    return serializer as ResourceSerializer<T>;
   }
 
   /// Gets a subject serializer by runtime type rather than generic type parameter
@@ -386,12 +386,12 @@ final class RdfMapperRegistry {
   /// @param type The runtime Type to look up
   /// @return The serializer for the specified type
   /// @throws SerializerNotFoundException if no serializer is registered for the type
-  NodeSerializer<T> getNodeSerializerByType<T>(Type type) {
-    final serializer = _nodeSerializers[type];
+  ResourceSerializer<T> getResourceSerializerByType<T>(Type type) {
+    final serializer = _resourceSerializers[type];
     if (serializer == null) {
-      throw SerializerNotFoundException('NodeSerializer', type);
+      throw SerializerNotFoundException('ResourceSerializer', type);
     }
-    return serializer as NodeSerializer<T>;
+    return serializer as ResourceSerializer<T>;
   }
 
   /// Checks if a mapper exists for a type
@@ -409,5 +409,5 @@ final class RdfMapperRegistry {
   bool hasIriTermSerializerFor<T>() => _iriTermSerializers.containsKey(T);
   bool hasLiteralTermSerializerFor<T>() =>
       _literalTermSerializers.containsKey(T);
-  bool hasNodeSerializerFor<T>() => _nodeSerializers.containsKey(T);
+  bool hasResourceSerializerFor<T>() => _resourceSerializers.containsKey(T);
 }

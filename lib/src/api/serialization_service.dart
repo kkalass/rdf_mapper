@@ -64,7 +64,7 @@ abstract class SerializationService {
     RdfSubject subject,
     RdfPredicate predicate,
     T instance, {
-    NodeSerializer<T>? serializer,
+    ResourceSerializer<T>? serializer,
   });
 
   /// Creates triples for multiple child nodes derived from a source object.
@@ -73,7 +73,7 @@ abstract class SerializationService {
     RdfPredicate predicate,
     Iterable<T> Function(A p1) toIterable,
     A instance, {
-    NodeSerializer<T>? serializer,
+    ResourceSerializer<T>? serializer,
   });
 
   /// Creates triples for a collection of child nodes.
@@ -81,7 +81,7 @@ abstract class SerializationService {
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> instance, {
-    NodeSerializer<T>? serializer,
+    ResourceSerializer<T>? serializer,
   });
 
   /// Creates triples for a map of child nodes.
@@ -89,7 +89,7 @@ abstract class SerializationService {
     RdfSubject subject,
     RdfPredicate predicate,
     Map<K, V> instance,
-    NodeSerializer<MapEntry<K, V>> entrySerializer,
+    ResourceSerializer<MapEntry<K, V>> entrySerializer,
   );
 
   /// Serializes an object to an RDF node.
@@ -97,5 +97,5 @@ abstract class SerializationService {
   /// @param instance The object to serialize
   /// @param serializer Optional serializer for the object type
 
-  List<Triple> node<T>(T instance, {NodeSerializer<T>? serializer});
+  List<Triple> node<T>(T instance, {ResourceSerializer<T>? serializer});
 }

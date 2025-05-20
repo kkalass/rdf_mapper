@@ -161,7 +161,7 @@ class ResourceBuilder<S extends RdfSubject> {
     RdfPredicate predicate,
     Iterable<T> Function(A) toIterable,
     A instance, {
-    NodeSerializer<T>? serializer,
+    ResourceSerializer<T>? serializer,
   }) {
     _triples.addAll(
       _service.childNodesFromInstance(
@@ -250,7 +250,7 @@ class ResourceBuilder<S extends RdfSubject> {
   ResourceBuilder<S> childNode<V>(
     RdfPredicate predicate,
     V value, {
-    NodeSerializer<V>? serializer,
+    ResourceSerializer<V>? serializer,
   }) {
     _triples.addAll(
       _service.childNode(_subject, predicate, value, serializer: serializer),
@@ -278,7 +278,7 @@ class ResourceBuilder<S extends RdfSubject> {
   ResourceBuilder<S> childNodes<V>(
     RdfPredicate predicate,
     Iterable<V> values, {
-    NodeSerializer<V>? serializer,
+    ResourceSerializer<V>? serializer,
   }) {
     _triples.addAll(
       _service.childNodes(
@@ -313,7 +313,7 @@ class ResourceBuilder<S extends RdfSubject> {
   ResourceBuilder<S> childNodeMap<K, V>(
     RdfPredicate predicate,
     Map<K, V> instance,
-    NodeSerializer<MapEntry<K, V>> entrySerializer,
+    ResourceSerializer<MapEntry<K, V>> entrySerializer,
   ) {
     _triples.addAll(
       _service.childNodeMap(_subject, predicate, instance, entrySerializer),
@@ -396,7 +396,7 @@ class ResourceBuilder<S extends RdfSubject> {
   ResourceBuilder<S> childNodeIfNotNull<V>(
     RdfPredicate predicate,
     V? value, {
-    NodeSerializer<V>? serializer,
+    ResourceSerializer<V>? serializer,
   }) {
     if (value != null) {
       childNode(predicate, value, serializer: serializer);
@@ -413,7 +413,7 @@ class ResourceBuilder<S extends RdfSubject> {
   ResourceBuilder<S> childNodesIfNotEmpty<V>(
     RdfPredicate predicate,
     Iterable<V>? values, {
-    NodeSerializer<V>? serializer,
+    ResourceSerializer<V>? serializer,
   }) {
     if (values != null && values.isNotEmpty) {
       childNodes(predicate, values, serializer: serializer);

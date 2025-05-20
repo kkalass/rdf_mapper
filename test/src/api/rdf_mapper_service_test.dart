@@ -325,7 +325,7 @@ void main() {
       );
 
       // And verify the main registry wasn't affected
-      expect(service.registry.hasNodeSerializerFor<TestPerson>(), isFalse);
+      expect(service.registry.hasResourceSerializerFor<TestPerson>(), isFalse);
     });
 
     test('toGraphFromList serializes a list of objects to a graph', () {

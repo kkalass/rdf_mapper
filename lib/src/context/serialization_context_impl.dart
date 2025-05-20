@@ -83,14 +83,14 @@ class SerializationContextImpl extends SerializationContext
     RdfSubject subject,
     RdfPredicate predicate,
     T instance, {
-    NodeSerializer<T>? serializer,
+    ResourceSerializer<T>? serializer,
   }) {
     // Try to get serializer directly for type T if provided or available
-    NodeSerializer<T>? ser = _getSerializerFallbackToRuntimeType(
+    ResourceSerializer<T>? ser = _getSerializerFallbackToRuntimeType(
       serializer,
       instance,
-      _registry.getNodeSerializer,
-      _registry.getNodeSerializerByType,
+      _registry.getResourceSerializer,
+      _registry.getResourceSerializerByType,
     );
     if (ser == null) {
       return [];
@@ -169,7 +169,7 @@ class SerializationContextImpl extends SerializationContext
   }
 
   @override
-  List<Triple> node<T>(T instance, {NodeSerializer<T>? serializer}) {
+  List<Triple> node<T>(T instance, {ResourceSerializer<T>? serializer}) {
     if (instance == null) {
       throw ArgumentError('Cannot serialize null instance');
     }
@@ -178,8 +178,8 @@ class SerializationContextImpl extends SerializationContext
     final ser = _getSerializerFallbackToRuntimeType(
       serializer,
       instance,
-      _registry.getNodeSerializer<T>,
-      _registry.getNodeSerializerByType<T>,
+      _registry.getResourceSerializer<T>,
+      _registry.getResourceSerializerByType<T>,
     );
 
     if (ser == null) {
@@ -279,7 +279,7 @@ class SerializationContextImpl extends SerializationContext
     RdfPredicate predicate,
     Iterable<T> Function(A p1) toIterable,
     A instance, {
-    NodeSerializer<T>? serializer,
+    ResourceSerializer<T>? serializer,
   }) =>
       toIterable(instance)
           .expand<Triple>(
@@ -293,7 +293,7 @@ class SerializationContextImpl extends SerializationContext
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> instance, {
-    NodeSerializer<T>? serializer,
+    ResourceSerializer<T>? serializer,
   }) =>
       childNodesFromInstance(
         subject,
@@ -308,7 +308,7 @@ class SerializationContextImpl extends SerializationContext
     RdfSubject subject,
     RdfPredicate predicate,
     Map<K, V> instance,
-    NodeSerializer<MapEntry<K, V>> entrySerializer,
+    ResourceSerializer<MapEntry<K, V>> entrySerializer,
   ) =>
       childNodesFromInstance<Map<K, V>, MapEntry<K, V>>(
         subject,

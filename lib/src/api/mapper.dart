@@ -77,7 +77,7 @@ abstract interface class LiteralTermMapper<T>
 
 /// Bidirectional mapper between Dart objects and RDF subjects with associated triples.
 ///
-/// Combines the functionality of both [NodeSerializer] and [GlobalResourceDeserializer]
+/// Combines the functionality of both [ResourceSerializer] and [GlobalResourceDeserializer]
 /// for seamless conversion between Dart objects and RDF subjects in both directions.
 /// This mapper handles complex objects that are represented as a subject with
 /// multiple associated triples in an RDF graph.

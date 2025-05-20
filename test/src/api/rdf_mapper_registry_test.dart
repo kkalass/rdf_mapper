@@ -115,10 +115,10 @@ void main() {
       registry.registerSerializer<CustomType>(serializer);
 
       // Verify registration
-      expect(registry.hasNodeSerializerFor<CustomType>(), isTrue);
+      expect(registry.hasResourceSerializerFor<CustomType>(), isTrue);
 
       // Verify retrieval works
-      expect(registry.getNodeSerializer<CustomType>(), equals(serializer));
+      expect(registry.getResourceSerializer<CustomType>(), equals(serializer));
     });
 
     test('registerMapper registers both serializer and deserializer', () {
@@ -126,8 +126,8 @@ void main() {
       registry.registerMapper<CustomType>(mapper);
 
       // Verify serializer registration
-      expect(registry.hasNodeSerializerFor<CustomType>(), isTrue);
-      expect(registry.getNodeSerializer<CustomType>(), equals(mapper));
+      expect(registry.hasResourceSerializerFor<CustomType>(), isTrue);
+      expect(registry.getResourceSerializer<CustomType>(), equals(mapper));
 
       // Verify deserializer registration
       expect(registry.hasGlobalResourceDeserializerFor<CustomType>(), isTrue);
@@ -196,7 +196,7 @@ void main() {
 
     test('getSubjectSerializer throws when serializer not found', () {
       expect(
-        () => registry.getNodeSerializer<CustomType>(),
+        () => registry.getResourceSerializer<CustomType>(),
         throwsA(isA<SerializerNotFoundException>()),
       );
     });
@@ -211,7 +211,7 @@ void main() {
       final clonedRegistry = registry.clone();
 
       // Verify all mappers were copied
-      expect(clonedRegistry.hasNodeSerializerFor<CustomType>(), isTrue);
+      expect(clonedRegistry.hasResourceSerializerFor<CustomType>(), isTrue);
       expect(clonedRegistry.hasGlobalResourceDeserializerFor<CustomType>(),
           isTrue);
       expect(clonedRegistry.hasLiteralTermSerializerFor<CustomType>(), isTrue);
@@ -224,8 +224,9 @@ void main() {
       final newMapper = AnotherTestSubjectMapper();
       clonedRegistry.registerMapper<AnotherCustomType>(newMapper);
 
-      expect(clonedRegistry.hasNodeSerializerFor<AnotherCustomType>(), isTrue);
-      expect(registry.hasNodeSerializerFor<AnotherCustomType>(), isFalse);
+      expect(
+          clonedRegistry.hasResourceSerializerFor<AnotherCustomType>(), isTrue);
+      expect(registry.hasResourceSerializerFor<AnotherCustomType>(), isFalse);
     });
   });
 }

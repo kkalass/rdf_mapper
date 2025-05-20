@@ -348,7 +348,8 @@ void main() {
       expect(nameTriples.isNotEmpty, isTrue);
 
       // Verify the temporary registration didn't affect the original registry
-      expect(rdfMapper.registry.hasNodeSerializerFor<TestPerson>(), isFalse);
+      expect(
+          rdfMapper.registry.hasResourceSerializerFor<TestPerson>(), isFalse);
     });
 
     test(
@@ -626,7 +627,8 @@ _:b0 a schema:PostalAddress;
         final mapper = TestPersonMapper();
 
         // Verify mapper is not registered initially
-        expect(rdfMapper.registry.hasNodeSerializerFor<TestPerson>(), isFalse);
+        expect(
+            rdfMapper.registry.hasResourceSerializerFor<TestPerson>(), isFalse);
         expect(
           rdfMapper.registry.hasGlobalResourceDeserializerFor<TestPerson>(),
           isFalse,
@@ -636,7 +638,8 @@ _:b0 a schema:PostalAddress;
         rdfMapper.registerMapper<TestPerson>(mapper);
 
         // Verify mapper is now registered
-        expect(rdfMapper.registry.hasNodeSerializerFor<TestPerson>(), isTrue);
+        expect(
+            rdfMapper.registry.hasResourceSerializerFor<TestPerson>(), isTrue);
         expect(
           rdfMapper.registry.hasGlobalResourceDeserializerFor<TestPerson>(),
           isTrue,
@@ -719,7 +722,7 @@ _:b0 a schema:PostalAddress;
           rdfMapper.registry.hasLocalResourceDeserializerFor<Address>(),
           isFalse,
         );
-        expect(rdfMapper.registry.hasNodeSerializerFor<Address>(), isFalse);
+        expect(rdfMapper.registry.hasResourceSerializerFor<Address>(), isFalse);
 
         // Register deserializer through convenience method
         rdfMapper.registerMapper<Address>(mapper);
@@ -729,7 +732,7 @@ _:b0 a schema:PostalAddress;
           rdfMapper.registry.hasLocalResourceDeserializerFor<Address>(),
           isTrue,
         );
-        expect(rdfMapper.registry.hasNodeSerializerFor<Address>(), isTrue);
+        expect(rdfMapper.registry.hasResourceSerializerFor<Address>(), isTrue);
       },
     );
   });

@@ -7,7 +7,7 @@ import 'package:rdf_mapper/src/exceptions/rdf_mapping_exception.dart';
 /// the conversion for the object's type.
 ///
 /// The exception contains information about which serializer type was sought (e.g., IriTermSerializer,
-/// NodeSerializer) and the Dart type that couldn't be handled.
+/// ResourceSerializer) and the Dart type that couldn't be handled.
 class SerializerNotFoundException extends RdfMappingException {
   final Type _t;
   final String _serializerType;
