@@ -60,7 +60,7 @@
   <p>Exception thrown when multiple values are found for a single-valued property.</p>
 <p>This exception occurs during deserialization when a property is expected to have
 at most one value, but multiple values are found in the RDF graph. This typically
-happens when using methods like <a href="../rdf_mapper/NodeReader/require.html">NodeReader.require</a> or <a href="../rdf_mapper/NodeReader/get.html">NodeReader.get</a> with
+happens when using methods like <a href="../rdf_mapper/ResourceReader/require.html">ResourceReader.require</a> or <code>ResourceReader.get</code> with
 the default enforceSingleValue parameter set to true.</p>
 <p>The exception contains detailed information about the subject, predicate, and
 the list of object values that were found, which can be useful for diagnosing
@@ -254,7 +254,7 @@ data inconsistencies.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.4.0
+      0.5.0
   </span>
   
 </footer>

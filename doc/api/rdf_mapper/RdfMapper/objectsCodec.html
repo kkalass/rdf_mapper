@@ -83,7 +83,7 @@ allowing efficient batch processing of multiple entities in a single operation.<
 will be inferred from the input. The decoder will rely on
 <code>rdf:type</code> to find the correct mapper for each object.</p>
 <p>IMPORTANT: When using this method, the type <code>T</code> must be mapped using an
-<a href="../../rdf_mapper/IriNodeMapper-class.html">IriNodeMapper</a> either globally in the <a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a> instance or locally by
+<a href="../../rdf_mapper/GlobalResourceMapper-class.html">GlobalResourceMapper</a> either globally in the <a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a> instance or locally by
 providing a register callback and register it there.</p>
 <p><code>contentType</code> specifies the RDF format (e.g., 'text/turtle', 'application/ld+json').
 If not specified, defaults to the format registered first in the RdfCodecRegistry.
@@ -137,7 +137,7 @@ If not specified, defaults to the format registered first in the RdfCodecRegistr
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.4.0
+      0.5.0
   </span>
   
 </footer>

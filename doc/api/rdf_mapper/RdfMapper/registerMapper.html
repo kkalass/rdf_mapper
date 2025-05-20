@@ -73,11 +73,11 @@ converted to RDF triples and reconstructed from them.</p>
 <p>The registry supports four distinct mapper types based on RDF node characteristics:</p>
 <ul>
 <li>
-<p><a href="../../rdf_mapper/IriNodeMapper-class.html">IriNodeMapper</a>: Maps objects to/from IRI subjects (identified by URIs)
+<p><a href="../../rdf_mapper/GlobalResourceMapper-class.html">GlobalResourceMapper</a>: Maps objects to/from IRI subjects (identified by URIs)
 Used for entity objects with identity and complex properties</p>
 </li>
 <li>
-<p><a href="../../rdf_mapper/BlankNodeMapper-class.html">BlankNodeMapper</a>: Maps objects to/from blank node subjects
+<p><a href="../../rdf_mapper/LocalResourceMapper-class.html">LocalResourceMapper</a>: Maps objects to/from blank node subjects
 Used for embedded objects without their own identity</p>
 </li>
 <li>
@@ -89,12 +89,12 @@ Used for value objects with datatype annotations</p>
 Used for object references and URIs</p>
 </li>
 </ul>
-<p>Example with IriNodeMapper:</p>
-<pre class="language-dart"><code class="language-dart">class PersonMapper implements IriNodeMapper&lt;Person&gt; {
+<p>Example with GlobalResourceMapper:</p>
+<pre class="language-dart"><code class="language-dart">class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
 
   @override
   RdfIriNode toRdfNode(Person instance, SerializationContext context) {
-    return context.nodeBuilder(IriTerm(instance.id))
+    return context.resourceBuilder(IriTerm(instance.id))
       .literal(FoafPerson.name, instance.name)
       .build();
   }
@@ -152,7 +152,7 @@ rdfMapper.registerMapper&lt;Person&gt;(PersonMapper());
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.4.0
+      0.5.0
   </span>
   
 </footer>

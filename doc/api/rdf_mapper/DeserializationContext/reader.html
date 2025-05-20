@@ -57,7 +57,7 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="../../rdf_mapper/NodeReader-class.html">NodeReader</a></span>
+<span class="returntype"><a href="../../rdf_mapper/ResourceReader-class.html">ResourceReader</a></span>
 <span class="name ">reader</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="reader-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span></span></li>
 </ol>)
 
@@ -80,14 +80,14 @@ final age = reader.require&lt;int&gt;(foaf.age);
 final friends = reader.getList&lt;Person&gt;(foaf.knows);
 </code></pre>
 <p>@param subject The subject term (IRI or blank node) to read properties from
-@return A NodeReader instance for fluent property access</p>
+@return A ResourceReader instance for fluent property access</p>
 </section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">NodeReader reader(RdfSubject subject);</code></pre>
+  <pre class="language-dart"><code class="language-dart">ResourceReader reader(RdfSubject subject);</code></pre>
 </section>
 
 
@@ -115,7 +115,7 @@ final friends = reader.getList&lt;Person&gt;(foaf.knows);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.4.0
+      0.5.0
   </span>
   
 </footer>

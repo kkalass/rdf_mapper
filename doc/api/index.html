@@ -84,7 +84,7 @@
 <h2 id="installation">Installation</h2>
 <p>Add the following to your <code>pubspec.yaml</code>:</p>
 <pre class="language-yaml"><code class="language-yaml">dependencies:
-  rdf_mapper: ^0.4.0
+  rdf_mapper: ^0.5.0
 </code></pre>
 <p>Or use the following command:</p>
 <pre class="language-bash"><code class="language-bash">dart pub add rdf_mapper
@@ -138,7 +138,7 @@ class Person {
 }
 
 // Create a custom mapper
-class PersonMapper implements IriNodeMapper&lt;Person&gt; {
+class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
   @override
   IriTerm? get typeIri =&gt; SchemaPerson.classIri;
   
@@ -146,7 +146,7 @@ class PersonMapper implements IriNodeMapper&lt;Person&gt; {
   (IriTerm, List&lt;Triple&gt;) toRdfNode(Person value, SerializationContext context, {RdfSubject? parentSubject}) {
 
     // convert dart objects to triples using the fluent builder API
-    return context.nodeBuilder(IriTerm(value.id))
+    return context.resourceBuilder(IriTerm(value.id))
       .literal(SchemaPerson.foafName, value.name)
       .literal(SchemaPerson.foafAge, value.age)
       .build();
@@ -176,22 +176,22 @@ class PersonMapper implements IriNodeMapper&lt;Person&gt; {
 </ul>
 </li>
 <li>
-<p><strong>Node Mappers</strong>: For complex objects with multiple properties</p>
+<p><strong>Resource Mappers</strong>: For complex objects with multiple properties</p>
 <ul>
-<li><code>IriNodeMapper</code>: For objects with globally unique identifiers</li>
-<li><code>BlankNodeMapper</code>: For anonymous objects or auxiliary structures</li>
+<li><code>GlobalResourceMapper</code>: For objects with globally unique identifiers</li>
+<li><code>LocalResourceMapper</code>: For anonymous objects or auxiliary structures</li>
 </ul>
 </li>
 </ul>
 <h3 id="context-classes">Context Classes</h3>
 <ul>
-<li><code>SerializationContext</code>: Provides access to the NodeBuilder</li>
-<li><code>DeserializationContext</code>: Provides access to the NodeReader</li>
+<li><code>SerializationContext</code>: Provides access to the ResourceBuilder</li>
+<li><code>DeserializationContext</code>: Provides access to the ResourceReader</li>
 </ul>
 <h3 id="fluent-apis">Fluent APIs</h3>
 <ul>
-<li><code>NodeBuilder</code>: For conveniently creating RDF nodes with a fluent API</li>
-<li><code>NodeReader</code>: For easily accessing RDF node properties</li>
+<li><code>ResourceBuilder</code>: For conveniently creating RDF nodes with a fluent API</li>
+<li><code>ResourceReader</code>: For easily accessing RDF node properties</li>
 </ul>
 <h2 id="advanced-usage">Advanced Usage</h2>
 <h3 id="working-with-graphs">Working with Graphs</h3>
@@ -342,7 +342,7 @@ class Rating {
 // --- Mappers ---
 
 // IRI-based entity mapper
-class BookMapper implements IriNodeMapper&lt;Book&gt; {
+class BookMapper implements GlobalResourceMapper&lt;Book&gt; {
   static final titlePredicate = SchemaBook.name;
   static final authorPredicate = SchemaBook.author;
   static final publishedPredicate = SchemaBook.datePublished;
@@ -389,7 +389,7 @@ class BookMapper implements IriNodeMapper&lt;Book&gt; {
     RdfSubject? parentSubject,
   }) {
     return context
-        .nodeBuilder(IriTerm(_createIriFromId(book.id)))
+        .resourceBuilder(IriTerm(_createIriFromId(book.id)))
         .literal(titlePredicate, book.title)
         .literal(authorPredicate, book.author)
         .literal&lt;DateTime&gt;(publishedPredicate, book.published)
@@ -401,7 +401,7 @@ class BookMapper implements IriNodeMapper&lt;Book&gt; {
 }
 
 // Blank node-based entity mapper
-class ChapterMapper implements BlankNodeMapper&lt;Chapter&gt; {
+class ChapterMapper implements LocalResourceMapper&lt;Chapter&gt; {
   static final titlePredicate = SchemaChapter.name;
   static final numberPredicate = SchemaChapter.position;
 
@@ -424,7 +424,7 @@ class ChapterMapper implements BlankNodeMapper&lt;Chapter&gt; {
     RdfSubject? parentSubject,
   }) {
     return ctxt
-        .nodeBuilder(BlankNodeTerm())
+        .resourceBuilder(BlankNodeTerm())
         .literal(titlePredicate, chapter.title)
         .literal&lt;int&gt;(numberPredicate, chapter.number)
         .build();
@@ -577,7 +577,7 @@ class RatingMapper implements LiteralTermMapper&lt;Rating&gt; {
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.4.0
+      0.5.0
   </span>
   
 </footer>

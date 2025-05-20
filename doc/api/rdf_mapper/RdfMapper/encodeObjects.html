@@ -75,7 +75,7 @@
 <p>This method is similar to <a href="../../rdf_mapper/RdfMapper/encodeObject.html">encodeObject</a> but optimized for collections of objects.
 It combines all objects into a single RDF graph before serializing to a string.</p>
 <p>IMPORTANT: When using this method, the type <code>T</code> must be mapped using an
-<a href="../../rdf_mapper/IriNodeMapper-class.html">IriNodeMapper</a> either globally in the <a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a> instance or locally by
+<a href="../../rdf_mapper/GlobalResourceMapper-class.html">GlobalResourceMapper</a> either globally in the <a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a> instance or locally by
 providing a register callback.</p>
 <p><code>instance</code> The collection of objects to serialize.
 <code>contentType</code> MIME type for output format (e.g., 'text/turtle', 'application/ld+json').
@@ -143,7 +143,7 @@ final jsonLd = rdfMapper.encodeObjects(
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.4.0
+      0.5.0
   </span>
   
 </footer>

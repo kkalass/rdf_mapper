@@ -79,7 +79,7 @@ only objects of type <code>T</code>.</p>
 will be inferred from the input. The decoder will rely on
 <code>rdf:type</code> to find the correct mapper for each object.</p>
 <p>IMPORTANT: When using this method, the type <code>T</code> must be mapped using an
-<a href="../../rdf_mapper/IriNodeMapper-class.html">IriNodeMapper</a> either globally in the <a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a> instance or locally by
+<a href="../../rdf_mapper/GlobalResourceMapper-class.html">GlobalResourceMapper</a> either globally in the <a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a> instance or locally by
 providing a register callback and register it there.</p>
 <p>Simple types like String, int, etc. that
 use <a href="../../rdf_mapper/LiteralTermMapper-class.html">LiteralTermMapper</a> cannot be directly deserialized as complete RDF documents,
@@ -153,7 +153,7 @@ final people = rdfMapper.decodeObjects&lt;Person&gt;(turtle);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.4.0
+      0.5.0
   </span>
   
 </footer>

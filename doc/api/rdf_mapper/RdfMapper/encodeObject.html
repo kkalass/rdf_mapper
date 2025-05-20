@@ -78,7 +78,7 @@
 <li>For an Iterable of objects, it combines all objects into a single graph</li>
 </ul>
 <p>IMPORTANT: When using this method, the type <code>T</code> must be mapped using an
-<a href="../../rdf_mapper/IriNodeMapper-class.html">IriNodeMapper</a> either globally in the <a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a> instance or locally by
+<a href="../../rdf_mapper/GlobalResourceMapper-class.html">GlobalResourceMapper</a> either globally in the <a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a> instance or locally by
 providing a register callback and register it there.</p>
 <p>Simple types like String, int, etc. that
 use <a href="../../rdf_mapper/LiteralTermMapper-class.html">LiteralTermMapper</a> cannot be directly serialized as complete RDF documents,
@@ -147,7 +147,7 @@ final turtle = rdfMapper.encodeObject(person);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.4.0
+      0.5.0
   </span>
   
 </footer>
