@@ -172,14 +172,13 @@ final organizations = objects.whereType&lt;Organization&gt;().toList();
     &#47;&#47; Only throw if this failed subject isn&#39;t referenced by other objects
     &#47;&#47; (meaning it&#39;s a root node)
     if (!subjectReferences.contains(subject)) {
-      final type =
-          graph
-              .findTriples(subject: subject, predicate: Rdf.type)
-              .firstOrNull
-              ?.object;
+      final type = graph
+          .findTriples(subject: subject, predicate: Rdf.type)
+          .firstOrNull
+          ?.object;
 
       throw DeserializerNotFoundException.forTypeIri(
-        &quot;IriNodeDeserializer&quot;,
+        &quot;GlobalResourceDeserializer&quot;,
         type as IriTerm,
       );
     }
@@ -214,7 +213,7 @@ final organizations = objects.whereType&lt;Organization&gt;().toList();
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.5.0
+      0.6.0
   </span>
   
 </footer>

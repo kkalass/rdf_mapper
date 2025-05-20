@@ -64,8 +64,8 @@ triples that describe the object's properties. These serializers are used for do
 entities and objects with multiple properties that need to be represented in RDF.</p>
 <p>The two main specializations are:</p>
 <ul>
-<li><a href="../rdf_mapper/BlankNodeSerializer-class.html">BlankNodeSerializer</a>: For anonymous resources using blank nodes</li>
-<li><a href="../rdf_mapper/IriNodeSerializer-class.html">IriNodeSerializer</a>: For identifiable resources using IRIs</li>
+<li><a href="../rdf_mapper/LocalResourceSerializer-class.html">LocalResourceSerializer</a>: For anonymous resources using blank nodes</li>
+<li><a href="../rdf_mapper/GlobalResourceSerializer-class.html">GlobalResourceSerializer</a>: For identifiable resources using IRIs</li>
 </ul>
 </section>
 
@@ -87,8 +87,8 @@ entities and objects with multiple properties that need to be represented in RDF
 
           <dt>Implementers</dt>
           <dd><ul class="comma-separated clazz-relationships">
-              <li><a href="../rdf_mapper/BlankNodeSerializer-class.html">BlankNodeSerializer</a></li>
-              <li><a href="../rdf_mapper/IriNodeSerializer-class.html">IriNodeSerializer</a></li>
+              <li><a href="../rdf_mapper/GlobalResourceSerializer-class.html">GlobalResourceSerializer</a></li>
+              <li><a href="../rdf_mapper/LocalResourceSerializer-class.html">LocalResourceSerializer</a></li>
           </ul></dd>
 
         
@@ -239,7 +239,7 @@ entities and objects with multiple properties that need to be represented in RDF
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.5.0
+      0.6.0
   </span>
   
 </footer>

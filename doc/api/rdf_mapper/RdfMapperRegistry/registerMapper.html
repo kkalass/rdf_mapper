@@ -72,8 +72,8 @@ serializer/deserializer mappers. It determines which specific mapper interfaces
 are implemented and registers the mapper with all relevant registries.</p>
 <p>Supported mapper types:</p>
 <ul>
-<li>GlobalResourceMapper: Combined IriNodeSerializer/IriNodeDeserializer</li>
-<li>LocalResourceMapper: Combined BlankNodeSerializer/BlankNodeDeserializer</li>
+<li>GlobalResourceMapper: Combined GlobalResourceSerializer/GlobalResourceDeserializer</li>
+<li>LocalResourceMapper: Combined LocalResourceSerializer/LocalResourceDeserializer</li>
 <li>LiteralTermMapper: Combined LiteralTermSerializer/LiteralTermDeserializer</li>
 <li>IriTermMapper: Combined IriTermSerializer/IriTermDeserializer</li>
 </ul>
@@ -87,11 +87,11 @@ are implemented and registers the mapper with all relevant registries.</p>
   <pre class="language-dart"><code class="language-dart">void registerMapper&lt;T&gt;(Mapper&lt;T&gt; mapper) {
   switch (mapper) {
     case GlobalResourceMapper&lt;T&gt;():
-      _registerIriNodeDeserializer(mapper);
+      _registerGlobalResourceDeserializer(mapper);
       _registerNodeSerializer(mapper);
       break;
     case LocalResourceMapper&lt;T&gt;():
-      _registerBlankNodeDeserializer&lt;T&gt;(mapper);
+      _registerLocalResourceDeserializer&lt;T&gt;(mapper);
       _registerNodeSerializer&lt;T&gt;(mapper);
       break;
     case LiteralTermMapper&lt;T&gt;():
@@ -131,7 +131,7 @@ are implemented and registers the mapper with all relevant registries.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.5.0
+      0.6.0
   </span>
   
 </footer>

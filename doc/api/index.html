@@ -84,7 +84,7 @@
 <h2 id="installation">Installation</h2>
 <p>Add the following to your <code>pubspec.yaml</code>:</p>
 <pre class="language-yaml"><code class="language-yaml">dependencies:
-  rdf_mapper: ^0.5.0
+  rdf_mapper: ^0.6.0
 </code></pre>
 <p>Or use the following command:</p>
 <pre class="language-bash"><code class="language-bash">dart pub add rdf_mapper
@@ -294,7 +294,7 @@ class Book {
   final DateTime published;
   final ISBN isbn;
   final Rating rating;
-  final List&lt;Chapter&gt; chapters;
+  final Iterable&lt;Chapter&gt; chapters;
 
   Book({
     required this.id,
@@ -378,7 +378,7 @@ class BookMapper implements GlobalResourceMapper&lt;Book&gt; {
       published: reader.require&lt;DateTime&gt;(publishedPredicate),
       isbn: reader.require&lt;ISBN&gt;(isbnPredicate),
       rating: reader.require&lt;Rating&gt;(ratingPredicate),
-      chapters: reader.getList&lt;Chapter&gt;(chapterPredicate),
+      chapters: reader.getValues&lt;Chapter&gt;(chapterPredicate),
     );
   }
 
@@ -395,7 +395,7 @@ class BookMapper implements GlobalResourceMapper&lt;Book&gt; {
         .literal&lt;DateTime&gt;(publishedPredicate, book.published)
         .iri&lt;ISBN&gt;(isbnPredicate, book.isbn)
         .literal&lt;Rating&gt;(ratingPredicate, book.rating)
-        .childNodeList(chapterPredicate, book.chapters)
+        .childNodes(chapterPredicate, book.chapters)
         .build();
   }
 }
@@ -519,7 +519,7 @@ class RatingMapper implements LiteralTermMapper&lt;Rating&gt; {
 <h2 id="-roadmap--next-steps">🛣️ Roadmap / Next Steps</h2>
 <ul>
 <li>Detect cycles, optimally support them.</li>
-<li>Properly Support Collection for serialization and derserialization - map multiple triples to Sets, not Lists</li>
+<li>Properly Support Collection (<code>rdf:first</code> / <code>rdf:rest</code> / <code>rdf:nil</code> pattern) for serialization and derserialization as dart List.</li>
 <li>Implement default behaviour for nodes without mapper ((Json-LD?) Maps)</li>
 <li>Support generating mappers based on annotations</li>
 <li>Support "any" feature and annotation which puts the remaining properties of a node into a (Json-LD?) Map that is a property of the dart class</li>
@@ -577,7 +577,7 @@ class RatingMapper implements LiteralTermMapper&lt;Rating&gt; {
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.5.0
+      0.6.0
   </span>
   
 </footer>

@@ -75,9 +75,10 @@ enabling more flexible usage and better testability.</p>
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">RdfMapper({required RdfMapperRegistry registry, RdfCore? rdfCore})
-  : _service = RdfMapperService(registry: registry),
-    _rdfCore = rdfCore ?? RdfCore.withStandardCodecs(),
-    _graphOperations = GraphOperations(RdfMapperService(registry: registry));</code></pre>
+    : _service = RdfMapperService(registry: registry),
+      _rdfCore = rdfCore ?? RdfCore.withStandardCodecs(),
+      _graphOperations =
+          GraphOperations(RdfMapperService(registry: registry));</code></pre>
 </section>
 
 
@@ -105,7 +106,7 @@ enabling more flexible usage and better testability.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.5.0
+      0.6.0
   </span>
   
 </footer>

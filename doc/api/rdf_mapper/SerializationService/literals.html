@@ -27,7 +27,7 @@
     <li><a href="../../index.html">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper">rdf_mapper.dart</a></li>
     <li><a href="../../rdf_mapper/SerializationService-class.html">SerializationService</a></li>
-    <li class="self-crumb">literals&lt;<wbr><span class="type-parameter">A</span>, <span class="type-parameter">T</span>&gt; abstract method</li>
+    <li class="self-crumb">literals&lt;<wbr><span class="type-parameter">T</span>&gt; abstract method</li>
   </ol>
   <div class="self-name">literals</div>
   <form class="search navbar-right" role="search">
@@ -52,17 +52,15 @@
     data-above-sidebar="rdf_mapper&#47;SerializationService-class-sidebar.html"
     data-below-sidebar="">
     <div>
-<h1><span class="kind-method">literals&lt;<wbr><span class="type-parameter">A</span>, <span class="type-parameter">T</span>&gt;</span> abstract method 
+<h1><span class="kind-method">literals&lt;<wbr><span class="type-parameter">T</span>&gt;</span> abstract method 
 </h1></div>
 
     <section class="multi-line-signature">
       
 <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
-<span class="name ">literals</span>&lt;<wbr><span class="type-parameter">A</span>, <span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="literals-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span></li>
+<span class="name ">literals</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="literals-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span></li>
 <li><span class="parameter" id="literals-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span></li>
-<li><span class="parameter" id="literals-param-toIterable"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">toIterable</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-"><span class="type-annotation">A</span></span></li>
-</ol>), </span></li>
-<li><span class="parameter" id="literals-param-instance"><span class="type-annotation">A</span> <span class="parameter-name">instance</span>, {</span></li>
+<li><span class="parameter" id="literals-param-instance"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">instance</span>, {</span></li>
 <li><span class="parameter" id="literals-param-serializer"><span class="type-annotation"><a href="../../rdf_mapper/LiteralTermSerializer-class.html">LiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">serializer</span>, </span></li>
 </ol>})
 
@@ -71,18 +69,17 @@
     </section>
     
 <section class="desc markdown">
-  <p>Creates triples for multiple literal objects derived from a source object.</p>
+  <p>Creates triples for a collection of literal objects.</p>
 </section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">List&lt;Triple&gt; literals&lt;A, T&gt;(
+  <pre class="language-dart"><code class="language-dart">List&lt;Triple&gt; literals&lt;T&gt;(
   RdfSubject subject,
   RdfPredicate predicate,
-  Iterable&lt;T&gt; Function(A) toIterable,
-  A instance, {
+  Iterable&lt;T&gt; instance, {
   LiteralTermSerializer&lt;T&gt;? serializer,
 });</code></pre>
 </section>
@@ -100,7 +97,7 @@
     <li><a href="../../index.html">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper/SerializationService-class.html">SerializationService</a></li>
-    <li class="self-crumb">literals&lt;<wbr><span class="type-parameter">A</span>, <span class="type-parameter">T</span>&gt; abstract method</li>
+    <li class="self-crumb">literals&lt;<wbr><span class="type-parameter">T</span>&gt; abstract method</li>
 </ol>
 
     <h5>SerializationService class</h5>
@@ -112,7 +109,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.5.0
+      0.6.0
   </span>
   
 </footer>

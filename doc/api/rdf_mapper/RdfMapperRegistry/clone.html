@@ -80,9 +80,10 @@ the global registry.</p>
   <pre class="language-dart"><code class="language-dart">RdfMapperRegistry clone() {
   final copy = RdfMapperRegistry._empty();
   copy._nodeSerializers.addAll(_nodeSerializers);
-  copy._iriNodeDeserializersByType.addAll(_iriNodeDeserializersByType);
-  copy._iriNodeDeserializers.addAll(_iriNodeDeserializers);
-  copy._blankNodeDeserializers.addAll(_blankNodeDeserializers);
+  copy._globalResourceDeserializersByType
+      .addAll(_globalResourceDeserializersByType);
+  copy._globalResourceDeserializers.addAll(_globalResourceDeserializers);
+  copy._localResourceDeserializers.addAll(_localResourceDeserializers);
   copy._iriTermSerializers.addAll(_iriTermSerializers);
   copy._iriTermDeserializers.addAll(_iriTermDeserializers);
   copy._literalTermSerializers.addAll(_literalTermSerializers);
@@ -116,7 +117,7 @@ the global registry.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.5.0
+      0.6.0
   </span>
   
 </footer>

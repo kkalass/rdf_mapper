@@ -71,22 +71,22 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">BoolDeserializer({IriTerm? datatype})
-  : super(
-      datatype: datatype ?? Xsd.boolean,
-      convertFromLiteral: (term, _) {
-        final value = term.value.toLowerCase();
+    : super(
+        datatype: datatype ?? Xsd.boolean,
+        convertFromLiteral: (term, _) {
+          final value = term.value.toLowerCase();
 
-        if (value == &#39;true&#39; || value == &#39;1&#39;) {
-          return true;
-        } else if (value == &#39;false&#39; || value == &#39;0&#39;) {
-          return false;
-        }
+          if (value == &#39;true&#39; || value == &#39;1&#39;) {
+            return true;
+          } else if (value == &#39;false&#39; || value == &#39;0&#39;) {
+            return false;
+          }
 
-        throw DeserializationException(
-          &#39;Failed to parse boolean: ${term.value}&#39;,
-        );
-      },
-    );</code></pre>
+          throw DeserializationException(
+            &#39;Failed to parse boolean: ${term.value}&#39;,
+          );
+        },
+      );</code></pre>
 </section>
 
 
@@ -114,7 +114,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.5.0
+      0.6.0
   </span>
   
 </footer>

@@ -78,9 +78,9 @@ This function should throw an exception if the conversion fails.</p>
   <pre class="language-dart"><code class="language-dart">BaseRdfLiteralTermDeserializer({
   required IriTerm datatype,
   required T Function(LiteralTerm term, DeserializationContext context)
-  convertFromLiteral,
-}) : _datatype = datatype,
-     _convertFromLiteral = convertFromLiteral;</code></pre>
+      convertFromLiteral,
+})  : _datatype = datatype,
+      _convertFromLiteral = convertFromLiteral;</code></pre>
 </section>
 
 
@@ -108,7 +108,7 @@ This function should throw an exception if the conversion fails.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.5.0
+      0.6.0
   </span>
   
 </footer>

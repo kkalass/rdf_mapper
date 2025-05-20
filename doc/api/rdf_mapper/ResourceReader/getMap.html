@@ -59,10 +59,10 @@
       
 <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>
 <span class="name ">getMap</span>&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="getMap-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, {</span></li>
-<li><span class="parameter" id="getMap-param-iriNodeDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/IriNodeDeserializer-class.html">IriNodeDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">iriNodeDeserializer</span>, </span></li>
+<li><span class="parameter" id="getMap-param-globalResourceDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/GlobalResourceDeserializer-class.html">GlobalResourceDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">globalResourceDeserializer</span>, </span></li>
 <li><span class="parameter" id="getMap-param-iriTermDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/IriTermDeserializer-class.html">IriTermDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">iriTermDeserializer</span>, </span></li>
 <li><span class="parameter" id="getMap-param-literalTermDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/LiteralTermDeserializer-class.html">LiteralTermDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">literalTermDeserializer</span>, </span></li>
-<li><span class="parameter" id="getMap-param-blankNodeDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/BlankNodeDeserializer-class.html">BlankNodeDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">blankNodeDeserializer</span>, </span></li>
+<li><span class="parameter" id="getMap-param-localResourceDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/LocalResourceDeserializer-class.html">LocalResourceDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">localResourceDeserializer</span>, </span></li>
 </ol>})
 
       
@@ -78,9 +78,14 @@ properties that represent dictionaries or associative data.</p>
 <pre class="language-dart"><code class="language-dart">final translations = reader.getMap&lt;String, String&gt;(schema.translation);
 final metadata = reader.getMap&lt;String, Object&gt;(dc.metadata);
 </code></pre>
-<p>@param predicate The predicate IRI for the properties to read
-@param deserializers Optional custom deserializers to use for conversion
-@return A map constructed from the property values</p>
+<ul>
+<li><code>predicate</code> The predicate IRI for the properties to read</li>
+<li><code>globalResourceDeserializer</code> Optional custom deserializer for global resources (identifiable by <a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/IriTerm-class.html">IriTerm</a>)</li>
+<li><code>iriTermDeserializer</code> Optional custom deserializer for IRI terms</li>
+<li><code>literalTermDeserializer</code> Optional custom deserializer for literal terms</li>
+<li><code>localResourceDeserializer</code> Optional custom deserializer for local resources (identifiable by <a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/BlankNodeTerm-class.html">BlankNodeTerm</a> only)</li>
+</ul>
+<p>Returns a map constructed from the property values.</p>
 </section>
 
 
@@ -89,18 +94,18 @@ final metadata = reader.getMap&lt;String, Object&gt;(dc.metadata);
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Map&lt;K, V&gt; getMap&lt;K, V&gt;(
   RdfPredicate predicate, {
-  IriNodeDeserializer&lt;MapEntry&lt;K, V&gt;&gt;? iriNodeDeserializer,
+  GlobalResourceDeserializer&lt;MapEntry&lt;K, V&gt;&gt;? globalResourceDeserializer,
   IriTermDeserializer&lt;MapEntry&lt;K, V&gt;&gt;? iriTermDeserializer,
   LiteralTermDeserializer&lt;MapEntry&lt;K, V&gt;&gt;? literalTermDeserializer,
-  BlankNodeDeserializer&lt;MapEntry&lt;K, V&gt;&gt;? blankNodeDeserializer,
+  LocalResourceDeserializer&lt;MapEntry&lt;K, V&gt;&gt;? localResourceDeserializer,
 }) {
   return _service.getMap&lt;K, V&gt;(
     _subject,
     predicate,
-    iriNodeDeserializer: iriNodeDeserializer,
+    globalResourceDeserializer: globalResourceDeserializer,
     iriTermDeserializer: iriTermDeserializer,
     literalTermDeserializer: literalTermDeserializer,
-    blankNodeDeserializer: blankNodeDeserializer,
+    localResourceDeserializer: localResourceDeserializer,
   );
 }</code></pre>
 </section>
@@ -130,7 +135,7 @@ final metadata = reader.getMap&lt;String, Object&gt;(dc.metadata);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.5.0
+      0.6.0
   </span>
   
 </footer>

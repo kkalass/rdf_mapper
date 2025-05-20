@@ -133,22 +133,6 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
   Base implementation for literal term serializers that simplifies the creation of custom serializers.
 </dd>
 
-          <dt id="BlankNodeDeserializer">
-  <span class="name "><a href="../rdf_mapper/BlankNodeDeserializer-class.html">BlankNodeDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
-
-</dt>
-<dd>
-  Deserializes an RDF blank node to a Dart object.
-</dd>
-
-          <dt id="BlankNodeSerializer">
-  <span class="name "><a href="../rdf_mapper/BlankNodeSerializer-class.html">BlankNodeSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
-
-</dt>
-<dd>
-  Serializes Dart objects to RDF blank nodes with associated triples.
-</dd>
-
           <dt id="BoolDeserializer">
   <span class="name "><a href="../rdf_mapper/BoolDeserializer-class.html">BoolDeserializer</a></span> 
 
@@ -229,12 +213,28 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
   A flexible IRI term deserializer that uses a custom extraction function.
 </dd>
 
+          <dt id="GlobalResourceDeserializer">
+  <span class="name "><a href="../rdf_mapper/GlobalResourceDeserializer-class.html">GlobalResourceDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Deserializes an RDF IRI-identified subject to a Dart object.
+</dd>
+
           <dt id="GlobalResourceMapper">
   <span class="name "><a href="../rdf_mapper/GlobalResourceMapper-class.html">GlobalResourceMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
 
 </dt>
 <dd>
   Bidirectional mapper between Dart objects and RDF subjects with associated triples.
+</dd>
+
+          <dt id="GlobalResourceSerializer">
+  <span class="name "><a href="../rdf_mapper/GlobalResourceSerializer-class.html">GlobalResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Serializes Dart objects to RDF resources with IRI identifiers and associated triples.
 </dd>
 
           <dt id="GraphOperations">
@@ -285,22 +285,6 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
   Serializer that converts a local identifier to a complete IRI term.
 </dd>
 
-          <dt id="IriNodeDeserializer">
-  <span class="name "><a href="../rdf_mapper/IriNodeDeserializer-class.html">IriNodeDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
-
-</dt>
-<dd>
-  Deserializes an RDF IRI-identified subject to a Dart object.
-</dd>
-
-          <dt id="IriNodeSerializer">
-  <span class="name "><a href="../rdf_mapper/IriNodeSerializer-class.html">IriNodeSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
-
-</dt>
-<dd>
-  Serializes Dart objects to RDF resources with IRI identifiers and associated triples.
-</dd>
-
           <dt id="IriTermDeserializer">
   <span class="name "><a href="../rdf_mapper/IriTermDeserializer-class.html">IriTermDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
 
@@ -349,12 +333,28 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
   Serializes a Dart object to an RDF literal term.
 </dd>
 
+          <dt id="LocalResourceDeserializer">
+  <span class="name "><a href="../rdf_mapper/LocalResourceDeserializer-class.html">LocalResourceDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Deserializes an RDF blank node to a Dart object.
+</dd>
+
           <dt id="LocalResourceMapper">
   <span class="name "><a href="../rdf_mapper/LocalResourceMapper-class.html">LocalResourceMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
 
 </dt>
 <dd>
   Bidirectional mapper between Dart objects and RDF blank node subjects.
+</dd>
+
+          <dt id="LocalResourceSerializer">
+  <span class="name "><a href="../rdf_mapper/LocalResourceSerializer-class.html">LocalResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Serializes Dart objects to RDF blank nodes with associated triples.
 </dd>
 
           <dt id="Mapper">
@@ -371,14 +371,6 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 </dt>
 <dd>
   Utility class for managing RDF namespaces and creating IRI terms.
-</dd>
-
-          <dt id="NodeDeserializer">
-  <span class="name "><a href="../rdf_mapper/NodeDeserializer-class.html">NodeDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
-
-</dt>
-<dd>
-  Base class for deserializers that convert RDF subjects with associated triples to Dart objects.
 </dd>
 
           <dt id="NodeSerializer">
@@ -539,6 +531,14 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 </dt>
 <dd>
   Builder for fluent RDF node serialization.
+</dd>
+
+          <dt id="ResourceDeserializer">
+  <span class="name "><a href="../rdf_mapper/ResourceDeserializer-class.html">ResourceDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Base class for deserializers that convert RDF subjects with associated triples to Dart objects.
 </dd>
 
           <dt id="ResourceReader">
@@ -721,7 +721,7 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.5.0
+      0.6.0
   </span>
   
 </footer>

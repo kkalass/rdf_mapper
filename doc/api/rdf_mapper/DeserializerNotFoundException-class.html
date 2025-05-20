@@ -65,7 +65,7 @@ to a Dart object, but no appropriate deserializer has been registered to handle 
 <li>When attempting to deserialize to a specific Dart type but no deserializer is registered for it</li>
 <li>When encountering an RDF type IRI (from an rdf:type predicate) that has no registered deserializer</li>
 </ol>
-<p>The exception contains information about which deserializer type was sought (e.g., IriNodeDeserializer)
+<p>The exception contains information about which deserializer type was sought (e.g., GlobalResourceDeserializer)
 and the target type that couldn't be handled.</p>
 </section>
 
@@ -226,7 +226,7 @@ and the target type that couldn't be handled.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.5.0
+      0.6.0
   </span>
   
 </footer>

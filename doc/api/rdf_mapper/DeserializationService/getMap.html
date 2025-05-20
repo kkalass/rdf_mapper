@@ -61,9 +61,9 @@
 <span class="name ">getMap</span>&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="getMap-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span></li>
 <li><span class="parameter" id="getMap-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, {</span></li>
 <li><span class="parameter" id="getMap-param-iriTermDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/IriTermDeserializer-class.html">IriTermDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">iriTermDeserializer</span>, </span></li>
-<li><span class="parameter" id="getMap-param-iriNodeDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/IriNodeDeserializer-class.html">IriNodeDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">iriNodeDeserializer</span>, </span></li>
+<li><span class="parameter" id="getMap-param-globalResourceDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/GlobalResourceDeserializer-class.html">GlobalResourceDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">globalResourceDeserializer</span>, </span></li>
 <li><span class="parameter" id="getMap-param-literalTermDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/LiteralTermDeserializer-class.html">LiteralTermDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">literalTermDeserializer</span>, </span></li>
-<li><span class="parameter" id="getMap-param-blankNodeDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/BlankNodeDeserializer-class.html">BlankNodeDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">blankNodeDeserializer</span>, </span></li>
+<li><span class="parameter" id="getMap-param-localResourceDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/LocalResourceDeserializer-class.html">LocalResourceDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">localResourceDeserializer</span>, </span></li>
 </ol>})
 
       
@@ -73,6 +73,15 @@
 <section class="desc markdown">
   <p>Gets a map of property values</p>
 <p>Convenience method that collects multiple property values into a Map.</p>
+<ul>
+<li><code>subject</code> The subject IRI of the object we are working with</li>
+<li><code>predicate</code> The predicate IRI of the property</li>
+<li><code>globalResourceDeserializer</code> Optional custom deserializer for IRI nodes containing MapEntry values</li>
+<li><code>iriTermDeserializer</code> Optional custom deserializer for IRI terms containing MapEntry values</li>
+<li><code>literalTermDeserializer</code> Optional custom deserializer for literal terms containing MapEntry values</li>
+<li><code>localResourceDeserializer</code> Optional custom deserializer for blank nodes containing MapEntry values</li>
+</ul>
+<p>Returns a map constructed from the property values.</p>
 </section>
 
 
@@ -83,9 +92,9 @@
   RdfSubject subject,
   RdfPredicate predicate, {
   IriTermDeserializer&lt;MapEntry&lt;K, V&gt;&gt;? iriTermDeserializer,
-  IriNodeDeserializer&lt;MapEntry&lt;K, V&gt;&gt;? iriNodeDeserializer,
+  GlobalResourceDeserializer&lt;MapEntry&lt;K, V&gt;&gt;? globalResourceDeserializer,
   LiteralTermDeserializer&lt;MapEntry&lt;K, V&gt;&gt;? literalTermDeserializer,
-  BlankNodeDeserializer&lt;MapEntry&lt;K, V&gt;&gt;? blankNodeDeserializer,
+  LocalResourceDeserializer&lt;MapEntry&lt;K, V&gt;&gt;? localResourceDeserializer,
 });</code></pre>
 </section>
 
@@ -114,7 +123,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.5.0
+      0.6.0
   </span>
   
 </footer>
