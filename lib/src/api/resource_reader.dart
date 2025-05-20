@@ -1,6 +1,8 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserialization_service.dart';
 import 'package:rdf_mapper/src/api/deserializer.dart';
+import 'package:rdf_mapper/src/exceptions/property_value_not_found_exception.dart';
+import 'package:rdf_mapper/src/exceptions/too_many_property_values_exception.dart';
 
 /// Reader for fluent RDF node deserialization.
 ///
@@ -59,10 +61,10 @@ class ResourceReader {
   ///
   /// * [predicate] The predicate IRI for the property to read
   /// * [enforceSingleValue] If true, throws an exception when multiple values exist
-  /// * [globalResourceDeserializer] Optional custom deserializer for IRI nodes
+  /// * [globalResourceDeserializer] Optional custom deserializer for global resources (identifiable by [IriTerm])
   /// * [iriTermDeserializer] Optional custom deserializer for IRI terms
   /// * [literalTermDeserializer] Optional custom deserializer for literal terms
-  /// * [localResourceDeserializer] Optional custom deserializer for blank nodes
+  /// * [localResourceDeserializer] Optional custom deserializer for local resources (identifiable by [BlankNodeTerm] only)
   ///
   /// Returns the property value converted to the requested type.
   ///
@@ -101,10 +103,10 @@ class ResourceReader {
   ///
   /// * [predicate] The predicate IRI for the property to read
   /// * [enforceSingleValue] If true, throws an exception when multiple values exist
-  /// * [globalResourceDeserializer] Optional custom deserializer for IRI nodes
+  /// * [globalResourceDeserializer] Optional custom deserializer for global resources (identifiable by [IriTerm])
   /// * [iriTermDeserializer] Optional custom deserializer for IRI terms
   /// * [literalTermDeserializer] Optional custom deserializer for literal terms
-  /// * [localResourceDeserializer] Optional custom deserializer for blank nodes
+  /// * [localResourceDeserializer] Optional custom deserializer for local resources (identifiable by [BlankNodeTerm] only)
   ///
   /// Returns the property value converted to the requested type, or null if not found.
   ///
@@ -141,10 +143,10 @@ class ResourceReader {
   /// ```
   ///
   /// * [predicate] The predicate IRI for the properties to read
-  /// * [globalResourceDeserializer] Optional custom deserializer for IRI nodes
+  /// * [globalResourceDeserializer] Optional custom deserializer for global resources (identifiable by [IriTerm])
   /// * [iriTermDeserializer] Optional custom deserializer for IRI terms
   /// * [literalTermDeserializer] Optional custom deserializer for literal terms
-  /// * [localResourceDeserializer] Optional custom deserializer for blank nodes
+  /// * [localResourceDeserializer] Optional custom deserializer for local resources (identifiable by [BlankNodeTerm] only)
   ///
   /// Returns a list of property values converted to the requested type.
   List<T> getList<T>(
@@ -177,10 +179,10 @@ class ResourceReader {
   /// ```
   ///
   /// * [predicate] The predicate IRI for the properties to read
-  /// * [globalResourceDeserializer] Optional custom deserializer for IRI nodes containing MapEntry values
-  /// * [iriTermDeserializer] Optional custom deserializer for IRI terms containing MapEntry values
-  /// * [literalTermDeserializer] Optional custom deserializer for literal terms containing MapEntry values
-  /// * [localResourceDeserializer] Optional custom deserializer for blank nodes containing MapEntry values
+  /// * [globalResourceDeserializer] Optional custom deserializer for global resources (identifiable by [IriTerm])
+  /// * [iriTermDeserializer] Optional custom deserializer for IRI terms
+  /// * [literalTermDeserializer] Optional custom deserializer for literal terms
+  /// * [localResourceDeserializer] Optional custom deserializer for local resources (identifiable by [BlankNodeTerm] only)
   ///
   /// Returns a map constructed from the property values.
   Map<K, V> getMap<K, V>(
@@ -216,10 +218,10 @@ class ResourceReader {
   ///
   /// * [predicate] The predicate IRI for the properties to read
   /// * [collector] A function to process the collected values
-  /// * [globalResourceDeserializer] Optional custom deserializer for IRI nodes
+  /// * [globalResourceDeserializer] Optional custom deserializer for global resources (identifiable by [IriTerm])
   /// * [iriTermDeserializer] Optional custom deserializer for IRI terms
   /// * [literalTermDeserializer] Optional custom deserializer for literal terms
-  /// * [localResourceDeserializer] Optional custom deserializer for blank nodes
+  /// * [localResourceDeserializer] Optional custom deserializer for local resources (identifiable by [BlankNodeTerm] only)
   ///
   /// Returns the result of the collector function.
   R collect<T, R>(
