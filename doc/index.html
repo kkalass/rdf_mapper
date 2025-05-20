@@ -316,7 +316,7 @@ class Book {
   final DateTime published;
   final ISBN isbn;
   final Rating rating;
-  final List&lt;Chapter&gt; chapters;
+  final Iterable&lt;Chapter&gt; chapters;
 
   Book({
     required this.id,
@@ -398,7 +398,7 @@ class BookMapper implements GlobalResourceMapper&lt;Book&gt; {
       published: reader.require&lt;DateTime&gt;(publishedPredicate),
       isbn: reader.require&lt;ISBN&gt;(isbnPredicate),
       rating: reader.require&lt;Rating&gt;(ratingPredicate),
-      chapters: reader.getList&lt;Chapter&gt;(chapterPredicate),
+      chapters: reader.getValues&lt;Chapter&gt;(chapterPredicate),
     );
   }
   
