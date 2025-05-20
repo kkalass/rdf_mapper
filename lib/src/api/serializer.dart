@@ -120,7 +120,7 @@ sealed class ResourceSerializer<T> extends Serializer<T> {
   /// @param context The current serialization context
   /// @param parentSubject Optional parent subject for establishing relationships
   /// @return A tuple containing the subject term and list of associated triples
-  (RdfSubject, List<Triple>) toRdfNode(
+  (RdfSubject, List<Triple>) toRdfResource(
     T value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -150,7 +150,7 @@ abstract interface class LocalResourceSerializer<T>
   /// @param context The serialization context
   /// @param parentSubject Optional parent subject for establishing relationships
   /// @return A tuple with the blank node term and associated triples
-  (BlankNodeTerm, List<Triple>) toRdfNode(
+  (BlankNodeTerm, List<Triple>) toRdfResource(
     T value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -182,7 +182,7 @@ abstract interface class GlobalResourceSerializer<T>
   /// @param context The serialization context
   /// @param parentSubject Optional parent subject for establishing relationships
   /// @return A tuple with the IRI term and associated triples
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     T value,
     SerializationContext context, {
     RdfSubject? parentSubject,

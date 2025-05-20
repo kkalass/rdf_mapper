@@ -79,7 +79,7 @@ class SerializationContextImpl extends SerializationContext
   }
 
   @override
-  List<Triple> childNode<T>(
+  List<Triple> childResource<T>(
     RdfSubject subject,
     RdfPredicate predicate,
     T instance, {
@@ -96,7 +96,7 @@ class SerializationContextImpl extends SerializationContext
       return [];
     }
 
-    var (childIri, childTriples) = ser.toRdfNode(
+    var (childIri, childTriples) = ser.toRdfResource(
       instance,
       this,
       parentSubject: subject,
@@ -169,7 +169,7 @@ class SerializationContextImpl extends SerializationContext
   }
 
   @override
-  List<Triple> node<T>(T instance, {ResourceSerializer<T>? serializer}) {
+  List<Triple> resource<T>(T instance, {ResourceSerializer<T>? serializer}) {
     if (instance == null) {
       throw ArgumentError('Cannot serialize null instance');
     }
@@ -186,7 +186,7 @@ class SerializationContextImpl extends SerializationContext
       throw SerializerNotFoundException('SubjectSerializer', T);
     }
 
-    var (iri, triples) = ser.toRdfNode(instance, this);
+    var (iri, triples) = ser.toRdfResource(instance, this);
 
     // Check if a type triple already exists
     final hasTypeTriple = triples.any(
@@ -274,7 +274,7 @@ class SerializationContextImpl extends SerializationContext
         instance,
         serializer: serializer,
       );
-  List<Triple> childNodesFromInstance<A, T>(
+  List<Triple> childResourcesFromInstance<A, T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> Function(A p1) toIterable,
@@ -284,18 +284,18 @@ class SerializationContextImpl extends SerializationContext
       toIterable(instance)
           .expand<Triple>(
             (item) =>
-                childNode(subject, predicate, item, serializer: serializer),
+                childResource(subject, predicate, item, serializer: serializer),
           )
           .toList();
 
   /// Creates triples for a collection of child nodes.
-  List<Triple> childNodes<T>(
+  List<Triple> childResources<T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> instance, {
     ResourceSerializer<T>? serializer,
   }) =>
-      childNodesFromInstance(
+      childResourcesFromInstance(
         subject,
         predicate,
         (it) => it,
@@ -304,13 +304,13 @@ class SerializationContextImpl extends SerializationContext
       );
 
   /// Creates triples for a map of child nodes.
-  List<Triple> childNodeMap<K, V>(
+  List<Triple> childResourceMap<K, V>(
     RdfSubject subject,
     RdfPredicate predicate,
     Map<K, V> instance,
     ResourceSerializer<MapEntry<K, V>> entrySerializer,
   ) =>
-      childNodesFromInstance<Map<K, V>, MapEntry<K, V>>(
+      childResourcesFromInstance<Map<K, V>, MapEntry<K, V>>(
         subject,
         predicate,
         (it) => it.entries,

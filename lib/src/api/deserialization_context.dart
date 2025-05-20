@@ -22,9 +22,9 @@ import 'package:rdf_mapper/src/api/resource_reader.dart';
 /// This abstraction is particularly valuable when deserializing complex RDF graphs
 /// that may contain circular references or shared resources.
 abstract class DeserializationContext {
-  /// Creates a reader for fluent access to node properties.
+  /// Creates a reader for fluent access to resource properties.
   ///
-  /// The node reader provides a convenient API for reading properties from an RDF
+  /// The resource reader provides a convenient API for reading properties from an RDF
   /// subject, handling common patterns like retrieving single values, collections,
   /// or related objects. It encapsulates the complexity of traversing the RDF graph
   /// and extracting structured data.

@@ -112,7 +112,7 @@ class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
   
   // Convert Person object to RDF (serialization)
   @override
-  (IriTerm, List&lt;Triple&gt;) toRdfNode(
+  (IriTerm, List&lt;Triple&gt;) toRdfResource(
       Person value, 
       SerializationContext context,
       {RdfSubject? parentSubject}) {
@@ -126,7 +126,7 @@ class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
   
   // Convert RDF back to Person object (deserialization)
   @override
-  Person fromRdfNode(IriTerm term, DeserializationContext context) {
+  Person fromRdfResource(IriTerm term, DeserializationContext context) {
     final reader = context.reader(term);
     
     return Person(
@@ -371,7 +371,7 @@ class BookMapper implements GlobalResourceMapper&lt;Book&gt; {
   final IriTerm typeIri = SchemaBook.classIri;
   
   @override
-  (IriTerm, List&lt;Triple&gt;) toRdfNode(
+  (IriTerm, List&lt;Triple&gt;) toRdfResource(
     Book book,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -383,12 +383,12 @@ class BookMapper implements GlobalResourceMapper&lt;Book&gt; {
         .literal&lt;DateTime&gt;(publishedPredicate, book.published)
         .iri&lt;ISBN&gt;(isbnPredicate, book.isbn)
         .literal&lt;Rating&gt;(ratingPredicate, book.rating)
-        .childNodes(chapterPredicate, book.chapters)
+        .childResources(chapterPredicate, book.chapters)
         .build();
   }
   
   @override
-  Book fromRdfNode(IriTerm term, DeserializationContext context) {
+  Book fromRdfResource(IriTerm term, DeserializationContext context) {
     final reader = context.reader(term);
     
     return Book(
@@ -420,7 +420,7 @@ class ChapterMapper implements LocalResourceMapper&lt;Chapter&gt; {
   final IriTerm typeIri = SchemaChapter.classIri;
   
   @override
-  (BlankNodeTerm, List&lt;Triple&gt;) toRdfNode(
+  (BlankNodeTerm, List&lt;Triple&gt;) toRdfResource(
     Chapter chapter,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -432,7 +432,7 @@ class ChapterMapper implements LocalResourceMapper&lt;Chapter&gt; {
   }
   
   @override
-  Chapter fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
+  Chapter fromRdfResource(BlankNodeTerm term, DeserializationContext context) {
     final reader = context.reader(term);
     
     return Chapter(
@@ -494,7 +494,7 @@ class RatingMapper implements LiteralTermMapper&lt;Rating&gt; {
                                 </ul>
                             </li>
                             <li>
-                                <span class="architecture-highlight">Node Mappers</span>: For complex objects with multiple properties
+                                <span class="architecture-highlight">Resource Mappers</span>: For complex objects with multiple properties
                                 <ul>
                                     <li><code>GlobalResourceMapper</code>: For objects with globally unique identifiers</li>
                                     <li><code>LocalResourceMapper</code>: For anonymous objects or auxiliary structures</li>
@@ -510,8 +510,8 @@ class RatingMapper implements LiteralTermMapper&lt;Rating&gt; {
                         
                         <h3>Fluent APIs</h3>
                         <ul class="architecture-list">
-                            <li><code>ResourceBuilder</code>: For conveniently creating RDF nodes</li>
-                            <li><code>ResourceReader</code>: For easily accessing RDF node properties</li>
+                            <li><code>ResourceBuilder</code>: For conveniently creating RDF resources</li>
+                            <li><code>ResourceReader</code>: For easily accessing RDF resource properties</li>
                         </ul>
                     </div>
                     <div class="architecture-diagram">

@@ -33,8 +33,8 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 ///     .resourceBuilder(IriTerm('http://example.org/person/1'))
 ///     .literal(foaf.name, 'John Doe')
 ///     .literal(foaf.age, 30)
-///     .childNode(foaf.address, address)
-///     .childNodes(foaf.knows, friends)
+///     .childResource(foaf.address, address)
+///     .childResources(foaf.knows, friends)
 ///     .build();
 /// ```
 class ResourceBuilder<S extends RdfSubject> {
@@ -149,7 +149,7 @@ class ResourceBuilder<S extends RdfSubject> {
   /// Example:
   /// ```dart
   /// // Extracts all chapters from a book and adds them as structured content
-  /// builder.childNodesFromInstance(schema.hasPart, (book) => book.chapters, currentBook);
+  /// builder.childResourcesFromInstance(schema.hasPart, (book) => book.chapters, currentBook);
   /// ```
   ///
   /// @param predicate The predicate for the relationships
@@ -157,14 +157,14 @@ class ResourceBuilder<S extends RdfSubject> {
   /// @param instance The source object to extract values from
   /// @param serializer Optional serializer for the child node type
   /// @return This builder for method chaining
-  ResourceBuilder<S> childNodesFromInstance<A, T>(
+  ResourceBuilder<S> childResourcesFromInstance<A, T>(
     RdfPredicate predicate,
     Iterable<T> Function(A) toIterable,
     A instance, {
     ResourceSerializer<T>? serializer,
   }) {
     _triples.addAll(
-      _service.childNodesFromInstance(
+      _service.childResourcesFromInstance(
         _subject,
         predicate,
         toIterable,
@@ -239,21 +239,22 @@ class ResourceBuilder<S extends RdfSubject> {
   ///
   /// Example:
   /// ```dart
-  /// builder.childNode(foaf.address, address);
-  /// builder.childNode(schema.author, person);
+  /// builder.childResource(foaf.address, address);
+  /// builder.childResource(schema.author, person);
   /// ```
   ///
   /// @param predicate The predicate IRI for the relationship
   /// @param value The child node object to serialize
   /// @param serializer Optional custom serializer for the child object type
   /// @return This builder for method chaining
-  ResourceBuilder<S> childNode<V>(
+  ResourceBuilder<S> childResource<V>(
     RdfPredicate predicate,
     V value, {
     ResourceSerializer<V>? serializer,
   }) {
     _triples.addAll(
-      _service.childNode(_subject, predicate, value, serializer: serializer),
+      _service.childResource(_subject, predicate, value,
+          serializer: serializer),
     );
     return this;
   }
@@ -267,21 +268,21 @@ class ResourceBuilder<S extends RdfSubject> {
   ///
   /// Example:
   /// ```dart
-  /// builder.childNodes(foaf.knows, friends);
-  /// builder.childNodes(schema.author, authors);
+  /// builder.childResources(foaf.knows, friends);
+  /// builder.childResources(schema.author, authors);
   /// ```
   ///
   /// @param predicate The predicate for the relationships
   /// @param values The collection of child node values
   /// @param serializer Optional serializer for the child node type
   /// @return This builder for method chaining
-  ResourceBuilder<S> childNodes<V>(
+  ResourceBuilder<S> childResources<V>(
     RdfPredicate predicate,
     Iterable<V> values, {
     ResourceSerializer<V>? serializer,
   }) {
     _triples.addAll(
-      _service.childNodes(
+      _service.childResources(
         _subject,
         predicate,
         values,
@@ -299,7 +300,7 @@ class ResourceBuilder<S extends RdfSubject> {
   /// Example:
   /// ```dart
   /// // Serializes a metadata dictionary as linked nodes
-  /// builder.childNodeMap(
+  /// builder.childResourceMap(
   ///   schema.additionalProperty,
   ///   metadata,
   ///   MetadataEntrySerializer(),
@@ -310,13 +311,13 @@ class ResourceBuilder<S extends RdfSubject> {
   /// @param instance The map to serialize
   /// @param entrySerializer The serializer for map entries
   /// @return This builder for method chaining
-  ResourceBuilder<S> childNodeMap<K, V>(
+  ResourceBuilder<S> childResourceMap<K, V>(
     RdfPredicate predicate,
     Map<K, V> instance,
     ResourceSerializer<MapEntry<K, V>> entrySerializer,
   ) {
     _triples.addAll(
-      _service.childNodeMap(_subject, predicate, instance, entrySerializer),
+      _service.childResourceMap(_subject, predicate, instance, entrySerializer),
     );
     return this;
   }
@@ -393,13 +394,13 @@ class ResourceBuilder<S extends RdfSubject> {
   /// @param value The optional child node value
   /// @param serializer Optional serializer for the child node type
   /// @return This builder instance for method chaining
-  ResourceBuilder<S> childNodeIfNotNull<V>(
+  ResourceBuilder<S> childResourceIfNotNull<V>(
     RdfPredicate predicate,
     V? value, {
     ResourceSerializer<V>? serializer,
   }) {
     if (value != null) {
-      childNode(predicate, value, serializer: serializer);
+      childResource(predicate, value, serializer: serializer);
     }
     return this;
   }
@@ -410,13 +411,13 @@ class ResourceBuilder<S extends RdfSubject> {
   /// @param values The optional collection of child node values
   /// @param serializer Optional serializer for the child node type
   /// @return This builder instance for method chaining
-  ResourceBuilder<S> childNodesIfNotEmpty<V>(
+  ResourceBuilder<S> childResourcesIfNotEmpty<V>(
     RdfPredicate predicate,
     Iterable<V>? values, {
     ResourceSerializer<V>? serializer,
   }) {
     if (values != null && values.isNotEmpty) {
-      childNodes(predicate, values, serializer: serializer);
+      childResources(predicate, values, serializer: serializer);
     }
     return this;
   }

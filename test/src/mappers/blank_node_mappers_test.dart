@@ -29,7 +29,7 @@ class ChapterMapper implements LocalResourceMapper<Chapter> {
   final IriTerm typeIri = IriTerm('http://example.org/Chapter');
 
   @override
-  Chapter fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
+  Chapter fromRdfResource(BlankNodeTerm term, DeserializationContext context) {
     final reader = context.reader(term);
     return Chapter(
       reader.require<String>(titlePredicate),
@@ -38,7 +38,7 @@ class ChapterMapper implements LocalResourceMapper<Chapter> {
   }
 
   @override
-  (BlankNodeTerm, List<Triple>) toRdfNode(
+  (BlankNodeTerm, List<Triple>) toRdfResource(
     Chapter chapter,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -245,7 +245,7 @@ class AnonymousMapper implements LocalResourceMapper<AnonymousData> {
   final IriTerm? typeIri = null; // Explicitly null
 
   @override
-  AnonymousData fromRdfNode(
+  AnonymousData fromRdfResource(
     BlankNodeTerm term,
     DeserializationContext context,
   ) {
@@ -254,7 +254,7 @@ class AnonymousMapper implements LocalResourceMapper<AnonymousData> {
   }
 
   @override
-  (BlankNodeTerm, List<Triple>) toRdfNode(
+  (BlankNodeTerm, List<Triple>) toRdfResource(
     AnonymousData data,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -281,7 +281,7 @@ class DocumentMapper implements GlobalResourceMapper<Document> {
   final IriTerm typeIri = IriTerm('http://example.org/Document');
 
   @override
-  Document fromRdfNode(IriTerm term, DeserializationContext context) {
+  Document fromRdfResource(IriTerm term, DeserializationContext context) {
     final reader = context.reader(term);
     return Document(
       reader.require<String>(titlePredicate),
@@ -290,7 +290,7 @@ class DocumentMapper implements GlobalResourceMapper<Document> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     Document document,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -299,11 +299,11 @@ class DocumentMapper implements GlobalResourceMapper<Document> {
     final docId =
         'http://example.org/documents/${document.title.replaceAll(' ', '_')}';
 
-    // Use the childNodes method to properly handle the chapters
+    // Use the childResources method to properly handle the chapters
     return context
         .resourceBuilder(IriTerm(docId))
         .literal(titlePredicate, document.title)
-        .childNodes(chaptersPredicate, document.chapters)
+        .childResources(chaptersPredicate, document.chapters)
         .build();
   }
 }

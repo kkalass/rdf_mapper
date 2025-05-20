@@ -12,7 +12,7 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 /// Key responsibilities:
 /// - Track the current state of the serialization process
 /// - Prevent infinite recursion by tracking already serialized objects
-/// - Provide access to utility methods for creating and manipulating nodes
+/// - Provide access to utility methods for creating and manipulating resources
 /// - Enable a consistent environment for serializer implementations
 ///
 /// The context follows the Ambient Context pattern, providing relevant services
@@ -22,9 +22,9 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 /// This abstraction is particularly valuable when serializing complex object graphs
 /// that may contain circular references or shared objects.
 abstract class SerializationContext {
-  /// Creates a builder for fluent RDF node construction.
+  /// Creates a builder for fluent RDF resource construction.
   ///
-  /// The node builder provides a convenient fluent API for constructing RDF nodes
+  /// The resource builder provides a convenient fluent API for constructing RDF resources
   /// with their associated triples. This is the primary method for creating
   /// structured RDF representations during serialization.
   ///

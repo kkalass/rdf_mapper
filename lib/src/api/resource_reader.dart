@@ -4,9 +4,9 @@ import 'package:rdf_mapper/src/api/deserializer.dart';
 import 'package:rdf_mapper/src/exceptions/property_value_not_found_exception.dart';
 import 'package:rdf_mapper/src/exceptions/too_many_property_values_exception.dart';
 
-/// Reader for fluent RDF node deserialization.
+/// Reader for fluent RDF resource deserialization.
 ///
-/// The ResourceReader provides a convenient fluent API for extracting data from RDF nodes
+/// The ResourceReader provides a convenient fluent API for extracting data from RDF resources
 /// during deserialization. It simplifies the process of reading properties from a graph
 /// by maintaining the current subject context and offering methods to retrieve and
 /// convert RDF property values to Dart objects.

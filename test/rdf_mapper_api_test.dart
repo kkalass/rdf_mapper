@@ -144,7 +144,7 @@ class TestEntityMapper implements GlobalResourceMapper<TestEntity> {
   final IriTerm typeIri = IriTerm('http://schema.org/TestEntity');
 
   @override
-  TestEntity fromRdfNode(IriTerm subject, DeserializationContext context) {
+  TestEntity fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return TestEntity(
       id: subject.iri,
@@ -154,7 +154,7 @@ class TestEntityMapper implements GlobalResourceMapper<TestEntity> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     TestEntity entity,
     SerializationContext context, {
     RdfSubject? parentSubject,

@@ -1035,7 +1035,7 @@ class CompanyMapper implements GlobalResourceMapper<Company> {
   final IriTerm typeIri = SchemaOrganization.classIri;
 
   @override
-  Company fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Company fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     final id = subject.iri;
     final name = reader.require<String>(namePredicate);
@@ -1045,7 +1045,7 @@ class CompanyMapper implements GlobalResourceMapper<Company> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     Company company,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -1053,7 +1053,7 @@ class CompanyMapper implements GlobalResourceMapper<Company> {
     return context
         .resourceBuilder(IriTerm(company.id))
         .literal(namePredicate, company.name)
-        .childNodeIfNotNull(addressPredicate, company.address)
+        .childResourceIfNotNull(addressPredicate, company.address)
         .build();
   }
 }
@@ -1069,7 +1069,7 @@ class EmployeeMapper implements GlobalResourceMapper<Employee> {
   final IriTerm typeIri = SchemaPerson.classIri;
 
   @override
-  Employee fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Employee fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     final id = subject.iri;
     final name = reader.require<String>(givenNamePredicate);
@@ -1087,7 +1087,7 @@ class EmployeeMapper implements GlobalResourceMapper<Employee> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     Employee person,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -1096,8 +1096,8 @@ class EmployeeMapper implements GlobalResourceMapper<Employee> {
         .resourceBuilder(IriTerm(person.id))
         .literal(givenNamePredicate, person.name)
         .literal(agePredicate, person.age)
-        .childNodeIfNotNull(addressPredicate, person.address)
-        .childNodeIfNotNull(employerPredicate, person.employer)
+        .childResourceIfNotNull(addressPredicate, person.address)
+        .childResourceIfNotNull(employerPredicate, person.employer)
         .build();
   }
 }
@@ -1113,7 +1113,7 @@ class EmployeeWithCompanyReferenceMapper
   final IriTerm typeIri = SchemaPerson.classIri;
 
   @override
-  EmployeeWithCompanyReference fromRdfNode(
+  EmployeeWithCompanyReference fromRdfResource(
     IriTerm subject,
     DeserializationContext context,
   ) {
@@ -1134,7 +1134,7 @@ class EmployeeWithCompanyReferenceMapper
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     EmployeeWithCompanyReference person,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -1143,7 +1143,7 @@ class EmployeeWithCompanyReferenceMapper
         .resourceBuilder(IriTerm(person.id))
         .literal(givenNamePredicate, person.name)
         .literal(agePredicate, person.age)
-        .childNodeIfNotNull(addressPredicate, person.address)
+        .childResourceIfNotNull(addressPredicate, person.address)
         .iriIfNotNull(employerPredicate, person.employer)
         .build();
   }
@@ -1265,7 +1265,7 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   final IriTerm typeIri = SchemaPerson.classIri;
 
   @override
-  TestPerson fromRdfNode(IriTerm subject, DeserializationContext context) {
+  TestPerson fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     final id = subject.iri;
     final name = reader.require<String>(SchemaPerson.givenName);
@@ -1283,7 +1283,7 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     TestPerson person,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -1292,8 +1292,8 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
         .resourceBuilder(IriTerm(person.id))
         .literal(SchemaPerson.givenName, person.name)
         .literal(SchemaPerson.foafAge, person.age)
-        .childNodeIfNotNull(SchemaPerson.address, person.address)
-        .childNodeIfNotNull(SchemaPerson.worksFor, person.employer)
+        .childResourceIfNotNull(SchemaPerson.address, person.address)
+        .childResourceIfNotNull(SchemaPerson.worksFor, person.employer)
         .build();
   }
 }
@@ -1309,7 +1309,7 @@ class AddressMapper implements LocalResourceMapper<Address> {
   final IriTerm typeIri = SchemaPostalAddress.classIri;
 
   @override
-  Address fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
+  Address fromRdfResource(BlankNodeTerm term, DeserializationContext context) {
     final reader = context.reader(term);
     // Get address properties
     final street = reader.require<String>(streetAddressPredicate);
@@ -1326,7 +1326,7 @@ class AddressMapper implements LocalResourceMapper<Address> {
   }
 
   @override
-  (BlankNodeTerm, List<Triple>) toRdfNode(
+  (BlankNodeTerm, List<Triple>) toRdfResource(
     Address value,
     SerializationContext context, {
     RdfSubject? parentSubject,

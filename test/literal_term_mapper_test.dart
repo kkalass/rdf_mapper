@@ -209,7 +209,7 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   IriTerm get typeIri => TestPersonMapper.personTypeIri;
 
   @override
-  TestPerson fromRdfNode(IriTerm subject, DeserializationContext context) {
+  TestPerson fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return TestPerson(
       id: subject.iri,
@@ -219,7 +219,7 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     TestPerson instance,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -258,7 +258,7 @@ class TestCollectionContainerMapper
   IriTerm get typeIri => TestCollectionContainerMapper.containerTypeIri;
 
   @override
-  TestCollectionContainer fromRdfNode(
+  TestCollectionContainer fromRdfResource(
     IriTerm subject,
     DeserializationContext context,
   ) {
@@ -271,7 +271,7 @@ class TestCollectionContainerMapper
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     TestCollectionContainer instance,
     SerializationContext context, {
     RdfSubject? parentSubject,

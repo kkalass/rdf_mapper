@@ -304,7 +304,7 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   IriTerm get typeIri => _ns('Person');
 
   @override
-  TestPerson fromRdfNode(IriTerm subject, DeserializationContext context) {
+  TestPerson fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return TestPerson(
       id: subject.iri,
@@ -315,7 +315,7 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     TestPerson instance,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -325,7 +325,7 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
           .iri(Rdf.type, _ns('Person').iri)
           .literal(_ns('name'), instance.name)
           .literal(_ns('age'), instance.age)
-          .childNodeIfNotNull(_ns('address'), instance.address)
+          .childResourceIfNotNull(_ns('address'), instance.address)
           .build();
 }
 
@@ -336,7 +336,8 @@ class TestAddressMapper implements LocalResourceMapper<TestAddress> {
   IriTerm get typeIri => _ns('Address');
 
   @override
-  TestAddress fromRdfNode(RdfSubject subject, DeserializationContext context) {
+  TestAddress fromRdfResource(
+      RdfSubject subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return TestAddress(
       street: reader.require<String>(_ns('street')),
@@ -345,7 +346,7 @@ class TestAddressMapper implements LocalResourceMapper<TestAddress> {
   }
 
   @override
-  (BlankNodeTerm, List<Triple>) toRdfNode(
+  (BlankNodeTerm, List<Triple>) toRdfResource(
     TestAddress instance,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -365,7 +366,7 @@ class TestCompanyMapper implements GlobalResourceMapper<TestCompany> {
   IriTerm get typeIri => _ns('Company');
 
   @override
-  TestCompany fromRdfNode(IriTerm subject, DeserializationContext context) {
+  TestCompany fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return TestCompany(
       id: subject.iri,
@@ -375,7 +376,7 @@ class TestCompanyMapper implements GlobalResourceMapper<TestCompany> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     TestCompany instance,
     SerializationContext context, {
     RdfSubject? parentSubject,

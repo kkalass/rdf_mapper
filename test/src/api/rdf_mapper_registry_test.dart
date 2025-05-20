@@ -277,7 +277,7 @@ class TestSubjectDeserializer
   final IriTerm typeIri = IriTerm('http://example.org/CustomType');
 
   @override
-  CustomType fromRdfNode(IriTerm term, DeserializationContext context) {
+  CustomType fromRdfResource(IriTerm term, DeserializationContext context) {
     return CustomType(term.iri);
   }
 }
@@ -287,7 +287,7 @@ class TestSubjectSerializer implements GlobalResourceSerializer<CustomType> {
   final IriTerm typeIri = IriTerm('http://example.org/CustomType');
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     CustomType value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -309,12 +309,12 @@ class TestSubjectMapper implements GlobalResourceMapper<CustomType> {
   final IriTerm typeIri = IriTerm('http://example.org/CustomType');
 
   @override
-  CustomType fromRdfNode(IriTerm term, DeserializationContext context) {
+  CustomType fromRdfResource(IriTerm term, DeserializationContext context) {
     return CustomType(term.iri);
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     CustomType value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -337,12 +337,13 @@ class AnotherTestSubjectMapper
   final IriTerm typeIri = IriTerm('http://example.org/AnotherCustomType');
 
   @override
-  AnotherCustomType fromRdfNode(IriTerm term, DeserializationContext context) {
+  AnotherCustomType fromRdfResource(
+      IriTerm term, DeserializationContext context) {
     return AnotherCustomType(term.iri);
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     AnotherCustomType value,
     SerializationContext context, {
     RdfSubject? parentSubject,

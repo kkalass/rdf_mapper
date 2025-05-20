@@ -82,7 +82,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
   static final contactPredicate = IriTerm('http://example.org/contact');
 
   @override
-  Person fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Person fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     // Use require to ensure these properties are present
     final name = reader.require<String>(namePredicate);
@@ -98,7 +98,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     Person value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -106,8 +106,8 @@ class PersonMapper implements GlobalResourceMapper<Person> {
     return context
         .resourceBuilder(IriTerm(value.id))
         .literal(namePredicate, value.name)
-        .childNodeIfNotNull(addressPredicate, value.address)
-        .childNodes(contactPredicate, value.contacts)
+        .childResourceIfNotNull(addressPredicate, value.address)
+        .childResources(contactPredicate, value.contacts)
         .build();
   }
 }
@@ -120,7 +120,8 @@ class AddressMapper implements LocalResourceMapper<Address> {
   static final cityPredicate = IriTerm('http://example.org/city');
 
   @override
-  Address fromRdfNode(BlankNodeTerm subject, DeserializationContext context) {
+  Address fromRdfResource(
+      BlankNodeTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     final street = reader.require<String>(streetPredicate);
     final city = reader.require<String>(cityPredicate);
@@ -129,7 +130,7 @@ class AddressMapper implements LocalResourceMapper<Address> {
   }
 
   @override
-  (BlankNodeTerm, List<Triple>) toRdfNode(
+  (BlankNodeTerm, List<Triple>) toRdfResource(
     Address value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -150,7 +151,7 @@ class ContactMapper implements GlobalResourceMapper<Contact> {
   static final valuePredicate = IriTerm('http://example.org/contactValue');
 
   @override
-  Contact fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Contact fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     final type = reader.require<String>(typePredicate);
     final value = reader.require<String>(valuePredicate);
@@ -159,7 +160,7 @@ class ContactMapper implements GlobalResourceMapper<Contact> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     Contact value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -181,7 +182,7 @@ class StandaloneAddressMapper implements GlobalResourceMapper<Address> {
   static final cityPredicate = IriTerm('http://example.org/city');
 
   @override
-  Address fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Address fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     final street = reader.require<String>(streetPredicate);
     final city = reader.require<String>(cityPredicate);
@@ -190,7 +191,7 @@ class StandaloneAddressMapper implements GlobalResourceMapper<Address> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     Address value,
     SerializationContext context, {
     RdfSubject? parentSubject,

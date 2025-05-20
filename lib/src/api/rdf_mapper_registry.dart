@@ -28,7 +28,7 @@ final _log = Logger("rdf_orm.registry");
 /// separate registries for different mapper categories:
 ///
 /// 1. Term mappers (IRI and Literal) for simple value conversions
-/// 2. Node mappers (IRI and Blank) for complex objects with associated triples
+/// 2. Resource mappers (IRI and Blank) for complex objects with associated triples
 ///
 /// The registry supports two primary lookup mechanisms:
 /// - Type-based lookup using Dart's generic type system
@@ -130,7 +130,7 @@ final class RdfMapperRegistry {
   /// Supported serializer types:
   /// - IriTermSerializer: For serializing objects to IRI terms
   /// - LiteralTermSerializer: For serializing objects to literal terms
-  /// - ResourceSerializer: For serializing objects to RDF nodes (subjects with triples)
+  /// - ResourceSerializer: For serializing objects to RDF resources (subjects with triples)
   ///
   /// @param serializer The serializer to register
   void registerSerializer<T>(Serializer<T> serializer) {
@@ -155,8 +155,8 @@ final class RdfMapperRegistry {
   /// Supported deserializer types:
   /// - IriTermDeserializer: For deserializing IRI terms to objects
   /// - LiteralTermDeserializer: For deserializing literal terms to objects
-  /// - LocalResourceDeserializer: For deserializing blank nodes to objects
-  /// - GlobalResourceDeserializer: For deserializing IRI subjects with triples to objects
+  /// - LocalResourceDeserializer: For deserializing local resources to objects
+  /// - GlobalResourceDeserializer: For deserializing global resources with triples to objects
   ///
   /// @param deserializer The deserializer to register
   void registerDeserializer<T>(Deserializer<T> deserializer) {

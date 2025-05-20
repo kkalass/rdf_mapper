@@ -85,7 +85,7 @@ abstract interface class LiteralTermDeserializer<T>
 
 /// Base class for deserializers that convert RDF subjects with associated triples to Dart objects.
 ///
-/// Node deserializers handle complex objects by reading a subject and its related triples
+/// Resource deserializers handle complex objects by reading a subject and its related triples
 /// from an RDF graph. These deserializers are used for domain entities and objects with
 /// multiple properties that are represented as subjects with properties in RDF.
 ///
@@ -109,7 +109,7 @@ sealed class ResourceDeserializer<T> extends Deserializer<T> {
   IriTerm? get typeIri;
 }
 
-/// Deserializes an RDF blank node to a Dart object.
+/// Deserializes an RDF local resource to a Dart object.
 ///
 /// This deserializer transforms blank nodes and their associated triples into
 /// Dart objects. Blank nodes are anonymous resources in RDF without global identifiers,
@@ -121,7 +121,7 @@ sealed class ResourceDeserializer<T> extends Deserializer<T> {
 /// - Objects whose identity is only significant within the local graph
 abstract interface class LocalResourceDeserializer<T>
     implements ResourceDeserializer<T> {
-  /// Converts a blank node to a value.
+  /// Converts a local resource to a value.
   ///
   /// This method reads a blank node and its associated triples from the graph
   /// and transforms them into a Dart object. The deserialization context provides
@@ -130,7 +130,7 @@ abstract interface class LocalResourceDeserializer<T>
   /// @param term The blank node term to convert
   /// @param context The deserialization context, providing access to the graph
   /// @return The resulting Dart object
-  T fromRdfNode(BlankNodeTerm term, DeserializationContext context);
+  T fromRdfResource(BlankNodeTerm term, DeserializationContext context);
 }
 
 /// Deserializes an RDF IRI-identified subject to a Dart object.
@@ -145,7 +145,7 @@ abstract interface class LocalResourceDeserializer<T>
 /// - The object represents a significant domain entity
 abstract interface class GlobalResourceDeserializer<T>
     implements ResourceDeserializer<T> {
-  /// Converts an IRI-identified node to an object of type T.
+  /// Converts an IRI-identified global resource to an object of type T.
   ///
   /// This method reads an IRI subject and its associated triples from the graph
   /// and transforms them into a Dart object. The deserialization context provides
@@ -154,5 +154,5 @@ abstract interface class GlobalResourceDeserializer<T>
   /// @param term The IRI term to convert
   /// @param context The deserialization context providing access to the graph
   /// @return The resulting Dart object
-  T fromRdfNode(IriTerm term, DeserializationContext context);
+  T fromRdfResource(IriTerm term, DeserializationContext context);
 }

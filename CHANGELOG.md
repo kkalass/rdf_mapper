@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Breaking Change** `childNode` -> `childResource` and related.
+- **Breaking Change** `fromRdfNode` -> `fromRdfResource` and `toRdfNode` -> `toRdfResource`. Hopefully this was the last wrong usage of the term "node"
+
+## [0.6.1] - 2025-05-22
+
+### Changed
+
 - **Breaking Change** `NodeSerializer` -> `ResourceSerializer`
 
 ## [0.6.0] - 2025-05-22
@@ -106,7 +113,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `constant()` - For direct use of pre-created RDF terms
   - `literals()` - For extracting multiple literal values from a source object
   - `iris()` - For extracting multiple IRI values from a source object
-  - `childNodes()` - For extracting multiple child nodes from a source object
+  - `childResources()` - For extracting multiple child nodes from a source object
 - Enhanced documentation for all NodeBuilder methods
 
 ## [0.1.2] - 2025-04-30

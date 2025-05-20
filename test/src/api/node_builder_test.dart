@@ -96,7 +96,7 @@ void main() {
     );
 
     test(
-      'childNodes method should extract multiple child nodes from source object',
+      'childResources method should extract multiple child nodes from source object',
       () {
         // Register a test serializer
         final personSerializer = TestPersonSerializer();
@@ -113,7 +113,7 @@ void main() {
 
         final (_, triples) = context
             .resourceBuilder(subject)
-            .childNodesFromInstance(predicate, (c) => c.people, container)
+            .childResourcesFromInstance(predicate, (c) => c.people, container)
             .build();
 
         // Should have:
@@ -189,7 +189,7 @@ void main() {
             (c) => c.relatedIds,
             container,
           )
-          .childNodesFromInstance(
+          .childResourcesFromInstance(
             IriTerm('http://example.org/hasMember'),
             (c) => c.people,
             container,
@@ -228,7 +228,7 @@ class TestPersonSerializer implements GlobalResourceSerializer<TestPerson> {
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     TestPerson value,
     SerializationContext context, {
     RdfSubject? parentSubject,

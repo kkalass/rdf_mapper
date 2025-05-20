@@ -59,16 +59,16 @@ abstract class SerializationService {
     IriTermSerializer<T>? serializer,
   });
 
-  /// Creates triples for a child node linked to this subject.
-  List<Triple> childNode<T>(
+  /// Creates triples for a child resources linked to this subject.
+  List<Triple> childResource<T>(
     RdfSubject subject,
     RdfPredicate predicate,
     T instance, {
     ResourceSerializer<T>? serializer,
   });
 
-  /// Creates triples for multiple child nodes derived from a source object.
-  List<Triple> childNodesFromInstance<A, T>(
+  /// Creates triples for multiple child resources derived from a source object.
+  List<Triple> childResourcesFromInstance<A, T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> Function(A p1) toIterable,
@@ -77,7 +77,7 @@ abstract class SerializationService {
   });
 
   /// Creates triples for a collection of child nodes.
-  List<Triple> childNodes<T>(
+  List<Triple> childResources<T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> instance, {
@@ -85,7 +85,7 @@ abstract class SerializationService {
   });
 
   /// Creates triples for a map of child nodes.
-  List<Triple> childNodeMap<K, V>(
+  List<Triple> childResourceMap<K, V>(
     RdfSubject subject,
     RdfPredicate predicate,
     Map<K, V> instance,
@@ -97,5 +97,5 @@ abstract class SerializationService {
   /// @param instance The object to serialize
   /// @param serializer Optional serializer for the object type
 
-  List<Triple> node<T>(T instance, {ResourceSerializer<T>? serializer});
+  List<Triple> resource<T>(T instance, {ResourceSerializer<T>? serializer});
 }

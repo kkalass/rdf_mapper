@@ -30,7 +30,7 @@ void main() {
         );
 
         // Serialize the person to RDF triples
-        final triples = context.node(person);
+        final triples = context.resource(person);
 
         // Count the number of type triples
         final typeTriples = triples
@@ -59,7 +59,7 @@ void main() {
       );
 
       // Serialize the person to RDF triples
-      final triples = context.node(person);
+      final triples = context.resource(person);
 
       // Count the number of type triples
       final typeTriples = triples
@@ -89,7 +89,7 @@ void main() {
       // Use childSubject to serialize the person as a child of another subject
       final parentSubject = IriTerm('http://example.org/container/1');
       final predicate = IriTerm('http://example.org/contains');
-      final triples = context.childNode(parentSubject, predicate, person);
+      final triples = context.childResource(parentSubject, predicate, person);
 
       // Count the number of type triples for the person
       final typeTriples = triples
@@ -121,7 +121,7 @@ class TestPersonSerializerWithTypeTriple
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     TestPerson value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -150,7 +150,7 @@ class TestPersonSerializerWithoutTypeTriple
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     TestPerson value,
     SerializationContext context, {
     RdfSubject? parentSubject,

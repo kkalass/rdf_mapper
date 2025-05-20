@@ -718,7 +718,7 @@ class DocumentDeserializer implements GlobalResourceDeserializer<Document> {
   final IriTerm typeIri = IriTerm('http://example.org/Document');
 
   @override
-  Document fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Document fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     final title = reader.require<String>(IriTerm('http://example.org/title'));
 
@@ -737,7 +737,7 @@ class DocumentWithTagReferencesDeserializer
   final IriTerm typeIri = IriTerm('http://example.org/Document');
 
   @override
-  Document fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Document fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     final title = reader.require<String>(IriTerm('http://example.org/title'));
 
@@ -755,7 +755,7 @@ class TagDeserializer implements GlobalResourceDeserializer<Tag> {
   final IriTerm typeIri = IriTerm('http://example.org/Tag');
 
   @override
-  Tag fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Tag fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     final name = reader.require<String>(IriTerm('http://example.org/name'));
 
@@ -796,14 +796,14 @@ class AddressMapper implements GlobalResourceMapper<Address> {
   final IriTerm typeIri = IriTerm('http://example.org/Address');
 
   @override
-  Address fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Address fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     final city = reader.require<String>(IriTerm('http://example.org/city'));
     return Address(id: subject.iri, city: city);
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     Address value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -820,7 +820,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
   @override
-  Person fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Person fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     final name = reader.require<String>(IriTerm('http://example.org/name'));
     final address = reader.optional<Address>(
@@ -830,7 +830,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     Person value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -861,7 +861,7 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   final IriTerm typeIri = IriTerm('http://xmlns.com/foaf/0.1/Person');
 
   @override
-  TestPerson fromRdfNode(IriTerm term, DeserializationContext context) {
+  TestPerson fromRdfResource(IriTerm term, DeserializationContext context) {
     final id = term.iri;
     final reader = context.reader(term);
 
@@ -879,7 +879,7 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     TestPerson value,
     SerializationContext context, {
     RdfSubject? parentSubject,

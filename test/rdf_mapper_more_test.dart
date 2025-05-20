@@ -155,7 +155,7 @@ final class TestItemRdfMapper implements GlobalResourceMapper<TestItem> {
   );
 
   @override
-  TestItem fromRdfNode(IriTerm iri, DeserializationContext context) {
+  TestItem fromRdfResource(IriTerm iri, DeserializationContext context) {
     final reader = context.reader(iri);
     return TestItem(
       name: reader.require(
@@ -168,7 +168,7 @@ final class TestItemRdfMapper implements GlobalResourceMapper<TestItem> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     TestItem instance,
     SerializationContext context, {
     RdfSubject? parentSubject,

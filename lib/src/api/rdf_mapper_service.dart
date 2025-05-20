@@ -202,7 +202,7 @@ final class RdfMapperService {
 
       try {
         // Deserialize the object and track it by subject
-        final obj = context.deserializeNode(subject, type);
+        final obj = context.deserializeResource(subject, type);
         deserializedObjects[subject] = obj;
       } on DeserializerNotFoundException {
         // Record this subject as failed to deserialize
@@ -287,7 +287,7 @@ final class RdfMapperService {
     }
     final context = SerializationContextImpl(registry: registry);
 
-    return RdfGraph(triples: context.node<T>(instance));
+    return RdfGraph(triples: context.resource<T>(instance));
   }
 
   /// Serializes a list of objects to a combined RDF graph.
@@ -322,7 +322,7 @@ final class RdfMapperService {
     }
     final context = SerializationContextImpl(registry: registry);
     var triples = instances.expand((instance) {
-      return context.node(instance);
+      return context.resource(instance);
     }).toList();
 
     return RdfGraph(triples: triples);

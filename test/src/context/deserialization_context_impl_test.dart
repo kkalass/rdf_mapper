@@ -200,7 +200,7 @@ void main() {
       registry.registerDeserializer<TestPerson>(deserializer);
 
       // Call fromRdfByType directly
-      final person = context.deserializeNode(
+      final person = context.deserializeResource(
         IriTerm('http://example.org/subject'),
         IriTerm('http://example.org/Person'),
       );
@@ -245,7 +245,7 @@ class TestPersonDeserializer implements GlobalResourceDeserializer<TestPerson> {
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
   @override
-  TestPerson fromRdfNode(IriTerm term, DeserializationContext context) {
+  TestPerson fromRdfResource(IriTerm term, DeserializationContext context) {
     return TestPerson(term.iri);
   }
 }
@@ -269,7 +269,8 @@ class CustomLocalResourceDeserializer
   @override
   IriTerm? get typeIri => null;
   @override
-  TestAddress fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
+  TestAddress fromRdfResource(
+      BlankNodeTerm term, DeserializationContext context) {
     final reader = context.reader(term);
     var city = reader.require<String>(VcardUniversalProperties.locality);
     return TestAddress(city: city);

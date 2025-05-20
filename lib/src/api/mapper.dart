@@ -16,7 +16,7 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 /// This is a marker interface that specific mapper interfaces extend.
 sealed class Mapper<T> {}
 
-/// Bidirectional mapper between Dart objects and RDF blank node subjects.
+/// Bidirectional mapper between Dart objects and RDF local resources.
 ///
 /// Combines the functionality of blank node deserialization and serialization
 /// for handling anonymous nodes in RDF graphs. Blank nodes represent resources
@@ -61,7 +61,7 @@ abstract interface class IriTermMapper<T>
 /// IMPORTANT: Literal terms on their own are not valid RDF - they can only exist as
 /// objects in RDF triples (subject-predicate-object). This mapper cannot be used directly
 /// to serialize/deserialize a complete RDF document from a standalone object. Instead,
-/// literal term mappers are typically used for property values within node mappers.
+/// literal term mappers are typically used for property values within resource mappers.
 ///
 /// This mapper type is recommended for:
 /// - Primitive types and their wrappers (String, int, double, DateTime, etc.)

@@ -358,7 +358,7 @@ class ResourceContainerMapper
   final IriTerm typeIri = IriTerm('http://example.org/ResourceContainer');
 
   @override
-  ResourceContainer fromRdfNode(
+  ResourceContainer fromRdfResource(
     IriTerm subject,
     DeserializationContext context,
   ) {
@@ -372,7 +372,7 @@ class ResourceContainerMapper
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     ResourceContainer value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -391,7 +391,7 @@ class MultiReferenceContainerMapper
   final IriTerm typeIri = IriTerm('http://example.org/MultiReferenceContainer');
 
   @override
-  MultiReferenceContainer fromRdfNode(
+  MultiReferenceContainer fromRdfResource(
     IriTerm subject,
     DeserializationContext context,
   ) {
@@ -409,7 +409,7 @@ class MultiReferenceContainerMapper
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     MultiReferenceContainer value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -434,7 +434,7 @@ class TransformedResourceMapper
   final IriTerm typeIri = IriTerm('http://example.org/TransformedResource');
 
   @override
-  TransformedResource fromRdfNode(
+  TransformedResource fromRdfResource(
     IriTerm subject,
     DeserializationContext context,
   ) {
@@ -450,7 +450,7 @@ class TransformedResourceMapper
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     TransformedResource value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -471,7 +471,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
   @override
-  Person fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Person fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     final name = reader.require<String>(IriTerm('http://example.org/name'));
     final knows = reader
@@ -485,7 +485,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     Person value,
     SerializationContext context, {
     RdfSubject? parentSubject,

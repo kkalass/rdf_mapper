@@ -215,7 +215,7 @@ class BookMapper implements GlobalResourceMapper<Book> {
   }
 
   @override
-  Book fromRdfNode(IriTerm subject, DeserializationContext context) {
+  Book fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return Book(
       // Extract just the identifier part from the IRI
@@ -230,7 +230,7 @@ class BookMapper implements GlobalResourceMapper<Book> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     Book book,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -242,7 +242,7 @@ class BookMapper implements GlobalResourceMapper<Book> {
         .literal<DateTime>(publishedPredicate, book.published)
         .iri<ISBN>(isbnPredicate, book.isbn)
         .literal<Rating>(ratingPredicate, book.rating)
-        .childNodes(chapterPredicate, book.chapters)
+        .childResources(chapterPredicate, book.chapters)
         .build();
   }
 }
@@ -256,7 +256,7 @@ class ChapterMapper implements LocalResourceMapper<Chapter> {
   final IriTerm typeIri = SchemaChapter.classIri;
 
   @override
-  Chapter fromRdfNode(BlankNodeTerm term, DeserializationContext context) {
+  Chapter fromRdfResource(BlankNodeTerm term, DeserializationContext context) {
     final reader = context.reader(term);
     return Chapter(
       reader.require<String>(titlePredicate),
@@ -265,7 +265,7 @@ class ChapterMapper implements LocalResourceMapper<Chapter> {
   }
 
   @override
-  (BlankNodeTerm, List<Triple>) toRdfNode(
+  (BlankNodeTerm, List<Triple>) toRdfResource(
     Chapter chapter,
     SerializationContext ctxt, {
     RdfSubject? parentSubject,

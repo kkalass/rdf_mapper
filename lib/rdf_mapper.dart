@@ -26,8 +26,8 @@
 ///
 /// ## Key Concepts
 ///
-/// - **Terms vs Nodes**: The library distinguishes between RDF Terms (single values like IRIs or Literals) and
-///   Nodes (subjects with their associated triples)
+/// - **Terms vs Resources**: The library distinguishes between RDF Terms (single values like IRIs or Literals) and
+///   Resources (subjects with their associated triples)
 /// - **Mappers**: Combined serializers and deserializers for bidirectional conversion
 /// - **Context**: Provides access to the current graph and related utilities during (de)serialization
 ///
@@ -484,17 +484,17 @@ final class RdfMapper {
   /// class PersonMapper implements GlobalResourceMapper<Person> {
   ///
   ///   @override
-  ///   (IriTerm, List<Triple>) toRdfNode(Person instance, SerializationContext context, {RdfSubject? parentSubject}) {
+  ///   (IriTerm, List<Triple>) toRdfResource(Person instance, SerializationContext context, {RdfSubject? parentSubject}) {
   ///     return context.resourceBuilder(IriTerm(instance.id))
   ///       .literal(FoafPerson.name, instance.name)
   ///       .build();
   ///   }
   ///
   ///   @override
-  ///   Person fromRdfNode(IriTerm subject, DeserializationContext context) {
+  ///   Person fromRdfResource(IriTerm subject, DeserializationContext context) {
   ///     return Person(
   ///       // you can of course also parse the iri to extract the actual id
-  ///       // and then create the full IRI from the id in toRdfNode
+  ///       // and then create the full IRI from the id in toRdfResource
   ///       id: subject.iri,
   ///       name: context.reader.require<String>(FoafPerson.name),
   ///     );

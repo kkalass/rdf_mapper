@@ -35,7 +35,7 @@ class ParentClassMapper implements GlobalResourceMapper<ParentClass> {
   static final childPredicate = IriTerm('http://example.org/child');
 
   @override
-  ParentClass fromRdfNode(IriTerm subject, DeserializationContext context) {
+  ParentClass fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     final name = reader.require<String>(namePredicate);
 
@@ -50,7 +50,7 @@ class ParentClassMapper implements GlobalResourceMapper<ParentClass> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     ParentClass value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -58,7 +58,7 @@ class ParentClassMapper implements GlobalResourceMapper<ParentClass> {
     return context
         .resourceBuilder(IriTerm(value.id))
         .literal(namePredicate, value.name)
-        .childNode(
+        .childResource(
           childPredicate,
           value.child,
           // Dynamically register the child mapper for serialization
@@ -81,7 +81,7 @@ class ChildClassMapper implements GlobalResourceMapper<ChildClass> {
   static final parentIdPredicate = IriTerm('http://example.org/parentId');
 
   @override
-  ChildClass fromRdfNode(IriTerm subject, DeserializationContext context) {
+  ChildClass fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     final value = reader.require<String>(valuePredicate);
 
@@ -92,7 +92,7 @@ class ChildClassMapper implements GlobalResourceMapper<ChildClass> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfNode(
+  (IriTerm, List<Triple>) toRdfResource(
     ChildClass value,
     SerializationContext context, {
     RdfSubject? parentSubject,

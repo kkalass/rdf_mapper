@@ -25,20 +25,20 @@ class DeserializationContextImpl extends DeserializationContext
     return ResourceReader(subject, this);
   }
 
-  Object deserializeNode(RdfSubject subjectIri, IriTerm typeIri) {
+  Object deserializeResource(RdfSubject subjectIri, IriTerm typeIri) {
     var context = this;
     switch (subjectIri) {
       case BlankNodeTerm _:
         var ser = _registry.getLocalResourceDeserializerByType(typeIri);
-        return ser.fromRdfNode(subjectIri, context);
+        return ser.fromRdfResource(subjectIri, context);
       case IriTerm _:
         var ser = _registry.getGlobalResourceDeserializerByType(typeIri);
-        return ser.fromRdfNode(subjectIri, context);
+        return ser.fromRdfResource(subjectIri, context);
     }
   }
 
-  // Hook for the Tracking implementation to track deserialized nodes.
-  void _onDeserializeNode(RdfTerm term) {}
+  // Hook for the Tracking implementation to track deserialized resources.
+  void _onDeserializeResource(RdfTerm term) {}
 
   T deserialize<T>(
     RdfTerm term,
@@ -54,8 +54,8 @@ class DeserializationContextImpl extends DeserializationContext
             _registry.hasGlobalResourceDeserializerFor<T>()) {
           var deser = globalResourceDeserializer ??
               _registry.getGlobalResourceDeserializer<T>();
-          _onDeserializeNode(term);
-          return deser.fromRdfNode(term, context);
+          _onDeserializeResource(term);
+          return deser.fromRdfResource(term, context);
         }
         var deser =
             iriTermDeserializer ?? _registry.getIriTermDeserializer<T>();
@@ -65,8 +65,8 @@ class DeserializationContextImpl extends DeserializationContext
       case BlankNodeTerm _:
         var deser = localResourceDeserializer ??
             _registry.getLocalResourceDeserializer<T>();
-        _onDeserializeNode(term);
-        return deser.fromRdfNode(term, context);
+        _onDeserializeResource(term);
+        return deser.fromRdfResource(term, context);
     }
   }
 
@@ -219,8 +219,8 @@ class TrackingDeserializationContext extends DeserializationContextImpl {
   }) : super(graph: graph, registry: registry);
 
   @override
-  void _onDeserializeNode(RdfTerm term) {
-    super._onDeserializeNode(term);
+  void _onDeserializeResource(RdfTerm term) {
+    super._onDeserializeResource(term);
     // Track processing of subject terms
     if (term is RdfSubject) {
       _processedSubjects.add(term);
