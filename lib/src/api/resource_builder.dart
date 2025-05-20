@@ -2,9 +2,9 @@ import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/serialization_service.dart';
 import 'package:rdf_mapper/src/api/serializer.dart';
 
-/// Builder for fluent RDF node serialization.
+/// Builder for fluent RDF resource serialization.
 ///
-/// The ResourceBuilder provides a convenient fluent API for constructing RDF nodes
+/// The ResourceBuilder provides a convenient fluent API for constructing RDF resources
 /// with their associated triples. It simplifies the process of building complex
 /// RDF structures by maintaining the current subject context and offering methods
 /// to add various types of predicates and objects.
@@ -14,7 +14,7 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 ///
 /// Key features:
 /// - Fluent API for adding properties to RDF subjects
-/// - Support for literals, IRIs, and nested node structures
+/// - Support for literals, IRIs, and nested resource structures
 /// - Conditional methods for handling null or empty values
 /// - Type-safe serialization of Dart objects to RDF
 ///
@@ -22,8 +22,8 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 /// ```dart
 /// final (subject, triples) = context
 ///     .resourceBuilder(IriTerm('http://example.org/resource'))
-///     .literal(dc.title, 'The Title')
-///     .literal(dc.creator, 'The Author')
+///     .literal(Dc.title, 'The Title')
+///     .literal(Dc.creator, 'The Author')
 ///     .build();
 /// ```
 ///
@@ -31,10 +31,10 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 /// ```dart
 /// final (person, triples) = context
 ///     .resourceBuilder(IriTerm('http://example.org/person/1'))
-///     .literal(foaf.name, 'John Doe')
-///     .literal(foaf.age, 30)
-///     .childResource(foaf.address, address)
-///     .childResources(foaf.knows, friends)
+///     .literal(Foaf.name, 'John Doe')
+///     .literal(Foaf.age, 30)
+///     .childResource(Foaf.address, address)
+///     .childResources(Foaf.knows, friends)
 ///     .build();
 /// ```
 class ResourceBuilder<S extends RdfSubject> {
@@ -47,13 +47,14 @@ class ResourceBuilder<S extends RdfSubject> {
   /// This constructor is typically not called directly. Instead, create a
   /// builder through the [SerializationContext.resourceBuilder] method.
   ///
-  /// @param subject The RDF subject to build properties for
-  /// @param service The serialization service for converting objects to RDF
-  /// @param initialTriples Optional list of initial triples to include
+  /// Parameters:
+  /// - [_subject]: The RDF subject to build properties for.
+  /// - [_service]: The serialization service for converting objects to RDF.
+  /// - [initialTriples]: Optional list of initial triples to include.
   ResourceBuilder(this._subject, this._service, {List<Triple>? initialTriples})
       : _triples = initialTriples ?? [];
 
-  /// Adds a constant object property to the node.
+  /// Adds a constant object property to the resource.
   ///
   /// Use this method to add a property with a pre-created RDF term as an object.
   /// Unlike other methods, this one takes a direct RdfObject instance rather than
@@ -61,13 +62,15 @@ class ResourceBuilder<S extends RdfSubject> {
   ///
   /// Example:
   /// ```dart
-  /// builder.constant(rdf.type, foaf.Person);
-  /// builder.constant(dc.format, LiteralTerm('text/html', datatype: xsd.string));
+  /// builder.constant(Rdf.type, Foaf.Person);
+  /// builder.constant(Dc.format, LiteralTerm('text/html', datatype: Xsd.string));
   /// ```
   ///
-  /// @param predicate The predicate IRI for the property
-  /// @param object The RDF object term to add
-  /// @return This builder for method chaining
+  /// Parameters:
+  /// - [predicate]: The predicate that defines the relationship.
+  /// - [object]: The RDF object term to add directly.
+  ///
+  /// Returns this builder for method chaining.
   ResourceBuilder<S> constant(RdfPredicate predicate, RdfObject object) {
     _triples.add(_service.constant(_subject, predicate, object));
     return this;
@@ -80,15 +83,17 @@ class ResourceBuilder<S extends RdfSubject> {
   ///
   /// Example:
   /// ```dart
-  /// // Extracts all tags from a post and adds them as dc:subject properties
-  /// builder.literalsFromInstance(dc.subject, (post) => post.tags, blogPost);
+  /// // Extracts all tags from a post and adds them as DC:subject properties
+  /// builder.literalsFromInstance(Dc.subject, (post) => post.tags, blogPost);
   /// ```
   ///
-  /// @param predicate The predicate for the properties
-  /// @param toIterable A function that extracts the collection of values from the source object
-  /// @param instance The source object to extract values from
-  /// @param serializer Optional serializer for the value type
-  /// @return This builder for method chaining
+  /// Parameters:
+  /// - [predicate]: The predicate for the relationships.
+  /// - [toIterable]: Function that extracts the values from the source object.
+  /// - [instance]: The source object to extract values from.
+  /// - [serializer]: Optional custom serializer for the extracted values.
+  ///
+  /// Returns this builder for method chaining.
   ResourceBuilder<S> literalsFromInstance<A, T>(
     RdfPredicate predicate,
     Iterable<T> Function(A) toIterable,
@@ -114,15 +119,17 @@ class ResourceBuilder<S extends RdfSubject> {
   ///
   /// Example:
   /// ```dart
-  /// // Extracts all collaborators from a project and adds them as dc:contributor properties
-  /// builder.irisFromInstance(dc.contributor, (project) => project.collaborators, currentProject);
+  /// // Extracts all collaborators from a project and adds them as DC:contributor properties
+  /// builder.irisFromInstance(Dc.contributor, (project) => project.collaborators, currentProject);
   /// ```
   ///
-  /// @param predicate The predicate for the properties
-  /// @param toIterable A function that extracts the collection of values from the source object
-  /// @param instance The source object to extract values from
-  /// @param serializer Optional serializer for the value type
-  /// @return This builder for method chaining
+  /// Parameters:
+  /// - [predicate]: The predicate for the relationships.
+  /// - [toIterable]: Function that extracts the values from the source object.
+  /// - [instance]: The source object to extract values from.
+  /// - [serializer]: Optional custom serializer for the extracted values.
+  ///
+  /// Returns this builder for method chaining.
   ResourceBuilder<S> irisFromInstance<A, T>(
     RdfPredicate predicate,
     Iterable<T> Function(A) toIterable,
@@ -141,22 +148,24 @@ class ResourceBuilder<S extends RdfSubject> {
     return this;
   }
 
-  /// Adds multiple child nodes extracted from a source object.
+  /// Adds multiple child resources extracted from a source object.
   ///
   /// This method is useful when you need to extract multiple complex objects from a parent object
-  /// and serialize each as a separate linked node.
+  /// and serialize each as a separate linked resource.
   ///
   /// Example:
   /// ```dart
   /// // Extracts all chapters from a book and adds them as structured content
-  /// builder.childResourcesFromInstance(schema.hasPart, (book) => book.chapters, currentBook);
+  /// builder.childResourcesFromInstance(Schema.hasPart, (book) => book.chapters, currentBook);
   /// ```
   ///
-  /// @param predicate The predicate for the relationships
-  /// @param toIterable A function that extracts the collection of objects from the source
-  /// @param instance The source object to extract values from
-  /// @param serializer Optional serializer for the child node type
-  /// @return This builder for method chaining
+  /// Parameters:
+  /// - [predicate]: The predicate for the relationships.
+  /// - [toIterable]: Function that extracts the values from the source object.
+  /// - [instance]: The source object to extract values from.
+  /// - [serializer]: Optional custom serializer for the extracted values.
+  ///
+  /// Returns this builder for method chaining.
   ResourceBuilder<S> childResourcesFromInstance<A, T>(
     RdfPredicate predicate,
     Iterable<T> Function(A) toIterable,
@@ -175,7 +184,7 @@ class ResourceBuilder<S extends RdfSubject> {
     return this;
   }
 
-  /// Adds a literal property to the node.
+  /// Adds a literal property to the resource.
   ///
   /// Use this method to add a property with a literal value (strings, numbers,
   /// dates, etc.) to the current subject. The value will be serialized to an
@@ -183,14 +192,16 @@ class ResourceBuilder<S extends RdfSubject> {
   ///
   /// Example:
   /// ```dart
-  /// builder.literal(dc.title, 'The Title');
-  /// builder.literal(foaf.age, 30);
+  /// builder.literal(Dc.title, 'The Title');
+  /// builder.literal(Foaf.age, 30);
   /// ```
   ///
-  /// @param predicate The predicate IRI for the property
-  /// @param value The literal value to add
-  /// @param serializer Optional custom serializer for the value type
-  /// @return This builder for method chaining
+  /// Parameters:
+  /// - [predicate]: The predicate that defines the relationship.
+  /// - [value]: The value to be serialized as a literal.
+  /// - [serializer]: Optional custom serializer for the value.
+  ///
+  /// Returns this builder for method chaining.
   ResourceBuilder<S> literal<V>(
     RdfPredicate predicate,
     V value, {
@@ -202,7 +213,7 @@ class ResourceBuilder<S extends RdfSubject> {
     return this;
   }
 
-  /// Adds an IRI property to the node.
+  /// Adds an IRI property to the resource.
   ///
   /// Use this method to add a property with an IRI value (referring to another
   /// resource) to the current subject. The value will be serialized to an
@@ -210,14 +221,16 @@ class ResourceBuilder<S extends RdfSubject> {
   ///
   /// Example:
   /// ```dart
-  /// builder.iri(rdf.type, foaf.Person);
-  /// builder.iri(dc.relation, document);
+  /// builder.iri(Rdf.type, Foaf.Person);
+  /// builder.iri(Dc.relation, document);
   /// ```
   ///
-  /// @param predicate The predicate IRI for the property
-  /// @param value The value to be serialized as an IRI
-  /// @param serializer Optional custom serializer for the value type
-  /// @return This builder for method chaining
+  /// Parameters:
+  /// - [predicate]: The predicate that defines the relationship.
+  /// - [value]: The value to be serialized as an IRI.
+  /// - [serializer]: Optional custom serializer for the value.
+  ///
+  /// Returns this builder for method chaining.
   ResourceBuilder<S> iri<V>(
     RdfPredicate predicate,
     V value, {
@@ -229,7 +242,7 @@ class ResourceBuilder<S extends RdfSubject> {
     return this;
   }
 
-  /// Adds a child node to this node.
+  /// Adds a child resource to this resource.
   ///
   /// Use this method to add a nested object as a property value. The child object
   /// will be serialized to its own set of RDF triples, and connected to this
@@ -239,14 +252,16 @@ class ResourceBuilder<S extends RdfSubject> {
   ///
   /// Example:
   /// ```dart
-  /// builder.childResource(foaf.address, address);
-  /// builder.childResource(schema.author, person);
+  /// builder.childResource(Foaf.address, address);
+  /// builder.childResource(Schema.author, person);
   /// ```
   ///
-  /// @param predicate The predicate IRI for the relationship
-  /// @param value The child node object to serialize
-  /// @param serializer Optional custom serializer for the child object type
-  /// @return This builder for method chaining
+  /// Parameters:
+  /// - [predicate]: The predicate that defines the relationship.
+  /// - [value]: The object to be serialized as a linked resource.
+  /// - [serializer]: Optional custom serializer for the object.
+  ///
+  /// Returns this builder for method chaining.
   ResourceBuilder<S> childResource<V>(
     RdfPredicate predicate,
     V value, {
@@ -259,23 +274,25 @@ class ResourceBuilder<S extends RdfSubject> {
     return this;
   }
 
-  /// Adds multiple child nodes to this node.
+  /// Adds multiple child resources to this resource.
   ///
-  /// Use this method to add a collection of objects as related nodes. Each object
+  /// Use this method to add a collection of objects as related resources. Each object
   /// in the collection will be serialized to its own set of RDF triples and linked
   /// to the current subject via the specified predicate. Note that in RDF
   /// terms this corresponds to multi-value properties, not to collections or lists.
   ///
   /// Example:
   /// ```dart
-  /// builder.childResources(foaf.knows, friends);
-  /// builder.childResources(schema.author, authors);
+  /// builder.childResources(Foaf.knows, friends);
+  /// builder.childResources(Schema.author, authors);
   /// ```
   ///
-  /// @param predicate The predicate for the relationships
-  /// @param values The collection of child node values
-  /// @param serializer Optional serializer for the child node type
-  /// @return This builder for method chaining
+  /// Parameters:
+  /// - [predicate]: The predicate that defines the relationships.
+  /// - [values]: The collection of objects to be serialized as linked resources.
+  /// - [serializer]: Optional custom serializer for the objects.
+  ///
+  /// Returns this builder for method chaining.
   ResourceBuilder<S> childResources<V>(
     RdfPredicate predicate,
     Iterable<V> values, {
@@ -292,25 +309,27 @@ class ResourceBuilder<S extends RdfSubject> {
     return this;
   }
 
-  /// Adds a map of key-value pairs as child nodes.
+  /// Adds a map of key-value pairs as child resources.
   ///
   /// This method is useful for serializing dictionary-like structures where both
   /// the keys and values need to be serialized as part of the RDF graph.
   ///
   /// Example:
   /// ```dart
-  /// // Serializes a metadata dictionary as linked nodes
+  /// // Serializes a metadata dictionary as linked resources
   /// builder.childResourceMap(
-  ///   schema.additionalProperty,
+  ///   Schema.additionalProperty,
   ///   metadata,
   ///   MetadataEntrySerializer(),
   /// );
   /// ```
   ///
-  /// @param predicate The predicate for the relationships
-  /// @param instance The map to serialize
-  /// @param entrySerializer The serializer for map entries
-  /// @return This builder for method chaining
+  /// Parameters:
+  /// - [predicate]: The predicate for the relationships.
+  /// - [instance]: The map to serialize.
+  /// - [entrySerializer]: The serializer for map entries.
+  ///
+  /// Returns this builder for method chaining.
   ResourceBuilder<S> childResourceMap<K, V>(
     RdfPredicate predicate,
     Map<K, V> instance,
@@ -322,11 +341,24 @@ class ResourceBuilder<S extends RdfSubject> {
     return this;
   }
 
-  /// Adds multiple literal properties to this node.
+  /// Adds multiple literal properties to this resource.
   ///
-  /// @param predicate The predicate for the properties
-  /// @param values The collection of literal values
-  /// @param serializer Optional serializer for the value type
+  /// Use this method to add a collection of literal values (strings, numbers, dates, etc.)
+  /// with the same predicate to the current subject. Each value will be serialized to
+  /// an RDF literal term using the appropriate serializer.
+  ///
+  /// Example:
+  /// ```dart
+  /// builder.literals(Dc.subject, ['Science', 'Physics', 'Quantum Mechanics']);
+  /// builder.literals(Schema.keywords, tags);
+  /// ```
+  ///
+  /// Parameters:
+  /// - [predicate]: The predicate for the relationships.
+  /// - [values]: The collection of values to be serialized as literals.
+  /// - [serializer]: Optional custom serializer for the values.
+  ///
+  /// Returns this builder for method chaining.
   ResourceBuilder<S> literals<V>(
     RdfPredicate predicate,
     Iterable<V> values, {
@@ -338,11 +370,24 @@ class ResourceBuilder<S extends RdfSubject> {
     return this;
   }
 
-  /// Adds multiple IRI properties to this node.
+  /// Adds multiple IRI properties to this resource.
   ///
-  /// @param predicate The predicate for the properties
-  /// @param values The collection of values to be serialized as IRIs
-  /// @param serializer Optional serializer for the value type
+  /// Use this method to add a collection of IRI values (referring to other resources)
+  /// with the same predicate to the current subject. Each value will be serialized to
+  /// an RDF IRI term using the appropriate serializer.
+  ///
+  /// Example:
+  /// ```dart
+  /// builder.iris(Owl.sameAs, [otherResourceId1, otherResourceId2]);
+  /// builder.iris(Foaf.interest, interests);
+  /// ```
+  ///
+  /// Parameters:
+  /// - [predicate]: The predicate for the relationships.
+  /// - [values]: The collection of values to be serialized as IRIs.
+  /// - [serializer]: Optional custom serializer for the values.
+  ///
+  /// Returns this builder for method chaining.
   ResourceBuilder<S> iris<V>(
     RdfPredicate predicate,
     Iterable<V> values, {
@@ -354,12 +399,23 @@ class ResourceBuilder<S extends RdfSubject> {
     return this;
   }
 
-  /// Adds a literal property to the node if the value is not null.
+  /// Adds a literal property to the resource if the value is not null.
   ///
-  /// @param predicate The predicate for the property
-  /// @param value The optional literal value
-  /// @param serializer Optional serializer for the value type
-  /// @return This builder instance for method chaining
+  /// This is a convenience method that only adds the property if the value exists.
+  /// It's particularly useful when working with optional data.
+  ///
+  /// Example:
+  /// ```dart
+  /// builder.literalIfNotNull(Dc.description, description);
+  /// builder.literalIfNotNull(Schema.alternateName, nickname);
+  /// ```
+  ///
+  /// Parameters:
+  /// - [predicate]: The predicate that defines the relationship.
+  /// - [value]: The optional value to be serialized as a literal.
+  /// - [serializer]: Optional custom serializer for the value.
+  ///
+  /// Returns this builder for method chaining.
   ResourceBuilder<S> literalIfNotNull<V>(
     RdfPredicate predicate,
     V? value, {
@@ -371,12 +427,23 @@ class ResourceBuilder<S extends RdfSubject> {
     return this;
   }
 
-  /// Adds an IRI property to the node if the value is not null.
+  /// Adds an IRI property to the resource if the value is not null.
   ///
-  /// @param predicate The predicate for the property
-  /// @param value The optional value to be serialized as an IRI
-  /// @param serializer Optional serializer for the value type
-  /// @return This builder instance for method chaining
+  /// This is a convenience method that only adds the property if the value exists.
+  /// It's particularly useful when working with optional references to other resources.
+  ///
+  /// Example:
+  /// ```dart
+  /// builder.iriIfNotNull(Foaf.homepage, website);
+  /// builder.iriIfNotNull(Dc.isPartOf, parentResource);
+  /// ```
+  ///
+  /// Parameters:
+  /// - [predicate]: The predicate that defines the relationship.
+  /// - [value]: The optional value to be serialized as an IRI.
+  /// - [serializer]: Optional custom serializer for the value.
+  ///
+  /// Returns this builder for method chaining.
   ResourceBuilder<S> iriIfNotNull<V>(
     RdfPredicate predicate,
     V? value, {
@@ -388,12 +455,23 @@ class ResourceBuilder<S extends RdfSubject> {
     return this;
   }
 
-  /// Adds a child node to this node if the value is not null.
+  /// Adds a child resource to this resource if the value is not null.
   ///
-  /// @param predicate The predicate for the relationship
-  /// @param value The optional child node value
-  /// @param serializer Optional serializer for the child node type
-  /// @return This builder instance for method chaining
+  /// This is a convenience method that only adds the nested object if it exists.
+  /// It's particularly useful when working with optional complex properties.
+  ///
+  /// Example:
+  /// ```dart
+  /// builder.childResourceIfNotNull(Foaf.address, optionalAddress);
+  /// builder.childResourceIfNotNull(Schema.contactPoint, contactInfo);
+  /// ```
+  ///
+  /// Parameters:
+  /// - [predicate]: The predicate that defines the relationship.
+  /// - [value]: The optional object to be serialized as a linked resource.
+  /// - [serializer]: Optional custom serializer for the object.
+  ///
+  /// Returns this builder for method chaining.
   ResourceBuilder<S> childResourceIfNotNull<V>(
     RdfPredicate predicate,
     V? value, {
@@ -405,12 +483,24 @@ class ResourceBuilder<S extends RdfSubject> {
     return this;
   }
 
-  /// Adds multiple child nodes to this node if the collection is not null and not empty.
+  /// Adds multiple child resources to this resource if the collection is not null and not empty.
   ///
-  /// @param predicate The predicate for the relationships
-  /// @param values The optional collection of child node values
-  /// @param serializer Optional serializer for the child node type
-  /// @return This builder instance for method chaining
+  /// This is a convenience method that only adds the collection of objects if it exists
+  /// and contains at least one element. It's particularly useful when working with
+  /// optional collections that should be excluded entirely when empty.
+  ///
+  /// Example:
+  /// ```dart
+  /// builder.childResourcesIfNotEmpty(Foaf.knows, optionalFriendsList);
+  /// builder.childResourcesIfNotEmpty(Schema.author, articleAuthors);
+  /// ```
+  ///
+  /// Parameters:
+  /// - [predicate]: The predicate that defines the relationships.
+  /// - [values]: The optional collection of objects to be serialized as linked resources.
+  /// - [serializer]: Optional custom serializer for the objects.
+  ///
+  /// Returns this builder for method chaining.
   ResourceBuilder<S> childResourcesIfNotEmpty<V>(
     RdfPredicate predicate,
     Iterable<V>? values, {
@@ -425,10 +515,23 @@ class ResourceBuilder<S extends RdfSubject> {
   /// Conditionally applies a transformation to this builder.
   ///
   /// Useful for complex conditional logic that doesn't fit the other conditional methods.
+  /// This method allows applying a function to the builder only when a specified condition is true,
+  /// making it powerful for creating conditional RDF structures.
   ///
-  /// @param condition The condition that determines if the action should be applied
-  /// @param action The action to apply to the builder if the condition is true
-  /// @return This builder instance for method chaining
+  /// Example:
+  /// ```dart
+  /// builder.when(
+  ///   person.isActive,
+  ///   (b) => b.literal(Schema.status, 'active')
+  ///          .iri(Foaf.member, organization)
+  /// );
+  /// ```
+  ///
+  /// Parameters:
+  /// - [condition]: The boolean condition to evaluate.
+  /// - [action]: The function to apply to the builder when the condition is true.
+  ///
+  /// Returns this builder for method chaining.
   ResourceBuilder<S> when(
     bool condition,
     void Function(ResourceBuilder<S> builder) action,
@@ -439,9 +542,19 @@ class ResourceBuilder<S extends RdfSubject> {
     return this;
   }
 
-  /// Builds the node and returns the subject and list of triples.
+  /// Builds the resource and returns the subject and list of triples.
   ///
-  /// @return A tuple containing the subject and all generated triples
+  /// This finalizes the RDF building process and returns both the subject resource
+  /// and an unmodifiable list of all the triples that have been created.
+  ///
+  /// Example:
+  /// ```dart
+  /// final (person, triples) = builder
+  ///   .literal(Foaf.name, 'John Doe')
+  ///   .build();
+  /// ```
+  ///
+  /// Returns a tuple containing the subject and all generated triples.
   (S, List<Triple>) build() {
     return (_subject, List.unmodifiable(_triples));
   }
