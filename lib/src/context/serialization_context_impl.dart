@@ -392,17 +392,14 @@ class SerializationContextImpl extends SerializationContext
   }
 
   @override
-  List<Triple> childResourceMap<K, V>(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    Map<K, V> instance,
-    ResourceSerializer<MapEntry<K, V>> entrySerializer,
-  ) =>
+  List<Triple> valueMap<K, V>(
+          RdfSubject subject, RdfPredicate predicate, Map<K, V> instance,
+          {required ResourceSerializer<MapEntry<K, V>> resourceSerializer}) =>
       valuesFromSource<Map<K, V>, MapEntry<K, V>>(
         subject,
         predicate,
         (it) => it.entries,
         instance,
-        resourceSerializer: entrySerializer,
+        resourceSerializer: resourceSerializer,
       );
 }

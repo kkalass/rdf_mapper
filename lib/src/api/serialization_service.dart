@@ -35,12 +35,9 @@ abstract class SerializationService {
   });
 
   /// Creates triples for a map of child nodes.
-  List<Triple> childResourceMap<K, V>(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    Map<K, V> instance,
-    ResourceSerializer<MapEntry<K, V>> entrySerializer,
-  );
+  List<Triple> valueMap<K, V>(
+      RdfSubject subject, RdfPredicate predicate, Map<K, V> instance,
+      {required ResourceSerializer<MapEntry<K, V>> resourceSerializer});
 
   /// Serializes an object to a RDF resource.
   ///

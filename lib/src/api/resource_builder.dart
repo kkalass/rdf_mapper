@@ -144,13 +144,11 @@ class ResourceBuilder<S extends RdfSubject> {
   /// - [entrySerializer]: The serializer for map entries.
   ///
   /// Returns this builder for method chaining.
-  ResourceBuilder<S> childResourceMap<K, V>(
-    RdfPredicate predicate,
-    Map<K, V> instance,
-    ResourceSerializer<MapEntry<K, V>> entrySerializer,
-  ) {
+  ResourceBuilder<S> addMap<K, V>(RdfPredicate predicate, Map<K, V> instance,
+      {required ResourceSerializer<MapEntry<K, V>> resourceSerializer}) {
     _triples.addAll(
-      _service.childResourceMap(_subject, predicate, instance, entrySerializer),
+      _service.valueMap(_subject, predicate, instance,
+          resourceSerializer: resourceSerializer),
     );
     return this;
   }
