@@ -1052,8 +1052,8 @@ class CompanyMapper implements GlobalResourceMapper<Company> {
   }) {
     return context
         .resourceBuilder(IriTerm(company.id))
-        .literal(namePredicate, company.name)
-        .childResourceIfNotNull(addressPredicate, company.address)
+        .addValue(namePredicate, company.name)
+        .addValueIfNotNull(addressPredicate, company.address)
         .build();
   }
 }
@@ -1094,10 +1094,10 @@ class EmployeeMapper implements GlobalResourceMapper<Employee> {
   }) {
     return context
         .resourceBuilder(IriTerm(person.id))
-        .literal(givenNamePredicate, person.name)
-        .literal(agePredicate, person.age)
-        .childResourceIfNotNull(addressPredicate, person.address)
-        .childResourceIfNotNull(employerPredicate, person.employer)
+        .addValue(givenNamePredicate, person.name)
+        .addValue(agePredicate, person.age)
+        .addValueIfNotNull(addressPredicate, person.address)
+        .addValueIfNotNull(employerPredicate, person.employer)
         .build();
   }
 }
@@ -1141,10 +1141,10 @@ class EmployeeWithCompanyReferenceMapper
   }) {
     return context
         .resourceBuilder(IriTerm(person.id))
-        .literal(givenNamePredicate, person.name)
-        .literal(agePredicate, person.age)
-        .childResourceIfNotNull(addressPredicate, person.address)
-        .iriIfNotNull(employerPredicate, person.employer)
+        .addValue(givenNamePredicate, person.name)
+        .addValue(agePredicate, person.age)
+        .addValueIfNotNull(addressPredicate, person.address)
+        .addValueIfNotNull(employerPredicate, person.employer)
         .build();
   }
 }
@@ -1290,10 +1290,10 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   }) {
     return context
         .resourceBuilder(IriTerm(person.id))
-        .literal(SchemaPerson.givenName, person.name)
-        .literal(SchemaPerson.foafAge, person.age)
-        .childResourceIfNotNull(SchemaPerson.address, person.address)
-        .childResourceIfNotNull(SchemaPerson.worksFor, person.employer)
+        .addValue(SchemaPerson.givenName, person.name)
+        .addValue(SchemaPerson.foafAge, person.age)
+        .addValueIfNotNull(SchemaPerson.address, person.address)
+        .addValueIfNotNull(SchemaPerson.worksFor, person.employer)
         .build();
   }
 }
@@ -1334,10 +1334,10 @@ class AddressMapper implements LocalResourceMapper<Address> {
     // Create a blank node subject
     return context
         .resourceBuilder(BlankNodeTerm())
-        .literal(streetAddressPredicate, value.street)
-        .literal(addressLocalityPredicate, value.city)
-        .literal(postalCodePredicate, value.zipCode)
-        .literal(addressCountryPredicate, value.country)
+        .addValue(streetAddressPredicate, value.street)
+        .addValue(addressLocalityPredicate, value.city)
+        .addValue(postalCodePredicate, value.zipCode)
+        .addValue(addressCountryPredicate, value.country)
         .build();
   }
 }

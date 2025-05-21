@@ -57,12 +57,12 @@ class ParentClassMapper implements GlobalResourceMapper<ParentClass> {
   }) {
     return context
         .resourceBuilder(IriTerm(value.id))
-        .literal(namePredicate, value.name)
-        .childResource(
+        .addValue(namePredicate, value.name)
+        .addValue(
           childPredicate,
           value.child,
           // Dynamically register the child mapper for serialization
-          serializer: ChildClassMapper(parentId: value.id),
+          resourceSerializer: ChildClassMapper(parentId: value.id),
         )
         .build();
   }
@@ -99,8 +99,8 @@ class ChildClassMapper implements GlobalResourceMapper<ChildClass> {
   }) {
     return context
         .resourceBuilder(IriTerm(value.id))
-        .literal(valuePredicate, value.value)
-        .literal(parentIdPredicate, value.parentId)
+        .addValue(valuePredicate, value.value)
+        .addValue(parentIdPredicate, value.parentId)
         .build();
   }
 }

@@ -178,11 +178,11 @@ final class TestItemRdfMapper implements GlobalResourceMapper<TestItem> {
     );
     return context
         .resourceBuilder(itemIri)
-        .literal(
+        .addValue(
           IriTerm("http://kalass.de/dart/rdf/test-ontology#name"),
           instance.name,
         )
-        .literal(
+        .addValue(
           IriTerm("http://kalass.de/dart/rdf/test-ontology#age"),
           instance.age,
         )

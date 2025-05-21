@@ -226,12 +226,12 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   }) {
     return context
         .resourceBuilder(IriTerm(instance.id))
-        .constant(
+        .addValue(
           IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
           personTypeIri,
         )
-        .literal(namePredicate, instance.name)
-        .literal(agePredicate, instance.age)
+        .addValue(namePredicate, instance.name)
+        .addValue(agePredicate, instance.age)
         .build();
   }
 }
@@ -280,14 +280,14 @@ class TestCollectionContainerMapper
     final builder = context.resourceBuilder(IriTerm(instance.id));
 
     // Add type triple
-    builder.constant(
+    builder.addValue(
       IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
       typeIri,
     );
 
     // Add string list values one by one
     for (final str in instance.stringList) {
-      builder.literal(stringListPredicate, str);
+      builder.addValue(stringListPredicate, str);
     }
 
     return builder.build();

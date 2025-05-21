@@ -810,7 +810,7 @@ class AddressMapper implements GlobalResourceMapper<Address> {
   }) {
     return context
         .resourceBuilder(IriTerm(value.id))
-        .literal(IriTerm('http://example.org/city'), value.city)
+        .addValue(IriTerm('http://example.org/city'), value.city)
         .build();
   }
 }
@@ -837,11 +837,9 @@ class PersonMapper implements GlobalResourceMapper<Person> {
   }) {
     return context
         .resourceBuilder(IriTerm(value.id))
-        .literal(IriTerm('http://example.org/name'), value.name)
-        .iriIfNotNull(
-          IriTerm('http://example.org/address'),
-          value.address == null ? null : IriTerm(value.address!.id),
-        )
+        .addValue(IriTerm('http://example.org/name'), value.name)
+        .addValueIfNotNull(IriTerm('http://example.org/address'),
+            value.address == null ? null : IriTerm(value.address!.id))
         .build();
   }
 }

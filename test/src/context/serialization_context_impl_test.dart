@@ -89,7 +89,7 @@ void main() {
       // Use childSubject to serialize the person as a child of another subject
       final parentSubject = IriTerm('http://example.org/container/1');
       final predicate = IriTerm('http://example.org/contains');
-      final triples = context.childResource(parentSubject, predicate, person);
+      final triples = context.value(parentSubject, predicate, person);
 
       // Count the number of type triples for the person
       final typeTriples = triples

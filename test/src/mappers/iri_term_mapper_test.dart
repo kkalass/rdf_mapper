@@ -379,8 +379,10 @@ class ResourceContainerMapper
   }) {
     return context
         .resourceBuilder(IriTerm(value.id))
-        .literal(IriTerm('http://example.org/name'), value.name)
-        .iri(IriTerm('http://example.org/resource'), value.resource)
+        .addValue(IriTerm('http://example.org/name'), value.name)
+        // We have a IriTermMapper for ResourceReference, no need to specify
+        // that this shall be serialized as IriTerm
+        .addValue(IriTerm('http://example.org/resource'), value.resource)
         .build();
   }
 }
@@ -416,10 +418,10 @@ class MultiReferenceContainerMapper
   }) {
     final builder = context
         .resourceBuilder(IriTerm(value.id))
-        .literal(IriTerm('http://example.org/name'), value.name);
+        .addValue(IriTerm('http://example.org/name'), value.name);
 
     for (final resource in value.resources) {
-      builder.iri(IriTerm('http://example.org/resources'), resource);
+      builder.addValue(IriTerm('http://example.org/resources'), resource);
     }
 
     return builder.build();
@@ -461,7 +463,7 @@ class TransformedResourceMapper
 
     return context
         .resourceBuilder(IriTerm(identityUri))
-        .iri(IriTerm('http://example.org/identity'), identity)
+        .addValue(IriTerm('http://example.org/identity'), identity)
         .build();
   }
 }
@@ -492,13 +494,11 @@ class PersonMapper implements GlobalResourceMapper<Person> {
   }) {
     final builder = context
         .resourceBuilder(IriTerm(value.id))
-        .literal(IriTerm('http://example.org/name'), value.name);
+        .addValue(IriTerm('http://example.org/name'), value.name);
 
     for (final personRef in value.knows) {
-      builder.iri(
-        IriTerm('http://example.org/knows'),
-        ResourceReference(uri: personRef.uri),
-      );
+      builder.addValue(IriTerm('http://example.org/knows'),
+          ResourceReference(uri: personRef.uri));
     }
 
     return builder.build();

@@ -161,8 +161,8 @@ class TestEntityMapper implements GlobalResourceMapper<TestEntity> {
   }) {
     return context
         .resourceBuilder(IriTerm(entity.id))
-        .literal(namePredicate, entity.name)
-        .literal(valuePredicate, entity.value)
+        .addValue(namePredicate, entity.name)
+        .addValue(valuePredicate, entity.value)
         .build();
   }
 }

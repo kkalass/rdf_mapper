@@ -78,20 +78,233 @@ class SerializationContextImpl extends SerializationContext
     return ser;
   }
 
+  /// Adds a value to the subject as the object of a triple.
+  ///
+  /// This method is a unified approach to creating triples from various value types.
+  /// It intelligently selects the appropriate serialization strategy based on:
+  /// 1. If the instance is already an RdfObject, it will be used directly
+  /// 2. If explicit serializers are provided, they will be used in order of priority
+  /// 3. Otherwise, it will try to find a registered serializer for the type
+  ///
+  /// @param subject The subject of the triple
+  /// @param predicate The predicate linking subject to value
+  /// @param instance The value to add as an object (can be a Dart object or RDF term)
+  /// @param literalTermSerializer Optional custom serializer for literal terms
+  /// @param iriTermSerializer Optional custom serializer for IRI terms
+  /// @param resourceSerializer Optional custom serializer for resources
+  /// @return A list of triples connecting the subject to the serialized value
   @override
-  List<Triple> childResource<T>(
+  List<Triple> value<T>(
+    RdfSubject subject,
+    RdfPredicate predicate,
+    T instance, {
+    LiteralTermSerializer<T>? literalTermSerializer,
+    IriTermSerializer<T>? iriTermSerializer,
+    ResourceSerializer<T>? resourceSerializer,
+  }) {
+    if (instance == null) {
+      throw ArgumentError(
+        'Instance cannot be null for serialization, the caller should handle null values.',
+      );
+    }
+
+    // Check if the instance is already an RDF term
+    if (instance is RdfObject) {
+      return [Triple(subject, predicate, instance as RdfObject)];
+    }
+
+    // Try serializers in priority order if explicitly provided
+
+    // 1. Try IRI serializer if provided
+    if (iriTermSerializer != null) {
+      var term = iriTermSerializer.toRdfTerm(instance, this);
+      return [Triple(subject, predicate, term)];
+    }
+
+    // 2. Try literal serializer if provided
+    if (literalTermSerializer != null) {
+      var term = literalTermSerializer.toRdfTerm(instance, this);
+      return [Triple(subject, predicate, term)];
+    }
+
+    // 3. Try resource serializer if provided
+    if (resourceSerializer != null) {
+      return _createChildResource(
+        subject,
+        predicate,
+        instance,
+        serializer: resourceSerializer,
+      );
+    }
+
+    // If no explicit serializers were provided, try to find registered ones
+
+    // 1. First try IRI serialization
+    try {
+      final iriSer = _getSerializerFallbackToRuntimeType(
+        null,
+        instance,
+        _registry.getIriTermSerializer,
+        _registry.getIriTermSerializerByType,
+      );
+
+      if (iriSer != null) {
+        var term = iriSer.toRdfTerm(instance, this);
+        return [Triple(subject, predicate, term)];
+      }
+    } catch (_) {
+      // If IRI serialization fails, continue to literal serialization
+    }
+
+    // 2. Then try literal serialization
+    try {
+      final literalSer = _getSerializerFallbackToRuntimeType(
+        null,
+        instance,
+        _registry.getLiteralTermSerializer,
+        _registry.getLiteralTermSerializerByType,
+      );
+
+      if (literalSer != null) {
+        // If we have a literal serializer, use it
+        // This is the case for String, int, double, etc.
+        // We can also use it for other types if we have a custom serializer
+        var term = literalSer.toRdfTerm(instance, this);
+        return [Triple(subject, predicate, term)];
+      }
+    } catch (_) {
+      // If literal serialization fails, try resource serialization
+    }
+
+    // 3. Finally try resource serialization
+    try {
+      final resourceSer = _getSerializerFallbackToRuntimeType(
+        null,
+        instance,
+        _registry.getResourceSerializer,
+        _registry.getResourceSerializerByType,
+      );
+
+      if (resourceSer != null) {
+        return _createChildResource(subject, predicate, instance,
+            serializer: resourceSer);
+      }
+    } catch (_) {
+      // If all serialization attempts fail, throw an exception
+    }
+
+    throw SerializerNotFoundException('Any serializer', T);
+  }
+
+  /// Adds values from a collection to the subject with the given predicate.
+  ///
+  /// Processes each item in the collection and creates triples for each non-null value.
+  ///
+  /// @param subject The subject of the triples
+  /// @param predicate The predicate linking subject to values
+  /// @param instance Collection of values to add
+  /// @param literalTermSerializer Optional custom serializer for literal terms
+  /// @param iriTermSerializer Optional custom serializer for IRI terms
+  /// @param resourceSerializer Optional custom serializer for resources
+  /// @return List of triples connecting the subject to the values
+  @override
+  List<Triple> values<T>(
+    RdfSubject subject,
+    RdfPredicate predicate,
+    Iterable<T> instance, {
+    LiteralTermSerializer<T>? literalTermSerializer,
+    IriTermSerializer<T>? iriTermSerializer,
+    ResourceSerializer<T>? resourceSerializer,
+  }) {
+    return valuesFromSource<Iterable<T>, T>(
+      subject,
+      predicate,
+      (it) => it,
+      instance,
+      literalTermSerializer: literalTermSerializer,
+      iriTermSerializer: iriTermSerializer,
+      resourceSerializer: resourceSerializer,
+    );
+  }
+
+  /// Adds multiple values extracted from a source object as objects in triples.
+  ///
+  /// This method first applies a transformation function to extract values from a source,
+  /// then serializes each extracted value into one or more triples.
+  ///
+  /// @param subject The subject of the triples
+  /// @param predicate The predicate linking subject to extracted values
+  /// @param toIterable Function to extract values from the source
+  /// @param instance Source object containing the values to extract
+  /// @param literalTermSerializer Optional custom serializer for literal terms
+  /// @param iriTermSerializer Optional custom serializer for IRI terms
+  /// @param resourceSerializer Optional custom serializer for resources
+  /// @return List of triples connecting the subject to all extracted values
+  @override
+  List<Triple> valuesFromSource<A, T>(
+    RdfSubject subject,
+    RdfPredicate predicate,
+    Iterable<T> Function(A) toIterable,
+    A instance, {
+    LiteralTermSerializer<T>? literalTermSerializer,
+    IriTermSerializer<T>? iriTermSerializer,
+    ResourceSerializer<T>? resourceSerializer,
+  }) {
+    final result = <Triple>[];
+
+    // Skip processing if instance is null
+    if (instance == null) {
+      return result;
+    }
+
+    // Process each item from the source
+    for (final item in toIterable(instance)) {
+      if (item == null) continue; // Skip null items
+
+      try {
+        // Try to create value with each item
+        final valueTriples = value(
+          subject,
+          predicate,
+          item,
+          literalTermSerializer: literalTermSerializer,
+          iriTermSerializer: iriTermSerializer,
+          resourceSerializer: resourceSerializer,
+        );
+
+        // Add all triples to our results
+        result.addAll(valueTriples);
+      } catch (e) {
+        // Handle any serialization errors - log or skip depending on requirements
+        _log.warning('Error serializing value of type ${item.runtimeType}: $e');
+      }
+    }
+
+    return result;
+  }
+
+  // Private implementation of childResource with support for different resource serializers
+  List<Triple> _createChildResource<T>(
     RdfSubject subject,
     RdfPredicate predicate,
     T instance, {
     ResourceSerializer<T>? serializer,
   }) {
-    // Try to get serializer directly for type T if provided or available
-    ResourceSerializer<T>? ser = _getSerializerFallbackToRuntimeType(
-      serializer,
-      instance,
-      _registry.getResourceSerializer,
-      _registry.getResourceSerializerByType,
-    );
+    // Check if we have a custom serializer or should use registry
+    ResourceSerializer<T>? ser = serializer;
+
+    // If no explicit serializer was provided, try the registry
+    if (ser == null) {
+      // Try to get serializer from registry
+      ser = _getSerializerFallbackToRuntimeType(
+        null,
+        instance,
+        _registry.getResourceSerializer,
+        _registry.getResourceSerializerByType,
+      );
+    }
+
+    // If we couldn't find any serializer, return empty result
     if (ser == null) {
       return [];
     }
@@ -118,54 +331,11 @@ class SerializationContextImpl extends SerializationContext
     return [
       // Add rdf:type for the child only if not already present
       if (!hasTypeTriple && typeIri != null)
-        constant(childIri, Rdf.type, typeIri),
+        Triple(childIri, Rdf.type, typeIri),
       ...childTriples,
       // connect the parent to the child
-      constant(subject, predicate, childIri),
+      Triple(subject, predicate, childIri),
     ];
-  }
-
-  @override
-  Triple constant(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    RdfObject object,
-  ) =>
-      Triple(subject, predicate, object);
-
-  @override
-  Triple iri<T>(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    T instance, {
-    IriTermSerializer<T>? serializer,
-  }) {
-    if (instance == null) {
-      throw ArgumentError(
-        'Instance cannot be null for IRI serialization, the caller should handle null values.',
-      );
-    }
-    // Try to get serializer directly for type T if provided or available
-    final ser = _getSerializerFallbackToRuntimeType(
-      serializer,
-      instance,
-      _registry.getIriTermSerializer,
-      _registry.getIriTermSerializerByType,
-    )!;
-
-    var term = ser.toRdfTerm(instance, this);
-    return Triple(subject, predicate, term);
-  }
-
-  @override
-  Triple literal<T>(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    T instance, {
-    LiteralTermSerializer<T>? serializer,
-  }) {
-    var term = toLiteralTerm(instance, serializer: serializer);
-    return Triple(subject, predicate, term);
   }
 
   @override
@@ -216,105 +386,23 @@ class SerializationContextImpl extends SerializationContext
     final typeIri = ser.typeIri;
     return [
       // Add rdf:type only if not already present in triples
-      if (!hasTypeTriple && typeIri != null) constant(iri, Rdf.type, typeIri),
+      if (!hasTypeTriple && typeIri != null) Triple(iri, Rdf.type, typeIri),
       ...triples,
     ];
   }
 
-  /// Creates triples for multiple literal objects derived from a source object.
-  List<Triple> literalsFromInstance<A, T>(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    Iterable<T> Function(A) toIterable,
-    A instance, {
-    LiteralTermSerializer<T>? serializer,
-  }) =>
-      toIterable(instance)
-          .map(
-            (item) => literal(subject, predicate, item, serializer: serializer),
-          )
-          .toList();
-
-  /// Creates triples for a collection of literal objects.
-  List<Triple> literals<T>(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    Iterable<T> instance, {
-    LiteralTermSerializer<T>? serializer,
-  }) =>
-      literalsFromInstance<Iterable<T>, T>(
-        subject,
-        predicate,
-        (it) => it,
-        instance,
-        serializer: serializer,
-      );
-  List<Triple> irisFromInstance<A, T>(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    Iterable<T> Function(A) toIterable,
-    A instance, {
-    IriTermSerializer<T>? serializer,
-  }) =>
-      toIterable(instance)
-          .map((item) => iri(subject, predicate, item, serializer: serializer))
-          .toList();
-
-  /// Creates triples for a collection of IRI objects.
-  List<Triple> iris<T>(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    Iterable<T> instance, {
-    IriTermSerializer<T>? serializer,
-  }) =>
-      irisFromInstance<Iterable<T>, T>(
-        subject,
-        predicate,
-        (it) => it,
-        instance,
-        serializer: serializer,
-      );
-  List<Triple> childResourcesFromInstance<A, T>(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    Iterable<T> Function(A p1) toIterable,
-    A instance, {
-    ResourceSerializer<T>? serializer,
-  }) =>
-      toIterable(instance)
-          .expand<Triple>(
-            (item) =>
-                childResource(subject, predicate, item, serializer: serializer),
-          )
-          .toList();
-
-  /// Creates triples for a collection of child nodes.
-  List<Triple> childResources<T>(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    Iterable<T> instance, {
-    ResourceSerializer<T>? serializer,
-  }) =>
-      childResourcesFromInstance(
-        subject,
-        predicate,
-        (it) => it,
-        instance,
-        serializer: serializer,
-      );
-
-  /// Creates triples for a map of child nodes.
+  @override
   List<Triple> childResourceMap<K, V>(
     RdfSubject subject,
     RdfPredicate predicate,
     Map<K, V> instance,
     ResourceSerializer<MapEntry<K, V>> entrySerializer,
   ) =>
-      childResourcesFromInstance<Map<K, V>, MapEntry<K, V>>(
+      valuesFromSource<Map<K, V>, MapEntry<K, V>>(
         subject,
         predicate,
         (it) => it.entries,
         instance,
-        serializer: entrySerializer,
+        resourceSerializer: entrySerializer,
       );
 }

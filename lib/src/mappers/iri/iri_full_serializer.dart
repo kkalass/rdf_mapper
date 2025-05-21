@@ -15,6 +15,8 @@ import 'package:rdf_mapper/src/api/serialization_context.dart';
 /// Note: This serializer assumes that the input string is already a properly formatted IRI.
 /// It does not perform any validation or normalization of the IRI.
 final class IriFullSerializer implements IriTermSerializer<String> {
+  const IriFullSerializer();
+
   /// Converts a string to an IRI term.
   ///
   /// @param iri The string containing the complete IRI

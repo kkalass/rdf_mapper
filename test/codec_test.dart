@@ -322,10 +322,13 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   }) =>
       context
           .resourceBuilder(IriTerm(instance.id))
-          .iri(Rdf.type, _ns('Person').iri)
-          .literal(_ns('name'), instance.name)
-          .literal(_ns('age'), instance.age)
-          .childResourceIfNotNull(_ns('address'), instance.address)
+          .addValue<String>(Rdf.type, _ns('Person').iri,
+              // String value would default to Literal, so we need to specify
+              // the IriTermSerializer to ensure it is serialized as an Iri
+              iriTermSerializer: const IriFullSerializer())
+          .addValue<String>(_ns('name'), instance.name)
+          .addValue<int>(_ns('age'), instance.age)
+          .addValueIfNotNull<TestAddress>(_ns('address'), instance.address)
           .build();
 }
 
@@ -353,9 +356,12 @@ class TestAddressMapper implements LocalResourceMapper<TestAddress> {
   }) =>
       context
           .resourceBuilder(BlankNodeTerm())
-          .iri(Rdf.type, _ns('Address').iri)
-          .literal(_ns('street'), instance.street)
-          .literal(_ns('city'), instance.city)
+          .addValue<String>(Rdf.type, _ns('Address').iri,
+              // String value would default to Literal, so we need to specify
+              // the IriTermSerializer to ensure it is serialized as an Iri
+              iriTermSerializer: const IriFullSerializer())
+          .addValue(_ns('street'), instance.street)
+          .addValue(_ns('city'), instance.city)
           .build();
 }
 
@@ -383,8 +389,10 @@ class TestCompanyMapper implements GlobalResourceMapper<TestCompany> {
   }) =>
       context
           .resourceBuilder(IriTerm(instance.id))
-          .iri(Rdf.type, _ns('Company').iri)
-          .literal(_ns('name'), instance.name)
-          .literal(_ns('foundedYear'), instance.foundedYear)
+          // IriTerm is automatically serialized as an IriTerm, we don't need to specify
+          // the IriTermSerializer
+          .addValue(Rdf.type, _ns('Company'))
+          .addValue(_ns('name'), instance.name)
+          .addValue(_ns('foundedYear'), instance.foundedYear)
           .build();
 }

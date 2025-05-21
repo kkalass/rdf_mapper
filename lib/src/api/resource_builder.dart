@@ -54,256 +54,70 @@ class ResourceBuilder<S extends RdfSubject> {
   ResourceBuilder(this._subject, this._service, {List<Triple>? initialTriples})
       : _triples = initialTriples ?? [];
 
-  /// Adds a constant object property to the resource.
-  ///
-  /// Use this method to add a property with a pre-created RDF term as an object.
-  /// Unlike other methods, this one takes a direct RdfObject instance rather than
-  /// a value that needs serialization.
-  ///
-  /// Example:
-  /// ```dart
-  /// builder.constant(Rdf.type, Foaf.Person);
-  /// builder.constant(Dc.format, LiteralTerm('text/html', datatype: Xsd.string));
-  /// ```
-  ///
-  /// Parameters:
-  /// - [predicate]: The predicate that defines the relationship.
-  /// - [object]: The RDF object term to add directly.
-  ///
-  /// Returns this builder for method chaining.
-  ResourceBuilder<S> constant(RdfPredicate predicate, RdfObject object) {
-    _triples.add(_service.constant(_subject, predicate, object));
+  ResourceBuilder<S> addValue<V>(
+    RdfPredicate predicate,
+    V value, {
+    LiteralTermSerializer<V>? literalTermSerializer,
+    IriTermSerializer<V>? iriTermSerializer,
+    ResourceSerializer<V>? resourceSerializer,
+  }) {
+    _triples.addAll(
+      _service.value(_subject, predicate, value,
+          literalTermSerializer: literalTermSerializer,
+          iriTermSerializer: iriTermSerializer,
+          resourceSerializer: resourceSerializer),
+    );
     return this;
   }
 
-  /// Adds multiple literal properties extracted from a source object.
-  ///
-  /// This method is useful when you need to extract multiple values from a complex object
-  /// and add them as separate literal properties.
-  ///
-  /// Example:
-  /// ```dart
-  /// // Extracts all tags from a post and adds them as DC:subject properties
-  /// builder.literalsFromInstance(Dc.subject, (post) => post.tags, blogPost);
-  /// ```
-  ///
-  /// Parameters:
-  /// - [predicate]: The predicate for the relationships.
-  /// - [toIterable]: Function that extracts the values from the source object.
-  /// - [instance]: The source object to extract values from.
-  /// - [serializer]: Optional custom serializer for the extracted values.
-  ///
-  /// Returns this builder for method chaining.
-  ResourceBuilder<S> literalsFromInstance<A, T>(
+  ResourceBuilder<S> addValueIfNotNull<V>(
+    RdfPredicate predicate,
+    V? value, {
+    LiteralTermSerializer<V>? literalTermSerializer,
+    IriTermSerializer<V>? iriTermSerializer,
+    ResourceSerializer<V>? resourceSerializer,
+  }) {
+    if (value == null) {
+      return this;
+    }
+    return addValue(predicate, value,
+        literalTermSerializer: literalTermSerializer,
+        iriTermSerializer: iriTermSerializer,
+        resourceSerializer: resourceSerializer);
+  }
+
+  ResourceBuilder<S> addValuesFromSource<A, T>(
     RdfPredicate predicate,
     Iterable<T> Function(A) toIterable,
     A instance, {
-    LiteralTermSerializer<T>? serializer,
+    LiteralTermSerializer<T>? literalTermSerializer,
+    IriTermSerializer<T>? iriTermSerializer,
+    ResourceSerializer<T>? resourceSerializer,
   }) {
     _triples.addAll(
-      _service.literalsFromInstance(
-        _subject,
-        predicate,
-        toIterable,
-        instance,
-        serializer: serializer,
-      ),
+      _service.valuesFromSource(_subject, predicate, toIterable, instance,
+          literalTermSerializer: literalTermSerializer,
+          iriTermSerializer: iriTermSerializer,
+          resourceSerializer: resourceSerializer),
     );
     return this;
   }
 
-  /// Adds multiple IRI properties extracted from a source object.
-  ///
-  /// This method is useful when you need to extract multiple values from a complex object
-  /// and add them as separate IRI references.
-  ///
-  /// Example:
-  /// ```dart
-  /// // Extracts all collaborators from a project and adds them as DC:contributor properties
-  /// builder.irisFromInstance(Dc.contributor, (project) => project.collaborators, currentProject);
-  /// ```
-  ///
-  /// Parameters:
-  /// - [predicate]: The predicate for the relationships.
-  /// - [toIterable]: Function that extracts the values from the source object.
-  /// - [instance]: The source object to extract values from.
-  /// - [serializer]: Optional custom serializer for the extracted values.
-  ///
-  /// Returns this builder for method chaining.
-  ResourceBuilder<S> irisFromInstance<A, T>(
-    RdfPredicate predicate,
-    Iterable<T> Function(A) toIterable,
-    A instance, {
-    IriTermSerializer<T>? serializer,
-  }) {
-    _triples.addAll(
-      _service.irisFromInstance(
-        _subject,
-        predicate,
-        toIterable,
-        instance,
-        serializer: serializer,
-      ),
-    );
-    return this;
-  }
-
-  /// Adds multiple child resources extracted from a source object.
-  ///
-  /// This method is useful when you need to extract multiple complex objects from a parent object
-  /// and serialize each as a separate linked resource.
-  ///
-  /// Example:
-  /// ```dart
-  /// // Extracts all chapters from a book and adds them as structured content
-  /// builder.childResourcesFromInstance(Schema.hasPart, (book) => book.chapters, currentBook);
-  /// ```
-  ///
-  /// Parameters:
-  /// - [predicate]: The predicate for the relationships.
-  /// - [toIterable]: Function that extracts the values from the source object.
-  /// - [instance]: The source object to extract values from.
-  /// - [serializer]: Optional custom serializer for the extracted values.
-  ///
-  /// Returns this builder for method chaining.
-  ResourceBuilder<S> childResourcesFromInstance<A, T>(
-    RdfPredicate predicate,
-    Iterable<T> Function(A) toIterable,
-    A instance, {
-    ResourceSerializer<T>? serializer,
-  }) {
-    _triples.addAll(
-      _service.childResourcesFromInstance(
-        _subject,
-        predicate,
-        toIterable,
-        instance,
-        serializer: serializer,
-      ),
-    );
-    return this;
-  }
-
-  /// Adds a literal property to the resource.
-  ///
-  /// Use this method to add a property with a literal value (strings, numbers,
-  /// dates, etc.) to the current subject. The value will be serialized to an
-  /// RDF literal term using the appropriate serializer.
-  ///
-  /// Example:
-  /// ```dart
-  /// builder.literal(Dc.title, 'The Title');
-  /// builder.literal(Foaf.age, 30);
-  /// ```
-  ///
-  /// Parameters:
-  /// - [predicate]: The predicate that defines the relationship.
-  /// - [value]: The value to be serialized as a literal.
-  /// - [serializer]: Optional custom serializer for the value.
-  ///
-  /// Returns this builder for method chaining.
-  ResourceBuilder<S> literal<V>(
-    RdfPredicate predicate,
-    V value, {
-    LiteralTermSerializer<V>? serializer,
-  }) {
-    _triples.add(
-      _service.literal(_subject, predicate, value, serializer: serializer),
-    );
-    return this;
-  }
-
-  /// Adds an IRI property to the resource.
-  ///
-  /// Use this method to add a property with an IRI value (referring to another
-  /// resource) to the current subject. The value will be serialized to an
-  /// RDF IRI term using the appropriate serializer.
-  ///
-  /// Example:
-  /// ```dart
-  /// builder.iri(Rdf.type, Foaf.Person);
-  /// builder.iri(Dc.relation, document);
-  /// ```
-  ///
-  /// Parameters:
-  /// - [predicate]: The predicate that defines the relationship.
-  /// - [value]: The value to be serialized as an IRI.
-  /// - [serializer]: Optional custom serializer for the value.
-  ///
-  /// Returns this builder for method chaining.
-  ResourceBuilder<S> iri<V>(
-    RdfPredicate predicate,
-    V value, {
-    IriTermSerializer<V>? serializer,
-  }) {
-    _triples.add(
-      _service.iri(_subject, predicate, value, serializer: serializer),
-    );
-    return this;
-  }
-
-  /// Adds a child resource to this resource.
-  ///
-  /// Use this method to add a nested object as a property value. The child object
-  /// will be serialized to its own set of RDF triples, and connected to this
-  /// subject via the specified predicate.
-  ///
-  /// This is ideal for complex object structures and relationships between entities.
-  ///
-  /// Example:
-  /// ```dart
-  /// builder.childResource(Foaf.address, address);
-  /// builder.childResource(Schema.author, person);
-  /// ```
-  ///
-  /// Parameters:
-  /// - [predicate]: The predicate that defines the relationship.
-  /// - [value]: The object to be serialized as a linked resource.
-  /// - [serializer]: Optional custom serializer for the object.
-  ///
-  /// Returns this builder for method chaining.
-  ResourceBuilder<S> childResource<V>(
-    RdfPredicate predicate,
-    V value, {
-    ResourceSerializer<V>? serializer,
-  }) {
-    _triples.addAll(
-      _service.childResource(_subject, predicate, value,
-          serializer: serializer),
-    );
-    return this;
-  }
-
-  /// Adds multiple child resources to this resource.
-  ///
-  /// Use this method to add a collection of objects as related resources. Each object
-  /// in the collection will be serialized to its own set of RDF triples and linked
-  /// to the current subject via the specified predicate. Note that in RDF
-  /// terms this corresponds to multi-value properties, not to collections or lists.
-  ///
-  /// Example:
-  /// ```dart
-  /// builder.childResources(Foaf.knows, friends);
-  /// builder.childResources(Schema.author, authors);
-  /// ```
-  ///
-  /// Parameters:
-  /// - [predicate]: The predicate that defines the relationships.
-  /// - [values]: The collection of objects to be serialized as linked resources.
-  /// - [serializer]: Optional custom serializer for the objects.
-  ///
-  /// Returns this builder for method chaining.
-  ResourceBuilder<S> childResources<V>(
+  ResourceBuilder<S> addValues<V>(
     RdfPredicate predicate,
     Iterable<V> values, {
-    ResourceSerializer<V>? serializer,
+    LiteralTermSerializer<S>? literalTermSerializer,
+    IriTermSerializer<S>? iriTermSerializer,
+    ResourceSerializer<S>? resourceSerializer,
   }) {
     _triples.addAll(
-      _service.childResources(
+      _service.values(
         _subject,
         predicate,
         values,
-        serializer: serializer,
+        literalTermSerializer: literalTermSerializer,
+        iriTermSerializer: iriTermSerializer,
+        resourceSerializer: resourceSerializer,
       ),
     );
     return this;
@@ -338,177 +152,6 @@ class ResourceBuilder<S extends RdfSubject> {
     _triples.addAll(
       _service.childResourceMap(_subject, predicate, instance, entrySerializer),
     );
-    return this;
-  }
-
-  /// Adds multiple literal properties to this resource.
-  ///
-  /// Use this method to add a collection of literal values (strings, numbers, dates, etc.)
-  /// with the same predicate to the current subject. Each value will be serialized to
-  /// an RDF literal term using the appropriate serializer.
-  ///
-  /// Example:
-  /// ```dart
-  /// builder.literals(Dc.subject, ['Science', 'Physics', 'Quantum Mechanics']);
-  /// builder.literals(Schema.keywords, tags);
-  /// ```
-  ///
-  /// Parameters:
-  /// - [predicate]: The predicate for the relationships.
-  /// - [values]: The collection of values to be serialized as literals.
-  /// - [serializer]: Optional custom serializer for the values.
-  ///
-  /// Returns this builder for method chaining.
-  ResourceBuilder<S> literals<V>(
-    RdfPredicate predicate,
-    Iterable<V> values, {
-    LiteralTermSerializer<V>? serializer,
-  }) {
-    _triples.addAll(
-      _service.literals(_subject, predicate, values, serializer: serializer),
-    );
-    return this;
-  }
-
-  /// Adds multiple IRI properties to this resource.
-  ///
-  /// Use this method to add a collection of IRI values (referring to other resources)
-  /// with the same predicate to the current subject. Each value will be serialized to
-  /// an RDF IRI term using the appropriate serializer.
-  ///
-  /// Example:
-  /// ```dart
-  /// builder.iris(Owl.sameAs, [otherResourceId1, otherResourceId2]);
-  /// builder.iris(Foaf.interest, interests);
-  /// ```
-  ///
-  /// Parameters:
-  /// - [predicate]: The predicate for the relationships.
-  /// - [values]: The collection of values to be serialized as IRIs.
-  /// - [serializer]: Optional custom serializer for the values.
-  ///
-  /// Returns this builder for method chaining.
-  ResourceBuilder<S> iris<V>(
-    RdfPredicate predicate,
-    Iterable<V> values, {
-    IriTermSerializer<V>? serializer,
-  }) {
-    _triples.addAll(
-      _service.iris(_subject, predicate, values, serializer: serializer),
-    );
-    return this;
-  }
-
-  /// Adds a literal property to the resource if the value is not null.
-  ///
-  /// This is a convenience method that only adds the property if the value exists.
-  /// It's particularly useful when working with optional data.
-  ///
-  /// Example:
-  /// ```dart
-  /// builder.literalIfNotNull(Dc.description, description);
-  /// builder.literalIfNotNull(Schema.alternateName, nickname);
-  /// ```
-  ///
-  /// Parameters:
-  /// - [predicate]: The predicate that defines the relationship.
-  /// - [value]: The optional value to be serialized as a literal.
-  /// - [serializer]: Optional custom serializer for the value.
-  ///
-  /// Returns this builder for method chaining.
-  ResourceBuilder<S> literalIfNotNull<V>(
-    RdfPredicate predicate,
-    V? value, {
-    LiteralTermSerializer<V>? serializer,
-  }) {
-    if (value != null) {
-      literal(predicate, value, serializer: serializer);
-    }
-    return this;
-  }
-
-  /// Adds an IRI property to the resource if the value is not null.
-  ///
-  /// This is a convenience method that only adds the property if the value exists.
-  /// It's particularly useful when working with optional references to other resources.
-  ///
-  /// Example:
-  /// ```dart
-  /// builder.iriIfNotNull(Foaf.homepage, website);
-  /// builder.iriIfNotNull(Dc.isPartOf, parentResource);
-  /// ```
-  ///
-  /// Parameters:
-  /// - [predicate]: The predicate that defines the relationship.
-  /// - [value]: The optional value to be serialized as an IRI.
-  /// - [serializer]: Optional custom serializer for the value.
-  ///
-  /// Returns this builder for method chaining.
-  ResourceBuilder<S> iriIfNotNull<V>(
-    RdfPredicate predicate,
-    V? value, {
-    IriTermSerializer<V>? serializer,
-  }) {
-    if (value != null) {
-      iri(predicate, value, serializer: serializer);
-    }
-    return this;
-  }
-
-  /// Adds a child resource to this resource if the value is not null.
-  ///
-  /// This is a convenience method that only adds the nested object if it exists.
-  /// It's particularly useful when working with optional complex properties.
-  ///
-  /// Example:
-  /// ```dart
-  /// builder.childResourceIfNotNull(Foaf.address, optionalAddress);
-  /// builder.childResourceIfNotNull(Schema.contactPoint, contactInfo);
-  /// ```
-  ///
-  /// Parameters:
-  /// - [predicate]: The predicate that defines the relationship.
-  /// - [value]: The optional object to be serialized as a linked resource.
-  /// - [serializer]: Optional custom serializer for the object.
-  ///
-  /// Returns this builder for method chaining.
-  ResourceBuilder<S> childResourceIfNotNull<V>(
-    RdfPredicate predicate,
-    V? value, {
-    ResourceSerializer<V>? serializer,
-  }) {
-    if (value != null) {
-      childResource(predicate, value, serializer: serializer);
-    }
-    return this;
-  }
-
-  /// Adds multiple child resources to this resource if the collection is not null and not empty.
-  ///
-  /// This is a convenience method that only adds the collection of objects if it exists
-  /// and contains at least one element. It's particularly useful when working with
-  /// optional collections that should be excluded entirely when empty.
-  ///
-  /// Example:
-  /// ```dart
-  /// builder.childResourcesIfNotEmpty(Foaf.knows, optionalFriendsList);
-  /// builder.childResourcesIfNotEmpty(Schema.author, articleAuthors);
-  /// ```
-  ///
-  /// Parameters:
-  /// - [predicate]: The predicate that defines the relationships.
-  /// - [values]: The optional collection of objects to be serialized as linked resources.
-  /// - [serializer]: Optional custom serializer for the objects.
-  ///
-  /// Returns this builder for method chaining.
-  ResourceBuilder<S> childResourcesIfNotEmpty<V>(
-    RdfPredicate predicate,
-    Iterable<V>? values, {
-    ResourceSerializer<V>? serializer,
-  }) {
-    if (values != null && values.isNotEmpty) {
-      childResources(predicate, values, serializer: serializer);
-    }
     return this;
   }
 

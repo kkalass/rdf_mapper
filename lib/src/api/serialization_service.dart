@@ -6,82 +6,32 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 /// This service encapsulates the low-level operations needed during RDF serialization.
 /// It provides the foundation for both direct serialization and the Builder API.
 abstract class SerializationService {
-  /// Creates a triple with a constant object.
-  Triple constant(RdfSubject subject, RdfPredicate predicate, RdfObject object);
-
-  /// Creates a triple with a literal object.
-  Triple literal<T>(
+  List<Triple> value<T>(
     RdfSubject subject,
     RdfPredicate predicate,
     T instance, {
-    LiteralTermSerializer<T>? serializer,
+    LiteralTermSerializer<T>? literalTermSerializer,
+    IriTermSerializer<T>? iriTermSerializer,
+    ResourceSerializer<T>? resourceSerializer,
   });
 
-  /// Creates triples for multiple literal objects derived from a source object.
-  List<Triple> literalsFromInstance<A, T>(
+  List<Triple> valuesFromSource<A, T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> Function(A) toIterable,
     A instance, {
-    LiteralTermSerializer<T>? serializer,
+    LiteralTermSerializer<T>? literalTermSerializer,
+    IriTermSerializer<T>? iriTermSerializer,
+    ResourceSerializer<T>? resourceSerializer,
   });
 
-  /// Creates triples for a collection of literal objects.
-  List<Triple> literals<T>(
+  List<Triple> values<T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> instance, {
-    LiteralTermSerializer<T>? serializer,
-  });
-
-  /// Creates a triple with an IRI object.
-  Triple iri<T>(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    T instance, {
-    IriTermSerializer<T>? serializer,
-  });
-
-  /// Creates triples for multiple IRI objects derived from a source object.
-  List<Triple> irisFromInstance<A, T>(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    Iterable<T> Function(A) toIterable,
-    A instance, {
-    IriTermSerializer<T>? serializer,
-  });
-
-  /// Creates triples for a collection of IRI objects.
-  List<Triple> iris<T>(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    Iterable<T> instance, {
-    IriTermSerializer<T>? serializer,
-  });
-
-  /// Creates triples for a child resources linked to this subject.
-  List<Triple> childResource<T>(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    T instance, {
-    ResourceSerializer<T>? serializer,
-  });
-
-  /// Creates triples for multiple child resources derived from a source object.
-  List<Triple> childResourcesFromInstance<A, T>(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    Iterable<T> Function(A p1) toIterable,
-    A instance, {
-    ResourceSerializer<T>? serializer,
-  });
-
-  /// Creates triples for a collection of child nodes.
-  List<Triple> childResources<T>(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    Iterable<T> instance, {
-    ResourceSerializer<T>? serializer,
+    LiteralTermSerializer<T>? literalTermSerializer,
+    IriTermSerializer<T>? iriTermSerializer,
+    ResourceSerializer<T>? resourceSerializer,
   });
 
   /// Creates triples for a map of child nodes.
@@ -92,7 +42,7 @@ abstract class SerializationService {
     ResourceSerializer<MapEntry<K, V>> entrySerializer,
   );
 
-  /// Serializes an object to an RDF node.
+  /// Serializes an object to a RDF resource.
   ///
   /// @param instance The object to serialize
   /// @param serializer Optional serializer for the object type

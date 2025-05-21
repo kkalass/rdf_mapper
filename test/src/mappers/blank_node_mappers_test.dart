@@ -45,8 +45,8 @@ class ChapterMapper implements LocalResourceMapper<Chapter> {
   }) {
     return context
         .resourceBuilder(BlankNodeTerm())
-        .literal(titlePredicate, chapter.title)
-        .literal<int>(numberPredicate, chapter.number)
+        .addValue(titlePredicate, chapter.title)
+        .addValue<int>(numberPredicate, chapter.number)
         .build();
   }
 }
@@ -261,7 +261,7 @@ class AnonymousMapper implements LocalResourceMapper<AnonymousData> {
   }) {
     return context
         .resourceBuilder(BlankNodeTerm())
-        .literal(contentPredicate, data.content)
+        .addValue(contentPredicate, data.content)
         .build();
   }
 }
@@ -302,8 +302,8 @@ class DocumentMapper implements GlobalResourceMapper<Document> {
     // Use the childResources method to properly handle the chapters
     return context
         .resourceBuilder(IriTerm(docId))
-        .literal(titlePredicate, document.title)
-        .childResources(chaptersPredicate, document.chapters)
+        .addValue(titlePredicate, document.title)
+        .addValues(chaptersPredicate, document.chapters)
         .build();
   }
 }

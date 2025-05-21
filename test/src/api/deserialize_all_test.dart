@@ -105,9 +105,9 @@ class PersonMapper implements GlobalResourceMapper<Person> {
   }) {
     return context
         .resourceBuilder(IriTerm(value.id))
-        .literal(namePredicate, value.name)
-        .childResourceIfNotNull(addressPredicate, value.address)
-        .childResources(contactPredicate, value.contacts)
+        .addValue(namePredicate, value.name)
+        .addValueIfNotNull(addressPredicate, value.address)
+        .addValues(contactPredicate, value.contacts)
         .build();
   }
 }
@@ -137,8 +137,8 @@ class AddressMapper implements LocalResourceMapper<Address> {
   }) {
     return context
         .resourceBuilder(BlankNodeTerm())
-        .literal(streetPredicate, value.street)
-        .literal(cityPredicate, value.city)
+        .addValue(streetPredicate, value.street)
+        .addValue(cityPredicate, value.city)
         .build();
   }
 }
@@ -167,8 +167,8 @@ class ContactMapper implements GlobalResourceMapper<Contact> {
   }) {
     return context
         .resourceBuilder(IriTerm(value.id))
-        .literal(typePredicate, value.type)
-        .literal(valuePredicate, value.value)
+        .addValue(typePredicate, value.type)
+        .addValue(valuePredicate, value.value)
         .build();
   }
 }
@@ -198,8 +198,8 @@ class StandaloneAddressMapper implements GlobalResourceMapper<Address> {
   }) {
     return context
         .resourceBuilder(IriTerm('http://example.org/address/1'))
-        .literal(streetPredicate, value.street)
-        .literal(cityPredicate, value.city)
+        .addValue(streetPredicate, value.street)
+        .addValue(cityPredicate, value.city)
         .build();
   }
 }

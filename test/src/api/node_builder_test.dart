@@ -1,7 +1,5 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
-import 'package:rdf_mapper/src/api/serialization_context.dart';
-import 'package:rdf_mapper/src/api/serializer.dart';
+import 'package:rdf_mapper/rdf_mapper.dart';
 import 'package:rdf_mapper/src/context/serialization_context_impl.dart';
 import 'package:rdf_vocabularies/rdf.dart';
 import 'package:test/test.dart';
@@ -23,7 +21,7 @@ void main() {
       final object = IriTerm('http://example.org/object');
 
       final (_, triples) =
-          context.resourceBuilder(subject).constant(predicate, object).build();
+          context.resourceBuilder(subject).addValue(predicate, object).build();
 
       expect(triples.length, equals(1));
       expect(triples.first, equals(Triple(subject, predicate, object)));
@@ -38,7 +36,7 @@ void main() {
 
         final (_, triples) = context
             .resourceBuilder(subject)
-            .literalsFromInstance(predicate, (c) => c.tags, container)
+            .addValuesFromSource(predicate, (c) => c.tags, container)
             .build();
 
         expect(triples.length, equals(3));
@@ -72,7 +70,11 @@ void main() {
 
         final (_, triples) = context
             .resourceBuilder(subject)
-            .irisFromInstance(predicate, (c) => c.relatedIds, container)
+            .addValuesFromSource<TestContainer, String>(
+                predicate, (c) => c.relatedIds, container,
+                // String values would default to Literal, so we need to specify
+                // the IriTermSerializer to ensure it is serialized as an Iri
+                iriTermSerializer: const IriFullSerializer())
             .build();
 
         expect(triples.length, equals(3));
@@ -113,7 +115,7 @@ void main() {
 
         final (_, triples) = context
             .resourceBuilder(subject)
-            .childResourcesFromInstance(predicate, (c) => c.people, container)
+            .addValuesFromSource(predicate, (c) => c.people, container)
             .build();
 
         // Should have:
@@ -174,22 +176,24 @@ void main() {
 
       final (_, triples) = context
           .resourceBuilder(subject)
-          .literal(IriTerm('http://example.org/title'), 'Test Resource')
-          .constant(
+          .addValue(IriTerm('http://example.org/title'), 'Test Resource')
+          .addValue(
             IriTerm('http://example.org/type'),
             IriTerm('http://example.org/Container'),
           )
-          .literalsFromInstance(
+          .addValuesFromSource(
             IriTerm('http://example.org/tag'),
             (c) => c.tags,
             container,
           )
-          .irisFromInstance(
-            IriTerm('http://example.org/related'),
-            (c) => c.relatedIds,
-            container,
-          )
-          .childResourcesFromInstance(
+          .addValuesFromSource<TestContainer, String>(
+              IriTerm('http://example.org/related'),
+              (c) => c.relatedIds,
+              container,
+              // String values would default to Literal, so we need to specify
+              // the IriTermSerializer to ensure it is serialized as an Iri
+              iriTermSerializer: const IriFullSerializer())
+          .addValuesFromSource(
             IriTerm('http://example.org/hasMember'),
             (c) => c.people,
             container,
@@ -235,6 +239,6 @@ class TestPersonSerializer implements GlobalResourceSerializer<TestPerson> {
   }) =>
       context
           .resourceBuilder(IriTerm(value.id))
-          .literal(IriTerm('http://xmlns.com/foaf/0.1/name'), value.name)
+          .addValue(IriTerm('http://xmlns.com/foaf/0.1/name'), value.name)
           .build();
 }
