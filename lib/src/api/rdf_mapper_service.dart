@@ -37,7 +37,7 @@ final class RdfMapperService {
   /// The service requires a registry that contains the mappers needed for
   /// serialization and deserialization operations.
   ///
-  /// @param registry The registry containing mappers for different types
+  /// [registry] The registry containing mappers for different types
   RdfMapperService({required RdfMapperRegistry registry})
       : _registry = registry;
 
@@ -46,7 +46,7 @@ final class RdfMapperService {
   /// This property allows direct access to the mapper registry, enabling
   /// registration of custom mappers for specific types.
   ///
-  /// @return The mapper registry used by this service
+  /// Returns the mapper registry used by this service.
   RdfMapperRegistry get registry => _registry;
 
   /// Deserializes an object of type [T] from an RDF graph, using a specific subject.
@@ -75,11 +75,13 @@ final class RdfMapperService {
   /// );
   /// ```
   ///
-  /// @param graph The RDF graph containing the data
-  /// @param rdfSubject The subject identifier to deserialize
-  /// @param register Optional callback to register temporary mappers
-  /// @return The deserialized object of type T
-  /// @throws DeserializerNotFoundException if no deserializer is found for type T
+  /// [graph] The RDF graph containing the data
+  /// [rdfSubject] The subject identifier to deserialize
+  /// [register] Optional callback to register temporary mappers
+  ///
+  /// Returns the deserialized object of type T
+  ///
+  /// Throws [DeserializerNotFoundException] if no deserializer is found for type T
   T deserializeBySubject<T>(
     RdfGraph graph,
     RdfSubject rdfSubject, {
@@ -113,11 +115,13 @@ final class RdfMapperService {
   /// final person = service.deserialize<Person>(graph);
   /// ```
   ///
-  /// @param graph The RDF graph to deserialize from
-  /// @param register Optional callback to register temporary mappers
-  /// @return The deserialized object of type T
-  /// @throws DeserializationException if no subject or multiple subjects are found
-  /// @throws DeserializerNotFoundException if no deserializer is found for the subject
+  /// [graph] The RDF graph to deserialize from
+  /// [register] Optional callback to register temporary mappers
+  ///
+  /// Returns the deserialized object of type T
+  ///
+  /// Throws [DeserializationException] if no subject or multiple subjects are found
+  /// Throws [DeserializerNotFoundException] if no deserializer is found for the subject
   T deserialize<T>(
     RdfGraph graph, {
     void Function(RdfMapperRegistry registry)? register,
@@ -156,10 +160,12 @@ final class RdfMapperService {
   /// final organizations = objects.whereType<Organization>().toList();
   /// ```
   ///
-  /// @param graph The RDF graph to deserialize from
-  /// @param register Optional callback to register temporary mappers
-  /// @return A list of deserialized objects (potentially of different types)
-  /// @throws DeserializerNotFoundException if a deserializer is missing for any subject
+  /// [graph] The RDF graph to deserialize from
+  /// [register] Optional callback to register temporary mappers
+  ///
+  /// Returns a list of deserialized objects (potentially of different types)
+  ///
+  /// Throws [DeserializerNotFoundException] if a deserializer is missing for any subject
   List<Object> deserializeAll(
     RdfGraph graph, {
     void Function(RdfMapperRegistry registry)? register,
@@ -270,10 +276,12 @@ final class RdfMapperService {
   /// final graph = service.serialize(person);
   /// ```
   ///
-  /// @param instance The object to convert
-  /// @param register Optional callback to register temporary mappers
-  /// @return RDF graph representing the object
-  /// @throws SerializerNotFoundException if no serializer is registered for the object's type
+  /// [instance] The object to convert
+  /// [register] Optional callback to register temporary mappers
+  ///
+  /// Returns RDF graph representing the object
+  ///
+  /// Throws [SerializerNotFoundException] if no serializer is registered for the object's type
   RdfGraph serialize<T>(
     T instance, {
     void Function(RdfMapperRegistry registry)? register,
@@ -305,10 +313,12 @@ final class RdfMapperService {
   /// final graph = service.serializeList(people);
   /// ```
   ///
-  /// @param instances The list of objects to serialize
-  /// @param register Optional callback to register temporary mappers
-  /// @return A combined RDF graph containing all objects' triples
-  /// @throws SerializerNotFoundException if no serializer is found for any object's type
+  /// [instances] The list of objects to serialize
+  /// [register] Optional callback to register temporary mappers
+  ///
+  /// Returns a combined RDF graph containing all objects' triples
+  ///
+  /// Throws [SerializerNotFoundException] if no serializer is found for any object's type
   RdfGraph serializeList<T>(
     Iterable<T> instances, {
     void Function(RdfMapperRegistry registry)? register,
