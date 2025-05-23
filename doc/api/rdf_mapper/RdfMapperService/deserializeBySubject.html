@@ -91,11 +91,11 @@ final person = service.deserializeBySubject&lt;Person&gt;(
   }
 );
 </code></pre>
-<p>@param graph The RDF graph containing the data
-@param rdfSubject The subject identifier to deserialize
-@param register Optional callback to register temporary mappers
-@return The deserialized object of type T
-@throws DeserializerNotFoundException if no deserializer is found for type T</p>
+<p><code>graph</code> The RDF graph containing the data
+<code>rdfSubject</code> The subject identifier to deserialize
+<code>register</code> Optional callback to register temporary mappers</p>
+<p>Returns the deserialized object of type T</p>
+<p>Throws <a href="../../rdf_mapper/DeserializerNotFoundException-class.html">DeserializerNotFoundException</a> if no deserializer is found for type T</p>
 </section>
 
 

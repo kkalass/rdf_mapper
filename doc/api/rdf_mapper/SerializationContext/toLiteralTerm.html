@@ -66,6 +66,14 @@
 
     </section>
     
+<section class="desc markdown">
+  <p>Converts a Dart value to an RDF literal term.</p>
+<p>If <code>serializer</code> is provided, it will be used to convert the value.
+Otherwise, looks up a serializer based on the runtime type of <code>value</code>.</p>
+<p>Throws <a href="https://api.flutter.dev/flutter/dart-core/ArgumentError-class.html">ArgumentError</a> if <code>value</code> is null.</p>
+<p>This is a low-level method typically used by <a href="../../rdf_mapper/LiteralTermMapper-class.html">LiteralTermMapper</a> implementations
+to delegate to existing serializers.</p>
+</section>
 
 
     

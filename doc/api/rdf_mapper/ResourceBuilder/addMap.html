@@ -73,10 +73,10 @@
 the keys and values need to be serialized as part of the RDF graph.</p>
 <p>Example:</p>
 <pre class="language-dart"><code class="language-dart">// Serializes a metadata dictionary as linked resources
-builder.childResourceMap(
+builder.addMap(
   Schema.additionalProperty,
   metadata,
-  MetadataEntrySerializer(),
+  resourceSerializer: MetadataEntrySerializer(),
 );
 </code></pre>
 <p>Parameters:</p>

@@ -79,11 +79,11 @@ For graphs with multiple subjects, use <a href="../../rdf_mapper/RdfMapperServic
 <pre class="language-dart"><code class="language-dart">// Deserialize a single person from a graph
 final person = service.deserialize&lt;Person&gt;(graph);
 </code></pre>
-<p>@param graph The RDF graph to deserialize from
-@param register Optional callback to register temporary mappers
-@return The deserialized object of type T
-@throws DeserializationException if no subject or multiple subjects are found
-@throws DeserializerNotFoundException if no deserializer is found for the subject</p>
+<p><code>graph</code> The RDF graph to deserialize from
+<code>register</code> Optional callback to register temporary mappers</p>
+<p>Returns the deserialized object of type T</p>
+<p>Throws <a href="../../rdf_mapper/DeserializationException-class.html">DeserializationException</a> if no subject or multiple subjects are found
+Throws <a href="../../rdf_mapper/DeserializerNotFoundException-class.html">DeserializerNotFoundException</a> if no deserializer is found for the subject</p>
 </section>
 
 

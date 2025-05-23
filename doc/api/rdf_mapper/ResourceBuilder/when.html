@@ -75,8 +75,8 @@ making it powerful for creating conditional RDF structures.</p>
 <p>Example:</p>
 <pre class="language-dart"><code class="language-dart">builder.when(
   person.isActive,
-  (b) =&gt; b.literal(Schema.status, 'active')
-         .iri(Foaf.member, organization)
+  (b) =&gt; b.addValue(Schema.status, 'active')
+          .addValue(Foaf.member, organization)
 );
 </code></pre>
 <p>Parameters:</p>

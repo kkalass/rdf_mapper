@@ -58,23 +58,12 @@
 
     
 <section class="desc markdown">
-  <p>Context for serialization operations in the RDF mapping process.</p>
-<p>The serialization context provides a unified access point to all services and state
-needed during the conversion of Dart objects to RDF representations. It maintains
-references to the current graph being built and offers utility methods for serializing
-complex object structures.</p>
-<p>Key responsibilities:</p>
-<ul>
-<li>Track the current state of the serialization process</li>
-<li>Prevent infinite recursion by tracking already serialized objects</li>
-<li>Provide access to utility methods for creating and manipulating resources</li>
-<li>Enable a consistent environment for serializer implementations</li>
-</ul>
-<p>The context follows the Ambient Context pattern, providing relevant services
-to serializers without requiring explicit passing of dependencies through
-deep call hierarchies.</p>
-<p>This abstraction is particularly valuable when serializing complex object graphs
-that may contain circular references or shared objects.</p>
+  <p>Core interface for serializing Dart objects to RDF.</p>
+<p>The <a href="../rdf_mapper/SerializationContext-class.html">SerializationContext</a> provides methods to convert Dart objects into RDF
+terms and resources. It manages the serialization process and maintains
+necessary state to handle complex object graphs.</p>
+<p>This is typically used by <a href="../rdf_mapper/GlobalResourceMapper-class.html">GlobalResourceMapper</a> or <a href="../rdf_mapper/LocalResourceMapper-class.html">LocalResourceMapper</a> implementations to convert
+domain objects to their RDF representation.</p>
 </section>
 
 
@@ -151,7 +140,7 @@ that may contain circular references or shared objects.</p>
 
 </dt>
 <dd>
-  Creates a builder for fluent RDF resource construction.
+  Creates a <a href="../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder</a> for constructing RDF resources.
   
 
 </dd>
@@ -164,7 +153,7 @@ that may contain circular references or shared objects.</p>
 
 </dt>
 <dd>
-  
+  Converts a Dart value to an RDF literal term.
   
 
 </dd>

@@ -9,7 +9,7 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 /// terms and resources. It manages the serialization process and maintains
 /// necessary state to handle complex object graphs.
 ///
-/// This is typically used by [ResourceMapper] implementations to convert
+/// This is typically used by [GlobalResourceMapper] or [LocalResourceMapper] implementations to convert
 /// domain objects to their RDF representation.
 abstract class SerializationContext {
   /// Creates a [ResourceBuilder] for constructing RDF resources.

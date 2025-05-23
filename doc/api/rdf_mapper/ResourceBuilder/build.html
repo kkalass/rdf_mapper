@@ -70,7 +70,7 @@
 and an unmodifiable list of all the triples that have been created.</p>
 <p>Example:</p>
 <pre class="language-dart"><code class="language-dart">final (person, triples) = builder
-  .literal(Foaf.name, 'John Doe')
+  .addValue(Foaf.name, 'John Doe')
   .build();
 </code></pre>
 <p>Returns a tuple containing the subject and all generated triples.</p>

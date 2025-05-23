@@ -84,10 +84,10 @@ allowing for dynamic, per-call configuration without affecting the global regist
 <pre class="language-dart"><code class="language-dart">final person = Person(id: 'http://example.org/person/1', name: 'John Doe');
 final graph = service.serialize(person);
 </code></pre>
-<p>@param instance The object to convert
-@param register Optional callback to register temporary mappers
-@return RDF graph representing the object
-@throws SerializerNotFoundException if no serializer is registered for the object's type</p>
+<p><code>instance</code> The object to convert
+<code>register</code> Optional callback to register temporary mappers</p>
+<p>Returns RDF graph representing the object</p>
+<p>Throws <a href="../../rdf_mapper/SerializerNotFoundException-class.html">SerializerNotFoundException</a> if no serializer is registered for the object's type</p>
 </section>
 
 

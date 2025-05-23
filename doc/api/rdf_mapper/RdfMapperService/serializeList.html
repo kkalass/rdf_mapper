@@ -78,10 +78,10 @@ a single coherent graph, maintaining any relationships between the objects.</p>
 <pre class="language-dart"><code class="language-dart">final people = [person1, person2, person3];
 final graph = service.serializeList(people);
 </code></pre>
-<p>@param instances The list of objects to serialize
-@param register Optional callback to register temporary mappers
-@return A combined RDF graph containing all objects' triples
-@throws SerializerNotFoundException if no serializer is found for any object's type</p>
+<p><code>instances</code> The list of objects to serialize
+<code>register</code> Optional callback to register temporary mappers</p>
+<p>Returns a combined RDF graph containing all objects' triples</p>
+<p>Throws <a href="../../rdf_mapper/SerializerNotFoundException-class.html">SerializerNotFoundException</a> if no serializer is found for any object's type</p>
 </section>
 
 

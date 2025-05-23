@@ -86,10 +86,10 @@ final objects = service.deserializeAll(graph);
 final people = objects.whereType&lt;Person&gt;().toList();
 final organizations = objects.whereType&lt;Organization&gt;().toList();
 </code></pre>
-<p>@param graph The RDF graph to deserialize from
-@param register Optional callback to register temporary mappers
-@return A list of deserialized objects (potentially of different types)
-@throws DeserializerNotFoundException if a deserializer is missing for any subject</p>
+<p><code>graph</code> The RDF graph to deserialize from
+<code>register</code> Optional callback to register temporary mappers</p>
+<p>Returns a list of deserialized objects (potentially of different types)</p>
+<p>Throws <a href="../../rdf_mapper/DeserializerNotFoundException-class.html">DeserializerNotFoundException</a> if a deserializer is missing for any subject</p>
 </section>
 
 
