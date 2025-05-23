@@ -5,26 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.0] - 2025-05-22
+## [0.7.0] - 2025-05-23
 
 ### Changed
 
 - **Breaking Change** Simplified `ResourceBuilder` and related classes to have only `addValue`, `addValues`, `addValuesFromSource`, `addValueIfNotNull` instead of duplicating those for iri/literal/resource
 
-## [0.6.2] - 2025-05-22
+## [0.6.2] - 2025-05-20
 
 ### Changed
 
 - **Breaking Change** `childNode` -> `childResource` and related.
 - **Breaking Change** `fromRdfNode` -> `fromRdfResource` and `toRdfNode` -> `toRdfResource`. Hopefully this was the last wrong usage of the term "node"
 
-## [0.6.1] - 2025-05-22
+## [0.6.1] - 2025-05-20
 
 ### Changed
 
 - **Breaking Change** `NodeSerializer` -> `ResourceSerializer`
 
-## [0.6.0] - 2025-05-22
+## [0.6.0] - 2025-05-20
 
 ### Changed
 
@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Breaking Change** Renamed `BlankNodeDeserializer` to `LocalResourceDeserializer` and `IriNodeDeserializer` to `GlobalResourceDeserializer` as well as `BlankNodeSerializer` to ` LocalResourceSerializer` and `IriNodeSerializer` to `GlobalResourceSerializer`
 - **Breaking Change** Renamed `getList` and `literalList` etc. to make it clearer that those are actually not mapped to dart Lists, but merely to multi-value predicates (e.g. mutliple triples with the same subject and predicate). Also changed the type of those from List to Iterable.
 
-## [0.5.0] - 2025-05-22
+## [0.5.0] - 2025-05-20
 
 ### Changed
 
