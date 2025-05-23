@@ -498,7 +498,7 @@ final class RdfMapper {
   ///   @override
   ///   (IriTerm, List<Triple>) toRdfResource(Person instance, SerializationContext context, {RdfSubject? parentSubject}) {
   ///     return context.resourceBuilder(IriTerm(instance.id))
-  ///       .literal(FoafPerson.name, instance.name)
+  ///       .addValue(FoafPerson.name, instance.name)
   ///       .build();
   ///   }
   ///

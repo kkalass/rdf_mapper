@@ -74,17 +74,17 @@ the code for creating RDF structures more readable and maintainable.</p>
 <p>Basic example:</p>
 <pre class="language-dart"><code class="language-dart">final (subject, triples) = context
     .resourceBuilder(IriTerm('http://example.org/resource'))
-    .literal(Dc.title, 'The Title')
-    .literal(Dc.creator, 'The Author')
+    .addValue(Dc.title, 'The Title')
+    .addValue(Dc.creator, 'The Author')
     .build();
 </code></pre>
 <p>More complex example with nested objects:</p>
 <pre class="language-dart"><code class="language-dart">final (person, triples) = context
     .resourceBuilder(IriTerm('http://example.org/person/1'))
-    .literal(Foaf.name, 'John Doe')
-    .literal(Foaf.age, 30)
-    .childResource(Foaf.address, address)
-    .childResources(Foaf.knows, friends)
+    .addValue(Foaf.name, 'John Doe')
+    .addValue(Foaf.age, 30)
+    .addValue(Foaf.address, address)
+    .addValues(Foaf.knows, friends)
     .build();
 </code></pre>
 </section>

@@ -1,48 +1,42 @@
 import 'package:rdf_core/rdf_core.dart';
+import 'package:rdf_mapper/src/api/mapper.dart';
 import 'package:rdf_mapper/src/api/resource_builder.dart';
 import 'package:rdf_mapper/src/api/serializer.dart';
 
-/// Context for serialization operations in the RDF mapping process.
+/// Core interface for serializing Dart objects to RDF.
 ///
-/// The serialization context provides a unified access point to all services and state
-/// needed during the conversion of Dart objects to RDF representations. It maintains
-/// references to the current graph being built and offers utility methods for serializing
-/// complex object structures.
+/// The [SerializationContext] provides methods to convert Dart objects into RDF
+/// terms and resources. It manages the serialization process and maintains
+/// necessary state to handle complex object graphs.
 ///
-/// Key responsibilities:
-/// - Track the current state of the serialization process
-/// - Prevent infinite recursion by tracking already serialized objects
-/// - Provide access to utility methods for creating and manipulating resources
-/// - Enable a consistent environment for serializer implementations
-///
-/// The context follows the Ambient Context pattern, providing relevant services
-/// to serializers without requiring explicit passing of dependencies through
-/// deep call hierarchies.
-///
-/// This abstraction is particularly valuable when serializing complex object graphs
-/// that may contain circular references or shared objects.
+/// This is typically used by [ResourceMapper] implementations to convert
+/// domain objects to their RDF representation.
 abstract class SerializationContext {
-  /// Creates a builder for fluent RDF resource construction.
+  /// Creates a [ResourceBuilder] for constructing RDF resources.
   ///
-  /// The resource builder provides a convenient fluent API for constructing RDF resources
-  /// with their associated triples. This is the primary method for creating
-  /// structured RDF representations during serialization.
+  /// The [subject] is the RDF subject (IRI or blank node) that will be used as
+  /// the subject for all triples created by the builder.
   ///
-  /// The builder pattern simplifies the process of adding multiple properties
-  /// to a subject, especially when handling complex nested structures.
-  ///
-  /// Example usage:
+  /// Example usage in a [GlobalResourceMapper] or [LocalResourceMapper]:
   /// ```dart
-  /// final builder = context.resourceBuilder(subject);
-  /// builder
-  ///   .literal(foaf.name, "John Doe")
-  ///   .literal(foaf.age, 30)
-  ///   .iri(foaf.knows, otherPerson);
+  /// final builder = context.resourceBuilder(bookIri);
+  /// builder.addValue(SchemaBook.name, book.title);
+  /// builder.addValue(SchemaBook.author, book.author);
+  /// final (subject, triples) = builder.build();
   /// ```
   ///
-  /// @param subject The subject term (IRI or blank node) for the node
-  /// @return A ResourceBuilder instance for fluent API construction
+  /// The returned [ResourceBuilder] instance provides a fluent API for adding
+  /// properties to the RDF subject.
   ResourceBuilder<S> resourceBuilder<S extends RdfSubject>(S subject);
 
+  /// Converts a Dart value to an RDF literal term.
+  ///
+  /// If [serializer] is provided, it will be used to convert the value.
+  /// Otherwise, looks up a serializer based on the runtime type of [value].
+  ///
+  /// Throws [ArgumentError] if [value] is null.
+  ///
+  /// This is a low-level method typically used by [LiteralTermMapper] implementations
+  /// to delegate to existing serializers.
   LiteralTerm toLiteralTerm<T>(T value, {LiteralTermSerializer<T>? serializer});
 }

@@ -147,8 +147,8 @@ class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
 
     // convert dart objects to triples using the fluent builder API
     return context.resourceBuilder(IriTerm(value.id))
-      .literal(SchemaPerson.foafName, value.name)
-      .literal(SchemaPerson.foafAge, value.age)
+      .addValue(SchemaPerson.foafName, value.name)
+      .addValue(SchemaPerson.foafAge, value.age)
       .build();
   }
   
@@ -227,7 +227,7 @@ final result = rdfMapper.decodeObject&lt;CustomType&gt;(
 final example = Namespace('http://example.com/my-new-vocab/');
 
 // Usage:
-builder.literal(example('name'), 'Alice');  // Generates http://example.com/my-new-vocab/name
+builder.addValue(example('name'), 'Alice');  // Generates http://example.com/my-new-vocab/name
 </code></pre>
 <h3 id="complex-example">Complex Example</h3>
 <p>The following example demonstrates handling complex models with relationships between objects and nested structures:</p>
@@ -390,12 +390,12 @@ class BookMapper implements GlobalResourceMapper&lt;Book&gt; {
   }) {
     return context
         .resourceBuilder(IriTerm(_createIriFromId(book.id)))
-        .literal(titlePredicate, book.title)
-        .literal(authorPredicate, book.author)
-        .literal&lt;DateTime&gt;(publishedPredicate, book.published)
-        .iri&lt;ISBN&gt;(isbnPredicate, book.isbn)
-        .literal&lt;Rating&gt;(ratingPredicate, book.rating)
-        .childResources(chapterPredicate, book.chapters)
+        .addValue(titlePredicate, book.title)
+        .addValue(authorPredicate, book.author)
+        .addValue&lt;DateTime&gt;(publishedPredicate, book.published)
+        .addValue&lt;ISBN&gt;(isbnPredicate, book.isbn)
+        .addValue&lt;Rating&gt;(ratingPredicate, book.rating)
+        .addValues(chapterPredicate, book.chapters)
         .build();
   }
 }
@@ -425,8 +425,8 @@ class ChapterMapper implements LocalResourceMapper&lt;Chapter&gt; {
   }) {
     return ctxt
         .resourceBuilder(BlankNodeTerm())
-        .literal(titlePredicate, chapter.title)
-        .literal&lt;int&gt;(numberPredicate, chapter.number)
+        .addValue(titlePredicate, chapter.title)
+        .addValue&lt;int&gt;(numberPredicate, chapter.number)
         .build();
   }
 }

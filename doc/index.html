@@ -119,8 +119,8 @@ class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
 
     // Using fluent builder API for clean triple creation
     return context.resourceBuilder(IriTerm(value.id))
-      .literal(namePredicate, value.name)
-      .literal(agePredicate, value.age)
+      .addValue(namePredicate, value.name)
+      .addValue(agePredicate, value.age)
       .build();
   }
   
@@ -378,12 +378,12 @@ class BookMapper implements GlobalResourceMapper&lt;Book&gt; {
   }) {
     return context
         .resourceBuilder(IriTerm('$bookIriPrefix${book.id}'))
-        .literal(titlePredicate, book.title)
-        .literal(authorPredicate, book.author)
-        .literal&lt;DateTime&gt;(publishedPredicate, book.published)
-        .iri&lt;ISBN&gt;(isbnPredicate, book.isbn)
-        .literal&lt;Rating&gt;(ratingPredicate, book.rating)
-        .childResources(chapterPredicate, book.chapters)
+        .addValue(titlePredicate, book.title)
+        .addValue(authorPredicate, book.author)
+        .addValue&lt;DateTime&gt;(publishedPredicate, book.published)
+        .addValue&lt;ISBN&gt;(isbnPredicate, book.isbn)
+        .addValue&lt;Rating&gt;(ratingPredicate, book.rating)
+        .addValues(chapterPredicate, book.chapters)
         .build();
   }
   
@@ -426,8 +426,8 @@ class ChapterMapper implements LocalResourceMapper&lt;Chapter&gt; {
     RdfSubject? parentSubject,
   }) {
     return context.resourceBuilder()
-      .literal(titlePredicate, chapter.title)
-      .literal(numberPredicate, chapter.number)
+      .addValue(titlePredicate, chapter.title)
+      .addValue(numberPredicate, chapter.number)
       .build();
   }
   

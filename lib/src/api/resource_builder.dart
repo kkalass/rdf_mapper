@@ -22,8 +22,8 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 /// ```dart
 /// final (subject, triples) = context
 ///     .resourceBuilder(IriTerm('http://example.org/resource'))
-///     .literal(Dc.title, 'The Title')
-///     .literal(Dc.creator, 'The Author')
+///     .addValue(Dc.title, 'The Title')
+///     .addValue(Dc.creator, 'The Author')
 ///     .build();
 /// ```
 ///
@@ -31,10 +31,10 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 /// ```dart
 /// final (person, triples) = context
 ///     .resourceBuilder(IriTerm('http://example.org/person/1'))
-///     .literal(Foaf.name, 'John Doe')
-///     .literal(Foaf.age, 30)
-///     .childResource(Foaf.address, address)
-///     .childResources(Foaf.knows, friends)
+///     .addValue(Foaf.name, 'John Doe')
+///     .addValue(Foaf.age, 30)
+///     .addValue(Foaf.address, address)
+///     .addValues(Foaf.knows, friends)
 ///     .build();
 /// ```
 class ResourceBuilder<S extends RdfSubject> {
@@ -131,10 +131,10 @@ class ResourceBuilder<S extends RdfSubject> {
   /// Example:
   /// ```dart
   /// // Serializes a metadata dictionary as linked resources
-  /// builder.childResourceMap(
+  /// builder.addMap(
   ///   Schema.additionalProperty,
   ///   metadata,
-  ///   MetadataEntrySerializer(),
+  ///   resourceSerializer: MetadataEntrySerializer(),
   /// );
   /// ```
   ///
@@ -163,8 +163,8 @@ class ResourceBuilder<S extends RdfSubject> {
   /// ```dart
   /// builder.when(
   ///   person.isActive,
-  ///   (b) => b.literal(Schema.status, 'active')
-  ///          .iri(Foaf.member, organization)
+  ///   (b) => b.addValue(Schema.status, 'active')
+  ///           .addValue(Foaf.member, organization)
   /// );
   /// ```
   ///
@@ -191,7 +191,7 @@ class ResourceBuilder<S extends RdfSubject> {
   /// Example:
   /// ```dart
   /// final (person, triples) = builder
-  ///   .literal(Foaf.name, 'John Doe')
+  ///   .addValue(Foaf.name, 'John Doe')
   ///   .build();
   /// ```
   ///

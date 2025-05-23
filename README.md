@@ -129,8 +129,8 @@ class PersonMapper implements GlobalResourceMapper<Person> {
 
     // convert dart objects to triples using the fluent builder API
     return context.resourceBuilder(IriTerm(value.id))
-      .literal(SchemaPerson.foafName, value.name)
-      .literal(SchemaPerson.foafAge, value.age)
+      .addValue(SchemaPerson.foafName, value.name)
+      .addValue(SchemaPerson.foafAge, value.age)
       .build();
   }
   
@@ -221,7 +221,7 @@ But you can also use our Namespace helper class which might be usefull during de
 final example = Namespace('http://example.com/my-new-vocab/');
 
 // Usage:
-builder.literal(example('name'), 'Alice');  // Generates http://example.com/my-new-vocab/name
+builder.addValue(example('name'), 'Alice');  // Generates http://example.com/my-new-vocab/name
 ```
 
 ### Complex Example
@@ -388,12 +388,12 @@ class BookMapper implements GlobalResourceMapper<Book> {
   }) {
     return context
         .resourceBuilder(IriTerm(_createIriFromId(book.id)))
-        .literal(titlePredicate, book.title)
-        .literal(authorPredicate, book.author)
-        .literal<DateTime>(publishedPredicate, book.published)
-        .iri<ISBN>(isbnPredicate, book.isbn)
-        .literal<Rating>(ratingPredicate, book.rating)
-        .childResources(chapterPredicate, book.chapters)
+        .addValue(titlePredicate, book.title)
+        .addValue(authorPredicate, book.author)
+        .addValue<DateTime>(publishedPredicate, book.published)
+        .addValue<ISBN>(isbnPredicate, book.isbn)
+        .addValue<Rating>(ratingPredicate, book.rating)
+        .addValues(chapterPredicate, book.chapters)
         .build();
   }
 }
@@ -423,8 +423,8 @@ class ChapterMapper implements LocalResourceMapper<Chapter> {
   }) {
     return ctxt
         .resourceBuilder(BlankNodeTerm())
-        .literal(titlePredicate, chapter.title)
-        .literal<int>(numberPredicate, chapter.number)
+        .addValue(titlePredicate, chapter.title)
+        .addValue<int>(numberPredicate, chapter.number)
         .build();
   }
 }
