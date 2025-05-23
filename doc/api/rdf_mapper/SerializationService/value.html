@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
-  <meta name="description" content="API docs for the iris method from the SerializationService class, for the Dart programming language.">
-  <title>iris method - SerializationService class - rdf_mapper library - Dart API</title>
+  <meta name="description" content="API docs for the value method from the SerializationService class, for the Dart programming language.">
+  <title>value method - SerializationService class - rdf_mapper library - Dart API</title>
 
 
   
@@ -27,9 +27,9 @@
     <li><a href="../../index.html">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper">rdf_mapper.dart</a></li>
     <li><a href="../../rdf_mapper/SerializationService-class.html">SerializationService</a></li>
-    <li class="self-crumb">iris&lt;<wbr><span class="type-parameter">T</span>&gt; abstract method</li>
+    <li class="self-crumb">value&lt;<wbr><span class="type-parameter">T</span>&gt; abstract method</li>
   </ol>
-  <div class="self-name">iris</div>
+  <div class="self-name">value</div>
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
@@ -52,35 +52,36 @@
     data-above-sidebar="rdf_mapper&#47;SerializationService-class-sidebar.html"
     data-below-sidebar="">
     <div>
-<h1><span class="kind-method">iris&lt;<wbr><span class="type-parameter">T</span>&gt;</span> abstract method 
+<h1><span class="kind-method">value&lt;<wbr><span class="type-parameter">T</span>&gt;</span> abstract method 
 </h1></div>
 
     <section class="multi-line-signature">
       
 <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
-<span class="name ">iris</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="iris-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span></li>
-<li><span class="parameter" id="iris-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span></li>
-<li><span class="parameter" id="iris-param-instance"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">instance</span>, {</span></li>
-<li><span class="parameter" id="iris-param-serializer"><span class="type-annotation"><a href="../../rdf_mapper/IriTermSerializer-class.html">IriTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">serializer</span>, </span></li>
+<span class="name ">value</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="value-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span></li>
+<li><span class="parameter" id="value-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span></li>
+<li><span class="parameter" id="value-param-instance"><span class="type-annotation">T</span> <span class="parameter-name">instance</span>, {</span></li>
+<li><span class="parameter" id="value-param-literalTermSerializer"><span class="type-annotation"><a href="../../rdf_mapper/LiteralTermSerializer-class.html">LiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">literalTermSerializer</span>, </span></li>
+<li><span class="parameter" id="value-param-iriTermSerializer"><span class="type-annotation"><a href="../../rdf_mapper/IriTermSerializer-class.html">IriTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">iriTermSerializer</span>, </span></li>
+<li><span class="parameter" id="value-param-resourceSerializer"><span class="type-annotation"><a href="../../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">resourceSerializer</span>, </span></li>
 </ol>})
 
       
 
     </section>
     
-<section class="desc markdown">
-  <p>Creates triples for a collection of IRI objects.</p>
-</section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">List&lt;Triple&gt; iris&lt;T&gt;(
+  <pre class="language-dart"><code class="language-dart">List&lt;Triple&gt; value&lt;T&gt;(
   RdfSubject subject,
   RdfPredicate predicate,
-  Iterable&lt;T&gt; instance, {
-  IriTermSerializer&lt;T&gt;? serializer,
+  T instance, {
+  LiteralTermSerializer&lt;T&gt;? literalTermSerializer,
+  IriTermSerializer&lt;T&gt;? iriTermSerializer,
+  ResourceSerializer&lt;T&gt;? resourceSerializer,
 });</code></pre>
 </section>
 
@@ -97,7 +98,7 @@
     <li><a href="../../index.html">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper/SerializationService-class.html">SerializationService</a></li>
-    <li class="self-crumb">iris&lt;<wbr><span class="type-parameter">T</span>&gt; abstract method</li>
+    <li class="self-crumb">value&lt;<wbr><span class="type-parameter">T</span>&gt; abstract method</li>
 </ol>
 
     <h5>SerializationService class</h5>
@@ -109,7 +110,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.3-dev
+      0.7.0-dev
   </span>
   
 </footer>

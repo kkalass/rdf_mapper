@@ -76,16 +76,17 @@
 If the property is not found, null is returned. If multiple values are found
 when only one is expected, an exception will be thrown (if enforceSingleValue is true).</p>
 <p>Example:</p>
-<pre class="language-dart"><code class="language-dart">final description = reader.optional&lt;String&gt;(dc.description);
-final publishDate = reader.optional&lt;DateTime&gt;(dc.date);
+<pre class="language-dart"><code class="language-dart">final description = reader.optional&lt;String&gt;(Dc.description);
+final publishDate = reader.optional&lt;DateTime&gt;(Dc.date);
 </code></pre>
+<p>Parameters:</p>
 <ul>
-<li><code>predicate</code> The predicate IRI for the property to read</li>
-<li><code>enforceSingleValue</code> If true, throws an exception when multiple values exist</li>
-<li><code>globalResourceDeserializer</code> Optional custom deserializer for global resources (identifiable by <a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/IriTerm-class.html">IriTerm</a>)</li>
-<li><code>iriTermDeserializer</code> Optional custom deserializer for IRI terms</li>
-<li><code>literalTermDeserializer</code> Optional custom deserializer for literal terms</li>
-<li><code>localResourceDeserializer</code> Optional custom deserializer for local resources (identifiable by <a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/BlankNodeTerm-class.html">BlankNodeTerm</a> only)</li>
+<li><code>predicate</code> - The predicate IRI for the property to read</li>
+<li><code>enforceSingleValue</code> - If true, throws an exception when multiple values exist</li>
+<li><code>globalResourceDeserializer</code> - Optional custom deserializer for global resources (identifiable by <a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/IriTerm-class.html">IriTerm</a>)</li>
+<li><code>iriTermDeserializer</code> - Optional custom deserializer for IRI terms</li>
+<li><code>literalTermDeserializer</code> - Optional custom deserializer for literal terms</li>
+<li><code>localResourceDeserializer</code> - Optional custom deserializer for local resources (identifiable by <a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/BlankNodeTerm-class.html">BlankNodeTerm</a> only)</li>
 </ul>
 <p>Returns the property value converted to the requested type, or null if not found.</p>
 <p>Throws <a href="../../rdf_mapper/TooManyPropertyValuesException-class.html">TooManyPropertyValuesException</a> if multiple values exist and <code>enforceSingleValue</code> is true.</p>
@@ -140,7 +141,7 @@ final publishDate = reader.optional&lt;DateTime&gt;(dc.date);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.3-dev
+      0.7.0-dev
   </span>
   
 </footer>

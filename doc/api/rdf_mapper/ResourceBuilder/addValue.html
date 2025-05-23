@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
-  <meta name="description" content="API docs for the childResource method from the ResourceBuilder class, for the Dart programming language.">
-  <title>childResource method - ResourceBuilder class - rdf_mapper library - Dart API</title>
+  <meta name="description" content="API docs for the addValue method from the ResourceBuilder class, for the Dart programming language.">
+  <title>addValue method - ResourceBuilder class - rdf_mapper library - Dart API</title>
 
 
   
@@ -27,9 +27,9 @@
     <li><a href="../../index.html">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper">rdf_mapper.dart</a></li>
     <li><a href="../../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder<span class="signature">&lt;<wbr><span class="type-parameter">S extends RdfSubject</span>&gt;</span></a></li>
-    <li class="self-crumb">childResource&lt;<wbr><span class="type-parameter">V</span>&gt; method</li>
+    <li class="self-crumb">addValue&lt;<wbr><span class="type-parameter">V</span>&gt; method</li>
   </ol>
-  <div class="self-name">childResource</div>
+  <div class="self-name">addValue</div>
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
@@ -52,49 +52,40 @@
     data-above-sidebar="rdf_mapper&#47;ResourceBuilder-class-sidebar.html"
     data-below-sidebar="">
     <div>
-<h1><span class="kind-method">childResource&lt;<wbr><span class="type-parameter">V</span>&gt;</span> method 
+<h1><span class="kind-method">addValue&lt;<wbr><span class="type-parameter">V</span>&gt;</span> method 
 </h1></div>
 
     <section class="multi-line-signature">
       
 <span class="returntype"><a href="../../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
-<span class="name ">childResource</span>&lt;<wbr><span class="type-parameter">V</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="childResource-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span></li>
-<li><span class="parameter" id="childResource-param-value"><span class="type-annotation">V</span> <span class="parameter-name">value</span>, {</span></li>
-<li><span class="parameter" id="childResource-param-serializer"><span class="type-annotation"><a href="../../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span>?</span> <span class="parameter-name">serializer</span>, </span></li>
+<span class="name ">addValue</span>&lt;<wbr><span class="type-parameter">V</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="addValue-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span></li>
+<li><span class="parameter" id="addValue-param-value"><span class="type-annotation">V</span> <span class="parameter-name">value</span>, {</span></li>
+<li><span class="parameter" id="addValue-param-literalTermSerializer"><span class="type-annotation"><a href="../../rdf_mapper/LiteralTermSerializer-class.html">LiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span>?</span> <span class="parameter-name">literalTermSerializer</span>, </span></li>
+<li><span class="parameter" id="addValue-param-iriTermSerializer"><span class="type-annotation"><a href="../../rdf_mapper/IriTermSerializer-class.html">IriTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span>?</span> <span class="parameter-name">iriTermSerializer</span>, </span></li>
+<li><span class="parameter" id="addValue-param-resourceSerializer"><span class="type-annotation"><a href="../../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span>?</span> <span class="parameter-name">resourceSerializer</span>, </span></li>
 </ol>})
 
       
 
     </section>
     
-<section class="desc markdown">
-  <p>Adds a child node to this node.</p>
-<p>Use this method to add a nested object as a property value. The child object
-will be serialized to its own set of RDF triples, and connected to this
-subject via the specified predicate.</p>
-<p>This is ideal for complex object structures and relationships between entities.</p>
-<p>Example:</p>
-<pre class="language-dart"><code class="language-dart">builder.childResource(foaf.address, address);
-builder.childResource(schema.author, person);
-</code></pre>
-<p>@param predicate The predicate IRI for the relationship
-@param value The child node object to serialize
-@param serializer Optional custom serializer for the child object type
-@return This builder for method chaining</p>
-</section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">ResourceBuilder&lt;S&gt; childResource&lt;V&gt;(
+  <pre class="language-dart"><code class="language-dart">ResourceBuilder&lt;S&gt; addValue&lt;V&gt;(
   RdfPredicate predicate,
   V value, {
-  ResourceSerializer&lt;V&gt;? serializer,
+  LiteralTermSerializer&lt;V&gt;? literalTermSerializer,
+  IriTermSerializer&lt;V&gt;? iriTermSerializer,
+  ResourceSerializer&lt;V&gt;? resourceSerializer,
 }) {
   _triples.addAll(
-    _service.childResource(_subject, predicate, value,
-        serializer: serializer),
+    _service.value(_subject, predicate, value,
+        literalTermSerializer: literalTermSerializer,
+        iriTermSerializer: iriTermSerializer,
+        resourceSerializer: resourceSerializer),
   );
   return this;
 }</code></pre>
@@ -113,7 +104,7 @@ builder.childResource(schema.author, person);
     <li><a href="../../index.html">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder<span class="signature">&lt;<wbr><span class="type-parameter">S extends RdfSubject</span>&gt;</span></a></li>
-    <li class="self-crumb">childResource&lt;<wbr><span class="type-parameter">V</span>&gt; method</li>
+    <li class="self-crumb">addValue&lt;<wbr><span class="type-parameter">V</span>&gt; method</li>
 </ol>
 
     <h5>ResourceBuilder class</h5>
@@ -125,7 +116,7 @@ builder.childResource(schema.author, person);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.3-dev
+      0.7.0-dev
   </span>
   
 </footer>

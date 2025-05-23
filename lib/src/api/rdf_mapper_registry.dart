@@ -60,7 +60,7 @@ final class RdfMapperRegistry {
   /// for specific serialization/deserialization operations without affecting
   /// the global registry.
   ///
-  /// @return A new registry with the same mappers as this one
+  /// Returns a new registry with the same mappers as this one
   RdfMapperRegistry clone() {
     final copy = RdfMapperRegistry._empty();
     copy._resourceSerializers.addAll(_resourceSerializers);
@@ -132,7 +132,7 @@ final class RdfMapperRegistry {
   /// - LiteralTermSerializer: For serializing objects to literal terms
   /// - ResourceSerializer: For serializing objects to RDF resources (subjects with triples)
   ///
-  /// @param serializer The serializer to register
+  /// [serializer] The serializer to register
   void registerSerializer<T>(Serializer<T> serializer) {
     switch (serializer) {
       case IriTermSerializer<T>():
@@ -158,7 +158,7 @@ final class RdfMapperRegistry {
   /// - LocalResourceDeserializer: For deserializing local resources to objects
   /// - GlobalResourceDeserializer: For deserializing global resources with triples to objects
   ///
-  /// @param deserializer The deserializer to register
+  /// [deserializer] The deserializer to register
   void registerDeserializer<T>(Deserializer<T> deserializer) {
     switch (deserializer) {
       case IriTermDeserializer<T>():
@@ -188,7 +188,7 @@ final class RdfMapperRegistry {
   /// - LiteralTermMapper: Combined LiteralTermSerializer/LiteralTermDeserializer
   /// - IriTermMapper: Combined IriTermSerializer/IriTermDeserializer
   ///
-  /// @param mapper The mapper to register
+  /// [mapper] The mapper to register
   void registerMapper<T>(Mapper<T> mapper) {
     switch (mapper) {
       case GlobalResourceMapper<T>():
@@ -259,9 +259,9 @@ final class RdfMapperRegistry {
     _resourceSerializers[T] = serializer;
   }
 
-  /// Gets the deserializer for a specific type
+  /// Gets the deserializer for a specific type.
   ///
-  /// @return The deserializer for type T or null if none is registered
+  /// Returns the deserializer for type T, throwing an exception if none is registered.
   IriTermDeserializer<T> getIriTermDeserializer<T>() {
     final deserializer = _iriTermDeserializers[T];
     if (deserializer == null) {
@@ -298,15 +298,17 @@ final class RdfMapperRegistry {
     return serializer as IriTermSerializer<T>;
   }
 
-  /// Gets a IRI serializer by runtime type rather than generic type parameter
+  /// Gets a IRI serializer by runtime type rather than generic type parameter.
   ///
   /// This method is primarily used to handle nullable types, where the serializer
-  /// might be registered for a non-nullable type (e.g., STring) but needs to be
+  /// might be registered for a non-nullable type (e.g., String) but needs to be
   /// retrieved for a nullable type (e.g., String?).
   ///
-  /// @param type The runtime Type to look up
-  /// @return The serializer for the specified type
-  /// @throws SerializerNotFoundException if no serializer is registered for the type
+  /// [type] The runtime Type to look up
+  ///
+  /// Returns the serializer for the specified type
+  ///
+  /// Throws [SerializerNotFoundException] if no serializer is registered for the type
   IriTermSerializer<T> getIriTermSerializerByType<T>(Type type) {
     final serializer = _iriTermSerializers[type];
     if (serializer == null) {
@@ -331,15 +333,17 @@ final class RdfMapperRegistry {
     return serializer as LiteralTermSerializer<T>;
   }
 
-  /// Gets a literal serializer by runtime type rather than generic type parameter
+  /// Gets a literal serializer by runtime type rather than generic type parameter.
   ///
   /// This method is primarily used to handle nullable types, where the serializer
-  /// might be registered for a non-nullable type (e.g., STring) but needs to be
+  /// might be registered for a non-nullable type (e.g., String) but needs to be
   /// retrieved for a nullable type (e.g., String?).
   ///
-  /// @param type The runtime Type to look up
-  /// @return The serializer for the specified type
-  /// @throws SerializerNotFoundException if no serializer is registered for the type
+  /// [type] The runtime Type to look up
+  ///
+  /// Returns the serializer for the specified type
+  ///
+  /// Throws [SerializerNotFoundException] if no serializer is registered for the type
   LiteralTermSerializer<T> getLiteralTermSerializerByType<T>(Type type) {
     final serializer = _literalTermSerializers[type];
     if (serializer == null) {
@@ -377,15 +381,17 @@ final class RdfMapperRegistry {
     return serializer as ResourceSerializer<T>;
   }
 
-  /// Gets a subject serializer by runtime type rather than generic type parameter
+  /// Gets a subject serializer by runtime type rather than generic type parameter.
   ///
   /// This method is primarily used to handle nullable types, where the serializer
   /// might be registered for a non-nullable type (e.g., Address) but needs to be
   /// retrieved for a nullable type (e.g., Address?).
   ///
-  /// @param type The runtime Type to look up
-  /// @return The serializer for the specified type
-  /// @throws SerializerNotFoundException if no serializer is registered for the type
+  /// [type] The runtime Type to look up
+  ///
+  /// Returns the serializer for the specified type
+  ///
+  /// Throws [SerializerNotFoundException] if no serializer is registered for the type
   ResourceSerializer<T> getResourceSerializerByType<T>(Type type) {
     final serializer = _resourceSerializers[type];
     if (serializer == null) {
@@ -394,9 +400,9 @@ final class RdfMapperRegistry {
     return serializer as ResourceSerializer<T>;
   }
 
-  /// Checks if a mapper exists for a type
+  /// Checks if a mapper exists for a type.
   ///
-  /// @return true if a mapper is registered for type T, false otherwise
+  /// Returns true if a mapper is registered for type T, false otherwise
   bool hasIriTermDeserializerFor<T>() => _iriTermDeserializers.containsKey(T);
   bool hasGlobalResourceDeserializerFor<T>() =>
       _globalResourceDeserializers.containsKey(T);

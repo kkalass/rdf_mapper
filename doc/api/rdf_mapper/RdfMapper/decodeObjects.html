@@ -78,7 +78,7 @@ only objects of type <code>T</code>.</p>
 <p>Note that it is perfectly fine to use <a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a> for <code>T</code> here, the actual type
 will be inferred from the input. The decoder will rely on
 <code>rdf:type</code> to find the correct mapper for each object.</p>
-<p>IMPORTANT: When using this method, the type <code>T</code> must be mapped using an
+<p>IMPORTANT: When using this method, the type <code>T</code> must be mapped using a
 <a href="../../rdf_mapper/GlobalResourceMapper-class.html">GlobalResourceMapper</a> either globally in the <a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a> instance or locally by
 providing a register callback and register it there.</p>
 <p>Simple types like String, int, etc. that
@@ -87,10 +87,15 @@ since RDF literals can only exist as objects within triples, not as standalone
 subjects. Attempting to use this method with literal types will result in errors.</p>
 <p><code>rdfString</code> The RDF string representation to deserialize.
 <code>contentType</code> MIME type like 'text/turtle' or 'application/ld+json'.
-  If not specified, the contentType will be auto-detected.
-<code>documentUrl</code> Optional base URI for resolving relative references in the document.
-<code>register</code> Callback function to temporarily register custom mappers.
-<code>stringDecoderOptions</code> Additional options for string decoding.</p>
+Parameters:</p>
+<ul>
+<li><code>rdfString</code> - The RDF string representation to deserialize.</li>
+<li><code>contentType</code> - MIME type like 'text/turtle' or 'application/ld+json'.
+If not specified, the contentType will be auto-detected.</li>
+<li><code>documentUrl</code> - Optional base URI for resolving relative references in the document.</li>
+<li><code>register</code> - Callback function to temporarily register custom mappers.</li>
+<li><code>stringDecoderOptions</code> - Additional options for string decoding.</li>
+</ul>
 <p>Usage:</p>
 <pre class="language-dart"><code class="language-dart">// Register mappers for all relevant classes
 rdfMapper.registerMapper&lt;Person&gt;(PersonMapper());
@@ -153,7 +158,7 @@ final people = rdfMapper.decodeObjects&lt;Person&gt;(turtle);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.3-dev
+      0.7.0-dev
   </span>
   
 </footer>

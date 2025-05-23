@@ -79,8 +79,9 @@ final name = reader.require&lt;String&gt;(foaf.name);
 final age = reader.require&lt;int&gt;(foaf.age);
 final friends = reader.getList&lt;Person&gt;(foaf.knows);
 </code></pre>
-<p>@param subject The subject term (IRI or blank node) to read properties from
-@return A ResourceReader instance for fluent property access</p>
+<p>Creates a reader for fluent access to resource properties.</p>
+<p><code>subject</code> is the subject term (IRI or blank node) to read properties from.</p>
+<p>Returns a <a href="../../rdf_mapper/ResourceReader-class.html">ResourceReader</a> instance for fluent property access.</p>
 </section>
 
 
@@ -115,7 +116,7 @@ final friends = reader.getList&lt;Person&gt;(foaf.knows);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.3-dev
+      0.7.0-dev
   </span>
   
 </footer>

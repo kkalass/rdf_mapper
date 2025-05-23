@@ -116,149 +116,6 @@ It provides the foundation for both direct serialization and the Builder API.</p
       id="instance-methods">
     <h2>Methods</h2>
     <dl class="callables">
-        <dt id="childResource" class="callable">
-  <span class="name"><a href="../rdf_mapper/SerializationService/childResource.html">childResource</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="childResource-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="childResource-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="childResource-param-instance"><span class="type-annotation">T</span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="childResource-param-serializer"><span class="type-annotation"><a href="../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">serializer</span></span>})
-    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
-  </span>
-  
-
-</dt>
-<dd>
-  Creates triples for a child resources linked to this subject.
-  
-
-</dd>
-
-        <dt id="childResourceMap" class="callable">
-  <span class="name"><a href="../rdf_mapper/SerializationService/childResourceMap.html">childResourceMap</a></span><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="childResourceMap-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="childResourceMap-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="childResourceMap-param-instance"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span> <span class="parameter-name">instance</span>, </span><span class="parameter" id="childResourceMap-param-entrySerializer"><span class="type-annotation"><a href="../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span></span> <span class="parameter-name">entrySerializer</span></span>)
-    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
-  </span>
-  
-
-</dt>
-<dd>
-  Creates triples for a map of child nodes.
-  
-
-</dd>
-
-        <dt id="childResources" class="callable">
-  <span class="name"><a href="../rdf_mapper/SerializationService/childResources.html">childResources</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="childResources-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="childResources-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="childResources-param-instance"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="childResources-param-serializer"><span class="type-annotation"><a href="../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">serializer</span></span>})
-    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
-  </span>
-  
-
-</dt>
-<dd>
-  Creates triples for a collection of child nodes.
-  
-
-</dd>
-
-        <dt id="childResourcesFromInstance" class="callable">
-  <span class="name"><a href="../rdf_mapper/SerializationService/childResourcesFromInstance.html">childResourcesFromInstance</a></span><span class="signature">&lt;<wbr><span class="type-parameter">A</span>, <span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="childResourcesFromInstance-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="childResourcesFromInstance-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="childResourcesFromInstance-param-toIterable"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">toIterable</span>(<span class="parameter" id="param-p1"><span class="type-annotation">A</span> <span class="parameter-name">p1</span></span>), </span><span class="parameter" id="childResourcesFromInstance-param-instance"><span class="type-annotation">A</span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="childResourcesFromInstance-param-serializer"><span class="type-annotation"><a href="../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">serializer</span></span>})
-    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
-  </span>
-  
-
-</dt>
-<dd>
-  Creates triples for multiple child resources derived from a source object.
-  
-
-</dd>
-
-        <dt id="constant" class="callable">
-  <span class="name"><a href="../rdf_mapper/SerializationService/constant.html">constant</a></span><span class="signature">(<wbr><span class="parameter" id="constant-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="constant-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="constant-param-object"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfObject-class.html">RdfObject</a></span> <span class="parameter-name">object</span></span>)
-    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/Triple-class.html">Triple</a></span>
-  </span>
-  
-
-</dt>
-<dd>
-  Creates a triple with a constant object.
-  
-
-</dd>
-
-        <dt id="iri" class="callable">
-  <span class="name"><a href="../rdf_mapper/SerializationService/iri.html">iri</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="iri-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="iri-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="iri-param-instance"><span class="type-annotation">T</span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="iri-param-serializer"><span class="type-annotation"><a href="../rdf_mapper/IriTermSerializer-class.html">IriTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">serializer</span></span>})
-    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/Triple-class.html">Triple</a></span>
-  </span>
-  
-
-</dt>
-<dd>
-  Creates a triple with an IRI object.
-  
-
-</dd>
-
-        <dt id="iris" class="callable">
-  <span class="name"><a href="../rdf_mapper/SerializationService/iris.html">iris</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="iris-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="iris-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="iris-param-instance"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="iris-param-serializer"><span class="type-annotation"><a href="../rdf_mapper/IriTermSerializer-class.html">IriTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">serializer</span></span>})
-    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
-  </span>
-  
-
-</dt>
-<dd>
-  Creates triples for a collection of IRI objects.
-  
-
-</dd>
-
-        <dt id="irisFromInstance" class="callable">
-  <span class="name"><a href="../rdf_mapper/SerializationService/irisFromInstance.html">irisFromInstance</a></span><span class="signature">&lt;<wbr><span class="type-parameter">A</span>, <span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="irisFromInstance-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="irisFromInstance-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="irisFromInstance-param-toIterable"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">toIterable</span>(<span class="parameter" id="param-"><span class="type-annotation">A</span></span>), </span><span class="parameter" id="irisFromInstance-param-instance"><span class="type-annotation">A</span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="irisFromInstance-param-serializer"><span class="type-annotation"><a href="../rdf_mapper/IriTermSerializer-class.html">IriTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">serializer</span></span>})
-    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
-  </span>
-  
-
-</dt>
-<dd>
-  Creates triples for multiple IRI objects derived from a source object.
-  
-
-</dd>
-
-        <dt id="literal" class="callable">
-  <span class="name"><a href="../rdf_mapper/SerializationService/literal.html">literal</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="literal-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="literal-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="literal-param-instance"><span class="type-annotation">T</span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="literal-param-serializer"><span class="type-annotation"><a href="../rdf_mapper/LiteralTermSerializer-class.html">LiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">serializer</span></span>})
-    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/Triple-class.html">Triple</a></span>
-  </span>
-  
-
-</dt>
-<dd>
-  Creates a triple with a literal object.
-  
-
-</dd>
-
-        <dt id="literals" class="callable">
-  <span class="name"><a href="../rdf_mapper/SerializationService/literals.html">literals</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="literals-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="literals-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="literals-param-instance"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="literals-param-serializer"><span class="type-annotation"><a href="../rdf_mapper/LiteralTermSerializer-class.html">LiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">serializer</span></span>})
-    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
-  </span>
-  
-
-</dt>
-<dd>
-  Creates triples for a collection of literal objects.
-  
-
-</dd>
-
-        <dt id="literalsFromInstance" class="callable">
-  <span class="name"><a href="../rdf_mapper/SerializationService/literalsFromInstance.html">literalsFromInstance</a></span><span class="signature">&lt;<wbr><span class="type-parameter">A</span>, <span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="literalsFromInstance-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="literalsFromInstance-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="literalsFromInstance-param-toIterable"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">toIterable</span>(<span class="parameter" id="param-"><span class="type-annotation">A</span></span>), </span><span class="parameter" id="literalsFromInstance-param-instance"><span class="type-annotation">A</span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="literalsFromInstance-param-serializer"><span class="type-annotation"><a href="../rdf_mapper/LiteralTermSerializer-class.html">LiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">serializer</span></span>})
-    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
-  </span>
-  
-
-</dt>
-<dd>
-  Creates triples for multiple literal objects derived from a source object.
-  
-
-</dd>
-
         <dt id="noSuchMethod" class="callable inherited">
   <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
     <span class="returntype parameter">&#8594; dynamic</span>
@@ -280,7 +137,7 @@ It provides the foundation for both direct serialization and the Builder API.</p
 
 </dt>
 <dd>
-  Serializes an object to an RDF node.
+  Serializes an object to a RDF resource.
   
 
 </dd>
@@ -295,6 +152,58 @@ It provides the foundation for both direct serialization and the Builder API.</p
 <dd class="inherited">
   A string representation of this object.
   <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="value" class="callable">
+  <span class="name"><a href="../rdf_mapper/SerializationService/value.html">value</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="value-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="value-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="value-param-instance"><span class="type-annotation">T</span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="value-param-literalTermSerializer"><span class="type-annotation"><a href="../rdf_mapper/LiteralTermSerializer-class.html">LiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">literalTermSerializer</span>, </span><span class="parameter" id="value-param-iriTermSerializer"><span class="type-annotation"><a href="../rdf_mapper/IriTermSerializer-class.html">IriTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">iriTermSerializer</span>, </span><span class="parameter" id="value-param-resourceSerializer"><span class="type-annotation"><a href="../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">resourceSerializer</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="valueMap" class="callable">
+  <span class="name"><a href="../rdf_mapper/SerializationService/valueMap.html">valueMap</a></span><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="valueMap-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="valueMap-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="valueMap-param-instance"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="valueMap-param-resourceSerializer"><span>required</span> <span class="type-annotation"><a href="../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span></span> <span class="parameter-name">resourceSerializer</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Creates triples for a map of child nodes.
+  
+
+</dd>
+
+        <dt id="values" class="callable">
+  <span class="name"><a href="../rdf_mapper/SerializationService/values.html">values</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="values-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="values-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="values-param-instance"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="values-param-literalTermSerializer"><span class="type-annotation"><a href="../rdf_mapper/LiteralTermSerializer-class.html">LiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">literalTermSerializer</span>, </span><span class="parameter" id="values-param-iriTermSerializer"><span class="type-annotation"><a href="../rdf_mapper/IriTermSerializer-class.html">IriTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">iriTermSerializer</span>, </span><span class="parameter" id="values-param-resourceSerializer"><span class="type-annotation"><a href="../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">resourceSerializer</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="valuesFromSource" class="callable">
+  <span class="name"><a href="../rdf_mapper/SerializationService/valuesFromSource.html">valuesFromSource</a></span><span class="signature">&lt;<wbr><span class="type-parameter">A</span>, <span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="valuesFromSource-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="valuesFromSource-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="valuesFromSource-param-toIterable"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">toIterable</span>(<span class="parameter" id="param-"><span class="type-annotation">A</span></span>), </span><span class="parameter" id="valuesFromSource-param-instance"><span class="type-annotation">A</span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="valuesFromSource-param-literalTermSerializer"><span class="type-annotation"><a href="../rdf_mapper/LiteralTermSerializer-class.html">LiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">literalTermSerializer</span>, </span><span class="parameter" id="valuesFromSource-param-iriTermSerializer"><span class="type-annotation"><a href="../rdf_mapper/IriTermSerializer-class.html">IriTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">iriTermSerializer</span>, </span><span class="parameter" id="valuesFromSource-param-resourceSerializer"><span class="type-annotation"><a href="../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">resourceSerializer</span></span>})
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
 
 </dd>
 
@@ -348,7 +257,7 @@ It provides the foundation for both direct serialization and the Builder API.</p
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.3-dev
+      0.7.0-dev
   </span>
   
 </footer>

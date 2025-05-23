@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
-  <meta name="description" content="API docs for the objectCode method from the GraphOperations class, for the Dart programming language.">
-  <title>objectCode method - GraphOperations class - rdf_mapper library - Dart API</title>
+  <meta name="description" content="API docs for the objectCodec method from the GraphOperations class, for the Dart programming language.">
+  <title>objectCodec method - GraphOperations class - rdf_mapper library - Dart API</title>
 
 
   
@@ -27,9 +27,9 @@
     <li><a href="../../index.html">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper">rdf_mapper.dart</a></li>
     <li><a href="../../rdf_mapper/GraphOperations-class.html">GraphOperations</a></li>
-    <li class="self-crumb">objectCode&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
+    <li class="self-crumb">objectCodec&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
   </ol>
-  <div class="self-name">objectCode</div>
+  <div class="self-name">objectCodec</div>
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
@@ -52,13 +52,13 @@
     data-above-sidebar="rdf_mapper&#47;GraphOperations-class-sidebar.html"
     data-below-sidebar="">
     <div>
-<h1><span class="kind-method">objectCode&lt;<wbr><span class="type-parameter">T</span>&gt;</span> method 
+<h1><span class="kind-method">objectCodec&lt;<wbr><span class="type-parameter">T</span>&gt;</span> method 
 </h1></div>
 
     <section class="multi-line-signature">
       
 <span class="returntype"><a href="../../rdf_mapper/RdfObjectCodec-class.html">RdfObjectCodec</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
-<span class="name ">objectCode</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="objectCode-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-registry"><span class="type-annotation"><a href="../../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span></li>
+<span class="name ">objectCodec</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="objectCodec-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-registry"><span class="type-annotation"><a href="../../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span></li>
 </ol>)?, </span></li>
 </ol>})
 
@@ -66,12 +66,20 @@
 
     </section>
     
+<section class="desc markdown">
+  <p>Creates a codec for serializing and deserializing a single object of type <code>T</code>.</p>
+<p>Returns a reusable codec object that can be used for multiple serialization
+or deserialization operations of the same type, which can be more efficient
+when working with multiple objects.</p>
+<p><code>register</code> Optional callback to register mappers that will be available for the lifetime of the returned codec</p>
+<p>Returns a codec for type T</p>
+</section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">RdfObjectCodec&lt;T&gt; objectCode&lt;T&gt;({
+  <pre class="language-dart"><code class="language-dart">RdfObjectCodec&lt;T&gt; objectCodec&lt;T&gt;({
   void Function(RdfMapperRegistry registry)? register,
 }) {
   return RdfObjectCodec&lt;T&gt;(service: _service, register: register);
@@ -91,7 +99,7 @@
     <li><a href="../../index.html">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper/GraphOperations-class.html">GraphOperations</a></li>
-    <li class="self-crumb">objectCode&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
+    <li class="self-crumb">objectCodec&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
 </ol>
 
     <h5>GraphOperations class</h5>
@@ -103,7 +111,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.3-dev
+      0.7.0-dev
   </span>
   
 </footer>

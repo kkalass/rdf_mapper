@@ -45,9 +45,10 @@ abstract interface class IriTermDeserializer<T> implements TermDeserializer<T> {
   /// The deserialization context provides access to the current deserialization
   /// state and helps with resolving related objects.
   ///
-  /// @param term The IRI term to convert
-  /// @param context The current deserialization context
-  /// @return The resulting Dart object
+  /// [term] The IRI term to convert
+  /// [context] The current deserialization context
+  ///
+  /// Returns the resulting Dart object
   T fromRdfTerm(IriTerm term, DeserializationContext context);
 }
 
@@ -77,9 +78,10 @@ abstract interface class LiteralTermDeserializer<T>
   /// The deserialization context provides access to the current deserialization
   /// state and helps with handling related objects.
   ///
-  /// @param term The literal term to convert
-  /// @param context The current deserialization context
-  /// @return The resulting Dart object
+  /// [term] The literal term to convert
+  /// [context] The current deserialization context
+  ///
+  /// Returns the resulting Dart object
   T fromRdfTerm(LiteralTerm term, DeserializationContext context);
 }
 
@@ -127,9 +129,10 @@ abstract interface class LocalResourceDeserializer<T>
   /// and transforms them into a Dart object. The deserialization context provides
   /// access to the graph and helps with resolving related objects.
   ///
-  /// @param term The blank node term to convert
-  /// @param context The deserialization context, providing access to the graph
-  /// @return The resulting Dart object
+  /// [term] The blank node term to convert
+  /// [context] The deserialization context, providing access to the graph
+  ///
+  /// Returns the resulting Dart object
   T fromRdfResource(BlankNodeTerm term, DeserializationContext context);
 }
 
@@ -151,8 +154,9 @@ abstract interface class GlobalResourceDeserializer<T>
   /// and transforms them into a Dart object. The deserialization context provides
   /// access to the graph and helps with resolving related objects.
   ///
-  /// @param term The IRI term to convert
-  /// @param context The deserialization context providing access to the graph
-  /// @return The resulting Dart object
+  /// [term] The IRI term to convert
+  /// [context] The deserialization context providing access to the graph
+  ///
+  /// Returns the resulting Dart object
   T fromRdfResource(IriTerm term, DeserializationContext context);
 }

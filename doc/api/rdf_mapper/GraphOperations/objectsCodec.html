@@ -66,6 +66,14 @@
 
     </section>
     
+<section class="desc markdown">
+  <p>Creates a codec for serializing and deserializing collections of objects of type <code>T</code>.</p>
+<p>Returns a reusable codec object that can be used for multiple serialization
+or deserialization operations of collections of the same type, which can be
+more efficient when processing multiple collections.</p>
+<p><code>register</code> Optional callback to register mappers that will be available for the lifetime of the returned codec</p>
+<p>Returns a codec for collections of type T</p>
+</section>
 
 
     
@@ -103,7 +111,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.3-dev
+      0.7.0-dev
   </span>
   
 </footer>

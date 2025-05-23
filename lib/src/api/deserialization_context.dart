@@ -40,10 +40,39 @@ abstract class DeserializationContext {
   /// final friends = reader.getList<Person>(foaf.knows);
   /// ```
   ///
-  /// @param subject The subject term (IRI or blank node) to read properties from
-  /// @return A ResourceReader instance for fluent property access
+  /// Creates a reader for fluent access to resource properties.
+  ///
+  /// [subject] is the subject term (IRI or blank node) to read properties from.
+  ///
+  /// Returns a [ResourceReader] instance for fluent property access.
   ResourceReader reader(RdfSubject subject);
 
+  /// Converts an RDF literal term into a typed Dart value.
+  ///
+  /// This method transforms an RDF literal (a data value in the RDF graph) into
+  /// its corresponding Dart type. It leverages a registered deserializer for the
+  /// specific target type or uses the provided custom deserializer if specified.
+  ///
+  /// This is a core utility for extracting primitive values like strings, numbers,
+  /// dates, and booleans from RDF literals, handling datatype conversions and
+  /// validation automatically.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// final stringValue = context.fromLiteralTerm<String>(stringLiteral);
+  /// final dateValue = context.fromLiteralTerm<DateTime>(dateLiteral);
+  /// final customValue = context.fromLiteralTerm<MyType>(
+  ///   literal,
+  ///   deserializer: MyCustomDeserializer(),
+  /// );
+  /// ```
+  ///
+  /// The [term] parameter is the RDF literal term to be converted.
+  /// An optional [deserializer] can be provided to use instead of the registered one.
+  ///
+  /// Returns the converted value of type T.
+  ///
+  /// Throws a [DeserializationException] if conversion fails or no suitable deserializer exists.
   T fromLiteralTerm<T>(
     LiteralTerm term, {
     LiteralTermDeserializer<T>? deserializer,

@@ -87,8 +87,14 @@ which registers this mapper (and any further custom ones, if applicable).</p>
 final turtle = codec.encode(person, baseUri: 'http://example.org/');
 final person2 = codec.decode(turtle, documentUrl: 'http://example.org/');
 </code></pre>
-<p><code>contentType</code> specifies the RDF format (e.g., 'text/turtle', 'application/ld+json').
-If not specified, defaults to that format that was registered first in the RdfCodecRegistry - usually 'text/turtle'.</p>
+<p>Parameters:</p>
+<ul>
+<li><code>contentType</code> - Specifies the RDF format (e.g., 'text/turtle', 'application/ld+json').
+If not specified, defaults to the format that was registered first in the RdfCodecRegistry - usually 'text/turtle'.</li>
+<li><code>register</code> - Allows temporary registration of custom mappers for this codec.</li>
+<li><code>stringDecoderOptions</code> - Additional options for string decoding.</li>
+<li><code>stringEncoderOptions</code> - Additional options for string encoding.</li>
+</ul>
 </section>
 
 
@@ -102,7 +108,7 @@ If not specified, defaults to that format that was registered first in the RdfCo
   RdfGraphEncoderOptions? stringEncoderOptions,
 }) {
   return RdfObjectStringCodec&lt;T&gt;(
-    objectCodec: _graphOperations.objectCode&lt;T&gt;(register: register),
+    objectCodec: _graphOperations.objectCodec&lt;T&gt;(register: register),
     graphCodec: _rdfCore.codec(
       contentType: contentType,
       encoderOptions: stringEncoderOptions,
@@ -137,7 +143,7 @@ If not specified, defaults to that format that was registered first in the RdfCo
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.3-dev
+      0.7.0-dev
   </span>
   
 </footer>

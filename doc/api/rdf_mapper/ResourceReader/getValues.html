@@ -70,20 +70,21 @@
     </section>
     
 <section class="desc markdown">
-  <p>Gets multiple property values as a list.</p>
+  <p>Gets multiple property values as an iterable.</p>
 <p>Use this method for properties that may have multiple values, such as
 tags, categories, related resources, or other collections. Returns an
-empty list if no values are found.</p>
+empty iterable if no values are found.</p>
 <p>Example:</p>
-<pre class="language-dart"><code class="language-dart">final tags = reader.getList&lt;String&gt;(dc.subject);
-final authors = reader.getList&lt;Person&gt;(dc.creator);
+<pre class="language-dart"><code class="language-dart">final tags = reader.getValues&lt;String&gt;(Dc.subject);
+final authors = reader.getValues&lt;Person&gt;(Dc.creator);
 </code></pre>
+<p>Parameters:</p>
 <ul>
-<li><code>predicate</code> The predicate IRI for the properties to read</li>
-<li><code>globalResourceDeserializer</code> Optional custom deserializer for global resources (identifiable by <a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/IriTerm-class.html">IriTerm</a>)</li>
-<li><code>iriTermDeserializer</code> Optional custom deserializer for IRI terms</li>
-<li><code>literalTermDeserializer</code> Optional custom deserializer for literal terms</li>
-<li><code>localResourceDeserializer</code> Optional custom deserializer for local resources (identifiable by <a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/BlankNodeTerm-class.html">BlankNodeTerm</a> only)</li>
+<li><code>predicate</code> - The predicate IRI for the properties to read</li>
+<li><code>globalResourceDeserializer</code> - Optional custom deserializer for global resources (identifiable by <a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/IriTerm-class.html">IriTerm</a>)</li>
+<li><code>iriTermDeserializer</code> - Optional custom deserializer for IRI terms</li>
+<li><code>literalTermDeserializer</code> - Optional custom deserializer for literal terms</li>
+<li><code>localResourceDeserializer</code> - Optional custom deserializer for local resources (identifiable by <a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/BlankNodeTerm-class.html">BlankNodeTerm</a> only)</li>
 </ul>
 <p>Returns an iterable of property values converted to the requested type.</p>
 </section>
@@ -135,7 +136,7 @@ final authors = reader.getList&lt;Person&gt;(dc.creator);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.3-dev
+      0.7.0-dev
   </span>
   
 </footer>

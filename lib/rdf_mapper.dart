@@ -211,7 +211,7 @@ final class RdfMapper {
     RdfGraphEncoderOptions? stringEncoderOptions,
   }) {
     return RdfObjectStringCodec<T>(
-      objectCodec: _graphOperations.objectCode<T>(register: register),
+      objectCodec: _graphOperations.objectCodec<T>(register: register),
       graphCodec: _rdfCore.codec(
         contentType: contentType,
         encoderOptions: stringEncoderOptions,

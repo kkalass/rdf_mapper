@@ -82,13 +82,17 @@ allowing efficient batch processing of multiple entities in a single operation.<
 <p>Note that it is perfectly fine to use <a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a> for <code>T</code> here, the actual type
 will be inferred from the input. The decoder will rely on
 <code>rdf:type</code> to find the correct mapper for each object.</p>
-<p>IMPORTANT: When using this method, the type <code>T</code> must be mapped using an
+<p>IMPORTANT: When using this method, the type <code>T</code> must be mapped using a
 <a href="../../rdf_mapper/GlobalResourceMapper-class.html">GlobalResourceMapper</a> either globally in the <a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a> instance or locally by
 providing a register callback and register it there.</p>
-<p><code>contentType</code> specifies the RDF format (e.g., 'text/turtle', 'application/ld+json').
-If not specified, defaults to the format registered first in the RdfCodecRegistry.
-<code>register</code> allows temporary registration of custom mappers for this codec.
-<code>stringDecoderOptions</code> and <code>stringEncoderOptions</code> configure string encoding/decoding.</p></object></li></object></li></ul>
+<p>Parameters:</p>
+<ul>
+<li><code>contentType</code> - Specifies the RDF format (e.g., 'text/turtle', 'application/ld+json').
+If not specified, defaults to the format registered first in the RdfCodecRegistry.</li>
+<li><code>register</code> - Allows temporary registration of custom mappers for this codec.</li>
+<li><code>stringDecoderOptions</code> - Additional options for string decoding.</li>
+<li><code>stringEncoderOptions</code> - Additional options for string encoding.</li>
+</ul></object></li></object></li></ul>
 </section>
 
 
@@ -137,7 +141,7 @@ If not specified, defaults to the format registered first in the RdfCodecRegistr
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.3-dev
+      0.7.0-dev
   </span>
   
 </footer>

@@ -65,8 +65,15 @@
     </section>
     
 <section class="desc markdown">
-  <p>Builds the node and returns the subject and list of triples.</p>
-<p>@return A tuple containing the subject and all generated triples</p>
+  <p>Builds the resource and returns the subject and list of triples.</p>
+<p>This finalizes the RDF building process and returns both the subject resource
+and an unmodifiable list of all the triples that have been created.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final (person, triples) = builder
+  .literal(Foaf.name, 'John Doe')
+  .build();
+</code></pre>
+<p>Returns a tuple containing the subject and all generated triples.</p>
 </section>
 
 
@@ -103,7 +110,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.3-dev
+      0.7.0-dev
   </span>
   
 </footer>

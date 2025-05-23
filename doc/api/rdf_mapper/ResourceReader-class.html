@@ -59,7 +59,7 @@
 <section class="desc markdown">
   <p>Reader for fluent RDF resource deserialization.</p>
 <p>The ResourceReader provides a convenient fluent API for extracting data from RDF resources
-during deserialization. It simplifies the process of reading properties from a graph
+during deserialization. It simplifies the process of reading properties from an RDF graph
 by maintaining the current subject context and offering methods to retrieve and
 convert RDF property values to Dart objects.</p>
 <p>Key features:</p>
@@ -72,16 +72,16 @@ convert RDF property values to Dart objects.</p>
 </ul>
 <p>Basic example:</p>
 <pre class="language-dart"><code class="language-dart">final reader = context.reader(subject);
-final title = reader.require&lt;String&gt;(dc.title);
-final author = reader.require&lt;String&gt;(dc.creator);
-final description = reader.optional&lt;String&gt;(dc.description); // Optional
+final title = reader.require&lt;String&gt;(Dc.title);
+final author = reader.require&lt;String&gt;(Dc.creator);
+final description = reader.optional&lt;String&gt;(Dc.description); // Optional
 </code></pre>
 <p>More complex example with nested structures:</p>
 <pre class="language-dart"><code class="language-dart">final reader = context.reader(subject);
-final name = reader.require&lt;String&gt;(foaf.name);
-final age = reader.require&lt;int&gt;(foaf.age);
-final address = reader.require&lt;Address&gt;(foaf.address);
-final friends = reader.getList&lt;Person&gt;(foaf.knows);
+final name = reader.require&lt;String&gt;(Foaf.name);
+final age = reader.require&lt;int&gt;(Foaf.age);
+final address = reader.require&lt;Address&gt;(Foaf.address);
+final friends = reader.getValues&lt;Person&gt;(Foaf.knows);
 </code></pre>
 </section>
 
@@ -172,7 +172,7 @@ final friends = reader.getList&lt;Person&gt;(foaf.knows);
 
 </dt>
 <dd>
-  Gets multiple property values as a list.
+  Gets multiple property values as an iterable.
   
 
 </dd>
@@ -279,7 +279,7 @@ final friends = reader.getList&lt;Person&gt;(foaf.knows);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.3-dev
+      0.7.0-dev
   </span>
   
 </footer>

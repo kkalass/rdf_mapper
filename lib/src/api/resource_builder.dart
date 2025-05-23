@@ -141,7 +141,7 @@ class ResourceBuilder<S extends RdfSubject> {
   /// Parameters:
   /// - [predicate]: The predicate for the relationships.
   /// - [instance]: The map to serialize.
-  /// - [entrySerializer]: The serializer for map entries.
+  /// - [resourceSerializer]: The serializer for map entries.
   ///
   /// Returns this builder for method chaining.
   ResourceBuilder<S> addMap<K, V>(RdfPredicate predicate, Map<K, V> instance,

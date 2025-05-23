@@ -58,7 +58,7 @@
     <section class="multi-line-signature">
       
 <span class="returntype"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfGraph-class.html">RdfGraph</a></span>
-<span class="name ">encodeObjects</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="encodeObjects-param-instance"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">instance</span>, {</span></li>
+<span class="name ">encodeObjects</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="encodeObjects-param-instances"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">instances</span>, {</span></li>
 <li><span class="parameter" id="encodeObjects-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-registry"><span class="type-annotation"><a href="../../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span></li>
 </ol>)?, </span></li>
 </ol>})
@@ -70,17 +70,24 @@
 <section class="desc markdown">
   <p>Serializes a collection of objects of type <code>T</code> to an RDF graph.</p>
 <p>This method converts multiple Dart objects to their RDF representation
-using registered mappers, combining them into a single graph.</p>
-<p>IMPORTANT: When using this method, the type <code>T</code> must be mapped using an
+using registered mappers, combining them into a single graph. This is especially
+useful for creating graphs with multiple related entities.</p>
+<p>IMPORTANT: When using this method, the type <code>T</code> must be mapped using a
 <a href="../../rdf_mapper/GlobalResourceMapper-class.html">GlobalResourceMapper</a> either globally in the <a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a> instance or locally by
 providing a register callback and register it there.</p>
-<p>Simple types like String, int, etc. that
-use <a href="../../rdf_mapper/LiteralTermMapper-class.html">LiteralTermMapper</a> cannot be directly deserialized as complete RDF documents,
-since RDF literals can only exist as objects within triples, not as standalone
-subjects. Attempting to use this method with literal types will result in errors.</p>
-<p>@param instance The collection of objects to serialize
-@param register Optional callback to register temporary mappers
-@return An RDF graph containing all serialized objects</p>
+<p>Simple types like String, int, etc. cannot be directly serialized as standalone RDF subjects,
+since they are represented as literal values in RDF. These types should only be used as
+properties of resource objects, not as top-level objects to encode.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final people = [
+  Person(name: 'Alice', age: 30),
+  Person(name: 'Bob', age: 25),
+];
+final graph = graphOperations.encodeObjects&lt;Person&gt;(people);
+</code></pre>
+<p><code>instances</code> The collection of objects to serialize
+<code>register</code> Optional callback to register mappers for this operation</p>
+<p>Returns an RDF graph containing all serialized objects</p>
 </section>
 
 
@@ -88,10 +95,10 @@ subjects. Attempting to use this method with literal types will result in errors
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">RdfGraph encodeObjects&lt;T&gt;(
-  Iterable&lt;T&gt; instance, {
+  Iterable&lt;T&gt; instances, {
   void Function(RdfMapperRegistry registry)? register,
 }) {
-  return objectsCodec&lt;T&gt;().encode(instance, register: register);
+  return objectsCodec&lt;T&gt;().encode(instances, register: register);
 }</code></pre>
 </section>
 
@@ -120,7 +127,7 @@ subjects. Attempting to use this method with literal types will result in errors
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.3-dev
+      0.7.0-dev
   </span>
   
 </footer>

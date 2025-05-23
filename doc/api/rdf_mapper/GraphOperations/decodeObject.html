@@ -73,24 +73,25 @@
 <p>This method finds and deserializes a subject of the specified type in the graph.
 It will attempt to find a subject with an rdf:type triple matching a registered
 deserializer for type <code>T</code>.</p>
-<p>IMPORTANT: When using this method, the type <code>T</code> must be mapped using an
+<p>IMPORTANT: When using this method, the type <code>T</code> must be mapped using a
 <a href="../../rdf_mapper/GlobalResourceMapper-class.html">GlobalResourceMapper</a> either globally in the <a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a> instance or locally by
 providing a register callback and register it there.</p>
-<p>Simple types like String, int, etc. that
-use <a href="../../rdf_mapper/LiteralTermMapper-class.html">LiteralTermMapper</a> cannot be directly deserialized as complete RDF documents,
-since RDF literals can only exist as objects within triples, not as standalone
-subjects. Attempting to use this method with literal types will result in errors.</p>
+<p>Simple types like String, int, etc. that use <a href="../../rdf_mapper/LiteralTermMapper-class.html">LiteralTermMapper</a> cannot be directly
+deserialized as complete RDF documents, since RDF literals can only exist as objects
+within triples, not as standalone subjects. Attempting to use this method with
+literal types will result in errors.</p>
 <p>Note that this method expects the graph to contain exactly one deserializable
 subject of the specified type. If multiple subjects could match, use
-<code>deserializeBySubject</code> or <a href="../../rdf_mapper/GraphOperations/decodeObjects.html">decodeObjects</a> instead.</p>
+<a href="../../rdf_mapper/GraphOperations/decodeObjects.html">decodeObjects</a> instead, or specify the exact <code>subject</code> to deserialize.</p>
 <p>Example:</p>
-<pre class="language-dart"><code class="language-dart">final person = graphOperations.deserialize&lt;Person&gt;(graph);
+<pre class="language-dart"><code class="language-dart">final person = graphOperations.decodeObject&lt;Person&gt;(graph);
 </code></pre>
-<p>@param graph The RDF graph to deserialize from
-@param register Optional callback to register temporary mappers
-@return The deserialized object of type T
-@throws TooManyDeserializableSubjectsException if multiple subjects can be deserialized
-@throws NoDeserializableSubjectsException if no deserializable subject is found</p>
+<p><code>graph</code> The RDF graph to deserialize from
+<code>subject</code> Optional subject URI to specifically target for deserialization
+<code>register</code> Optional callback to register mappers for this operation</p>
+<p>Returns the deserialized object of type T</p>
+<p>Throws <a href="../../rdf_mapper/TooManyDeserializableSubjectsException-class.html">TooManyDeserializableSubjectsException</a> if multiple subjects can be deserialized
+Throws <a href="../../rdf_mapper/NoDeserializableSubjectsException-class.html">NoDeserializableSubjectsException</a> if no deserializable subject is found</p>
 </section>
 
 
@@ -102,7 +103,7 @@ subject of the specified type. If multiple subjects could match, use
   RdfSubject? subject,
   void Function(RdfMapperRegistry registry)? register,
 }) {
-  return objectCode&lt;T&gt;(register: register).decode(graph, subject: subject);
+  return objectCodec&lt;T&gt;(register: register).decode(graph, subject: subject);
 }</code></pre>
 </section>
 
@@ -131,7 +132,7 @@ subject of the specified type. If multiple subjects could match, use
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.3-dev
+      0.7.0-dev
   </span>
   
 </footer>

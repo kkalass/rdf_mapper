@@ -66,13 +66,13 @@
     </section>
     
 <section class="desc markdown">
-  <p>Gets a subject serializer by runtime type rather than generic type parameter</p>
+  <p>Gets a subject serializer by runtime type rather than generic type parameter.</p>
 <p>This method is primarily used to handle nullable types, where the serializer
 might be registered for a non-nullable type (e.g., Address) but needs to be
 retrieved for a nullable type (e.g., Address?).</p>
-<p>@param type The runtime Type to look up
-@return The serializer for the specified type
-@throws SerializerNotFoundException if no serializer is registered for the type</p>
+<p><code>type</code> The runtime Type to look up</p>
+<p>Returns the serializer for the specified type</p>
+<p>Throws <a href="../../rdf_mapper/SerializerNotFoundException-class.html">SerializerNotFoundException</a> if no serializer is registered for the type</p>
 </section>
 
 
@@ -113,7 +113,7 @@ retrieved for a nullable type (e.g., Address?).</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.3-dev
+      0.7.0-dev
   </span>
   
 </footer>

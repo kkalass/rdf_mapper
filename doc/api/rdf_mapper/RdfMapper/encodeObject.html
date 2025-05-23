@@ -77,19 +77,22 @@
 <li>For a single object, it creates a graph with that object's triples</li>
 <li>For an Iterable of objects, it combines all objects into a single graph</li>
 </ul>
-<p>IMPORTANT: When using this method, the type <code>T</code> must be mapped using an
+<p>IMPORTANT: When using this method, the type <code>T</code> must be mapped using a
 <a href="../../rdf_mapper/GlobalResourceMapper-class.html">GlobalResourceMapper</a> either globally in the <a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a> instance or locally by
 providing a register callback and register it there.</p>
 <p>Simple types like String, int, etc. that
 use <a href="../../rdf_mapper/LiteralTermMapper-class.html">LiteralTermMapper</a> cannot be directly serialized as complete RDF documents,
 since RDF literals can only exist as objects within triples, not as standalone
 subjects. Attempting to use this method with literal types will result in errors.</p>
-<p><code>instance</code> The object to serialize.
-<code>contentType</code> MIME type for output format (e.g., 'text/turtle', 'application/ld+json').
-  If omitted, defaults to 'text/turtle'.
-<code>baseUri</code> Optional base URI for the RDF document, used for relative IRI resolution.
-<code>stringEncoderOptions</code> Additional options for string encoding.
-<code>register</code> Callback function to temporarily register additional mappers for this operation.</p>
+<p>Parameters:</p>
+<ul>
+<li><code>instance</code> - The object to serialize.</li>
+<li><code>contentType</code> - MIME type for output format (e.g., 'text/turtle', 'application/ld+json').
+If omitted, defaults to 'text/turtle'.</li>
+<li><code>baseUri</code> - Optional base URI for the RDF document, used for relative IRI resolution.</li>
+<li><code>stringEncoderOptions</code> - Additional options for string encoding.</li>
+<li><code>register</code> - Callback function to temporarily register additional mappers for this operation.</li>
+</ul>
 <p>Returns a string containing the serialized RDF representation.</p>
 <p>Example:</p>
 <pre class="language-dart"><code class="language-dart">final person = Person(
@@ -147,7 +150,7 @@ final turtle = rdfMapper.encodeObject(person);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.3-dev
+      0.7.0-dev
   </span>
   
 </footer>

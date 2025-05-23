@@ -69,31 +69,33 @@
     
 <section class="desc markdown">
   <p>Deserializes all subjects of type <code>T</code> from an RDF graph.</p>
-<p>Note that it
-is perfectly valid to call this method with Object as the type parameter,</p>
-<p>IMPORTANT: When using this method, the type <code>T</code> must be mapped using an
+<p>This method identifies and deserializes all subjects in the graph that match
+the specified type <code>T</code>. It's particularly useful for retrieving multiple
+related entities from a single graph.</p>
+<p>Note that it is perfectly valid to call this method with Object as the type parameter,
+which will deserialize all subjects that have registered mappers.</p>
+<p>IMPORTANT: When using this method, the type <code>T</code> must be mapped using a
 <a href="../../rdf_mapper/GlobalResourceMapper-class.html">GlobalResourceMapper</a> either globally in the <a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a> instance or locally by
 providing a register callback and register it there.</p>
-<p>Simple types like String, int, etc. that
-use <a href="../../rdf_mapper/LiteralTermMapper-class.html">LiteralTermMapper</a> cannot be directly deserialized as complete RDF documents,
-since RDF literals can only exist as objects within triples, not as standalone
-subjects. Attempting to use this method with literal types will result in errors.</p>
+<p>Simple types like String, int, etc. that use <a href="../../rdf_mapper/LiteralTermMapper-class.html">LiteralTermMapper</a> cannot be directly
+deserialized as complete RDF documents, since RDF literals can only exist as objects
+within triples, not as standalone subjects. Attempting to use this method with
+literal types will result in errors.</p>
 <p>Example 1:</p>
-<pre class="language-dart"><code class="language-dart">final people = graphOperations.deserializeAllOfType&lt;Person&gt;(graph);
+<pre class="language-dart"><code class="language-dart">final people = graphOperations.decodeObjects&lt;Person&gt;(graph);
 </code></pre>
 <p>Example 2:</p>
-<pre class="language-dart"><code class="language-dart">// Register all relevant mappers
-registry.registerMapper&lt;Person&gt;(PersonMapper());
-registry.registerMapper&lt;Organization&gt;(OrganizationMapper());
-
-// Deserialize all subjects
-final entities = graphOperations.deserializeAll&lt;Object&gt;(graph);
+<pre class="language-dart"><code class="language-dart">// Deserialize all subjects with custom mappers
+final entities = graphOperations.decodeObjects&lt;Object&gt;(graph, register: (registry) {
+  registry.registerMapper&lt;Person&gt;(PersonMapper());
+  registry.registerMapper&lt;Organization&gt;(OrganizationMapper());
+});
 final people = entities.whereType&lt;Person&gt;().toList();
 final orgs = entities.whereType&lt;Organization&gt;().toList();
 </code></pre>
-<p>@param graph The RDF graph to deserialize from
-@param register Optional callback to register temporary mappers
-@return A list of deserialized objects of type T</p>
+<p><code>graph</code> The RDF graph to deserialize from
+<code>register</code> Optional callback to register mappers for this operation</p>
+<p>Returns a list of deserialized objects of type T</p>
 </section>
 
 
@@ -133,7 +135,7 @@ final orgs = entities.whereType&lt;Organization&gt;().toList();
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.6.3-dev
+      0.7.0-dev
   </span>
   
 </footer>
