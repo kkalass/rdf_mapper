@@ -400,6 +400,19 @@ final class RdfMapperRegistry {
     return serializer as ResourceSerializer<T>;
   }
 
+  Deserializer<T>? findDeserializerByType<T>() {
+    return (_iriTermDeserializers[T] ??
+        _literalTermDeserializers[T] ??
+        _localResourceDeserializers[T] ??
+        _globalResourceDeserializers[T]) as Deserializer<T>?;
+  }
+
+  Serializer<T>? findSerializerByType<T>() {
+    return (_iriTermSerializers[T] ??
+        _literalTermSerializers[T] ??
+        _resourceSerializers[T]) as Serializer<T>?;
+  }
+
   /// Checks if a mapper exists for a type.
   ///
   /// Returns true if a mapper is registered for type T, false otherwise

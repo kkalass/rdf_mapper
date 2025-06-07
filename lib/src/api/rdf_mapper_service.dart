@@ -1,5 +1,6 @@
 import 'package:logging/logging.dart';
 import 'package:rdf_core/rdf_core.dart';
+import 'package:rdf_mapper/rdf_mapper.dart';
 import 'package:rdf_mapper/src/context/deserialization_context_impl.dart';
 import 'package:rdf_mapper/src/exceptions/deserialization_exception.dart';
 import 'package:rdf_mapper/src/exceptions/deserializer_not_found_exception.dart';
@@ -126,6 +127,27 @@ final class RdfMapperService {
     RdfGraph graph, {
     void Function(RdfMapperRegistry registry)? register,
   }) {
+    var subjects = graph.triples.map((t) => t.subject).toSet();
+    if (subjects.length == 1) {
+      // Easy case: only one subject in the graph
+      return deserializeBySubject(graph, subjects.single, register: register);
+    }
+    var deserializer = registry.findDeserializerByType<T>();
+    if (deserializer is ResourceDeserializer<T>) {
+      var typeIri = deserializer.typeIri; // Ensure the deserializer is valid
+      if (typeIri != null) {
+        subjects = graph
+            .findTriples(predicate: Rdf.type, object: typeIri)
+            .map((t) => t.subject)
+            .toSet();
+        if (subjects.length == 1) {
+          // We found exactly one subject with the type IRI handled by the deserializer
+          // identified by the result Type.
+          return deserializeBySubject(graph, subjects.single,
+              register: register);
+        }
+      }
+    }
     var result = deserializeAll(graph, register: register);
     if (result.isEmpty) {
       throw DeserializationException('No subject found in graph');
