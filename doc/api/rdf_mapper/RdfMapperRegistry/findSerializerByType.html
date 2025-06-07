@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
-  <meta name="description" content="API docs for the DateTimeDeserializer constructor from Class DateTimeDeserializer from the rdf_mapper library, for the Dart programming language.">
-  <title>DateTimeDeserializer constructor - DateTimeDeserializer - rdf_mapper library - Dart API</title>
+  <meta name="description" content="API docs for the findSerializerByType method from the RdfMapperRegistry class, for the Dart programming language.">
+  <title>findSerializerByType method - RdfMapperRegistry class - rdf_mapper library - Dart API</title>
 
 
   
@@ -26,10 +26,10 @@
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../../index.html">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper">rdf_mapper.dart</a></li>
-    <li><a href="../../rdf_mapper/DateTimeDeserializer-class.html">DateTimeDeserializer</a></li>
-    <li class="self-crumb">DateTimeDeserializer constructor</li>
+    <li><a href="../../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></li>
+    <li class="self-crumb">findSerializerByType&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
   </ol>
-  <div class="self-name">DateTimeDeserializer</div>
+  <div class="self-name">findSerializerByType</div>
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
@@ -46,35 +46,34 @@
   </div>
 </header>
 <main>
-  <div
-      id="dartdoc-main-content"
-      class="main-content"
-      data-above-sidebar="rdf_mapper&#47;DateTimeDeserializer-class-sidebar.html"
-      data-below-sidebar="">
-      <div>
-<h1><span class="kind-constructor">DateTimeDeserializer</span> constructor 
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="rdf_mapper&#47;RdfMapperRegistry-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">findSerializerByType&lt;<wbr><span class="type-parameter">T</span>&gt;</span> method 
 </h1></div>
 
     <section class="multi-line-signature">
       
-      <span class="name ">DateTimeDeserializer</span>(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="-param-datatype"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/IriTerm-class.html">IriTerm</a>?</span> <span class="parameter-name">datatype</span>, </span></li>
-</ol>})
+<span class="returntype"><a href="../../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span>
+<span class="name ">findSerializerByType</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr>)
+
+      
+
     </section>
     
-<section class="desc markdown">
-  <p>Creates a new DateTime deserializer with an optional custom datatype.</p>
-<p>@param datatype Optional custom datatype IRI (defaults to xsd:dateTime)</p>
-</section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">DateTimeDeserializer({IriTerm? datatype})
-    : super(
-        datatype: datatype ?? Xsd.dateTime,
-        convertFromLiteral: (term, _) =&gt; DateTime.parse(term.value).toUtc(),
-      );</code></pre>
+  <pre class="language-dart"><code class="language-dart">Serializer&lt;T&gt;? findSerializerByType&lt;T&gt;() {
+  return (_iriTermSerializers[T] ??
+      _literalTermSerializers[T] ??
+      _resourceSerializers[T]) as Serializer&lt;T&gt;?;
+}</code></pre>
 </section>
 
 
@@ -89,15 +88,15 @@
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../../index.html">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper">rdf_mapper</a></li>
-    <li><a href="../../rdf_mapper/DateTimeDeserializer-class.html">DateTimeDeserializer</a></li>
-    <li class="self-crumb">DateTimeDeserializer constructor</li>
+    <li><a href="../../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></li>
+    <li class="self-crumb">findSerializerByType&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
 </ol>
 
-    <h5>DateTimeDeserializer class</h5>
+    <h5>RdfMapperRegistry class</h5>
     <div id="dartdoc-sidebar-left-content"></div>
-  </div><!--/.sidebar-offcanvas-left-->
-  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
   </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
 </main>
 <footer>
   <span class="no-break">

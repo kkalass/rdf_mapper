@@ -94,6 +94,27 @@ Throws <a href="../../rdf_mapper/DeserializerNotFoundException-class.html">Deser
   RdfGraph graph, {
   void Function(RdfMapperRegistry registry)? register,
 }) {
+  var subjects = graph.triples.map((t) =&gt; t.subject).toSet();
+  if (subjects.length == 1) {
+    &#47;&#47; Easy case: only one subject in the graph
+    return deserializeBySubject(graph, subjects.single, register: register);
+  }
+  var deserializer = registry.findDeserializerByType&lt;T&gt;();
+  if (deserializer is ResourceDeserializer&lt;T&gt;) {
+    var typeIri = deserializer.typeIri; &#47;&#47; Ensure the deserializer is valid
+    if (typeIri != null) {
+      subjects = graph
+          .findTriples(predicate: Rdf.type, object: typeIri)
+          .map((t) =&gt; t.subject)
+          .toSet();
+      if (subjects.length == 1) {
+        &#47;&#47; We found exactly one subject with the type IRI handled by the deserializer
+        &#47;&#47; identified by the result Type.
+        return deserializeBySubject(graph, subjects.single,
+            register: register);
+      }
+    }
+  }
   var result = deserializeAll(graph, register: register);
   if (result.isEmpty) {
     throw DeserializationException(&#39;No subject found in graph&#39;);
@@ -132,7 +153,7 @@ Throws <a href="../../rdf_mapper/DeserializerNotFoundException-class.html">Deser
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.7.0
+      0.7.1
   </span>
   
 </footer>
