@@ -96,16 +96,12 @@ export 'src/mappers/iri/iri_id_serializer.dart';
 export 'src/mappers/literal/base_rdf_literal_term_deserializer.dart';
 export 'src/mappers/literal/base_rdf_literal_term_serializer.dart';
 // Standard literal mappers - useful for reference and extension
-export 'src/mappers/literal/bool_deserializer.dart';
-export 'src/mappers/literal/bool_serializer.dart';
-export 'src/mappers/literal/date_time_deserializer.dart';
-export 'src/mappers/literal/date_time_serializer.dart';
-export 'src/mappers/literal/double_deserializer.dart';
-export 'src/mappers/literal/double_serializer.dart';
-export 'src/mappers/literal/int_deserializer.dart';
-export 'src/mappers/literal/int_serializer.dart';
-export 'src/mappers/literal/string_deserializer.dart';
-export 'src/mappers/literal/string_serializer.dart';
+export 'src/mappers/literal/base_rdf_literal_term_mapper.dart';
+export 'src/mappers/literal/bool_mapper.dart';
+export 'src/mappers/literal/date_time_mapper.dart';
+export 'src/mappers/literal/double_mapper.dart';
+export 'src/mappers/literal/int_mapper.dart';
+export 'src/mappers/literal/string_mapper.dart';
 export 'src/util/namespace.dart';
 
 /// Central facade for the RDF Mapper library, providing access to object mapping and registry operations.

@@ -20,7 +20,7 @@ void main() {
         const simpleString = 'Hello, World!';
 
         // Create a literal term directly using the standard mapper
-        final stringMapper = StringSerializer();
+        final stringMapper = const StringMapper();
         final serializationContext = MockSerializationContext();
         final literalTerm = stringMapper.toRdfTerm(
           simpleString,

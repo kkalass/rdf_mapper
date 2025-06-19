@@ -35,8 +35,6 @@ abstract class BaseRdfLiteralTermDeserializer<T>
   /// Creates a new base literal term deserializer.
   ///
   /// @param datatype The XSD or custom datatype IRI that this deserializer handles
-  /// @param convertFromLiteral Function to convert from a literal term to the target type.
-  ///        This function should throw an exception if the conversion fails.
   const BaseRdfLiteralTermDeserializer({
     required IriTerm datatype,
   }) : _datatype = datatype;

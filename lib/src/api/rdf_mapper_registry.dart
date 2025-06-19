@@ -6,18 +6,13 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 
 import 'package:rdf_mapper/src/exceptions/deserializer_not_found_exception.dart';
 import 'package:rdf_mapper/src/exceptions/serializer_not_found_exception.dart';
-import 'package:rdf_mapper/src/mappers/literal/bool_deserializer.dart';
-import 'package:rdf_mapper/src/mappers/literal/bool_serializer.dart';
-import 'package:rdf_mapper/src/mappers/literal/date_time_deserializer.dart';
-import 'package:rdf_mapper/src/mappers/literal/date_time_serializer.dart';
-import 'package:rdf_mapper/src/mappers/literal/double_deserializer.dart';
-import 'package:rdf_mapper/src/mappers/literal/double_serializer.dart';
-import 'package:rdf_mapper/src/mappers/literal/int_deserializer.dart';
-import 'package:rdf_mapper/src/mappers/literal/int_serializer.dart';
+import 'package:rdf_mapper/src/mappers/literal/bool_mapper.dart';
+import 'package:rdf_mapper/src/mappers/literal/date_time_mapper.dart';
+import 'package:rdf_mapper/src/mappers/literal/double_mapper.dart';
+import 'package:rdf_mapper/src/mappers/literal/int_mapper.dart';
 import 'package:rdf_mapper/src/mappers/iri/iri_full_deserializer.dart';
 import 'package:rdf_mapper/src/mappers/iri/iri_full_serializer.dart';
-import 'package:rdf_mapper/src/mappers/literal/string_deserializer.dart';
-import 'package:rdf_mapper/src/mappers/literal/string_serializer.dart';
+import 'package:rdf_mapper/src/mappers/literal/string_mapper.dart';
 
 final _log = Logger("rdf_orm.registry");
 
@@ -107,19 +102,16 @@ final class RdfMapperRegistry {
   RdfMapperRegistry() {
     // Register standard deserializers
     registerDeserializer(IriFullDeserializer());
-    registerDeserializer(StringDeserializer());
-    registerDeserializer(IntDeserializer());
-    registerDeserializer(DoubleDeserializer());
-    registerDeserializer(BoolDeserializer());
-    registerDeserializer(DateTimeDeserializer());
 
     // Register standard serializers
     registerSerializer(IriFullSerializer());
-    registerSerializer(StringSerializer());
-    registerSerializer(IntSerializer());
-    registerSerializer(DoubleSerializer());
-    registerSerializer(BoolSerializer());
-    registerSerializer(DateTimeSerializer());
+
+    // Register mappers for common literal types
+    registerMapper(const StringMapper());
+    registerMapper(const IntMapper());
+    registerMapper(const DoubleMapper());
+    registerMapper(const BoolMapper());
+    registerMapper(const DateTimeMapper());
   }
 
   /// Registers a serializer with the appropriate registry based on its type.

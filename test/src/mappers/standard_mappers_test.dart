@@ -1,21 +1,16 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserializer.dart';
 import 'package:rdf_mapper/src/api/serializer.dart';
+import 'package:rdf_mapper/src/mappers/literal/bool_mapper.dart';
+import 'package:rdf_mapper/src/mappers/literal/date_time_mapper.dart';
+import 'package:rdf_mapper/src/mappers/literal/double_mapper.dart';
+import 'package:rdf_mapper/src/mappers/literal/int_mapper.dart';
+import 'package:rdf_mapper/src/mappers/literal/string_mapper.dart';
 import 'package:rdf_vocabularies/xsd.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
 import 'package:rdf_mapper/src/api/resource_builder.dart';
 import 'package:rdf_mapper/src/api/resource_reader.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
-import 'package:rdf_mapper/src/mappers/literal/bool_deserializer.dart';
-import 'package:rdf_mapper/src/mappers/literal/bool_serializer.dart';
-import 'package:rdf_mapper/src/mappers/literal/date_time_deserializer.dart';
-import 'package:rdf_mapper/src/mappers/literal/date_time_serializer.dart';
-import 'package:rdf_mapper/src/mappers/literal/double_deserializer.dart';
-import 'package:rdf_mapper/src/mappers/literal/double_serializer.dart';
-import 'package:rdf_mapper/src/mappers/literal/int_deserializer.dart';
-import 'package:rdf_mapper/src/mappers/literal/int_serializer.dart';
-import 'package:rdf_mapper/src/mappers/literal/string_deserializer.dart';
-import 'package:rdf_mapper/src/mappers/literal/string_serializer.dart';
 import 'package:test/test.dart';
 
 // Mock implementation of SerializationContext for testing
@@ -62,7 +57,7 @@ void main() {
   group('Standard Mappers', () {
     group('String Mapper', () {
       test('StringSerializer correctly serializes strings to RDF literals', () {
-        final serializer = StringSerializer();
+        final serializer = const StringMapper();
 
         final literal = serializer.toRdfTerm(
           'Hello, World!',
@@ -78,7 +73,7 @@ void main() {
       test(
         'StringDeserializer correctly deserializes RDF literals to strings',
         () {
-          final deserializer = StringDeserializer();
+          final deserializer = const StringMapper();
 
           final string = deserializer.fromRdfTerm(
             LiteralTerm.string('Hello, World!'),
@@ -92,7 +87,7 @@ void main() {
       test(
         'StringDeserializer by default rejects language-tagged literals',
         () {
-          final deserializer = StringDeserializer();
+          final deserializer = const StringMapper();
 
           expect(
             () => deserializer.fromRdfTerm(
@@ -107,7 +102,8 @@ void main() {
       test(
         'StringDeserializer with acceptLangString=true handles language-tagged literals',
         () {
-          final deserializer = StringDeserializer(acceptLangString: true);
+          final deserializer =
+              const StringMapper(null, /*acceptLangString:*/ true);
 
           final string = deserializer.fromRdfTerm(
             LiteralTerm.withLanguage('Hallo, Welt!', 'de'),
@@ -121,8 +117,9 @@ void main() {
       test(
         'StringDeserializer with custom datatype accepts only that datatype',
         () {
-          final customDatatype = IriTerm('http://example.org/customString');
-          final deserializer = StringDeserializer(datatype: customDatatype);
+          const customDatatype =
+              IriTerm.prevalidated('http://example.org/customString');
+          final deserializer = const StringMapper(customDatatype);
 
           final customLiteral = LiteralTerm(
             'Custom string',
@@ -147,7 +144,7 @@ void main() {
 
     group('Integer Mapper', () {
       test('IntSerializer correctly serializes integers to RDF literals', () {
-        final serializer = IntSerializer();
+        final serializer = const IntMapper();
 
         final literal = serializer.toRdfTerm(42, serializationContext);
 
@@ -159,7 +156,7 @@ void main() {
       test(
         'IntDeserializer correctly deserializes RDF literals to integers',
         () {
-          final deserializer = IntDeserializer();
+          final deserializer = const IntMapper();
 
           final int1 = deserializer.fromRdfTerm(
             LiteralTerm.typed('42', 'integer'),
@@ -179,7 +176,7 @@ void main() {
 
     group('Boolean Mapper', () {
       test('BoolSerializer correctly serializes booleans to RDF literals', () {
-        final serializer = BoolSerializer();
+        final serializer = const BoolMapper();
 
         final trueLiteral = serializer.toRdfTerm(true, serializationContext);
         final falseLiteral = serializer.toRdfTerm(false, serializationContext);
@@ -194,7 +191,7 @@ void main() {
       test(
         'BoolDeserializer correctly deserializes RDF literals to booleans',
         () {
-          final deserializer = BoolDeserializer();
+          final deserializer = const BoolMapper();
 
           final trueValue = deserializer.fromRdfTerm(
             LiteralTerm.typed('true', 'boolean'),
@@ -227,7 +224,7 @@ void main() {
 
     group('Double Mapper', () {
       test('DoubleSerializer correctly serializes doubles to RDF literals', () {
-        final serializer = DoubleSerializer();
+        final serializer = const DoubleMapper();
 
         final literal1 = serializer.toRdfTerm(3.14159, serializationContext);
         final literal2 = serializer.toRdfTerm(-0.5, serializationContext);
@@ -242,7 +239,7 @@ void main() {
       test(
         'DoubleDeserializer correctly deserializes RDF literals to doubles',
         () {
-          final deserializer = DoubleDeserializer();
+          final deserializer = const DoubleMapper();
 
           final double1 = deserializer.fromRdfTerm(
             LiteralTerm.typed('3.14159', 'decimal'),
@@ -264,7 +261,7 @@ void main() {
       test(
         'DateTimeSerializer correctly serializes DateTimes to RDF literals',
         () {
-          final serializer = DateTimeSerializer();
+          final serializer = const DateTimeMapper();
 
           final dateTime = DateTime.utc(2023, 4, 1, 12, 30, 45);
           final literal = serializer.toRdfTerm(dateTime, serializationContext);
@@ -277,7 +274,7 @@ void main() {
       test(
         'DateTimeDeserializer correctly deserializes RDF literals to DateTimes',
         () {
-          final deserializer = DateTimeDeserializer();
+          final deserializer = const DateTimeMapper();
 
           final dateTime = deserializer.fromRdfTerm(
             LiteralTerm.typed('2023-04-01T12:30:45.000Z', 'dateTime'),
