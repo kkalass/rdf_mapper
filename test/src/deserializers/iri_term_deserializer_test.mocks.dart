@@ -4,8 +4,10 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i6;
 import 'package:rdf_core/rdf_core.dart' as _i4;
 import 'package:rdf_mapper/src/api/deserialization_context.dart' as _i3;
+import 'package:rdf_mapper/src/api/deserializer.dart' as _i5;
 import 'package:rdf_mapper/src/api/resource_reader.dart' as _i2;
 
 // ignore_for_file: type=lint
@@ -24,8 +26,13 @@ import 'package:rdf_mapper/src/api/resource_reader.dart' as _i2;
 
 class _FakeResourceReader_0 extends _i1.SmartFake
     implements _i2.ResourceReader {
-  _FakeResourceReader_0(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
+  _FakeResourceReader_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
 }
 
 /// A class which mocks [DeserializationContext].
@@ -39,10 +46,44 @@ class MockDeserializationContext extends _i1.Mock
 
   @override
   _i2.ResourceReader reader(_i4.RdfSubject? subject) => (super.noSuchMethod(
-        Invocation.method(#reader, [subject]),
+        Invocation.method(
+          #reader,
+          [subject],
+        ),
         returnValue: _FakeResourceReader_0(
           this,
-          Invocation.method(#reader, [subject]),
+          Invocation.method(
+            #reader,
+            [subject],
+          ),
         ),
       ) as _i2.ResourceReader);
+
+  @override
+  T fromLiteralTerm<T>(
+    _i4.LiteralTerm? term, {
+    _i5.LiteralTermDeserializer<T>? deserializer,
+    bool? bypassDatatypeCheck = false,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fromLiteralTerm,
+          [term],
+          {
+            #deserializer: deserializer,
+            #bypassDatatypeCheck: bypassDatatypeCheck,
+          },
+        ),
+        returnValue: _i6.dummyValue<T>(
+          this,
+          Invocation.method(
+            #fromLiteralTerm,
+            [term],
+            {
+              #deserializer: deserializer,
+              #bypassDatatypeCheck: bypassDatatypeCheck,
+            },
+          ),
+        ),
+      ) as T);
 }

@@ -70,12 +70,12 @@ class DeserializationContextImpl extends DeserializationContext
     }
   }
 
-  T fromLiteralTerm<T>(
-    LiteralTerm term, {
-    LiteralTermDeserializer<T>? deserializer,
-  }) {
+  T fromLiteralTerm<T>(LiteralTerm term,
+      {LiteralTermDeserializer<T>? deserializer,
+      bool bypassDatatypeCheck = false}) {
     var deser = deserializer ?? _registry.getLiteralTermDeserializer<T>();
-    return deser.fromRdfTerm(term, this);
+    return deser.fromRdfTerm(term, this,
+        bypassDatatypeCheck: bypassDatatypeCheck);
   }
 
   @override

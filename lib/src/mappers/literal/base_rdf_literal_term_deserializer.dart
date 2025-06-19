@@ -53,8 +53,9 @@ abstract class BaseRdfLiteralTermDeserializer<T>
   /// @return The converted value of type T
   /// @throws DeserializationException if the datatype doesn't match or conversion fails
   @override
-  T fromRdfTerm(LiteralTerm term, DeserializationContext context) {
-    if (term.datatype != _datatype) {
+  T fromRdfTerm(LiteralTerm term, DeserializationContext context,
+      {bool bypassDatatypeCheck = false}) {
+    if (!bypassDatatypeCheck && term.datatype != _datatype) {
       throw DeserializationException(
         'Failed to parse ${T.toString()}: ${term.value}. Error: The expected datatype is ${_datatype.iri} but the actual datatype in the Literal was ${term.datatype.iri}',
       );

@@ -114,9 +114,8 @@ class CustomLiteralDeserializer implements LiteralTermDeserializer<Point> {
   const CustomLiteralDeserializer();
   @override
   Point fromRdfTerm(
-    LiteralTerm term,
-    covariant MockDeserializationContext context,
-  ) {
+      LiteralTerm term, covariant MockDeserializationContext context,
+      {bool bypassDatatypeCheck = false}) {
     // Simple parsing logic for a string like "x:10,y:20"
     final parts = term.value.split(',');
     final x = int.parse(parts[0].split(':')[1]);
@@ -138,9 +137,8 @@ class StringLiteralDeserializer implements LiteralTermDeserializer<String> {
   const StringLiteralDeserializer();
   @override
   String fromRdfTerm(
-    LiteralTerm term,
-    covariant MockDeserializationContext context,
-  ) {
+      LiteralTerm term, covariant MockDeserializationContext context,
+      {bool bypassDatatypeCheck = false}) {
     return term.value;
   }
 }
@@ -150,9 +148,8 @@ class IntegerLiteralDeserializer implements LiteralTermDeserializer<int> {
   const IntegerLiteralDeserializer();
   @override
   int fromRdfTerm(
-    LiteralTerm term,
-    covariant MockDeserializationContext context,
-  ) {
+      LiteralTerm term, covariant MockDeserializationContext context,
+      {bool bypassDatatypeCheck = false}) {
     return int.parse(term.value);
   }
 }
@@ -162,9 +159,8 @@ class BooleanLiteralDeserializer implements LiteralTermDeserializer<bool> {
   const BooleanLiteralDeserializer();
   @override
   bool fromRdfTerm(
-    LiteralTerm term,
-    covariant MockDeserializationContext context,
-  ) {
+      LiteralTerm term, covariant MockDeserializationContext context,
+      {bool bypassDatatypeCheck = false}) {
     return term.value.toLowerCase() == 'true';
   }
 }
@@ -174,9 +170,8 @@ class DoubleLiteralDeserializer implements LiteralTermDeserializer<double> {
   const DoubleLiteralDeserializer();
   @override
   double fromRdfTerm(
-    LiteralTerm term,
-    covariant MockDeserializationContext context,
-  ) {
+      LiteralTerm term, covariant MockDeserializationContext context,
+      {bool bypassDatatypeCheck = false}) {
     return double.parse(term.value);
   }
 }

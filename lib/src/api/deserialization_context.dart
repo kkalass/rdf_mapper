@@ -73,8 +73,7 @@ abstract class DeserializationContext {
   /// Returns the converted value of type T.
   ///
   /// Throws a [DeserializationException] if conversion fails or no suitable deserializer exists.
-  T fromLiteralTerm<T>(
-    LiteralTerm term, {
-    LiteralTermDeserializer<T>? deserializer,
-  });
+  T fromLiteralTerm<T>(LiteralTerm term,
+      {LiteralTermDeserializer<T>? deserializer,
+      bool bypassDatatypeCheck = false});
 }

@@ -22,8 +22,9 @@ abstract class BaseRdfLiteralTermMapper<T> implements LiteralTermMapper<T> {
   /// @return The converted value of type T
   /// @throws DeserializationException if the datatype doesn't match or conversion fails
   @override
-  T fromRdfTerm(LiteralTerm term, DeserializationContext context) {
-    if (term.datatype != datatype) {
+  T fromRdfTerm(LiteralTerm term, DeserializationContext context,
+      {bool bypassDatatypeCheck = true}) {
+    if (!bypassDatatypeCheck && term.datatype != datatype) {
       throw DeserializationException(
         'Failed to parse ${T.toString()}: ${term.value}. Error: The expected datatype is ${datatype.iri} but the actual datatype in the Literal was ${term.datatype.iri}',
       );

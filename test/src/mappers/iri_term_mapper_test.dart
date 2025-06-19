@@ -330,10 +330,9 @@ class CustomDeserializationContext extends DeserializationContext {
   }
 
   @override
-  T fromLiteralTerm<T>(
-    LiteralTerm term, {
-    LiteralTermDeserializer<T>? deserializer,
-  }) {
+  T fromLiteralTerm<T>(LiteralTerm term,
+      {LiteralTermDeserializer<T>? deserializer,
+      bool bypassDatatypeCheck = false}) {
     throw UnimplementedError();
   }
 }

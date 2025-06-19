@@ -1388,7 +1388,8 @@ class _TestLiteralMapper implements LiteralTermMapper<_TestType> {
   }
 
   @override
-  _TestType fromRdfTerm(LiteralTerm term, DeserializationContext context) {
+  _TestType fromRdfTerm(LiteralTerm term, DeserializationContext context,
+      {bool bypassDatatypeCheck = false}) {
     return _TestType(term.value);
   }
 }

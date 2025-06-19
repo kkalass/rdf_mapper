@@ -11,11 +11,12 @@ final class StringMapper extends BaseRdfLiteralTermMapper<String> {
         super(datatype: datatype ?? Xsd.string);
 
   @override
-  String fromRdfTerm(LiteralTerm term, DeserializationContext context) {
+  String fromRdfTerm(LiteralTerm term, DeserializationContext context,
+      {bool bypassDatatypeCheck = false}) {
     final isExpectedDatatype = term.datatype == datatype;
     final isLangString = _acceptLangString && term.datatype == Rdf.langString;
 
-    if (!isExpectedDatatype && !isLangString) {
+    if (!bypassDatatypeCheck && !isExpectedDatatype && !isLangString) {
       throw Exception(
         'Expected datatype ${datatype.iri} but got ${term.datatype.iri}',
       );

@@ -57,6 +57,7 @@ class MockDeserializationContext extends DeserializationContext {
   T fromLiteralTerm<T>(
     LiteralTerm term, {
     LiteralTermDeserializer<T>? deserializer,
+    bool bypassDatatypeCheck = false,
   }) {
     throw UnimplementedError();
   }

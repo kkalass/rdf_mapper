@@ -307,7 +307,8 @@ class RatingMapper implements LiteralTermMapper<Rating> {
   }
 
   @override
-  Rating fromRdfTerm(LiteralTerm term, DeserializationContext context) {
+  Rating fromRdfTerm(LiteralTerm term, DeserializationContext context,
+      {bool bypassDatatypeCheck = false}) {
     return Rating(int.parse(term.value));
   }
 }

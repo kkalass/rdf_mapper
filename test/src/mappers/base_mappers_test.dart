@@ -38,6 +38,7 @@ class MockDeserializationContext extends DeserializationContext {
   T fromLiteralTerm<T>(
     LiteralTerm term, {
     LiteralTermDeserializer<T>? deserializer,
+    bool bypassDatatypeCheck = false,
   }) {
     throw UnimplementedError();
   }
@@ -93,7 +94,8 @@ class LangTagTestDeserializer extends BaseRdfLiteralTermDeserializer<String> {
   convertFromLiteral(term, _) => term.value;
 
   @override
-  String fromRdfTerm(LiteralTerm term, DeserializationContext context) {
+  String fromRdfTerm(LiteralTerm term, DeserializationContext context,
+      {bool bypassDatatypeCheck = false}) {
     if (term.language != null) {
       return term.value;
     }
