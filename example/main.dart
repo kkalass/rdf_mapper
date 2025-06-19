@@ -299,6 +299,8 @@ class ISBNMapper implements IriTermMapper<ISBN> {
 
 // Custom literal mapper
 class RatingMapper implements LiteralTermMapper<Rating> {
+  const RatingMapper();
+
   @override
   LiteralTerm toRdfTerm(Rating rating, SerializationContext context) {
     return LiteralTerm.typed(rating.stars.toString(), 'integer');

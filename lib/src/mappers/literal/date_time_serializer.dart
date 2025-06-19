@@ -25,9 +25,11 @@ final class DateTimeSerializer extends BaseRdfLiteralTermSerializer<DateTime> {
   /// Creates a new DateTime serializer with an optional custom datatype.
   ///
   /// @param datatype Optional custom datatype IRI (defaults to xsd:dateTime)
-  DateTimeSerializer({IriTerm? datatype})
+  const DateTimeSerializer({IriTerm? datatype})
       : super(
           datatype: datatype ?? Xsd.dateTime,
-          convertToString: (dateTime) => dateTime.toUtc().toIso8601String(),
         );
+
+  @override
+  convertToString(dateTime) => dateTime.toUtc().toIso8601String();
 }

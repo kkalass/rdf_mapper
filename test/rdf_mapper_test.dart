@@ -1381,6 +1381,7 @@ class _TestType {
 
 // Test serializers and deserializers for registration tests
 class _TestLiteralMapper implements LiteralTermMapper<_TestType> {
+  const _TestLiteralMapper();
   @override
   LiteralTerm toRdfTerm(_TestType value, SerializationContext context) {
     return LiteralTerm.string(value.value);

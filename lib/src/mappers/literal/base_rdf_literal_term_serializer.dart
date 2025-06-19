@@ -29,18 +29,14 @@ import 'package:rdf_mapper/src/api/serialization_context.dart';
 abstract class BaseRdfLiteralTermSerializer<T>
     implements LiteralTermSerializer<T> {
   final IriTerm _datatype;
-  final String Function(T value) _convertToString;
 
   /// Creates a new base literal term serializer.
   ///
   /// @param datatype The XSD or custom datatype IRI for the serialized literals
-  /// @param convertToString Optional function to convert values to strings.
-  ///        If not provided, the default toString() method will be used.
-  BaseRdfLiteralTermSerializer({
-    required IriTerm datatype,
-    String Function(T value)? convertToString,
-  })  : _datatype = datatype,
-        _convertToString = convertToString ?? ((value) => value.toString());
+  const BaseRdfLiteralTermSerializer({required IriTerm datatype})
+      : _datatype = datatype;
+
+  String convertToString(T value);
 
   /// Converts a value to an RDF literal term.
   ///
@@ -53,6 +49,6 @@ abstract class BaseRdfLiteralTermSerializer<T>
   /// @return A literal term representing the value
   @override
   LiteralTerm toRdfTerm(T value, SerializationContext context) {
-    return LiteralTerm(_convertToString(value), datatype: _datatype);
+    return LiteralTerm(convertToString(value), datatype: _datatype);
   }
 }

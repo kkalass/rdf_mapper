@@ -22,9 +22,11 @@ final class IntDeserializer extends BaseRdfLiteralTermDeserializer<int> {
   /// Creates a new integer deserializer with an optional custom datatype.
   ///
   /// @param datatype Optional custom datatype IRI (defaults to xsd:integer)
-  IntDeserializer({IriTerm? datatype})
+  const IntDeserializer({IriTerm? datatype})
       : super(
           datatype: datatype ?? Xsd.integer,
-          convertFromLiteral: (term, _) => int.parse(term.value),
         );
+
+  @override
+  convertFromLiteral(term, _) => int.parse(term.value);
 }

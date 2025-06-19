@@ -31,20 +31,17 @@ import 'package:rdf_mapper/src/exceptions/deserialization_exception.dart';
 abstract class BaseRdfLiteralTermDeserializer<T>
     implements LiteralTermDeserializer<T> {
   final IriTerm _datatype;
-  final T Function(LiteralTerm term, DeserializationContext context)
-      _convertFromLiteral;
 
   /// Creates a new base literal term deserializer.
   ///
   /// @param datatype The XSD or custom datatype IRI that this deserializer handles
   /// @param convertFromLiteral Function to convert from a literal term to the target type.
   ///        This function should throw an exception if the conversion fails.
-  BaseRdfLiteralTermDeserializer({
+  const BaseRdfLiteralTermDeserializer({
     required IriTerm datatype,
-    required T Function(LiteralTerm term, DeserializationContext context)
-        convertFromLiteral,
-  })  : _datatype = datatype,
-        _convertFromLiteral = convertFromLiteral;
+  }) : _datatype = datatype;
+
+  T convertFromLiteral(LiteralTerm term, DeserializationContext context);
 
   /// Converts an RDF literal term to a value of type T.
   ///
@@ -65,7 +62,7 @@ abstract class BaseRdfLiteralTermDeserializer<T>
       );
     }
     try {
-      return _convertFromLiteral(term, context);
+      return convertFromLiteral(term, context);
     } catch (e) {
       throw DeserializationException(
         'Failed to parse ${T.toString()}: ${term.value}. Error: $e',

@@ -111,6 +111,7 @@ void main() {
 
 /// Test implementation of a custom RdfLiteralTermDeserializer for Point objects
 class CustomLiteralDeserializer implements LiteralTermDeserializer<Point> {
+  const CustomLiteralDeserializer();
   @override
   Point fromRdfTerm(
     LiteralTerm term,
@@ -134,6 +135,7 @@ class Point {
 
 /// Implementation of the standard string deserializer for testing
 class StringLiteralDeserializer implements LiteralTermDeserializer<String> {
+  const StringLiteralDeserializer();
   @override
   String fromRdfTerm(
     LiteralTerm term,
@@ -145,6 +147,7 @@ class StringLiteralDeserializer implements LiteralTermDeserializer<String> {
 
 /// Implementation of the standard integer deserializer for testing
 class IntegerLiteralDeserializer implements LiteralTermDeserializer<int> {
+  const IntegerLiteralDeserializer();
   @override
   int fromRdfTerm(
     LiteralTerm term,
@@ -156,6 +159,7 @@ class IntegerLiteralDeserializer implements LiteralTermDeserializer<int> {
 
 /// Implementation of the standard boolean deserializer for testing
 class BooleanLiteralDeserializer implements LiteralTermDeserializer<bool> {
+  const BooleanLiteralDeserializer();
   @override
   bool fromRdfTerm(
     LiteralTerm term,
@@ -167,6 +171,7 @@ class BooleanLiteralDeserializer implements LiteralTermDeserializer<bool> {
 
 /// Implementation of the standard double deserializer for testing
 class DoubleLiteralDeserializer implements LiteralTermDeserializer<double> {
+  const DoubleLiteralDeserializer();
   @override
   double fromRdfTerm(
     LiteralTerm term,

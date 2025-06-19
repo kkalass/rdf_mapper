@@ -258,6 +258,7 @@ class CustomIriDeserializer implements IriTermDeserializer<String> {
 }
 
 class CustomStringDeserializer implements LiteralTermDeserializer<String> {
+  const CustomStringDeserializer();
   @override
   String fromRdfTerm(LiteralTerm term, DeserializationContext context) {
     return term.value.toUpperCase(); // Convert to uppercase for testing
