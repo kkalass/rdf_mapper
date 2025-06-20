@@ -125,6 +125,14 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
   Base implementation for literal term deserializers that simplifies the creation of custom deserializers.
 </dd>
 
+          <dt id="BaseRdfLiteralTermMapper">
+  <span class="name "><a href="../rdf_mapper/BaseRdfLiteralTermMapper-class.html">BaseRdfLiteralTermMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
           <dt id="BaseRdfLiteralTermSerializer">
   <span class="name "><a href="../rdf_mapper/BaseRdfLiteralTermSerializer-class.html">BaseRdfLiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
 
@@ -133,36 +141,20 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
   Base implementation for literal term serializers that simplifies the creation of custom serializers.
 </dd>
 
-          <dt id="BoolDeserializer">
-  <span class="name "><a href="../rdf_mapper/BoolDeserializer-class.html">BoolDeserializer</a></span> 
+          <dt id="BoolMapper">
+  <span class="name "><a href="../rdf_mapper/BoolMapper-class.html">BoolMapper</a></span> 
 
 </dt>
 <dd>
-  Standard deserializer for converting RDF boolean literals to Dart boolean values.
+  
 </dd>
 
-          <dt id="BoolSerializer">
-  <span class="name "><a href="../rdf_mapper/BoolSerializer-class.html">BoolSerializer</a></span> 
+          <dt id="DateTimeMapper">
+  <span class="name "><a href="../rdf_mapper/DateTimeMapper-class.html">DateTimeMapper</a></span> 
 
 </dt>
 <dd>
-  Standard serializer for converting Dart boolean values to RDF boolean literals.
-</dd>
-
-          <dt id="DateTimeDeserializer">
-  <span class="name "><a href="../rdf_mapper/DateTimeDeserializer-class.html">DateTimeDeserializer</a></span> 
-
-</dt>
-<dd>
-  Standard deserializer for converting RDF dateTime literals to Dart DateTime objects.
-</dd>
-
-          <dt id="DateTimeSerializer">
-  <span class="name "><a href="../rdf_mapper/DateTimeSerializer-class.html">DateTimeSerializer</a></span> 
-
-</dt>
-<dd>
-  Standard serializer for converting Dart DateTime objects to RDF dateTime literals.
+  
 </dd>
 
           <dt id="DeserializationContext">
@@ -189,20 +181,12 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
   Base marker interface for all RDF deserializers.
 </dd>
 
-          <dt id="DoubleDeserializer">
-  <span class="name "><a href="../rdf_mapper/DoubleDeserializer-class.html">DoubleDeserializer</a></span> 
+          <dt id="DoubleMapper">
+  <span class="name "><a href="../rdf_mapper/DoubleMapper-class.html">DoubleMapper</a></span> 
 
 </dt>
 <dd>
-  Standard deserializer for converting RDF decimal/double literals to Dart double values.
-</dd>
-
-          <dt id="DoubleSerializer">
-  <span class="name "><a href="../rdf_mapper/DoubleSerializer-class.html">DoubleSerializer</a></span> 
-
-</dt>
-<dd>
-  Standard serializer for converting Dart double values to RDF decimal literals.
+  
 </dd>
 
           <dt id="ExtractingIriTermDeserializer">
@@ -245,20 +229,12 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
   Provides direct graph-based operations for RDF object mapping.
 </dd>
 
-          <dt id="IntDeserializer">
-  <span class="name "><a href="../rdf_mapper/IntDeserializer-class.html">IntDeserializer</a></span> 
+          <dt id="IntMapper">
+  <span class="name "><a href="../rdf_mapper/IntMapper-class.html">IntMapper</a></span> 
 
 </dt>
 <dd>
-  Standard deserializer for converting RDF integer literals to Dart integers.
-</dd>
-
-          <dt id="IntSerializer">
-  <span class="name "><a href="../rdf_mapper/IntSerializer-class.html">IntSerializer</a></span> 
-
-</dt>
-<dd>
-  Standard serializer for converting Dart integers to RDF integer literals.
+  
 </dd>
 
           <dt id="IriFullDeserializer">
@@ -573,20 +549,12 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
   Base marker interface for all RDF serializers.
 </dd>
 
-          <dt id="StringDeserializer">
-  <span class="name "><a href="../rdf_mapper/StringDeserializer-class.html">StringDeserializer</a></span> 
+          <dt id="StringMapper">
+  <span class="name "><a href="../rdf_mapper/StringMapper-class.html">StringMapper</a></span> 
 
 </dt>
 <dd>
-  Standard deserializer for converting RDF string literals to Dart strings.
-</dd>
-
-          <dt id="StringSerializer">
-  <span class="name "><a href="../rdf_mapper/StringSerializer-class.html">StringSerializer</a></span> 
-
-</dt>
-<dd>
-  Standard serializer for converting Dart strings to RDF string literals.
+  
 </dd>
 
           <dt id="TermDeserializer">
@@ -626,6 +594,14 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 </dt>
 <dd>
   Exception thrown when errors occur during the RDF deserialization process.
+</dd>
+
+          <dt id="DeserializerDatatypeMismatchException">
+  <span class="name "><a href="../rdf_mapper/DeserializerDatatypeMismatchException-class.html">DeserializerDatatypeMismatchException</a></span> 
+
+</dt>
+<dd>
+  Exception thrown when a deserializer encounters a datatype in the RDF graph which does not match the expected type.
 </dd>
 
           <dt id="DeserializerNotFoundException">
@@ -721,7 +697,7 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.7.1
+      0.8.0-dev
   </span>
   
 </footer>

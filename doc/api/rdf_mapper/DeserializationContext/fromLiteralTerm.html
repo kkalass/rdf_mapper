@@ -60,6 +60,7 @@
 <span class="returntype">T</span>
 <span class="name ">fromLiteralTerm</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="fromLiteralTerm-param-term"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/LiteralTerm-class.html">LiteralTerm</a></span> <span class="parameter-name">term</span>, {</span></li>
 <li><span class="parameter" id="fromLiteralTerm-param-deserializer"><span class="type-annotation"><a href="../../rdf_mapper/LiteralTermDeserializer-class.html">LiteralTermDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">deserializer</span>, </span></li>
+<li><span class="parameter" id="fromLiteralTerm-param-bypassDatatypeCheck"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">bypassDatatypeCheck</span> = <span class="default-value">false</span>, </span></li>
 </ol>})
 
       
@@ -92,10 +93,9 @@ An optional <code>deserializer</code> can be provided to use instead of the regi
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">T fromLiteralTerm&lt;T&gt;(
-  LiteralTerm term, {
-  LiteralTermDeserializer&lt;T&gt;? deserializer,
-});</code></pre>
+  <pre class="language-dart"><code class="language-dart">T fromLiteralTerm&lt;T&gt;(LiteralTerm term,
+    {LiteralTermDeserializer&lt;T&gt;? deserializer,
+    bool bypassDatatypeCheck = false});</code></pre>
 </section>
 
 
@@ -123,7 +123,7 @@ An optional <code>deserializer</code> can be provided to use instead of the regi
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.7.1
+      0.8.0-dev
   </span>
   
 </footer>

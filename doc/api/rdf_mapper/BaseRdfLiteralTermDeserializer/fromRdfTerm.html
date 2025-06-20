@@ -63,9 +63,10 @@
     </ol>
   </div>
 <span class="returntype">T</span>
-<span class="name ">fromRdfTerm</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="fromRdfTerm-param-term"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/LiteralTerm-class.html">LiteralTerm</a></span> <span class="parameter-name">term</span>, </span></li>
-<li><span class="parameter" id="fromRdfTerm-param-context"><span class="type-annotation"><a href="../../rdf_mapper/DeserializationContext-class.html">DeserializationContext</a></span> <span class="parameter-name">context</span></span></li>
-</ol>)
+<span class="name ">fromRdfTerm</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="fromRdfTerm-param-term"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/LiteralTerm-class.html">LiteralTerm</a></span> <span class="parameter-name">term</span>, </span></li>
+<li><span class="parameter" id="fromRdfTerm-param-context"><span class="type-annotation"><a href="../../rdf_mapper/DeserializationContext-class.html">DeserializationContext</a></span> <span class="parameter-name">context</span>, {</span></li>
+<li><span class="parameter" id="fromRdfTerm-param-bypassDatatypeCheck"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">bypassDatatypeCheck</span> = <span class="default-value">false</span>, </span></li>
+</ol>})
 
       <div class="features"><span class="feature">override</span></div>
 
@@ -90,14 +91,18 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">@override
-T fromRdfTerm(LiteralTerm term, DeserializationContext context) {
-  if (term.datatype != _datatype) {
-    throw DeserializationException(
-      &#39;Failed to parse ${T.toString()}: ${term.value}. Error: The expected datatype is ${_datatype.iri} but the actual datatype in the Literal was ${term.datatype.iri}&#39;,
-    );
+T fromRdfTerm(LiteralTerm term, DeserializationContext context,
+    {bool bypassDatatypeCheck = false}) {
+  if (!bypassDatatypeCheck &amp;&amp; term.datatype != _datatype) {
+    throw DeserializerDatatypeMismatchException(
+        &#39;Failed to parse ${T.toString()}: ${term.value}. &#39;,
+        actual: term.datatype,
+        expected: _datatype,
+        targetType: T,
+        mapperRuntimeType: this.runtimeType);
   }
   try {
-    return _convertFromLiteral(term, context);
+    return convertFromLiteral(term, context);
   } catch (e) {
     throw DeserializationException(
       &#39;Failed to parse ${T.toString()}: ${term.value}. Error: $e&#39;,
@@ -131,7 +136,7 @@ T fromRdfTerm(LiteralTerm term, DeserializationContext context) {
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.7.1
+      0.8.0-dev
   </span>
   
 </footer>

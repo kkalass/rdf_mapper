@@ -98,13 +98,6 @@ deserializers for simple value types while providing consistent error handling.<
   </dd>
         
 
-          <dt>Implementers</dt>
-          <dd><ul class="comma-separated clazz-relationships">
-              <li><a href="../rdf_mapper/BoolDeserializer-class.html">BoolDeserializer</a></li>
-              <li><a href="../rdf_mapper/DateTimeDeserializer-class.html">DateTimeDeserializer</a></li>
-              <li><a href="../rdf_mapper/DoubleDeserializer-class.html">DoubleDeserializer</a></li>
-              <li><a href="../rdf_mapper/IntDeserializer-class.html">IntDeserializer</a></li>
-          </ul></dd>
 
         
         
@@ -118,10 +111,11 @@ deserializers for simple value types while providing consistent error handling.<
     <h2>Constructors</h2>
     <dl class="constructor-summary-list">
         <dt id="BaseRdfLiteralTermDeserializer" class="callable">
-          <span class="name"><a href="../rdf_mapper/BaseRdfLiteralTermDeserializer/BaseRdfLiteralTermDeserializer.html">BaseRdfLiteralTermDeserializer</a></span><span class="signature">({<span class="parameter" id="-param-datatype"><span>required</span> <span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">datatype</span>, </span><span class="parameter" id="-param-convertFromLiteral"><span>required</span> <span class="type-annotation">T</span> <span class="parameter-name">convertFromLiteral</span>(<span class="parameter" id="param-term"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/LiteralTerm-class.html">LiteralTerm</a></span> <span class="parameter-name">term</span>, </span><span class="parameter" id="param-context"><span class="type-annotation"><a href="../rdf_mapper/DeserializationContext-class.html">DeserializationContext</a></span> <span class="parameter-name">context</span></span>)</span>})</span>
+          <span class="name"><a href="../rdf_mapper/BaseRdfLiteralTermDeserializer/BaseRdfLiteralTermDeserializer.html">BaseRdfLiteralTermDeserializer</a></span><span class="signature">({<span class="parameter" id="-param-datatype"><span>required</span> <span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">datatype</span></span>})</span>
         </dt>
         <dd>
           Creates a new base literal term deserializer.
+            <div class="constructor-modifier features">const</div>
         </dd>
     </dl>
   </section>
@@ -164,8 +158,21 @@ deserializers for simple value types while providing consistent error handling.<
       id="instance-methods">
     <h2>Methods</h2>
     <dl class="callables">
+        <dt id="convertFromLiteral" class="callable">
+  <span class="name"><a href="../rdf_mapper/BaseRdfLiteralTermDeserializer/convertFromLiteral.html">convertFromLiteral</a></span><span class="signature">(<wbr><span class="parameter" id="convertFromLiteral-param-term"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/LiteralTerm-class.html">LiteralTerm</a></span> <span class="parameter-name">term</span>, </span><span class="parameter" id="convertFromLiteral-param-context"><span class="type-annotation"><a href="../rdf_mapper/DeserializationContext-class.html">DeserializationContext</a></span> <span class="parameter-name">context</span></span>)
+    <span class="returntype parameter">&#8594; T</span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
         <dt id="fromRdfTerm" class="callable">
-  <span class="name"><a href="../rdf_mapper/BaseRdfLiteralTermDeserializer/fromRdfTerm.html">fromRdfTerm</a></span><span class="signature">(<wbr><span class="parameter" id="fromRdfTerm-param-term"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/LiteralTerm-class.html">LiteralTerm</a></span> <span class="parameter-name">term</span>, </span><span class="parameter" id="fromRdfTerm-param-context"><span class="type-annotation"><a href="../rdf_mapper/DeserializationContext-class.html">DeserializationContext</a></span> <span class="parameter-name">context</span></span>)
+  <span class="name"><a href="../rdf_mapper/BaseRdfLiteralTermDeserializer/fromRdfTerm.html">fromRdfTerm</a></span><span class="signature">(<wbr><span class="parameter" id="fromRdfTerm-param-term"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/LiteralTerm-class.html">LiteralTerm</a></span> <span class="parameter-name">term</span>, </span><span class="parameter" id="fromRdfTerm-param-context"><span class="type-annotation"><a href="../rdf_mapper/DeserializationContext-class.html">DeserializationContext</a></span> <span class="parameter-name">context</span>, {</span><span class="parameter" id="fromRdfTerm-param-bypassDatatypeCheck"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">bypassDatatypeCheck</span> = <span class="default-value">false</span></span>})
     <span class="returntype parameter">&#8594; T</span>
   </span>
   
@@ -253,7 +260,7 @@ deserializers for simple value types while providing consistent error handling.<
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.7.1
+      0.8.0-dev
   </span>
   
 </footer>
