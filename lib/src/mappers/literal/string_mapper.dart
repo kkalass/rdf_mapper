@@ -1,6 +1,5 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
-import 'package:rdf_mapper/src/exceptions/deserializer_datatype_mismatch_exception.dart';
 import 'package:rdf_vocabularies/rdf.dart';
 import 'package:rdf_vocabularies/xsd.dart';
 

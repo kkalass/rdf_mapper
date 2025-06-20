@@ -1,6 +1,5 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
-import 'package:rdf_mapper/src/exceptions/deserializer_datatype_mismatch_exception.dart';
 
 abstract class BaseRdfLiteralTermMapper<T> implements LiteralTermMapper<T> {
   final IriTerm datatype;
@@ -24,7 +23,7 @@ abstract class BaseRdfLiteralTermMapper<T> implements LiteralTermMapper<T> {
   /// @throws DeserializationException if the datatype doesn't match or conversion fails
   @override
   T fromRdfTerm(LiteralTerm term, DeserializationContext context,
-      {bool bypassDatatypeCheck = true}) {
+      {bool bypassDatatypeCheck = false}) {
     if (!bypassDatatypeCheck && term.datatype != datatype) {
       throw DeserializerDatatypeMismatchException(
           'Failed to parse ${T.toString()}: ${term.value}. ',

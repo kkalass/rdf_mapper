@@ -83,7 +83,7 @@ abstract interface class LiteralTermDeserializer<T>
   ///
   /// Returns the resulting Dart object
   T fromRdfTerm(LiteralTerm term, DeserializationContext context,
-      {bool bypassDatatypeCheck = true});
+      {bool bypassDatatypeCheck = false});
 }
 
 /// Base class for deserializers that convert RDF subjects with associated triples to Dart objects.

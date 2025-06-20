@@ -81,6 +81,7 @@ export 'src/codec/rdf_mapper_string_codec.dart';
 // Exception exports - essential for error handling
 export 'src/exceptions/codec_exceptions.dart';
 export 'src/exceptions/deserialization_exception.dart';
+export 'src/exceptions/deserializer_datatype_mismatch_exception.dart';
 export 'src/exceptions/deserializer_not_found_exception.dart';
 export 'src/exceptions/property_value_not_found_exception.dart';
 export 'src/exceptions/rdf_mapping_exception.dart';
