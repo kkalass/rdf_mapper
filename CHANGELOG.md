@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2025-06-20
+
+### Added
+
+- Added comprehensive datatype validation for literal term deserializers with helpful error messages
+- Added `DeserializerDatatypeMismatchException` that provides detailed guidance on resolving datatype mismatches
+- Added extensive test coverage for datatype mismatch scenarios and bypass functionality
+
+### Changed
+
+- **Breaking Change**: Added `bypassDatatypeCheck` parameter to `LiteralTermDeserializer.fromRdfTerm()` method signature
+- **Breaking Change**: Removed individual serializer and deserializer exports for standard types (BoolSerializer, BoolDeserializer, DoubleSerializer, DoubleDeserializer, IntSerializer, IntDeserializer, StringSerializer, StringDeserializer, DateTimeSerializer, DateTimeDeserializer) - use unified mapper classes instead (BoolMapper, DoubleMapper, IntMapper, StringMapper, DateTimeMapper)
+- Enhanced exception messages to provide educational context about roundtrip consistency and multiple solution approaches
+- Made common deserializers and mappers instantiable with `const` keyword for better performance
+- Updated `DeserializationContext.fromLiteralTerm()` method signature to include `bypassDatatypeCheck` parameter
+
+### Fixed
+
+- Datatype strictness now properly enforces roundtrip consistency to prevent data corruption in RDF stores
+- Literal term mappers now correctly validate expected vs actual datatypes during deserialization
+
 ## [0.7.1] - 2025-06-07
 
 ### Changed
