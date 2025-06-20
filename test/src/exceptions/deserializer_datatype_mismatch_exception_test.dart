@@ -215,20 +215,53 @@ void main() {
           expect(e, isA<DeserializerDatatypeMismatchException>());
           final exception = e as DeserializerDatatypeMismatchException;
           final message = exception.toString();
+
           expect(
               message.trim(),
               equals('''
 RDF Datatype Mismatch: Cannot deserialize xsd:double to double (expected xsd:decimal)
 
 Quick Fix during initialization (affects ALL double instances):
-final rdfMapper = RdfMapper.withMappers((registry) => registry.registerMapper(DoubleMapper(Xsd.double)))
+
+final rdfMapper = RdfMapper.withMappers((registry) => registry.registerMapper<double>(DoubleMapper(Xsd.double)))
 
 Other Solutions:
-1. Custom resource mapper (local scope for a specific predicate):
-   reader.require(myPredicate, literalTermDeserializer: DoubleMapper(Xsd.double))
 
-2. Annotations library (local scope for a specific predicate):
-   @RdfProperty(iri: myPredicate, literal: LiteralMapping.mapperInstance(DoubleMapper(Xsd.double)))
+1. Create a custom wrapper type (recommended for type safety):
+   • Annotations library:
+
+     @RdfLiteral(Xsd.double)
+     class MyCustomDouble {
+       @RdfValue()
+       final double value;
+       const MyCustomDouble(this.value);
+     }
+   
+   • Manual:
+
+     class MyCustomDouble {
+       final double value;
+       const MyCustomDouble(this.value);
+     }
+     class MyCustomDoubleMapper extends DelegatingRdfLiteralTermMapper<MyCustomDouble, double> {
+       const MyCustomDoubleMapper() : super(const DoubleMapper(), Xsd.double);
+       @override
+       MyCustomDouble convertFrom(double value) => MyCustomDouble(value);
+       @override
+       double convertTo(MyCustomDouble value) => value.value;
+     }
+     final rdfMapper = RdfMapper.withMappers((registry) => registry.registerMapper<MyCustomDouble>(MyCustomDoubleMapper()));
+
+2. Local scope for a specific predicate:
+   • Annotations library:
+
+     @RdfProperty(iri: myPredicate,
+         literal: LiteralMapping.mapperInstance(DoubleMapper(Xsd.double)))
+
+   • Manual (Custom resource mapper):
+
+     reader.require(myPredicate, literalTermDeserializer: DoubleMapper(Xsd.double))
+     builder.addValue(myPredicate, myValue, literalTermSerializer: DoubleMapper(Xsd.double))
 
 3. Custom mapper bypass:
    Use bypassDatatypeCheck: true when calling context.fromLiteralTerm
@@ -260,14 +293,46 @@ to the same RDF datatype (xsd:decimal), preserving semantic meaning and preventi
 RDF Datatype Mismatch: Cannot deserialize http://example.org/other-number-type to double (expected http://example.org/custom-number-type)
 
 Quick Fix during initialization (affects ALL double instances):
-final rdfMapper = RdfMapper.withMappers((registry) => registry.registerMapper(DoubleMapper(IriTerm('http://example.org/other-number-type'))))
+
+final rdfMapper = RdfMapper.withMappers((registry) => registry.registerMapper<double>(DoubleMapper(IriTerm('http://example.org/other-number-type'))))
 
 Other Solutions:
-1. Custom resource mapper (local scope for a specific predicate):
-   reader.require(myPredicate, literalTermDeserializer: DoubleMapper(IriTerm('http://example.org/other-number-type')))
 
-2. Annotations library (local scope for a specific predicate):
-   @RdfProperty(iri: myPredicate, literal: LiteralMapping.mapperInstance(DoubleMapper(IriTerm.prevalidated('http://example.org/other-number-type'))))
+1. Create a custom wrapper type (recommended for type safety):
+   • Annotations library:
+
+     @RdfLiteral(IriTerm.prevalidated('http://example.org/other-number-type'))
+     class MyCustomDouble {
+       @RdfValue()
+       final double value;
+       const MyCustomDouble(this.value);
+     }
+   
+   • Manual:
+
+     class MyCustomDouble {
+       final double value;
+       const MyCustomDouble(this.value);
+     }
+     class MyCustomDoubleMapper extends DelegatingRdfLiteralTermMapper<MyCustomDouble, double> {
+       const MyCustomDoubleMapper() : super(const DoubleMapper(), IriTerm('http://example.org/other-number-type'));
+       @override
+       MyCustomDouble convertFrom(double value) => MyCustomDouble(value);
+       @override
+       double convertTo(MyCustomDouble value) => value.value;
+     }
+     final rdfMapper = RdfMapper.withMappers((registry) => registry.registerMapper<MyCustomDouble>(MyCustomDoubleMapper()));
+
+2. Local scope for a specific predicate:
+   • Annotations library:
+
+     @RdfProperty(iri: myPredicate,
+         literal: LiteralMapping.mapperInstance(DoubleMapper(IriTerm.prevalidated('http://example.org/other-number-type'))))
+
+   • Manual (Custom resource mapper):
+
+     reader.require(myPredicate, literalTermDeserializer: DoubleMapper(IriTerm('http://example.org/other-number-type')))
+     builder.addValue(myPredicate, myValue, literalTermSerializer: DoubleMapper(IriTerm('http://example.org/other-number-type')))
 
 3. Custom mapper bypass:
    Use bypassDatatypeCheck: true when calling context.fromLiteralTerm

@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Added `DelegatingRdfLiteralTermMapper` abstract class for creating custom wrapper types with different datatypes
+- Added comprehensive test coverage for `DelegatingRdfLiteralTermMapper` including edge cases and roundtrip consistency
+
+### Changed
+
+- Enhanced `DeserializerDatatypeMismatchException` error messages with improved formatting and more comprehensive solution guidance
+- Reorganized exception message solutions to group local-scope options (annotations vs manual) for better clarity
+- Made standard mapper classes (`BoolMapper`, etc.) final for better performance and to prevent inheritance
+
+### Fixed
+
+- Improved exception message formatting to be more educational and provide clearer migration paths
+- Enhanced error messages to include both annotation-based and manual custom wrapper type solutions
+
 ## [0.8.0] - 2025-06-20
 
 ### Added

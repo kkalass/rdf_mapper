@@ -100,6 +100,7 @@ export 'src/mappers/literal/base_rdf_literal_term_serializer.dart';
 export 'src/mappers/literal/base_rdf_literal_term_mapper.dart';
 export 'src/mappers/literal/bool_mapper.dart';
 export 'src/mappers/literal/date_time_mapper.dart';
+export 'src/mappers/literal/delegating_rdf_literal_term_mapper.dart';
 export 'src/mappers/literal/double_mapper.dart';
 export 'src/mappers/literal/int_mapper.dart';
 export 'src/mappers/literal/string_mapper.dart';

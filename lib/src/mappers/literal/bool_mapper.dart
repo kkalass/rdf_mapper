@@ -2,7 +2,7 @@ import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
 import 'package:rdf_vocabularies/xsd.dart';
 
-class BoolMapper extends BaseRdfLiteralTermMapper<bool> {
+final class BoolMapper extends BaseRdfLiteralTermMapper<bool> {
   const BoolMapper([IriTerm? datatype])
       : super(
           datatype: datatype ?? Xsd.boolean,
