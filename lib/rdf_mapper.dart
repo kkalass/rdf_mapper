@@ -30,6 +30,18 @@
 ///   Resources (subjects with their associated triples)
 /// - **Mappers**: Combined serializers and deserializers for bidirectional conversion
 /// - **Context**: Provides access to the current graph and related utilities during (de)serialization
+/// - **Datatype Strictness**: Enforces consistency between RDF datatypes and Dart types for semantic preservation
+///
+/// ## Datatype Handling
+///
+/// The library enforces strict datatype validation by default to ensure roundtrip consistency and prevent
+/// data corruption. When encountering datatype mismatches, detailed exception messages provide multiple
+/// resolution strategies:
+///
+/// - **Global Registration**: Register custom mappers for non-standard datatypes
+/// - **Wrapper Types**: Create domain-specific types with custom datatypes using `DelegatingRdfLiteralTermMapper`
+/// - **Local Overrides**: Use custom mappers for specific predicates only
+/// - **Bypass Option**: Disable validation when flexible handling is required (use carefully)
 ///
 /// ## Usage Example
 ///
@@ -41,6 +53,24 @@
 ///
 /// // Register a custom mapper for your class
 /// rdfMapper.registerMapper<Person>(PersonMapper());
+///
+/// // Handle custom datatypes with wrapper types
+/// class Temperature {
+///   final double celsius;
+///   const Temperature(this.celsius);
+/// }
+///
+/// class TemperatureMapper extends DelegatingRdfLiteralTermMapper<Temperature, double> {
+///   static final celsiusType = IriTerm('http://qudt.org/vocab/unit/CEL');
+///   const TemperatureMapper() : super(const DoubleMapper(), celsiusType);
+///
+///   @override
+///   Temperature convertFrom(double value) => Temperature(value);
+///   @override
+///   double convertTo(Temperature value) => value.celsius;
+/// }
+///
+/// rdfMapper.registerMapper<Temperature>(TemperatureMapper());
 ///
 /// // String-based serialization
 /// final turtle = rdfMapper.encodeObject(myPerson);

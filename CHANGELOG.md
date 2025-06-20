@@ -11,12 +11,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added `DelegatingRdfLiteralTermMapper` abstract class for creating custom wrapper types with different datatypes
 - Added comprehensive test coverage for `DelegatingRdfLiteralTermMapper` including edge cases and roundtrip consistency
+- Added extensive documentation on datatype handling and best practices in README and class documentation
+- Added detailed examples for custom wrapper types, global registration, and local scope solutions
+- Added comprehensive integration tests for global mapper registration scenarios, including verification of the documented patterns
 
 ### Changed
 
 - Enhanced `DeserializerDatatypeMismatchException` error messages with improved formatting and more comprehensive solution guidance
 - Reorganized exception message solutions to group local-scope options (annotations vs manual) for better clarity
 - Made standard mapper classes (`BoolMapper`, etc.) final for better performance and to prevent inheritance
+- Significantly improved documentation for `BaseRdfLiteralTermMapper`, `DelegatingRdfLiteralTermMapper`, and standard mappers
+- Enhanced main library documentation with datatype handling concepts and examples
 
 ### Fixed
 
