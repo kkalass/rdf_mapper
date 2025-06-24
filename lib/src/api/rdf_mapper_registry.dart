@@ -3,7 +3,6 @@ import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserializer.dart';
 import 'package:rdf_mapper/src/api/mapper.dart';
 import 'package:rdf_mapper/src/api/serializer.dart';
-
 import 'package:rdf_mapper/src/exceptions/deserializer_not_found_exception.dart';
 import 'package:rdf_mapper/src/exceptions/serializer_not_found_exception.dart';
 import 'package:rdf_mapper/src/mappers/iri/iri_full_mapper.dart';
@@ -11,8 +10,6 @@ import 'package:rdf_mapper/src/mappers/literal/bool_mapper.dart';
 import 'package:rdf_mapper/src/mappers/literal/date_time_mapper.dart';
 import 'package:rdf_mapper/src/mappers/literal/double_mapper.dart';
 import 'package:rdf_mapper/src/mappers/literal/int_mapper.dart';
-import 'package:rdf_mapper/src/mappers/iri/iri_full_deserializer.dart';
-import 'package:rdf_mapper/src/mappers/iri/iri_full_serializer.dart';
 import 'package:rdf_mapper/src/mappers/literal/string_mapper.dart';
 
 final _log = Logger("rdf_orm.registry");
