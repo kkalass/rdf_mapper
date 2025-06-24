@@ -12,6 +12,8 @@ import 'package:rdf_mapper/src/api/deserializer.dart';
 /// An IRI term `http://example.org/resource/1` will be deserialized to the string
 /// `"http://example.org/resource/1"`.
 final class IriFullDeserializer implements IriTermDeserializer<String> {
+  const IriFullDeserializer();
+
   /// Converts an IRI term to its full string representation.
   ///
   /// @param term The IRI term to convert

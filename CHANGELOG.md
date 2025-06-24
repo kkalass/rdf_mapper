@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added `IriFullMapper` class for complete IRI mapping with full URI preservation
 - Added `DelegatingRdfLiteralTermMapper` abstract class for creating custom wrapper types with different datatypes
 - Added comprehensive test coverage for `DelegatingRdfLiteralTermMapper` including edge cases and roundtrip consistency
 - Added extensive documentation on datatype handling and best practices in README and class documentation

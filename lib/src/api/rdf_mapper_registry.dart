@@ -6,6 +6,7 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 
 import 'package:rdf_mapper/src/exceptions/deserializer_not_found_exception.dart';
 import 'package:rdf_mapper/src/exceptions/serializer_not_found_exception.dart';
+import 'package:rdf_mapper/src/mappers/iri/iri_full_mapper.dart';
 import 'package:rdf_mapper/src/mappers/literal/bool_mapper.dart';
 import 'package:rdf_mapper/src/mappers/literal/date_time_mapper.dart';
 import 'package:rdf_mapper/src/mappers/literal/double_mapper.dart';
@@ -100,11 +101,8 @@ final class RdfMapperRegistry {
   /// These pre-registered mappers enable out-of-the-box functionality for
   /// basic data types without requiring custom mappers.
   RdfMapperRegistry() {
-    // Register standard deserializers
-    registerDeserializer(IriFullDeserializer());
-
-    // Register standard serializers
-    registerSerializer(IriFullSerializer());
+    // Register standard mappers
+    registerMapper(const IriFullMapper());
 
     // Register mappers for common literal types
     registerMapper(const StringMapper());

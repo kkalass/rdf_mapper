@@ -122,6 +122,7 @@ export 'src/exceptions/too_many_property_values_exception.dart';
 export 'src/mappers/iri/extracting_iri_term_deserializer.dart';
 export 'src/mappers/iri/iri_full_deserializer.dart';
 export 'src/mappers/iri/iri_full_serializer.dart';
+export 'src/mappers/iri/iri_full_mapper.dart';
 export 'src/mappers/iri/iri_id_serializer.dart';
 // Base classes for literal mappers - essential for custom mapper implementation
 export 'src/mappers/literal/base_rdf_literal_term_deserializer.dart';
