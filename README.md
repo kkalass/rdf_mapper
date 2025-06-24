@@ -548,8 +548,13 @@ final rdfMapper = RdfMapper.withMappers((registry) => registry
 
 **Solution 3: Local Scope Override**
 ```dart
-// For specific predicates only
-@RdfProperty(iri: 'http://example.org/score',
+// For specific predicates only - simpler option
+@RdfProperty('http://example.org/score',
+             literal: const LiteralMapping.withType(Xsd.double))
+double? testScore;
+
+// Alternative: mapper instance approach
+@RdfProperty('http://example.org/score',
              literal: LiteralMapping.mapperInstance(DoubleMapper(Xsd.double)))
 double? testScore;
 ```
@@ -626,8 +631,12 @@ class MyCustomDoubleMapper extends DelegatingRdfLiteralTermMapper<MyCustomDouble
 // In custom resource mappers
 reader.require(myPredicate, literalTermDeserializer: DoubleMapper(Xsd.double));
 
-// With annotations
-@RdfProperty(iri: myPredicate, 
+// With annotations - simpler option
+@RdfProperty(myPredicate, 
+             literal: const LiteralMapping.withType(Xsd.double))
+
+// With annotations - mapper instance approach
+@RdfProperty(myPredicate, 
              literal: LiteralMapping.mapperInstance(DoubleMapper(Xsd.double)))
 ```
 

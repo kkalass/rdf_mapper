@@ -78,9 +78,13 @@ Other Solutions:
      final rdfMapper = RdfMapper.withMappers((registry) => registry.registerMapper<MyCustom${targetTypeCapitalized}>(MyCustom${mapperRuntimeType}()));
 
 2. Local scope for a specific predicate:
-   • Annotations library:
+   • Annotations library (simpler option):
 
-     @RdfProperty(iri: myPredicate,
+     @RdfProperty(myPredicate, literal: const LiteralMapping.withType(${dartActualConstContext}))
+
+   • Annotations library (mapper instance):
+
+     @RdfProperty(myPredicate,
          literal: LiteralMapping.mapperInstance(${mapperRuntimeType}(${dartActualConstContext})))
 
    • Manual (Custom resource mapper):

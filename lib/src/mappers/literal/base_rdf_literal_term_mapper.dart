@@ -72,9 +72,15 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 ///
 /// ### 3. Local Scope Solutions (for specific predicates)
 ///
-/// **Annotations approach:**
+/// **Annotations approach (simpler option):**
 /// ```dart
-/// @RdfProperty(iri: myPredicate,
+/// @RdfProperty(myPredicate, literal: const LiteralMapping.withType(Xsd.double))
+/// double? myProperty;
+/// ```
+///
+/// **Annotations approach (mapper instance):**
+/// ```dart
+/// @RdfProperty(myPredicate,
 ///     literal: LiteralMapping.mapperInstance(DoubleMapper(Xsd.double)))
 /// double? myProperty;
 /// ```

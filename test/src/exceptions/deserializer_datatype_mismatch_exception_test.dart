@@ -253,9 +253,13 @@ Other Solutions:
      final rdfMapper = RdfMapper.withMappers((registry) => registry.registerMapper<MyCustomDouble>(MyCustomDoubleMapper()));
 
 2. Local scope for a specific predicate:
-   • Annotations library:
+   • Annotations library (simpler option):
 
-     @RdfProperty(iri: myPredicate,
+     @RdfProperty(myPredicate, literal: const LiteralMapping.withType(Xsd.double))
+
+   • Annotations library (mapper instance):
+
+     @RdfProperty(myPredicate,
          literal: LiteralMapping.mapperInstance(DoubleMapper(Xsd.double)))
 
    • Manual (Custom resource mapper):
@@ -324,9 +328,13 @@ Other Solutions:
      final rdfMapper = RdfMapper.withMappers((registry) => registry.registerMapper<MyCustomDouble>(MyCustomDoubleMapper()));
 
 2. Local scope for a specific predicate:
-   • Annotations library:
+   • Annotations library (simpler option):
 
-     @RdfProperty(iri: myPredicate,
+     @RdfProperty(myPredicate, literal: const LiteralMapping.withType(IriTerm.prevalidated('http://example.org/other-number-type')))
+
+   • Annotations library (mapper instance):
+
+     @RdfProperty(myPredicate,
          literal: LiteralMapping.mapperInstance(DoubleMapper(IriTerm.prevalidated('http://example.org/other-number-type'))))
 
    • Manual (Custom resource mapper):

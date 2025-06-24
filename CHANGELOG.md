@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Enhanced `DeserializerDatatypeMismatchException` error messages with improved formatting and more comprehensive solution guidance
+- Updated documentation to mention simpler `LiteralMapping.withType()` option alongside existing `LiteralMapping.mapperInstance()` for annotations library
 - Reorganized exception message solutions to group local-scope options (annotations vs manual) for better clarity
 - Made standard mapper classes (`BoolMapper`, etc.) final for better performance and to prevent inheritance
 - Significantly improved documentation for `BaseRdfLiteralTermMapper`, `DelegatingRdfLiteralTermMapper`, and standard mappers

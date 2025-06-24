@@ -1,7 +1,6 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_vocabularies/xsd.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
-import 'package:rdf_mapper/src/mappers/literal/delegating_rdf_literal_term_mapper.dart';
+import 'package:rdf_vocabularies/xsd.dart';
 import 'package:test/test.dart';
 
 /// Example custom wrapper class for testing
