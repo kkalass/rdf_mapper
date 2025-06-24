@@ -127,6 +127,8 @@ export 'src/mappers/iri/iri_id_serializer.dart';
 // Base classes for literal mappers - essential for custom mapper implementation
 export 'src/mappers/literal/base_rdf_literal_term_deserializer.dart';
 export 'src/mappers/literal/base_rdf_literal_term_serializer.dart';
+export 'src/mappers/literal/language_override_mapper.dart';
+export 'src/mappers/literal/datatype_override_mapper.dart';
 // Standard literal mappers - useful for reference and extension
 export 'src/mappers/literal/base_rdf_literal_term_mapper.dart';
 export 'src/mappers/literal/bool_mapper.dart';
