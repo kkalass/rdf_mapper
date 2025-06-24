@@ -70,6 +70,45 @@
 
     </section>
     
+<section class="desc markdown">
+  <p>Converts a Dart value of type T to its RDF literal string representation.</p>
+<p>Subclasses must implement this method to handle the actual string conversion logic.
+This method is called during serialization after type validation and before creating
+the final RDF literal term with the appropriate datatype.</p>
+<p>The string representation should:</p>
+<ul>
+<li>Follow the lexical format expected by the associated RDF datatype</li>
+<li>Be parseable by the corresponding <code>convertFromLiteral</code> method for roundtrip consistency</li>
+<li>Conform to RDF/XML and Turtle serialization requirements</li>
+</ul>
+<h2 id="implementation-guidelines">Implementation Guidelines</h2>
+<ul>
+<li><strong>Preserve Precision</strong>: Ensure numeric values maintain their precision</li>
+<li><strong>Handle Edge Cases</strong>: Consider null, empty, or special values appropriately</li>
+<li><strong>Follow Standards</strong>: Use standard lexical representations when available</li>
+<li><strong>Optimize Performance</strong>: Keep conversions efficient for large datasets</li>
+</ul>
+<h2 id="examples">Examples</h2>
+<pre class="language-dart"><code class="language-dart">// For DoubleMapper
+@override
+String convertToString(double value) =&gt; value.toString();
+
+// For BoolMapper
+@override
+String convertToString(bool value) =&gt; value.toString(); // "true" or "false"
+
+// For DateTimeMapper
+@override
+String convertToString(DateTime value) =&gt; value.toUtc().toIso8601String();
+
+// For custom types with specific formatting
+@override
+String convertToString(Temperature value) =&gt; value.celsius.toStringAsFixed(2);
+</code></pre>
+<p><code>value</code> The Dart value to convert to string representation</p>
+<p>Returns the string representation suitable for RDF literal values
+Should not throw exceptions - handle edge cases gracefully</p>
+</section>
 
 
     
@@ -104,7 +143,7 @@ convertToString(d) =&gt; d.toString();</code></pre>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.0
+      0.8.1
   </span>
   
 </footer>

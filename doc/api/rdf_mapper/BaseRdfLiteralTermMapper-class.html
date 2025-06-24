@@ -57,6 +57,83 @@
 </h1></div>
 
     
+<section class="desc markdown">
+  <p>Abstract base class for mapping Dart objects to RDF literal terms with strict datatype validation.</p>
+<p>This class provides type-safe mapping between Dart values and RDF literals, enforcing datatype
+consistency to ensure roundtrip reliability and semantic preservation.</p>
+<h2 id="quick-start">Quick Start</h2>
+<p>Extend this class to create custom literal mappers:</p>
+<pre class="language-dart"><code class="language-dart">final class CustomDateMapper extends BaseRdfLiteralTermMapper&lt;CustomDate&gt; {
+  const CustomDateMapper([IriTerm? datatype])
+      : super(datatype: datatype ?? Xsd.date);
+
+  @override
+  CustomDate convertFromLiteral(LiteralTerm term, DeserializationContext context) {
+    return CustomDate.parse(term.value);
+  }
+
+  @override
+  String convertToString(CustomDate value) =&gt; value.toIsoString();
+}
+</code></pre>
+<h2 id="why-datatype-strictness">Why Datatype Strictness?</h2>
+<p>Datatype strictness ensures roundtrip consistency - your Dart objects will serialize back
+to the same RDF datatype, preserving semantic meaning and preventing data corruption.</p>
+<h2 id="handling-different-rdf-datatypes">Handling Different RDF Datatypes</h2>
+<p>When your RDF data uses non-standard datatypes, you have several options:</p>
+<h3 id="1-global-registration-affects-all-instances-of-the-type">1. Global Registration (affects ALL instances of the type)</h3>
+<pre class="language-dart"><code class="language-dart">final rdfMapper = RdfMapper.withMappers((registry) =&gt;
+  registry.registerMapper&lt;double&gt;(DoubleMapper(Xsd.double)));
+</code></pre>
+<h3 id="2-create-custom-wrapper-types-recommended-for-type-safety">2. Create Custom Wrapper Types (recommended for type safety)</h3>
+<p><strong>Annotations approach:</strong></p>
+<pre class="language-dart"><code class="language-dart">@RdfLiteral(Xsd.double)
+class Temperature {
+  @RdfValue()
+  final double celsius;
+  const Temperature(this.celsius);
+}
+</code></pre>
+<p><strong>Manual approach:</strong></p>
+<pre class="language-dart"><code class="language-dart">class Temperature {
+  final double celsius;
+  const Temperature(this.celsius);
+}
+
+class TemperatureMapper extends DelegatingRdfLiteralTermMapper&lt;Temperature, double&gt; {
+  const TemperatureMapper() : super(const DoubleMapper(), Xsd.double);
+
+  @override
+  Temperature convertFrom(double value) =&gt; Temperature(value);
+
+  @override
+  double convertTo(Temperature value) =&gt; value.celsius;
+}
+</code></pre>
+<h3 id="3-local-scope-solutions-for-specific-predicates">3. Local Scope Solutions (for specific predicates)</h3>
+<p><strong>Annotations approach (simpler option):</strong></p>
+<pre class="language-dart"><code class="language-dart">@RdfProperty(myPredicate, literal: const LiteralMapping.withType(Xsd.double))
+double? myProperty;
+</code></pre>
+<p><strong>Annotations approach (mapper instance):</strong></p>
+<pre class="language-dart"><code class="language-dart">@RdfProperty(myPredicate,
+    literal: LiteralMapping.mapperInstance(DoubleMapper(Xsd.double)))
+double? myProperty;
+</code></pre>
+<p><strong>Manual approach:</strong></p>
+<pre class="language-dart"><code class="language-dart">reader.require(myPredicate, literalTermDeserializer: DoubleMapper(Xsd.double));
+builder.addValue(myPredicate, myValue, literalTermSerializer: DoubleMapper(Xsd.double));
+</code></pre>
+<h3 id="4-bypass-datatype-check-use-carefully">4. Bypass Datatype Check (use carefully)</h3>
+<pre class="language-dart"><code class="language-dart">context.fromLiteralTerm(term, bypassDatatypeCheck: true);
+</code></pre>
+<h2 id="implementation-requirements">Implementation Requirements</h2>
+<p>Subclasses must implement:</p>
+<ul>
+<li><code>convertFromLiteral()</code>: Parse RDF literal string to Dart object</li>
+<li><code>convertToString()</code>: Convert Dart object to RDF literal string</li>
+</ul>
+</section>
 
 
     <section>
@@ -96,7 +173,7 @@
           <span class="name"><a href="../rdf_mapper/BaseRdfLiteralTermMapper/BaseRdfLiteralTermMapper.html">BaseRdfLiteralTermMapper</a></span><span class="signature">({<span class="parameter" id="-param-datatype"><span>required</span> <span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">datatype</span></span>})</span>
         </dt>
         <dd>
-          
+          Creates a mapper for the specified RDF datatype.
             <div class="constructor-modifier features">const</div>
         </dd>
     </dl>
@@ -114,7 +191,7 @@
 
 </dt>
 <dd>
-  
+  The RDF datatype this mapper handles
   <div class="features"><span class="feature">final</span></div>
 
 </dd>
@@ -160,7 +237,7 @@
 
 </dt>
 <dd>
-  
+  Converts an RDF literal term to a Dart value of type T.
   
 
 </dd>
@@ -173,7 +250,7 @@
 
 </dt>
 <dd>
-  
+  Converts a Dart value of type T to its RDF literal string representation.
   
 
 </dd>
@@ -280,7 +357,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.0
+      0.8.1
   </span>
   
 </footer>

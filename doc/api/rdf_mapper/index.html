@@ -91,6 +91,17 @@ The API is organized into:</p>
 Resources (subjects with their associated triples)</li>
 <li><strong>Mappers</strong>: Combined serializers and deserializers for bidirectional conversion</li>
 <li><strong>Context</strong>: Provides access to the current graph and related utilities during (de)serialization</li>
+<li><strong>Datatype Strictness</strong>: Enforces consistency between RDF datatypes and Dart types for semantic preservation</li>
+</ul>
+<h2 id="datatype-handling">Datatype Handling</h2>
+<p>The library enforces strict datatype validation by default to ensure roundtrip consistency and prevent
+data corruption. When encountering datatype mismatches, detailed exception messages provide multiple
+resolution strategies:</p>
+<ul>
+<li><strong>Global Registration</strong>: Register custom mappers for non-standard datatypes</li>
+<li><strong>Wrapper Types</strong>: Create domain-specific types with custom datatypes using <code>DelegatingRdfLiteralTermMapper</code></li>
+<li><strong>Local Overrides</strong>: Use custom mappers for specific predicates only</li>
+<li><strong>Bypass Option</strong>: Disable validation when flexible handling is required (use carefully)</li>
 </ul>
 <h2 id="usage-example">Usage Example</h2>
 <pre class="language-dart"><code class="language-dart">import 'package:rdf_mapper/rdf_mapper.dart';
@@ -100,6 +111,24 @@ final rdfMapper = RdfMapper.withDefaultRegistry();
 
 // Register a custom mapper for your class
 rdfMapper.registerMapper&lt;Person&gt;(PersonMapper());
+
+// Handle custom datatypes with wrapper types
+class Temperature {
+  final double celsius;
+  const Temperature(this.celsius);
+}
+
+class TemperatureMapper extends DelegatingRdfLiteralTermMapper&lt;Temperature, double&gt; {
+  static final celsiusType = IriTerm('http://qudt.org/vocab/unit/CEL');
+  const TemperatureMapper() : super(const DoubleMapper(), celsiusType);
+
+  @override
+  Temperature convertFrom(double value) =&gt; Temperature(value);
+  @override
+  double convertTo(Temperature value) =&gt; value.celsius;
+}
+
+rdfMapper.registerMapper&lt;Temperature&gt;(TemperatureMapper());
 
 // String-based serialization
 final turtle = rdfMapper.encodeObject(myPerson);
@@ -130,7 +159,7 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 
 </dt>
 <dd>
-  
+  Abstract base class for mapping Dart objects to RDF literal terms with strict datatype validation.
 </dd>
 
           <dt id="BaseRdfLiteralTermSerializer">
@@ -146,7 +175,7 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 
 </dt>
 <dd>
-  
+  Mapper for converting between Dart <code>bool</code> values and RDF boolean literals.
 </dd>
 
           <dt id="DateTimeMapper">
@@ -155,6 +184,15 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 </dt>
 <dd>
   
+</dd>
+
+          <dt id="DelegatingRdfLiteralTermMapper">
+  <span class="name "><a href="../rdf_mapper/DelegatingRdfLiteralTermMapper-class.html">DelegatingRdfLiteralTermMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>, <span class="type-parameter">V</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Abstract base class for creating custom wrapper types that delegate to existing mappers
+but use different RDF datatypes.
 </dd>
 
           <dt id="DeserializationContext">
@@ -186,7 +224,7 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 
 </dt>
 <dd>
-  
+  Mapper for converting between Dart <code>double</code> values and RDF decimal literals.
 </dd>
 
           <dt id="ExtractingIriTermDeserializer">
@@ -243,6 +281,14 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 </dt>
 <dd>
   Standard deserializer that extracts the full IRI string from an IRI term.
+</dd>
+
+          <dt id="IriFullMapper">
+  <span class="name "><a href="../rdf_mapper/IriFullMapper-class.html">IriFullMapper</a></span> 
+
+</dt>
+<dd>
+  Standard mapper that converts a string to an IRI term (and back).
 </dd>
 
           <dt id="IriFullSerializer">
@@ -697,7 +743,7 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.0
+      0.8.1
   </span>
   
 </footer>

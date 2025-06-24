@@ -76,11 +76,8 @@ basic data types without requiring custom mappers.</p>
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">RdfMapperRegistry() {
-  &#47;&#47; Register standard deserializers
-  registerDeserializer(IriFullDeserializer());
-
-  &#47;&#47; Register standard serializers
-  registerSerializer(IriFullSerializer());
+  &#47;&#47; Register standard mappers
+  registerMapper(const IriFullMapper());
 
   &#47;&#47; Register mappers for common literal types
   registerMapper(const StringMapper());
@@ -116,7 +113,7 @@ basic data types without requiring custom mappers.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.0
+      0.8.1
   </span>
   
 </footer>

@@ -102,19 +102,56 @@ String toString() {
   final dartActualConstContext = isActualXsd
       ? &#39;Xsd.${actual.iri.substring(Xsd.namespace.length)}&#39;
       : &quot;IriTerm.prevalidated(&#39;${actual.iri}&#39;)&quot;;
-
+  final targetTypeCapitalized =
+      &#39;${targetType.toString()[0].toUpperCase()}${targetType.toString().substring(1)}&#39;;
   return &#39;&#39;&#39;
 RDF Datatype Mismatch: Cannot deserialize ${shortActual} to ${targetType} (expected ${shortExpected})
 
 Quick Fix during initialization (affects ALL ${targetType} instances):
-final rdfMapper = RdfMapper.withMappers((registry) =&gt; registry.registerMapper(${mapperRuntimeType}(${dartActual})))
+
+final rdfMapper = RdfMapper.withMappers((registry) =&gt; registry.registerMapper&lt;${targetType}&gt;(${mapperRuntimeType}(${dartActual})))
 
 Other Solutions:
-1. Custom resource mapper (local scope for a specific predicate):
- reader.require(myPredicate, literalTermDeserializer: ${mapperRuntimeType}(${dartActual}))
 
-2. Annotations library (local scope for a specific predicate):
- @RdfProperty(iri: myPredicate, literal: LiteralMapping.mapperInstance(${mapperRuntimeType}(${dartActualConstContext})))
+1. Create a custom wrapper type (recommended for type safety):
+ • Annotations library:
+
+   @RdfLiteral(${dartActualConstContext})
+   class MyCustom${targetTypeCapitalized} {
+     @RdfValue()
+     final ${targetType} value;
+     const MyCustom${targetTypeCapitalized}(this.value);
+   }
+
+ • Manual:
+
+   class MyCustom${targetTypeCapitalized} {
+     final ${targetType} value;
+     const MyCustom${targetTypeCapitalized}(this.value);
+   }
+   class MyCustom${mapperRuntimeType} extends DelegatingRdfLiteralTermMapper&lt;MyCustom${targetTypeCapitalized}, double&gt; {
+     const MyCustom${mapperRuntimeType}() : super(const ${mapperRuntimeType}(), ${dartActual});
+     @override
+     MyCustom${targetTypeCapitalized} convertFrom(${targetType} value) =&gt; MyCustom${targetTypeCapitalized}(value);
+     @override
+     ${targetType} convertTo(MyCustom${targetTypeCapitalized} value) =&gt; value.value;
+   }
+   final rdfMapper = RdfMapper.withMappers((registry) =&gt; registry.registerMapper&lt;MyCustom${targetTypeCapitalized}&gt;(MyCustom${mapperRuntimeType}()));
+
+2. Local scope for a specific predicate:
+ • Annotations library (simpler option):
+
+   @RdfProperty(myPredicate, literal: const LiteralMapping.withType(${dartActualConstContext}))
+
+ • Annotations library (mapper instance):
+
+   @RdfProperty(myPredicate,
+       literal: LiteralMapping.mapperInstance(${mapperRuntimeType}(${dartActualConstContext})))
+
+ • Manual (Custom resource mapper):
+
+   reader.require(myPredicate, literalTermDeserializer: ${mapperRuntimeType}(${dartActual}))
+   builder.addValue(myPredicate, myValue, literalTermSerializer: ${mapperRuntimeType}(${dartActual}))
 
 3. Custom mapper bypass:
  Use bypassDatatypeCheck: true when calling context.fromLiteralTerm
@@ -151,7 +188,7 @@ to the same RDF datatype (${shortExpected}), preserving semantic meaning and pre
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.0
+      0.8.1
   </span>
   
 </footer>

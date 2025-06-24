@@ -57,6 +57,43 @@
 </h1></div>
 
     
+<section class="desc markdown">
+  <p>Mapper for converting between Dart <code>double</code> values and RDF decimal literals.</p>
+<p>This mapper handles the conversion between Dart's <code>double</code> type and RDF literals
+with <code>xsd:decimal</code> datatype by default. It can be configured to use custom datatypes
+for specialized use cases.</p>
+<h2 id="default-behavior">Default Behavior</h2>
+<ul>
+<li><strong>Dart Type</strong>: <code>double</code></li>
+<li><strong>Default RDF Datatype</strong>: <code>xsd:decimal</code></li>
+<li><strong>Serialization</strong>: Converts double to string representation</li>
+<li><strong>Deserialization</strong>: Parses string to double using <code>double.parse()</code></li>
+</ul>
+<h2 id="custom-datatype-usage">Custom Datatype Usage</h2>
+<p>When working with RDF data that uses non-standard datatypes for numeric values:</p>
+<pre class="language-dart"><code class="language-dart">// For data using xsd:double instead of xsd:decimal
+final customMapper = DoubleMapper(Xsd.double);
+
+// Register globally
+final rdfMapper = RdfMapper.withMappers((registry) =&gt;
+  registry.registerMapper&lt;double&gt;(customMapper));
+
+// Or use locally for specific predicates
+reader.require(temperaturePredicate,
+  literalTermDeserializer: DoubleMapper(Xsd.double));
+</code></pre>
+<h2 id="datatype-strictness">Datatype Strictness</h2>
+<p>This mapper enforces datatype consistency by default. If you encounter a
+<code>DeserializerDatatypeMismatchException</code>, it means the RDF data uses a different
+datatype than expected. The exception provides detailed guidance on resolution options.</p>
+<h2 id="example-rdf-mapping">Example RDF Mapping</h2>
+<pre class="language-turtle"><code class="language-turtle">@prefix ex: &lt;http://example.org/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+ex:temperature "23.5"^^xsd:decimal .
+ex:altitude "1234.56"^^xsd:double .  # Requires custom mapper
+</code></pre>
+</section>
 
 
     <section>
@@ -90,7 +127,7 @@
           <span class="name"><a href="../rdf_mapper/DoubleMapper/DoubleMapper.html">DoubleMapper</a></span><span class="signature">([<span class="parameter" id="-param-datatype"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/IriTerm-class.html">IriTerm</a>?</span> <span class="parameter-name">datatype</span></span>])</span>
         </dt>
         <dd>
-          
+          Creates a double mapper with the specified datatype.
             <div class="constructor-modifier features">const</div>
         </dd>
     </dl>
@@ -108,7 +145,7 @@
 
 </dt>
 <dd class="inherited">
-  
+  The RDF datatype this mapper handles
   <div class="features"><span class="feature">final</span><span class="feature">inherited</span></div>
 
 </dd>
@@ -154,7 +191,7 @@
 
 </dt>
 <dd>
-  
+  Converts an RDF literal term to a Dart value of type T.
   <div class="features"><span class="feature">override</span></div>
 
 </dd>
@@ -167,7 +204,7 @@
 
 </dt>
 <dd>
-  
+  Converts a Dart value of type T to its RDF literal string representation.
   <div class="features"><span class="feature">override</span></div>
 
 </dd>
@@ -274,7 +311,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.0
+      0.8.1
   </span>
   
 </footer>

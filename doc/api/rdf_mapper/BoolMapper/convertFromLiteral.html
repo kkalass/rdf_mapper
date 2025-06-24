@@ -71,6 +71,15 @@
 
     </section>
     
+<section class="desc markdown">
+  <p>Converts an RDF literal term to a Dart value of type T.</p>
+<p>Subclasses must implement this method to handle the actual conversion logic.
+This method is called after datatype validation has passed.</p>
+<p><code>term</code> The RDF literal term to convert
+<code>context</code> The deserialization context for accessing additional services</p>
+<p>Returns the converted Dart value
+Throws <a href="../../rdf_mapper/DeserializationException-class.html">DeserializationException</a> if conversion fails</p>
+</section>
 
 
     
@@ -117,7 +126,7 @@ convertFromLiteral(term, _) {
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.0
+      0.8.1
   </span>
   
 </footer>

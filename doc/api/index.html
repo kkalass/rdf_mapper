@@ -84,7 +84,7 @@
 <h2 id="installation">Installation</h2>
 <p>Add the following to your <code>pubspec.yaml</code>:</p>
 <pre class="language-yaml"><code class="language-yaml">dependencies:
-  rdf_mapper: ^0.8.0
+  rdf_mapper: ^0.8.1
 </code></pre>
 <p>Or use the following command:</p>
 <pre class="language-bash"><code class="language-bash">dart pub add rdf_mapper
@@ -499,6 +499,91 @@ class RatingMapper implements LiteralTermMapper&lt;Rating&gt; {
 </tr>
 </tbody>
 </table>
+<h2 id="-datatype-handling-and-best-practices">🎯 Datatype Handling and Best Practices</h2>
+<h3 id="understanding-datatype-strictness">Understanding Datatype Strictness</h3>
+<p>RDF Mapper enforces <strong>datatype strictness</strong> by default to ensure:</p>
+<ul>
+<li><strong>Roundtrip Consistency</strong>: Values serialize back to the same RDF datatype</li>
+<li><strong>Semantic Preservation</strong>: Original meaning is maintained across transformations</li>
+<li><strong>Data Integrity</strong>: Prevention of data corruption in RDF stores</li>
+</ul>
+<h3 id="common-datatype-scenarios">Common Datatype Scenarios</h3>
+<h4 id="working-with-standard-types">Working with Standard Types</h4>
+<pre class="language-dart"><code class="language-dart">// These work out of the box
+final person = Person(
+  name: "Alice",        // -&gt; xsd:string
+  age: 30,              // -&gt; xsd:integer  
+  height: 1.75,         // -&gt; xsd:decimal
+  isActive: true,       // -&gt; xsd:boolean
+  birthDate: DateTime.now(), // -&gt; xsd:dateTime
+);
+</code></pre>
+<h4 id="handling-non-standard-datatypes">Handling Non-Standard Datatypes</h4>
+<p>When your RDF data uses different datatypes than the defaults:</p>
+<pre class="language-turtle"><code class="language-turtle"># RDF data with non-standard datatypes
+ex:temperature "23.5"^^units:celsius .
+ex:weight "70.5"^^units:kilogram .
+ex:score "95.0"^^xsd:double .  # double instead of decimal
+</code></pre>
+<p><strong>Solution 1: Custom Wrapper Types (Recommended)</strong></p>
+<pre class="language-dart"><code class="language-dart">@RdfLiteral(IriTerm('http://qudt.org/vocab/unit/CEL'))
+class Temperature {
+  @RdfValue()
+  final double celsius;
+  const Temperature(this.celsius);
+}
+
+// Or manual implementation
+class Weight {
+  final double kilograms;
+  const Weight(this.kilograms);
+}
+
+class WeightMapper extends DelegatingRdfLiteralTermMapper&lt;Weight, double&gt; {
+  static final kgDatatype = IriTerm('http://qudt.org/vocab/unit/KiloGM');
+  
+  const WeightMapper() : super(const DoubleMapper(), kgDatatype);
+  
+  @override
+  Weight convertFrom(double value) =&gt; Weight(value);
+  
+  @override  
+  double convertTo(Weight value) =&gt; value.kilograms;
+}
+</code></pre>
+<p><strong>Solution 2: Global Registration</strong></p>
+<pre class="language-dart"><code class="language-dart">// For existing types with different datatypes
+final rdfMapper = RdfMapper.withMappers((registry) =&gt; registry
+  ..registerMapper&lt;double&gt;(DoubleMapper(Xsd.double))  // Use xsd:double
+  ..registerMapper&lt;Temperature&gt;(TemperatureMapper())
+  ..registerMapper&lt;Weight&gt;(WeightMapper()));
+</code></pre>
+<p><strong>Solution 3: Local Scope Override</strong></p>
+<pre class="language-dart"><code class="language-dart">// For specific predicates only - simpler option
+@RdfProperty('http://example.org/score',
+             literal: const LiteralMapping.withType(Xsd.double))
+double? testScore;
+
+// Alternative: mapper instance approach
+@RdfProperty('http://example.org/score',
+             literal: LiteralMapping.mapperInstance(DoubleMapper(Xsd.double)))
+double? testScore;
+</code></pre>
+<h3 id="troubleshooting-datatype-issues">Troubleshooting Datatype Issues</h3>
+<p>When you see <code>DeserializerDatatypeMismatchException</code>:</p>
+<ol>
+<li><strong>Identify the mismatch</strong>: The exception shows actual vs expected datatypes</li>
+<li><strong>Choose your strategy</strong>: Global, wrapper type, or local scope solution</li>
+<li><strong>Implement the fix</strong>: Use the code examples provided in the exception message</li>
+<li><strong>Test roundtrip</strong>: Ensure serialize → deserialize produces identical results</li>
+</ol>
+<h3 id="performance-tips">Performance Tips</h3>
+<ul>
+<li>Use <code>const</code> constructors for mappers when possible</li>
+<li>Prefer wrapper types over global overrides for better type safety</li>
+<li>Consider caching for expensive custom conversions</li>
+<li>Use <code>bypassDatatypeCheck</code> sparingly and only when necessary</li>
+</ul>
 <h2 id="-error-handling">⚠️ Error Handling</h2>
 <p>RDF Mapper provides specific exceptions to help diagnose mapping issues:</p>
 <ul>
@@ -509,7 +594,56 @@ class RatingMapper implements LiteralTermMapper&lt;Rating&gt; {
 <li><code>DeserializerNotFoundException</code>: When no deserializer is registered for a type</li>
 <li><code>PropertyValueNotFoundException</code>: When a required property is missing</li>
 <li><code>TooManyPropertyValuesException</code>: When multiple values exist for a single-valued property</li>
+<li><code>DeserializerDatatypeMismatchException</code>: When RDF datatype doesn't match expected type</li>
 </ul>
+<h3 id="handling-datatype-mismatches">Handling Datatype Mismatches</h3>
+<p>The library enforces <strong>datatype strictness</strong> to ensure roundtrip consistency and semantic preservation. When you encounter a <code>DeserializerDatatypeMismatchException</code>, you have several resolution options:</p>
+<h4 id="global-solution-affects-all-instances">Global Solution (affects all instances)</h4>
+<pre class="language-dart"><code class="language-dart">// Register a mapper for the encountered datatype
+final rdfMapper = RdfMapper.withMappers((registry) =&gt; 
+  registry.registerMapper&lt;double&gt;(DoubleMapper(Xsd.double)));
+</code></pre>
+<h4 id="custom-wrapper-types-recommended">Custom Wrapper Types (recommended)</h4>
+<pre class="language-dart"><code class="language-dart">// Using annotations
+@RdfLiteral(Xsd.double)
+class MyCustomDouble {
+  @RdfValue()
+  final double value;
+  const MyCustomDouble(this.value);
+}
+
+// Manual implementation
+class MyCustomDouble {
+  final double value;
+  const MyCustomDouble(this.value);
+}
+
+class MyCustomDoubleMapper extends DelegatingRdfLiteralTermMapper&lt;MyCustomDouble, double&gt; {
+  const MyCustomDoubleMapper() : super(const DoubleMapper(), Xsd.double);
+  
+  @override
+  MyCustomDouble convertFrom(double value) =&gt; MyCustomDouble(value);
+  
+  @override
+  double convertTo(MyCustomDouble value) =&gt; value.value;
+}
+</code></pre>
+<h4 id="local-scope-for-specific-predicates">Local Scope (for specific predicates)</h4>
+<pre class="language-dart"><code class="language-dart">// In custom resource mappers
+reader.require(myPredicate, literalTermDeserializer: DoubleMapper(Xsd.double));
+
+// With annotations - simpler option
+@RdfProperty(myPredicate, 
+             literal: const LiteralMapping.withType(Xsd.double))
+
+// With annotations - mapper instance approach
+@RdfProperty(myPredicate, 
+             literal: LiteralMapping.mapperInstance(DoubleMapper(Xsd.double)))
+</code></pre>
+<h4 id="bypass-option-use-carefully">Bypass Option (use carefully)</h4>
+<pre class="language-dart"><code class="language-dart">// Only when flexible datatype handling is required
+context.fromLiteralTerm(term, bypassDatatypeCheck: true);
+</code></pre>
 <h2 id="-performance-considerations">🚦 Performance Considerations</h2>
 <ul>
 <li>RDF Mapper uses efficient traversal algorithms for both serialization and deserialization</li>
@@ -577,7 +711,7 @@ class RatingMapper implements LiteralTermMapper&lt;Rating&gt; {
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.0
+      0.8.1
   </span>
   
 </footer>
