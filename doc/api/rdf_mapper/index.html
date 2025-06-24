@@ -178,6 +178,14 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
   Mapper for converting between Dart <code>bool</code> values and RDF boolean literals.
 </dd>
 
+          <dt id="DatatypeOverrideMapper">
+  <span class="name "><a href="../rdf_mapper/DatatypeOverrideMapper-class.html">DatatypeOverrideMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  A literal term mapper that overrides the default datatype with a custom one.
+</dd>
+
           <dt id="DateTimeMapper">
   <span class="name "><a href="../rdf_mapper/DateTimeMapper-class.html">DateTimeMapper</a></span> 
 
@@ -329,6 +337,14 @@ but use different RDF datatypes.
 </dt>
 <dd>
   Serializes a Dart object to an RDF IRI term.
+</dd>
+
+          <dt id="LanguageOverrideMapper">
+  <span class="name "><a href="../rdf_mapper/LanguageOverrideMapper-class.html">LanguageOverrideMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  A literal term mapper that applies a language tag to string values.
 </dd>
 
           <dt id="LiteralTermDeserializer">
@@ -743,7 +759,7 @@ but use different RDF datatypes.
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.2
+      0.8.3
   </span>
   
 </footer>

@@ -50,7 +50,7 @@ Add the following to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  rdf_mapper: ^0.8.2
+  rdf_mapper: ^0.8.3
 ```
 
 Or use the following command:

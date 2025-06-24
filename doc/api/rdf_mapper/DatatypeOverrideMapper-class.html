@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the DatatypeOverrideMapper class from the rdf_mapper library, for the Dart programming language.">
+  <title>DatatypeOverrideMapper class - rdf_mapper library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">rdf_mapper</a></li>
+    <li><a href="../rdf_mapper">rdf_mapper.dart</a></li>
+    <li class="self-crumb">DatatypeOverrideMapper<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span> class</li>
+  </ol>
+  <div class="self-name">DatatypeOverrideMapper</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button" title="Toggle brightness">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        dark_mode
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        light_mode
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="rdf_mapper&#47;rdf_mapper-library-sidebar.html"
+    data-below-sidebar="rdf_mapper&#47;DatatypeOverrideMapper-class-sidebar.html">
+    <div>
+<h1><span class="kind-class">DatatypeOverrideMapper&lt;<wbr><span class="type-parameter">T</span>&gt;</span> class 
+    <a href="https://dart.dev/language/class-modifiers#final" class="feature feature-final" title="This class can neither be extended, implemented, nor mixed in.">final</a>
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>A literal term mapper that overrides the default datatype with a custom one.</p>
+<p>This mapper acts as a decorator around existing literal term mappers, allowing
+you to assign custom RDF datatypes to values while delegating the actual
+value conversion to the underlying mapper system.</p>
+<h2 id="primary-use-case---annotation-generator">Primary Use Case - Annotation Generator</h2>
+<p>This class is <strong>primarily designed for use by the annotation generator</strong> to implement
+<code>@RdfProperty(predicate, literal: LiteralMapping.withType(customDatatype))</code> annotations.</p>
+<p>The annotation generator automatically creates instances of this mapper when you specify
+custom datatypes in your annotations, handling the correct usage patterns internally.</p>
+<h2 id="manual-usage-scenarios">Manual Usage Scenarios</h2>
+<p>While primarily used by the annotation system, you may also use this mapper directly for:</p>
+<ul>
+<li><strong>Custom Semantic Types</strong>: Create domain-specific datatypes for better semantic meaning</li>
+<li><strong>Legacy System Integration</strong>: Map to datatypes expected by existing RDF vocabularies</li>
+<li><strong>Type Safety</strong>: Ensure specific datatypes are used for certain value types</li>
+<li><strong>Interoperability</strong>: Match datatypes required by external systems or standards</li>
+</ul>
+<h2 id="behavior">Behavior</h2>
+<p>During <strong>serialization</strong> (<code>toRdfTerm</code>):</p>
+<ol>
+<li>Delegates value conversion to the existing mapper for type <code>T</code></li>
+<li>Overrides the resulting literal's datatype with the custom <a href="../rdf_mapper/DatatypeOverrideMapper/datatype.html">datatype</a></li>
+<li>Preserves the string representation of the value</li>
+</ol>
+<p>During <strong>deserialization</strong> (<code>fromRdfTerm</code>):</p>
+<ol>
+<li>Validates that the input literal has the expected custom <a href="../rdf_mapper/DatatypeOverrideMapper/datatype.html">datatype</a></li>
+<li>Delegates parsing to the existing mapper with datatype checking bypassed</li>
+<li>Returns the parsed value of type <code>T</code></li>
+</ol>
+<h2 id="example---annotation-usage-typical">Example - Annotation Usage (Typical)</h2>
+<pre class="language-dart"><code class="language-dart">class Measurement {
+  // Annotation generator creates DatatypeOverrideMapper internally
+  @RdfProperty(Schema.temperature, literal: LiteralMapping.withType('http://qudt.org/vocab/unit/CEL'))
+  final double celsius;
+
+  const Measurement(this.celsius);
+}
+
+// The annotation system handles the mapping automatically:
+// - Serialization: 23.5 -&gt; "23.5"^^&lt;http://qudt.org/vocab/unit/CEL&gt;
+// - Deserialization: validates datatype and parses back to double
+</code></pre>
+<h2 id="example---manual-usage-advanced">Example - Manual Usage (Advanced)</h2>
+<pre class="language-dart"><code class="language-dart">// Define a custom datatype for temperature values
+final celsiusType = IriTerm('http://qudt.org/vocab/unit/CEL');
+
+// Create a mapper that treats doubles as Celsius temperatures
+final temperatureMapper = DatatypeOverrideMapper&lt;double&gt;(celsiusType);
+
+// Use with ResourceBuilder (manual serialization)
+builder.addValue(Schema.temperature, 23.5, literalTermSerializer: temperatureMapper);
+// Results in: "23.5"^^&lt;http://qudt.org/vocab/unit/CEL&gt;
+
+// Use with ResourceReader (manual deserialization)
+final celsius = reader.require&lt;double&gt;(Schema.temperature, literalTermDeserializer: temperatureMapper);
+// Validates datatype and returns: 23.5 (as double)
+</code></pre>
+<h2 id="error-handling">Error Handling</h2>
+<ul>
+<li>Throws <a href="../rdf_mapper/DeserializerDatatypeMismatchException-class.html">DeserializerDatatypeMismatchException</a> if the input literal's datatype
+doesn't match the expected custom datatype (unless <code>bypassDatatypeCheck</code> is true)</li>
+<li>Throws <a href="../rdf_mapper/DeserializationException-class.html">DeserializationException</a> if the underlying value parsing fails</li>
+</ul>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>The mapper requires that a suitable mapper for type <code>T</code> is already registered</li>
+<li>Type <code>T</code> should be a simple value type (String, int, double, bool, DateTime, etc.)</li>
+<li>Complex object types should use <a href="../rdf_mapper/GlobalResourceMapper-class.html">GlobalResourceMapper</a> or <a href="../rdf_mapper/LocalResourceMapper-class.html">LocalResourceMapper</a> instead</li>
+</ul>
+<h2 id="-critical-warning---do-not-register-in-any-registry">⚠️ CRITICAL WARNING - Do NOT Register in ANY Registry</h2>
+<p><strong>NEVER</strong> register this mapper in ANY <code>RdfMapperRegistry</code> including:</p>
+<ul>
+<li><code>RdfMapper.registerMapper()</code> ❌</li>
+<li><code>RdfMapperRegistry.registerMapper()</code> ❌</li>
+<li><code>RdfMapper.withMappers()</code> ❌</li>
+<li>Local registry instances (even after <code>.clone()</code>) ❌</li>
+</ul>
+<p>This mapper delegates to the registry system via <code>context.fromLiteralTerm&lt;T&gt;()</code> and
+<code>context.toLiteralTerm&lt;T&gt;()</code>, so ANY registry registration creates infinite recursion!</p>
+<p><strong>✅ CORRECT Usage - Explicit Serializer/Deserializer Parameters Only:</strong></p>
+<pre class="language-dart"><code class="language-dart">// With ResourceBuilder for serialization
+final builder = context.resourceBuilder(subject);
+builder.addValue(predicate, value, literalTermSerializer: customMapper);
+
+// With ResourceReader for deserialization
+final reader = context.reader(subject);
+final value = reader.require&lt;String&gt;(predicate, literalTermDeserializer: customMapper);
+
+// Direct context usage (less common)
+context.fromLiteralTerm&lt;String&gt;(term, deserializer: customMapper);
+context.toLiteralTerm(value, serializer: customMapper);
+</code></pre>
+<p><strong>❌ INCORRECT Usage - Will Cause Stack Overflow:</strong></p>
+<pre class="language-dart"><code class="language-dart">// ALL of these cause infinite recursion!
+rdfMapper.registerMapper&lt;String&gt;(mapper);                    // ❌
+registry.registerMapper&lt;String&gt;(mapper);                     // ❌
+RdfMapper.withMappers((r) =&gt; r.registerMapper&lt;String&gt;(mapper)); // ❌
+localRegistry.registerMapper&lt;String&gt;(mapper);                // ❌
+</code></pre>
+</section>
+
+
+    <section>
+      <dl class="dl-horizontal">
+        
+
+        
+  <dt>Implemented types</dt>
+  <dd>
+    <ul class="comma-separated clazz-relationships">
+        <li><a href="../rdf_mapper/LiteralTermMapper-class.html">LiteralTermMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></li>
+    </ul>
+  </dd>
+        
+
+
+        
+        
+
+
+      </dl>
+    </section>
+
+    
+  <section class="summary offset-anchor" id="constructors">
+    <h2>Constructors</h2>
+    <dl class="constructor-summary-list">
+        <dt id="DatatypeOverrideMapper" class="callable">
+          <span class="name"><a href="../rdf_mapper/DatatypeOverrideMapper/DatatypeOverrideMapper.html">DatatypeOverrideMapper</a></span><span class="signature">(<span class="parameter" id="-param-datatype"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">datatype</span></span>)</span>
+        </dt>
+        <dd>
+          Creates a datatype override mapper with the specified custom <code>datatype</code>.
+            <div class="constructor-modifier features">const</div>
+        </dd>
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-properties">
+    <h2>Properties</h2>
+    <dl class="properties">
+        <dt id="datatype" class="property">
+  <span class="name"><a href="../rdf_mapper/DatatypeOverrideMapper/datatype.html">datatype</a></span>
+  <span class="signature">&#8594; <a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/IriTerm-class.html">IriTerm</a></span>
+  
+
+</dt>
+<dd>
+  The custom RDF datatype IRI that this mapper produces and expects.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  The hash code for this object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="fromRdfTerm" class="callable">
+  <span class="name"><a href="../rdf_mapper/DatatypeOverrideMapper/fromRdfTerm.html">fromRdfTerm</a></span><span class="signature">(<wbr><span class="parameter" id="fromRdfTerm-param-term"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/LiteralTerm-class.html">LiteralTerm</a></span> <span class="parameter-name">term</span>, </span><span class="parameter" id="fromRdfTerm-param-context"><span class="type-annotation"><a href="../rdf_mapper/DeserializationContext-class.html">DeserializationContext</a></span> <span class="parameter-name">context</span>, {</span><span class="parameter" id="fromRdfTerm-param-bypassDatatypeCheck"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">bypassDatatypeCheck</span> = <span class="default-value">false</span></span>})
+    <span class="returntype parameter">&#8594; T</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Deserializes a literal term to a Dart value of type <code>T</code>.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a nonexistent method or property is accessed.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="toRdfTerm" class="callable">
+  <span class="name"><a href="../rdf_mapper/DatatypeOverrideMapper/toRdfTerm.html">toRdfTerm</a></span><span class="signature">(<wbr><span class="parameter" id="toRdfTerm-param-value"><span class="type-annotation">T</span> <span class="parameter-name">value</span>, </span><span class="parameter" id="toRdfTerm-param-context"><span class="type-annotation"><a href="../rdf_mapper/SerializationContext-class.html">SerializationContext</a></span> <span class="parameter-name">context</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/LiteralTerm-class.html">LiteralTerm</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Serializes a Dart value to an RDF literal term with the custom datatype.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+    
+    
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">rdf_mapper</a></li>
+    <li><a href="../rdf_mapper">rdf_mapper</a></li>
+    <li class="self-crumb">DatatypeOverrideMapper<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span> class</li>
+</ol>
+
+    <h5>rdf_mapper library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    rdf_mapper
+      0.8.3
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+
