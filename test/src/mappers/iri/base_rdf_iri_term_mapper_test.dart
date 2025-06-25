@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 enum TestEnum { value1, value2, specialValue }
 
 class SimpleTestMapper extends BaseRdfIriTermMapper<TestEnum> {
-  SimpleTestMapper() : super('https://example.org/test/{value}', 'value');
+  const SimpleTestMapper() : super('https://example.org/test/{value}', 'value');
 
   @override
   String convertToString(TestEnum value) => value.name;
@@ -17,11 +17,18 @@ class SimpleTestMapper extends BaseRdfIriTermMapper<TestEnum> {
 }
 
 class AdvancedTestMapper extends BaseRdfIriTermMapper<TestEnum> {
-  AdvancedTestMapper(String Function() baseProvider)
-      : super('{+base}/ns/{type}/{value}', 'value', providers: {
-          'base': baseProvider,
-          'type': () => 'enums',
-        });
+  final String Function() baseProvider;
+
+  AdvancedTestMapper(this.baseProvider)
+      : super('{+base}/ns/{type}/{value}', 'value');
+
+  @override
+  String resolvePlaceholder(String placeholderName) =>
+      switch (placeholderName) {
+        'base' => baseProvider(),
+        'type' => 'enums',
+        _ => super.resolvePlaceholder(placeholderName),
+      };
 
   @override
   String convertToString(TestEnum value) => value.name;
@@ -111,15 +118,18 @@ void main() {
 
     group('Validation', () {
       test('should throw when value variable not in template', () {
+        const mapper = SimpleTestMapperWithBadVariable();
+        final iri = IriTerm('https://example.org/test/somevalue');
         expect(
-          () => SimpleTestMapperWithBadVariable(),
+          () => mapper.fromRdfTerm(iri, MockDeserializationContext()),
           throwsArgumentError,
         );
       });
 
-      test('should throw when provider missing', () {
+      test('should throw when extra value missing during serialization', () {
+        const mapper = TestMapperWithMissingProvider();
         expect(
-          () => TestMapperWithMissingProvider(),
+          () => mapper.toRdfTerm(TestEnum.value1, MockSerializationContext()),
           throwsArgumentError,
         );
       });
@@ -128,7 +138,7 @@ void main() {
 }
 
 class SimpleTestMapperWithBadVariable extends BaseRdfIriTermMapper<TestEnum> {
-  SimpleTestMapperWithBadVariable()
+  const SimpleTestMapperWithBadVariable()
       : super('https://example.org/test/{wrong}', 'value');
 
   @override
@@ -141,7 +151,7 @@ class SimpleTestMapperWithBadVariable extends BaseRdfIriTermMapper<TestEnum> {
 }
 
 class TestMapperWithMissingProvider extends BaseRdfIriTermMapper<TestEnum> {
-  TestMapperWithMissingProvider()
+  const TestMapperWithMissingProvider()
       : super('https://example.org/{missing}/{value}', 'value');
 
   @override

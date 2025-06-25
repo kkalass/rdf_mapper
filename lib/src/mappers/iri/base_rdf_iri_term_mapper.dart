@@ -5,14 +5,14 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 ///
 /// This class provides a flexible way to map enum values or other objects to IRIs
 /// using URI templates with placeholders. It supports both static placeholders
-/// (provided via providers) and dynamic placeholders (resolved from the object value).
+/// (provided via resolvePlaceholder) and dynamic placeholders (resolved from the object value).
 ///
 /// ## Quick Start
 ///
 /// Simple enum to IRI mapping:
 /// ```dart
 /// class StatusMapper extends BaseRdfIriTermMapper<Status> {
-///   StatusMapper() : super('https://example.org/status/{value}', 'value');
+///   const StatusMapper() : super('https://example.org/status/{value}', 'value');
 ///
 ///   @override
 ///   String convertToString(Status status) => status.name;
@@ -25,9 +25,18 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 /// Template with multiple placeholders:
 /// ```dart
 /// class StatusMapper extends BaseRdfIriTermMapper<Status> {
-///   StatusMapper(String Function() baseUriProvider)
-///     : super('{+baseUri}/status/{value}', 'value',
-///             providers: {'baseUri': baseUriProvider});
+///   final String Function() baseUriProvider;
+///
+///   StatusMapper(this.baseUriProvider)
+///     : super('{+baseUri}/status/{value}', 'value');
+///
+///   @override
+///   String resolvePlaceholder(String placeholderName) {
+///     switch (placeholderName) {
+///       case 'baseUri': return baseUriProvider();
+///       default: return super.resolvePlaceholder(placeholderName);
+///     }
+///   }
 ///
 ///   @override
 ///   String convertToString(Status status) => status.name;
@@ -42,13 +51,14 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 /// - `{variableName}`: Simple placeholder for path segments (no slashes allowed)
 /// - `{+variableName}`: Full URI placeholder (slashes allowed)
 /// - The `valueVariableName` parameter specifies which placeholder represents the object value
-/// - All other placeholders must have corresponding providers
+/// - All other placeholders must be provided via `resolvePlaceholder()`
 ///
 /// ## Implementation Requirements
 ///
 /// Subclasses must implement:
 /// - `convertToString()`: Convert object to string for the value placeholder
 /// - `convertFromString()`: Convert string from value placeholder back to object
+/// - `resolvePlaceholder()`: Provide values for static placeholders (optional, has default implementation)
 abstract class BaseRdfIriTermMapper<T> implements IriTermMapper<T> {
   /// The URI template with placeholders
   final String template;
@@ -56,51 +66,39 @@ abstract class BaseRdfIriTermMapper<T> implements IriTermMapper<T> {
   /// The name of the placeholder that represents the object value
   final String valueVariableName;
 
-  /// Providers for static placeholders in the template
-  final Map<String, String Function()> providers;
-
-  /// Compiled regex pattern for extracting values from IRIs
-  late final RegExp _extractionPattern;
-
-  /// Placeholder names found in the template
-  late final List<String> _placeholderNames;
-
   /// Creates a mapper for the specified URI template.
   ///
   /// [template] The URI template with placeholders (e.g., 'https://example.org/{category}/{value}')
   /// [valueVariableName] The name of the placeholder that represents the object value
-  /// [providers] Optional providers for static placeholders
-  BaseRdfIriTermMapper(
-    this.template,
-    this.valueVariableName, {
-    Map<String, String Function()>? providers,
-  }) : providers = providers ?? {} {
-    _validateAndCompile();
+  const BaseRdfIriTermMapper(this.template, this.valueVariableName);
+
+  /// Provides values for static placeholders in the template.
+  ///
+  /// This method is called for each placeholder in the template (except for the value placeholder).
+  /// Subclasses should override this method to provide values for any static placeholders they use.
+  ///
+  /// The default implementation throws an ArgumentError with a helpful message.
+  ///
+  /// [placeholderName] The name of the placeholder that needs a value
+  /// Returns the string value to substitute for the placeholder
+  /// Throws [ArgumentError] if the placeholder is not supported
+  String resolvePlaceholder(String placeholderName) {
+    throw ArgumentError(
+      'No value provided for placeholder "$placeholderName". '
+      'Override resolvePlaceholder() to provide values for static placeholders.',
+    );
   }
 
-  /// Validates the template and compiles the extraction pattern
-  void _validateAndCompile() {
-    // Find all placeholders in the template
+  /// Lazily compiles the extraction pattern for parsing IRIs
+  RegExp get _extractionPattern {
     final placeholderRegex = RegExp(r'\{(\+?)([^}]+)\}');
     final matches = placeholderRegex.allMatches(template);
 
-    _placeholderNames = matches.map((match) => match.group(2)!).toList();
-
     // Validate that valueVariableName exists in template
-    if (!_placeholderNames.contains(valueVariableName)) {
+    final placeholderNames = matches.map((match) => match.group(2)!).toList();
+    if (!placeholderNames.contains(valueVariableName)) {
       throw ArgumentError(
           'Value variable "$valueVariableName" not found in template "$template"');
-    }
-
-    // Validate that all non-value placeholders have providers
-    final missingProviders = _placeholderNames
-        .where((name) => name != valueVariableName)
-        .where((name) => !providers.containsKey(name))
-        .toList();
-
-    if (missingProviders.isNotEmpty) {
-      throw ArgumentError(
-          'Missing providers for placeholders: ${missingProviders.join(", ")}');
     }
 
     // Build regex pattern for extracting values
@@ -123,7 +121,7 @@ abstract class BaseRdfIriTermMapper<T> implements IriTermMapper<T> {
       pattern = pattern.replaceFirst(RegExp.escape(fullMatch), captureGroup);
     }
 
-    _extractionPattern = RegExp('^$pattern\$');
+    return RegExp('^$pattern\$');
   }
 
   /// Converts a Dart object to a string representation for the value placeholder.
@@ -156,12 +154,7 @@ abstract class BaseRdfIriTermMapper<T> implements IriTermMapper<T> {
       if (placeholderName == valueVariableName) {
         return convertToString(value);
       } else {
-        final provider = providers[placeholderName];
-        if (provider == null) {
-          throw StateError(
-              'No provider found for placeholder: $placeholderName');
-        }
-        return provider();
+        return resolvePlaceholder(placeholderName);
       }
     });
 

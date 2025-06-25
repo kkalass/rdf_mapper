@@ -25,11 +25,11 @@ import 'package:rdf_vocabularies/xsd.dart';
 void main() {
   // Create mapper with default registry and register our custom enum mappers
   final rdf = RdfMapper.withDefaultRegistry()
-    ..registerMapper<Document>(DocumentMapper())
+    ..registerMapper<Document>(const DocumentMapper())
     ..registerMapper<DocumentStatus>(
-        DocumentStatusMapper()) // Literal-based mapping
+        const DocumentStatusMapper()) // Literal-based mapping
     ..registerMapper<DocumentCategory>(
-        DocumentCategoryMapper()); // IRI-based mapping
+        const DocumentCategoryMapper()); // IRI-based mapping
 
   // Create a document with enum properties
   final document = Document(
@@ -196,7 +196,7 @@ class DocumentStatusMapper extends BaseRdfLiteralTermMapper<DocumentStatus> {
 /// IRI-based mapper for DocumentCategory enum using URI templates
 /// Demonstrates how to map enums to structured IRIs
 class DocumentCategoryMapper extends BaseRdfIriTermMapper<DocumentCategory> {
-  DocumentCategoryMapper()
+  const DocumentCategoryMapper()
       : super('http://example.org/vocab/category/{value}', 'value');
 
   @override
@@ -220,9 +220,22 @@ class DocumentCategoryMapper extends BaseRdfIriTermMapper<DocumentCategory> {
 /// Shows how to use configurable base URIs and multiple placeholders
 class AdvancedDocumentCategoryMapper
     extends BaseRdfIriTermMapper<DocumentCategory> {
-  AdvancedDocumentCategoryMapper(String Function() baseUriProvider)
-      : super('{+baseUri}/vocab/{type}/{value}', 'value',
-            providers: {'baseUri': baseUriProvider, 'type': () => 'category'});
+  final String Function() baseUriProvider;
+
+  AdvancedDocumentCategoryMapper(this.baseUriProvider)
+      : super('{+baseUri}/vocab/{type}/{value}', 'value');
+
+  @override
+  String resolvePlaceholder(String placeholderName) {
+    switch (placeholderName) {
+      case 'baseUri':
+        return baseUriProvider();
+      case 'type':
+        return 'category';
+      default:
+        return super.resolvePlaceholder(placeholderName);
+    }
+  }
 
   @override
   String convertToString(DocumentCategory category) {
@@ -251,6 +264,8 @@ class DocumentMapper implements GlobalResourceMapper<Document> {
 
   // Custom predicate for category (not in Schema.org)
   static final categoryPredicate = IriTerm('http://example.org/vocab/category');
+
+  const DocumentMapper();
 
   @override
   final IriTerm typeIri = SchemaCreativeWork.classIri;
