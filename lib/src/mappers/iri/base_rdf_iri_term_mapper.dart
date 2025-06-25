@@ -89,8 +89,19 @@ abstract class BaseRdfIriTermMapper<T> implements IriTermMapper<T> {
     );
   }
 
-  /// Lazily compiles the extraction pattern for parsing IRIs
+  /// Global cache for compiled extraction patterns to optimize performance.
+  ///
+  /// Uses template + valueVariableName as key since the pattern depends on both.
+  static final Map<String, RegExp> _patternCache = <String, RegExp>{};
+
+  /// Gets the extraction pattern, using cache for optimal performance.
   RegExp get _extractionPattern {
+    final cacheKey = '$template|$valueVariableName';
+    return _patternCache.putIfAbsent(cacheKey, _buildExtractionPattern);
+  }
+
+  /// Builds the regex pattern for extracting values from IRIs.
+  RegExp _buildExtractionPattern() {
     final placeholderRegex = RegExp(r'\{(\+?)([^}]+)\}');
     final matches = placeholderRegex.allMatches(template);
 
