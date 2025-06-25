@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added `BaseRdfIriTermMapper<T>` abstract class for flexible IRI-based mapping using URI templates
 - Added support for URI template placeholders (`{variable}` and `{+variable}` for full URI components)
-- Added `resolvePlaceholder()` method for providing static placeholder values, enabling const constructors for simple cases
+- Added `resolvePlaceholder()` method for providing placeholder values, enabling const constructors for simple cases
 - Added comprehensive enum mapping example (`enum_mapping_example.dart`) demonstrating both literal and IRI-based approaches
 - Added full test coverage for `BaseRdfIriTermMapper` including template validation, provider requirements, and roundtrip scenarios
 

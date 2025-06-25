@@ -4,8 +4,8 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 /// Abstract base class for mapping Dart objects to RDF IRI terms using URI templates.
 ///
 /// This class provides a flexible way to map enum values or other objects to IRIs
-/// using URI templates with placeholders. It supports both static placeholders
-/// (provided via resolvePlaceholder) and dynamic placeholders (resolved from the object value).
+/// using URI templates with placeholders. It supports placeholders
+/// (provided via resolvePlaceholder or resolved from the object value).
 ///
 /// ## Quick Start
 ///
@@ -58,7 +58,7 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 /// Subclasses must implement:
 /// - `convertToString()`: Convert object to string for the value placeholder
 /// - `convertFromString()`: Convert string from value placeholder back to object
-/// - `resolvePlaceholder()`: Provide values for static placeholders (optional, has default implementation)
+/// - `resolvePlaceholder()`: Provide values for extra placeholders (optional, has default implementation)
 abstract class BaseRdfIriTermMapper<T> implements IriTermMapper<T> {
   /// The URI template with placeholders
   final String template;
@@ -72,10 +72,10 @@ abstract class BaseRdfIriTermMapper<T> implements IriTermMapper<T> {
   /// [valueVariableName] The name of the placeholder that represents the object value
   const BaseRdfIriTermMapper(this.template, this.valueVariableName);
 
-  /// Provides values for static placeholders in the template.
+  /// Provides values for extra placeholders in the template.
   ///
   /// This method is called for each placeholder in the template (except for the value placeholder).
-  /// Subclasses should override this method to provide values for any static placeholders they use.
+  /// Subclasses should override this method to provide values for any extra placeholders they use.
   ///
   /// The default implementation throws an ArgumentError with a helpful message.
   ///
@@ -85,7 +85,7 @@ abstract class BaseRdfIriTermMapper<T> implements IriTermMapper<T> {
   String resolvePlaceholder(String placeholderName) {
     throw ArgumentError(
       'No value provided for placeholder "$placeholderName". '
-      'Override resolvePlaceholder() to provide values for static placeholders.',
+      'Override resolvePlaceholder() to provide values for extra placeholders.',
     );
   }
 
