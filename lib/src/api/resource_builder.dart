@@ -127,8 +127,10 @@ class ResourceBuilder<S extends RdfSubject> {
   ///
   /// This method is useful for serializing dictionary-like structures where both
   /// the keys and values need to be serialized as part of the RDF graph.
+  /// Map entries can be serialized as literals, IRIs, or resources depending on
+  /// the serializer provided.
   ///
-  /// Example:
+  /// Examples:
   /// ```dart
   /// // Serializes a metadata dictionary as linked resources
   /// builder.addMap(
@@ -136,19 +138,42 @@ class ResourceBuilder<S extends RdfSubject> {
   ///   metadata,
   ///   resourceSerializer: MetadataEntrySerializer(),
   /// );
+  ///
+  /// // Serializes map entries as IRI terms
+  /// builder.addMap(
+  ///   Schema.sameAs,
+  ///   uriMappings,
+  ///   iriTermSerializer: UriMappingSerializer(),
+  /// );
+  ///
+  /// // Serializes map entries as literal terms
+  /// builder.addMap(
+  ///   Schema.propertyValue,
+  ///   keyValuePairs,
+  ///   literalTermSerializer: KeyValueSerializer(),
+  /// );
   /// ```
   ///
   /// Parameters:
   /// - [predicate]: The predicate for the relationships.
   /// - [instance]: The map to serialize.
-  /// - [resourceSerializer]: The serializer for map entries.
+  /// - [literalTermSerializer]: Optional serializer for map entries as literals.
+  /// - [iriTermSerializer]: Optional serializer for map entries as IRIs.
+  /// - [resourceSerializer]: Optional serializer for map entries as resources.
   ///
   /// Returns this builder for method chaining.
-  ResourceBuilder<S> addMap<K, V>(RdfPredicate predicate, Map<K, V> instance,
-      {required ResourceSerializer<MapEntry<K, V>> resourceSerializer}) {
+  ResourceBuilder<S> addMap<K, V>(
+    RdfPredicate predicate,
+    Map<K, V> instance, {
+    LiteralTermSerializer<MapEntry<K, V>>? literalTermSerializer,
+    IriTermSerializer<MapEntry<K, V>>? iriTermSerializer,
+    ResourceSerializer<MapEntry<K, V>>? resourceSerializer,
+  }) {
     _triples.addAll(
       _service.valueMap(_subject, predicate, instance,
-          resourceSerializer: resourceSerializer),
+          resourceSerializer: resourceSerializer,
+          iriTermSerializer: iriTermSerializer,
+          literalTermSerializer: literalTermSerializer),
     );
     return this;
   }
