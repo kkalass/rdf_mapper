@@ -106,9 +106,9 @@ class ResourceBuilder<S extends RdfSubject> {
   ResourceBuilder<S> addValues<V>(
     RdfPredicate predicate,
     Iterable<V> values, {
-    LiteralTermSerializer<S>? literalTermSerializer,
-    IriTermSerializer<S>? iriTermSerializer,
-    ResourceSerializer<S>? resourceSerializer,
+    LiteralTermSerializer<V>? literalTermSerializer,
+    IriTermSerializer<V>? iriTermSerializer,
+    ResourceSerializer<V>? resourceSerializer,
   }) {
     _triples.addAll(
       _service.values(
