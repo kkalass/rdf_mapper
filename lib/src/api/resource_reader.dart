@@ -248,4 +248,9 @@ class ResourceReader {
       localResourceDeserializer: localResourceDeserializer,
     );
   }
+
+  /// The triples of the subject of this reader, which have not been
+  /// read via one of the other methods yet.
+  List<Triple> get remainingTriples =>
+      _service.getRemainingTriplesForSubject(_subject);
 }

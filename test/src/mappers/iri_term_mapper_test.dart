@@ -315,6 +315,11 @@ class CustomSerializationContext extends SerializationContext {
   }
 
   @override
+  List<Triple> resource<T>(T instance, {ResourceSerializer<T>? serializer}) {
+    throw UnimplementedError();
+  }
+
+  @override
   LiteralTerm toLiteralTerm<T>(
     T value, {
     LiteralTermSerializer<T>? serializer,

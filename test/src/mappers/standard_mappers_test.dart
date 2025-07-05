@@ -27,6 +27,11 @@ class MockSerializationContext extends SerializationContext {
   }) {
     throw UnimplementedError();
   }
+
+  @override
+  List<Triple> resource<T>(T instance, {ResourceSerializer<T>? serializer}) {
+    throw UnimplementedError();
+  }
 }
 
 // Mock implementation of DeserializationContext for testing

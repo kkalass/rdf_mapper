@@ -58,6 +58,11 @@ class MockSerializationContext extends SerializationContext {
   }
 
   @override
+  List<Triple> resource<T>(T instance, {ResourceSerializer<T>? serializer}) {
+    throw UnimplementedError();
+  }
+
+  @override
   ResourceBuilder<S> resourceBuilder<S extends RdfSubject>(S subject) {
     throw UnimplementedError('Not needed for override mapper tests');
   }

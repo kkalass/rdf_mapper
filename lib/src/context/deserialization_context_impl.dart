@@ -3,6 +3,7 @@ import 'package:rdf_mapper/src/api/deserialization_context.dart';
 import 'package:rdf_mapper/src/api/deserialization_service.dart';
 import 'package:rdf_mapper/src/api/deserializer.dart';
 import 'package:rdf_mapper/src/api/resource_reader.dart';
+import 'package:rdf_mapper/src/api/serializer.dart';
 import 'package:rdf_mapper/src/exceptions/property_value_not_found_exception.dart';
 import 'package:rdf_mapper/src/exceptions/too_many_property_values_exception.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
@@ -12,6 +13,8 @@ class DeserializationContextImpl extends DeserializationContext
     implements DeserializationService {
   final RdfGraph _graph;
   final RdfMapperRegistry _registry;
+
+  final Map<RdfSubject, List<Triple>> _readTriplesBySubject = {};
 
   DeserializationContextImpl({
     required RdfGraph graph,
@@ -88,7 +91,7 @@ class DeserializationContextImpl extends DeserializationContext
     LiteralTermDeserializer<T>? literalTermDeserializer,
     LocalResourceDeserializer<T>? localResourceDeserializer,
   }) {
-    final triples = _graph.findTriples(subject: subject, predicate: predicate);
+    final triples = _findTriplesForReading(subject, predicate);
     if (triples.isEmpty) {
       return null;
     }
@@ -110,6 +113,36 @@ class DeserializationContextImpl extends DeserializationContext
     );
   }
 
+  List<Triple> _findTriplesForReading(
+      RdfSubject subject, RdfPredicate predicate) {
+    final readTriples =
+        _graph.findTriples(subject: subject, predicate: predicate);
+    _readTriplesBySubject.putIfAbsent(subject, () => []).addAll(readTriples);
+    // Hook for tracking deserialization
+    return readTriples;
+  }
+
+  @override
+  List<Triple> getRemainingTriplesForSubject(RdfSubject subject) {
+    final readTriples = (_readTriplesBySubject[subject] ?? const []).toSet();
+    final result = [
+      ..._graph.findTriples(
+        subject: subject,
+      )
+    ];
+    result.removeWhere((triple) => readTriples.contains(triple));
+    return result;
+  }
+
+  @override
+  List<Triple> getAllRemainingTriples() {
+    final allReadTriples =
+        _readTriplesBySubject.values.expand((e) => e).toSet();
+    return _graph.triples
+        .where((triple) => !allReadTriples.contains(triple))
+        .toList(growable: false);
+  }
+
   @override
   R collect<T, R>(
     RdfSubject subject,
@@ -120,7 +153,7 @@ class DeserializationContextImpl extends DeserializationContext
     LiteralTermDeserializer<T>? literalTermDeserializer,
     LocalResourceDeserializer<T>? localResourceDeserializer,
   }) {
-    final triples = _graph.findTriples(subject: subject, predicate: predicate);
+    final triples = _findTriplesForReading(subject, predicate);
     final convertedTriples = triples.map(
       (triple) => deserialize(
         triple.object,
@@ -229,4 +262,6 @@ class TrackingDeserializationContext extends DeserializationContextImpl {
 
   /// Returns the map of processed subjects with their first processing index
   Set<RdfSubject> getProcessedSubjects() => _processedSubjects;
+
+  
 }

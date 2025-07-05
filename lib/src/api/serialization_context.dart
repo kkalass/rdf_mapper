@@ -39,4 +39,6 @@ abstract class SerializationContext {
   /// This is a low-level method typically used by [LiteralTermMapper] implementations
   /// to delegate to existing serializers.
   LiteralTerm toLiteralTerm<T>(T value, {LiteralTermSerializer<T>? serializer});
+
+  List<Triple> resource<T>(T instance, {ResourceSerializer<T>? serializer});
 }

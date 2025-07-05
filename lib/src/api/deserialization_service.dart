@@ -129,4 +129,8 @@ abstract class DeserializationService {
     LiteralTermDeserializer<MapEntry<K, V>>? literalTermDeserializer,
     LocalResourceDeserializer<MapEntry<K, V>>? localResourceDeserializer,
   });
+
+  List<Triple> getRemainingTriplesForSubject(RdfSubject subject);
+
+  List<Triple> getAllRemainingTriples();
 }
