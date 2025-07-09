@@ -25,7 +25,7 @@
   <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../../index.html">rdf_mapper</a></li>
-    <li><a href="../../rdf_mapper">rdf_mapper.dart</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper.dart</a></li>
     <li><a href="../../rdf_mapper/GraphOperations-class.html">GraphOperations</a></li>
     <li class="self-crumb">objectsCodec&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
   </ol>
@@ -33,17 +33,14 @@
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
-  <div class="toggle" id="theme-button" title="Toggle brightness">
-    <label for="theme">
-      <input type="checkbox" id="theme" value="light-theme">
-      <span id="dark-theme-button" class="material-symbols-outlined">
-        dark_mode
-      </span>
-      <span id="light-theme-button" class="material-symbols-outlined">
-        light_mode
-      </span>
-    </label>
-  </div>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
 </header>
 <main>
 <div
@@ -60,6 +57,7 @@
 <span class="returntype"><a href="../../rdf_mapper/RdfObjectsCodec-class.html">RdfObjectsCodec</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
 <span class="name ">objectsCodec</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="objectsCodec-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-registry"><span class="type-annotation"><a href="../../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span></li>
 </ol>)?, </span></li>
+<li><span class="parameter" id="objectsCodec-param-completeness"><span class="type-annotation"><a href="../../rdf_mapper/CompletenessMode.html">CompletenessMode</a></span> <span class="parameter-name">completeness</span> = <span class="default-value">CompletenessMode.strict</span>, </span></li>
 </ol>})
 
       
@@ -71,7 +69,18 @@
 <p>Returns a reusable codec object that can be used for multiple serialization
 or deserialization operations of collections of the same type, which can be
 more efficient when processing multiple collections.</p>
-<p><code>register</code> Optional callback to register mappers that will be available for the lifetime of the returned codec</p>
+<p>Parameters:</p>
+<ul>
+<li><code>register</code> - Optional callback to register mappers that will be available for the lifetime of the returned codec</li>
+<li><code>completeness</code> - Controls how incomplete deserialization is handled:
+<ul>
+<li><a href="../../rdf_mapper/CompletenessMode.html">CompletenessMode.strict</a> (default): Throws <a href="../../rdf_mapper/IncompleteDeserializationException-class.html">IncompleteDeserializationException</a> if any triples cannot be mapped</li>
+<li><a href="../../rdf_mapper/CompletenessMode.html">CompletenessMode.lenient</a>: Silently ignores unmapped triples (data loss may occur)</li>
+<li><a href="../../rdf_mapper/CompletenessMode.html">CompletenessMode.warnOnly</a>: Logs warnings for unmapped triples but continues (data loss may occur)</li>
+<li><a href="../../rdf_mapper/CompletenessMode.html">CompletenessMode.infoOnly</a>: Logs info messages for unmapped triples but continues (data loss may occur)</li>
+</ul>
+</li>
+</ul>
 <p>Returns a codec for collections of type T</p>
 </section>
 
@@ -81,8 +90,10 @@ more efficient when processing multiple collections.</p>
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">RdfObjectsCodec&lt;T&gt; objectsCodec&lt;T&gt;({
   void Function(RdfMapperRegistry registry)? register,
+  CompletenessMode completeness = CompletenessMode.strict,
 }) {
-  return RdfObjectsCodec&lt;T&gt;(service: _service, register: register);
+  return RdfObjectsCodec&lt;T&gt;(
+      service: _service, register: register, completeness: completeness);
 }</code></pre>
 </section>
 
@@ -97,7 +108,7 @@ more efficient when processing multiple collections.</p>
 </header>
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../../index.html">rdf_mapper</a></li>
-    <li><a href="../../rdf_mapper">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper/GraphOperations-class.html">GraphOperations</a></li>
     <li class="self-crumb">objectsCodec&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
 </ol>
@@ -111,7 +122,7 @@ more efficient when processing multiple collections.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.6
+      0.8.7
   </span>
   
 </footer>

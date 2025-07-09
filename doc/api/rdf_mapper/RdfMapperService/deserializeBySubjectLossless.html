@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the deserializeBySubjectLossless method from the RdfMapperService class, for the Dart programming language.">
+  <title>deserializeBySubjectLossless method - RdfMapperService class - rdf_mapper library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper.dart</a></li>
+    <li><a href="../../rdf_mapper/RdfMapperService-class.html">RdfMapperService</a></li>
+    <li class="self-crumb">deserializeBySubjectLossless&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
+  </ol>
+  <div class="self-name">deserializeBySubjectLossless</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="rdf_mapper&#47;RdfMapperService-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">deserializeBySubjectLossless&lt;<wbr><span class="type-parameter">T</span>&gt;</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype">(<span class="field"><span class="type-annotation">T</span>, </span><span class="field"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfGraph-class.html">RdfGraph</a></span></span>)</span>
+<span class="name ">deserializeBySubjectLossless</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="deserializeBySubjectLossless-param-graph"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfGraph-class.html">RdfGraph</a></span> <span class="parameter-name">graph</span>, </span></li>
+<li><span class="parameter" id="deserializeBySubjectLossless-param-rdfSubject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">rdfSubject</span>, {</span></li>
+<li><span class="parameter" id="deserializeBySubjectLossless-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-registry"><span class="type-annotation"><a href="../../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span></li>
+</ol>)?, </span></li>
+</ol>})
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Deserializes an object from a specific subject preserving the remainder.</p>
+<p>This method is similar to <a href="../../rdf_mapper/RdfMapperService/deserializeBySubject.html">deserializeBySubject</a> but returns both the deserialized
+object and any remaining RDF triples that weren't processed.</p>
+<p><code>graph</code> The RDF graph containing the data
+<code>rdfSubject</code> The subject identifier to deserialize
+<code>register</code> Optional callback to register temporary mappers</p>
+<p>Returns a tuple containing the deserialized object and remaining graph</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">(T, RdfGraph) deserializeBySubjectLossless&lt;T&gt;(
+  RdfGraph graph,
+  RdfSubject rdfSubject, {
+  void Function(RdfMapperRegistry registry)? register,
+}) {
+  _log.fine(&#39;Delegated mapping graph to ${T.toString()}&#39;);
+
+  &#47;&#47; Clone registry if registration callback is provided
+  final registry = register != null ? _registry.clone() : _registry;
+  if (register != null) {
+    register(registry);
+  }
+  var context = DeserializationContextImpl(graph: graph, registry: registry);
+
+  var result = context.deserialize&lt;T&gt;(rdfSubject, null, null, null, null);
+
+  return (result, _withoutTriples(graph, context.getAllProcessedTriples()));
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/RdfMapperService-class.html">RdfMapperService</a></li>
+    <li class="self-crumb">deserializeBySubjectLossless&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
+</ol>
+
+    <h5>RdfMapperService class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    rdf_mapper
+      0.8.7
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

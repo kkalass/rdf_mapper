@@ -25,7 +25,7 @@
   <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../../index.html">rdf_mapper</a></li>
-    <li><a href="../../rdf_mapper">rdf_mapper.dart</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper.dart</a></li>
     <li><a href="../../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></li>
     <li class="self-crumb">registerMapper&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
   </ol>
@@ -33,17 +33,14 @@
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
-  <div class="toggle" id="theme-button" title="Toggle brightness">
-    <label for="theme">
-      <input type="checkbox" id="theme" value="light-theme">
-      <span id="dark-theme-button" class="material-symbols-outlined">
-        dark_mode
-      </span>
-      <span id="light-theme-button" class="material-symbols-outlined">
-        light_mode
-      </span>
-    </label>
-  </div>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
 </header>
 <main>
 <div
@@ -76,7 +73,20 @@ are implemented and registers the mapper with all relevant registries.</p>
 <li>LocalResourceMapper: Combined LocalResourceSerializer/LocalResourceDeserializer</li>
 <li>LiteralTermMapper: Combined LiteralTermSerializer/LiteralTermDeserializer</li>
 <li>IriTermMapper: Combined IriTermSerializer/IriTermDeserializer</li>
+<li>UnmappedTriplesMapper: Combined UnmappedTriplesSerializer/UnmappedTriplesDeserializer</li>
 </ul>
+<p>Special behavior for UnmappedTriplesMapper:
+When registering an UnmappedTriplesMapper, the registry automatically creates
+and registers wrapper mappers that make the type available for both resource
+and property mapping:</p>
+<ul>
+<li>GlobalResourceUnmappedTriplesDeserializer (wraps the deserializer)</li>
+<li>LocalResourceUnmappedTriplesDeserializer (wraps the deserializer)</li>
+<li>ResourceUnmappedTriplesSerializer (wraps the serializer)</li>
+</ul>
+<p>This enables objects handled by UnmappedTriplesMapper to be used seamlessly
+in any mapping context where a resource is expected, providing full
+integration with the mapping system for lossless round-trip operations.</p>
 <p><code>mapper</code> The mapper to register</p>
 </section>
 
@@ -102,6 +112,10 @@ are implemented and registers the mapper with all relevant registries.</p>
       _registerIriTermSerializer&lt;T&gt;(mapper);
       _registerIriTermDeserializer&lt;T&gt;(mapper);
       break;
+    case UnmappedTriplesMapper&lt;T&gt;():
+      _registerUnmappedTriplesDeserializer&lt;T&gt;(mapper);
+      _registerUnmappedTriplesSerializer&lt;T&gt;(mapper);
+      break;
   }
 }</code></pre>
 </section>
@@ -117,7 +131,7 @@ are implemented and registers the mapper with all relevant registries.</p>
 </header>
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../../index.html">rdf_mapper</a></li>
-    <li><a href="../../rdf_mapper">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></li>
     <li class="self-crumb">registerMapper&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
 </ol>
@@ -131,7 +145,7 @@ are implemented and registers the mapper with all relevant registries.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.6
+      0.8.7
   </span>
   
 </footer>

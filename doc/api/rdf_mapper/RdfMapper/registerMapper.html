@@ -25,7 +25,7 @@
   <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../../index.html">rdf_mapper</a></li>
-    <li><a href="../../rdf_mapper">rdf_mapper.dart</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper.dart</a></li>
     <li><a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a></li>
     <li class="self-crumb">registerMapper&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
   </ol>
@@ -33,17 +33,14 @@
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
-  <div class="toggle" id="theme-button" title="Toggle brightness">
-    <label for="theme">
-      <input type="checkbox" id="theme" value="light-theme">
-      <span id="dark-theme-button" class="material-symbols-outlined">
-        dark_mode
-      </span>
-      <span id="light-theme-button" class="material-symbols-outlined">
-        light_mode
-      </span>
-    </label>
-  </div>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
 </header>
 <main>
 <div
@@ -70,7 +67,7 @@
 <p>This method adds a <a href="../../rdf_mapper/Mapper-class.html">Mapper</a> implementation to the registry, enabling serialization
 and deserialization of objects of type <code>T</code>. The mapper determines how objects are
 converted to RDF triples and reconstructed from them.</p>
-<p>The registry supports four distinct mapper types based on RDF node characteristics:</p>
+<p>The registry supports five distinct mapper types based on RDF node characteristics:</p>
 <ul>
 <li>
 <p><a href="../../rdf_mapper/GlobalResourceMapper-class.html">GlobalResourceMapper</a>: Maps objects to/from IRI subjects (identified by URIs)
@@ -88,6 +85,19 @@ Used for value objects with datatype annotations</p>
 <p><a href="../../rdf_mapper/IriTermMapper-class.html">IriTermMapper</a>: Maps objects to/from IRI reference terms
 Used for object references and URIs</p>
 </li>
+<li>
+<p><a href="../../rdf_mapper/UnmappedTriplesMapper-class.html">UnmappedTriplesMapper</a>: Maps objects to/from collections of unmapped RDF triples
+Used for lossless mapping scenarios where unmapped data needs to be preserved</p>
+</li>
+</ul>
+<p><strong>Special Behavior for UnmappedTriplesMapper:</strong>
+When you register an <a href="../../rdf_mapper/UnmappedTriplesMapper-class.html">UnmappedTriplesMapper</a>, the registry automatically creates
+and registers additional wrapper mappers to make the type available as both
+a GlobalResourceMapper and LocalResourceMapper. This means:</p>
+<ul>
+<li>You can use the type directly with <a href="../../rdf_mapper/ResourceReader/getUnmapped.html">ResourceReader.getUnmapped</a> and <a href="../../rdf_mapper/ResourceBuilder/addUnmapped.html">ResourceBuilder.addUnmapped</a></li>
+<li>You can also use the type as a regular property in object mappers</li>
+<li>The type becomes available for both IRI-based and blank node-based serialization</li>
 </ul>
 <p>Example with GlobalResourceMapper:</p>
 <pre class="language-dart"><code class="language-dart">class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
@@ -116,6 +126,28 @@ Used for object references and URIs</p>
 // Register the mapper
 rdfMapper.registerMapper&lt;Person&gt;(PersonMapper());
 </code></pre>
+<p>Example with UnmappedTriplesMapper:</p>
+<pre class="language-dart"><code class="language-dart">class MyCustomGraphMapper implements UnmappedTriplesMapper&lt;MyCustomGraph&gt; {
+  @override
+  MyCustomGraph fromUnmappedTriples(Iterable&lt;Triple&gt; triples) {
+    return MyCustomGraph(triples.toSet());
+  }
+
+  @override
+  Iterable&lt;Triple&gt; toUnmappedTriples(MyCustomGraph value) {
+    return value.triples;
+  }
+}
+
+// Register the unmapped triples mapper
+rdfMapper.registerMapper&lt;MyCustomGraph&gt;(MyCustomGraphMapper());
+
+// Now MyCustomGraph is automatically available for:
+// 1. getUnmapped&lt;MyCustomGraph&gt;() in ResourceReader
+// 2. addUnmapped(myGraph) in ResourceBuilder
+// 3. As a regular property type in other mappers:
+//    reader.require&lt;MyCustomGraph&gt;(someProperty)
+</code></pre>
 </section>
 
 
@@ -138,7 +170,7 @@ rdfMapper.registerMapper&lt;Person&gt;(PersonMapper());
 </header>
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../../index.html">rdf_mapper</a></li>
-    <li><a href="../../rdf_mapper">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a></li>
     <li class="self-crumb">registerMapper&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
 </ol>
@@ -152,7 +184,7 @@ rdfMapper.registerMapper&lt;Person&gt;(PersonMapper());
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.6
+      0.8.7
   </span>
   
 </footer>

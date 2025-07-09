@@ -25,7 +25,7 @@
   <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../../index.html">rdf_mapper</a></li>
-    <li><a href="../../rdf_mapper">rdf_mapper.dart</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper.dart</a></li>
     <li><a href="../../rdf_mapper/RdfMapperService-class.html">RdfMapperService</a></li>
     <li class="self-crumb">deserializeBySubject&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
   </ol>
@@ -33,17 +33,14 @@
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
-  <div class="toggle" id="theme-button" title="Toggle brightness">
-    <label for="theme">
-      <input type="checkbox" id="theme" value="light-theme">
-      <span id="dark-theme-button" class="material-symbols-outlined">
-        dark_mode
-      </span>
-      <span id="light-theme-button" class="material-symbols-outlined">
-        light_mode
-      </span>
-    </label>
-  </div>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
 </header>
 <main>
 <div
@@ -58,10 +55,11 @@
     <section class="multi-line-signature">
       
 <span class="returntype">T</span>
-<span class="name ">deserializeBySubject</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="deserializeBySubject-param-graph"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfGraph-class.html">RdfGraph</a></span> <span class="parameter-name">graph</span>, </span></li>
-<li><span class="parameter" id="deserializeBySubject-param-rdfSubject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">rdfSubject</span>, {</span></li>
+<span class="name ">deserializeBySubject</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="deserializeBySubject-param-graph"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfGraph-class.html">RdfGraph</a></span> <span class="parameter-name">graph</span>, </span></li>
+<li><span class="parameter" id="deserializeBySubject-param-rdfSubject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">rdfSubject</span>, {</span></li>
 <li><span class="parameter" id="deserializeBySubject-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-registry"><span class="type-annotation"><a href="../../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span></li>
 </ol>)?, </span></li>
+<li><span class="parameter" id="deserializeBySubject-param-completeness"><span class="type-annotation"><a href="../../rdf_mapper/CompletenessMode.html">CompletenessMode</a></span> <span class="parameter-name">completeness</span> = <span class="default-value">CompletenessMode.strict</span>, </span></li>
 </ol>})
 
       
@@ -91,9 +89,20 @@ final person = service.deserializeBySubject&lt;Person&gt;(
   }
 );
 </code></pre>
-<p><code>graph</code> The RDF graph containing the data
-<code>rdfSubject</code> The subject identifier to deserialize
-<code>register</code> Optional callback to register temporary mappers</p>
+<p>Parameters:</p>
+<ul>
+<li><code>graph</code> - The RDF graph containing the data</li>
+<li><code>rdfSubject</code> - The subject identifier to deserialize</li>
+<li><code>register</code> - Optional callback to register temporary mappers</li>
+<li><code>completeness</code> - Controls how incomplete deserialization is handled:
+<ul>
+<li><a href="../../rdf_mapper/CompletenessMode.html">CompletenessMode.strict</a> (default): Throws <a href="../../rdf_mapper/IncompleteDeserializationException-class.html">IncompleteDeserializationException</a> if any triples cannot be mapped</li>
+<li><a href="../../rdf_mapper/CompletenessMode.html">CompletenessMode.lenient</a>: Silently ignores unmapped triples (data loss may occur)</li>
+<li><a href="../../rdf_mapper/CompletenessMode.html">CompletenessMode.warnOnly</a>: Logs warnings for unmapped triples but continues (data loss may occur)</li>
+<li><a href="../../rdf_mapper/CompletenessMode.html">CompletenessMode.infoOnly</a>: Logs info messages for unmapped triples but continues (data loss may occur)</li>
+</ul>
+</li>
+</ul>
 <p>Returns the deserialized object of type T</p>
 <p>Throws <a href="../../rdf_mapper/DeserializerNotFoundException-class.html">DeserializerNotFoundException</a> if no deserializer is found for type T</p>
 </section>
@@ -106,17 +115,15 @@ final person = service.deserializeBySubject&lt;Person&gt;(
   RdfGraph graph,
   RdfSubject rdfSubject, {
   void Function(RdfMapperRegistry registry)? register,
+  CompletenessMode completeness = CompletenessMode.strict,
 }) {
-  _log.fine(&#39;Delegated mapping graph to ${T.toString()}&#39;);
-
-  &#47;&#47; Clone registry if registration callback is provided
-  final registry = register != null ? _registry.clone() : _registry;
-  if (register != null) {
-    register(registry);
-  }
-  var context = DeserializationContextImpl(graph: graph, registry: registry);
-
-  return context.deserialize&lt;T&gt;(rdfSubject, null, null, null, null);
+  final (result, remaining) = deserializeBySubjectLossless&lt;T&gt;(
+    graph,
+    rdfSubject,
+    register: register,
+  );
+  _checkCompleteness(completeness, remaining);
+  return result;
 }</code></pre>
 </section>
 
@@ -131,7 +138,7 @@ final person = service.deserializeBySubject&lt;Person&gt;(
 </header>
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../../index.html">rdf_mapper</a></li>
-    <li><a href="../../rdf_mapper">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper/RdfMapperService-class.html">RdfMapperService</a></li>
     <li class="self-crumb">deserializeBySubject&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
 </ol>
@@ -145,7 +152,7 @@ final person = service.deserializeBySubject&lt;Person&gt;(
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.6
+      0.8.7
   </span>
   
 </footer>

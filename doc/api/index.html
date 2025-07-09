@@ -30,17 +30,14 @@
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
-  <div class="toggle" id="theme-button" title="Toggle brightness">
-    <label for="theme">
-      <input type="checkbox" id="theme" value="light-theme">
-      <span id="dark-theme-button" class="material-symbols-outlined">
-        dark_mode
-      </span>
-      <span id="light-theme-button" class="material-symbols-outlined">
-        light_mode
-      </span>
-    </label>
-  </div>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
 </header>
 <main>
   <div id="dartdoc-main-content" class="main-content">
@@ -84,7 +81,7 @@
 <h2 id="installation">Installation</h2>
 <p>Add the following to your <code>pubspec.yaml</code>:</p>
 <pre class="language-yaml"><code class="language-yaml">dependencies:
-  rdf_mapper: ^0.8.6
+  rdf_mapper: ^0.8.7
 </code></pre>
 <p>Or use the following command:</p>
 <pre class="language-bash"><code class="language-bash">dart pub add rdf_mapper
@@ -463,6 +460,52 @@ class RatingMapper implements LiteralTermMapper&lt;Rating&gt; {
   }
 }
 </code></pre>
+<h3 id="lossless-mapping---preserve-all-your-data">Lossless Mapping - Preserve All Your Data</h3>
+<p>Want to ensure no RDF data is lost during conversion? rdf_mapper provides powerful lossless mapping features:</p>
+<pre class="language-dart"><code class="language-dart">// Decode with remainder - get your object plus any unmapped data
+final (person, remainderGraph) = rdfMapper.decodeObjectLossless&lt;Person&gt;(turtle);
+
+// Your object contains all mapped properties
+print(person.name); // "John Smith"
+
+// remainderGraph contains any triples that weren't part of your object
+print('Preserved ${remainderGraph.triples.length} unmapped triples');
+
+// Encode back to preserve everything
+final restoredTurtle = rdfMapper.encodeObjectLossless((person, remainderGraph));
+// Now you have the complete original data back!
+</code></pre>
+<p><strong>Preserve unmapped properties within objects:</strong></p>
+<pre class="language-dart"><code class="language-dart">class Person {
+  final String id;
+  final String name;
+  final RdfGraph unmappedGraph; // Catches unmapped properties
+  
+  Person({required this.id, required this.name, RdfGraph? unmappedGraph})
+    : unmappedGraph = unmappedGraph ?? RdfGraph({});
+}
+
+class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
+  @override
+  Person fromRdfResource(IriTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
+    return Person(
+      id: subject.iri,
+      name: reader.require&lt;String&gt;(foafName),
+      unmappedGraph: reader.getUnmapped&lt;RdfGraph&gt;(), // Captures unmapped data, should be the last reader call
+    );
+  }
+
+  @override
+  (IriTerm, List&lt;Triple&gt;) toRdfResource(Person person, SerializationContext context, {RdfSubject? parentSubject}) {
+    return context.resourceBuilder(IriTerm(person.id))
+      .addValue(foafName, person.name)
+      .addUnmapped(person.unmappedGraph) // Restores unmapped data
+      .build();
+  }
+}
+</code></pre>
+<p>Perfect for applications that need to preserve unknown properties, support evolving schemas, or maintain complete data fidelity. See the <a href="doc/LOSSLESS_MAPPING.md">Lossless Mapping Guide</a> for complete details.</p>
 <h2 id="supported-rdf-types">Supported RDF Types</h2>
 <p>The library includes built-in mappers for common Dart types:</p>
 <table>
@@ -678,7 +721,7 @@ context.fromLiteralTerm(term, bypassDatatypeCheck: true);
           <h2>Libraries</h2>
         <dl>
           <dt id="rdf_mapper">
-  <span class="name"><a href="rdf_mapper">rdf_mapper</a></span> 
+  <span class="name"><a href="rdf_mapper/">rdf_mapper</a></span> 
 
 </dt>
 <dd>RDF Mapping Library for Dart
@@ -701,7 +744,7 @@ context.fromLiteralTerm(term, bypassDatatypeCheck: true);
     <h5 class="hidden-xs"><span class="package-name">rdf_mapper</span> <span class="package-kind">package</span></h5>
     <ol>
       <li class="section-title">Libraries</li>
-      <li><a href="rdf_mapper">rdf_mapper</a></li>
+      <li><a href="rdf_mapper/">rdf_mapper</a></li>
 </ol>
 
   </div>
@@ -711,7 +754,7 @@ context.fromLiteralTerm(term, bypassDatatypeCheck: true);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.6
+      0.8.7
   </span>
   
 </footer>

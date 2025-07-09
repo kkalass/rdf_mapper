@@ -25,7 +25,7 @@
   <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../../index.html">rdf_mapper</a></li>
-    <li><a href="../../rdf_mapper">rdf_mapper.dart</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper.dart</a></li>
     <li><a href="../../rdf_mapper/LocalResourceSerializer-class.html">LocalResourceSerializer<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
     <li class="self-crumb">toRdfResource abstract method</li>
   </ol>
@@ -33,17 +33,14 @@
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
-  <div class="toggle" id="theme-button" title="Toggle brightness">
-    <label for="theme">
-      <input type="checkbox" id="theme" value="light-theme">
-      <span id="dark-theme-button" class="material-symbols-outlined">
-        dark_mode
-      </span>
-      <span id="light-theme-button" class="material-symbols-outlined">
-        light_mode
-      </span>
-    </label>
-  </div>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
 </header>
 <main>
 <div
@@ -62,10 +59,10 @@
         <li>@<a href="https://api.flutter.dev/flutter/dart-core/override-constant.html">override</a></li>
     </ol>
   </div>
-<span class="returntype">(<span class="field"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/BlankNodeTerm-class.html">BlankNodeTerm</a></span>, </span><span class="field"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/Triple-class.html">Triple</a></span>&gt;</span></span></span>)</span>
+<span class="returntype">(<span class="field"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/BlankNodeTerm-class.html">BlankNodeTerm</a></span>, </span><span class="field"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/Triple-class.html">Triple</a></span>&gt;</span></span></span>)</span>
 <span class="name ">toRdfResource</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="toRdfResource-param-value"><span class="type-annotation">T</span> <span class="parameter-name">value</span>, </span></li>
 <li><span class="parameter" id="toRdfResource-param-context"><span class="type-annotation"><a href="../../rdf_mapper/SerializationContext-class.html">SerializationContext</a></span> <span class="parameter-name">context</span>, {</span></li>
-<li><span class="parameter" id="toRdfResource-param-parentSubject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfSubject-class.html">RdfSubject</a>?</span> <span class="parameter-name">parentSubject</span>, </span></li>
+<li><span class="parameter" id="toRdfResource-param-parentSubject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfSubject-class.html">RdfSubject</a>?</span> <span class="parameter-name">parentSubject</span>, </span></li>
 </ol>})
 
       <div class="features"><span class="feature">override</span></div>
@@ -115,7 +112,7 @@ triples that describe the object's properties using that blank node as subject.<
 </header>
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../../index.html">rdf_mapper</a></li>
-    <li><a href="../../rdf_mapper">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper/LocalResourceSerializer-class.html">LocalResourceSerializer<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
     <li class="self-crumb">toRdfResource abstract method</li>
 </ol>
@@ -129,7 +126,7 @@ triples that describe the object's properties using that blank node as subject.<
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.6
+      0.8.7
   </span>
   
 </footer>

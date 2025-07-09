@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the decodeObjectsLossless method from the RdfMapper class, for the Dart programming language.">
+  <title>decodeObjectsLossless method - RdfMapper class - rdf_mapper library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper.dart</a></li>
+    <li><a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a></li>
+    <li class="self-crumb">decodeObjectsLossless&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
+  </ol>
+  <div class="self-name">decodeObjectsLossless</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="rdf_mapper&#47;RdfMapper-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">decodeObjectsLossless&lt;<wbr><span class="type-parameter">T</span>&gt;</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype">(<span class="field"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>, </span><span class="field"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfGraph-class.html">RdfGraph</a></span></span>)</span>
+<span class="name ">decodeObjectsLossless</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="decodeObjectsLossless-param-rdfString"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">rdfString</span>, {</span></li>
+<li><span class="parameter" id="decodeObjectsLossless-param-contentType"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">contentType</span>, </span></li>
+<li><span class="parameter" id="decodeObjectsLossless-param-documentUrl"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">documentUrl</span>, </span></li>
+<li><span class="parameter" id="decodeObjectsLossless-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-registry"><span class="type-annotation"><a href="../../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span></li>
+</ol>)?, </span></li>
+<li><span class="parameter" id="decodeObjectsLossless-param-stringDecoderOptions"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfGraphDecoderOptions-class.html">RdfGraphDecoderOptions</a>?</span> <span class="parameter-name">stringDecoderOptions</span>, </span></li>
+</ol>})
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Deserializes multiple objects from an RDF string with lossless data preservation.</p>
+<p>This method provides lossless deserialization of collections by returning both
+the deserialized objects and any RDF triples that were not part of any object's
+mapping. This ensures complete data preservation for entire RDF documents.</p>
+<p>The method returns a record <code>(List&lt;T&gt; objects, RdfGraph remainderGraph)</code> where:</p>
+<ul>
+<li><code>objects</code> contains all successfully deserialized objects of type <code>T</code></li>
+<li><code>remainderGraph</code> contains all triples not consumed during any object deserialization</li>
+</ul>
+<p>Usage example:</p>
+<pre class="language-dart"><code class="language-dart">final (people, remainder) = rdfMapper.decodeObjectsLossless&lt;Person&gt;(turtle);
+
+// Process the deserialized objects
+for (final person in people) {
+  print('Person: ${person.name}');
+}
+
+// Handle any unprocessed triples
+if (remainder.triples.isNotEmpty) {
+  print('Document contained ${remainder.triples.length} unmapped triples');
+}
+
+// Perfect round-trip is possible
+final restored = rdfMapper.encodeObjectsLossless((people, remainder));
+</code></pre>
+<p>IMPORTANT: When using this method, the type <code>T</code> must be mapped using a
+<a href="../../rdf_mapper/GlobalResourceMapper-class.html">GlobalResourceMapper</a> either globally in the <a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a> instance or locally by
+providing a register callback. Use <a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a> as the type parameter to deserialize
+mixed object types.</p>
+<p>Parameters:</p>
+<ul>
+<li><code>rdfString</code> - The RDF string to deserialize</li>
+<li><code>contentType</code> - MIME type of the RDF format (defaults to 'text/turtle')</li>
+<li><code>documentUrl</code> - Optional base URL for relative IRI resolution</li>
+<li><code>register</code> - Optional callback to register mappers for this operation</li>
+<li><code>stringDecoderOptions</code> - Optional decoder configuration</li>
+</ul>
+<p>Returns a record containing the list of deserialized objects and remainder graph.</p>
+<p>Throws <a href="../../rdf_mapper/DeserializerNotFoundException-class.html">DeserializerNotFoundException</a> if no suitable mapper is registered for the target type.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">(List&lt;T&gt;, RdfGraph) decodeObjectsLossless&lt;T&gt;(
+  String rdfString, {
+  String? contentType,
+  String? documentUrl,
+  void Function(RdfMapperRegistry registry)? register,
+  RdfGraphDecoderOptions? stringDecoderOptions,
+}) {
+  final r = objectsLosslessCodec&lt;T&gt;(
+    contentType: contentType,
+    register: register,
+    stringDecoderOptions: stringDecoderOptions,
+  ).decode(rdfString, documentUrl: documentUrl);
+  return (r.$1.toList(), r.$2);
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a></li>
+    <li class="self-crumb">decodeObjectsLossless&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
+</ol>
+
+    <h5>RdfMapper class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    rdf_mapper
+      0.8.7
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

@@ -25,7 +25,7 @@
   <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../../index.html">rdf_mapper</a></li>
-    <li><a href="../../rdf_mapper">rdf_mapper.dart</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper.dart</a></li>
     <li><a href="../../rdf_mapper/ResourceReader-class.html">ResourceReader</a></li>
     <li class="self-crumb">getValues&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
   </ol>
@@ -33,17 +33,14 @@
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
-  <div class="toggle" id="theme-button" title="Toggle brightness">
-    <label for="theme">
-      <input type="checkbox" id="theme" value="light-theme">
-      <span id="dark-theme-button" class="material-symbols-outlined">
-        dark_mode
-      </span>
-      <span id="light-theme-button" class="material-symbols-outlined">
-        light_mode
-      </span>
-    </label>
-  </div>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
 </header>
 <main>
 <div
@@ -58,7 +55,7 @@
     <section class="multi-line-signature">
       
 <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
-<span class="name ">getValues</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="getValues-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, {</span></li>
+<span class="name ">getValues</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="getValues-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, {</span></li>
 <li><span class="parameter" id="getValues-param-globalResourceDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/GlobalResourceDeserializer-class.html">GlobalResourceDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">globalResourceDeserializer</span>, </span></li>
 <li><span class="parameter" id="getValues-param-iriTermDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/IriTermDeserializer-class.html">IriTermDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">iriTermDeserializer</span>, </span></li>
 <li><span class="parameter" id="getValues-param-literalTermDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/LiteralTermDeserializer-class.html">LiteralTermDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">literalTermDeserializer</span>, </span></li>
@@ -81,10 +78,10 @@ final authors = reader.getValues&lt;Person&gt;(Dc.creator);
 <p>Parameters:</p>
 <ul>
 <li><code>predicate</code> - The predicate IRI for the properties to read</li>
-<li><code>globalResourceDeserializer</code> - Optional custom deserializer for global resources (identifiable by <a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/IriTerm-class.html">IriTerm</a>)</li>
+<li><code>globalResourceDeserializer</code> - Optional custom deserializer for global resources (identifiable by <a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/IriTerm-class.html">IriTerm</a>)</li>
 <li><code>iriTermDeserializer</code> - Optional custom deserializer for IRI terms</li>
 <li><code>literalTermDeserializer</code> - Optional custom deserializer for literal terms</li>
-<li><code>localResourceDeserializer</code> - Optional custom deserializer for local resources (identifiable by <a href="https://pub.dev/documentation/rdf_core/0.9.2/rdf/BlankNodeTerm-class.html">BlankNodeTerm</a> only)</li>
+<li><code>localResourceDeserializer</code> - Optional custom deserializer for local resources (identifiable by <a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/BlankNodeTerm-class.html">BlankNodeTerm</a> only)</li>
 </ul>
 <p>Returns an iterable of property values converted to the requested type.</p>
 </section>
@@ -122,7 +119,7 @@ final authors = reader.getValues&lt;Person&gt;(Dc.creator);
 </header>
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../../index.html">rdf_mapper</a></li>
-    <li><a href="../../rdf_mapper">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper/ResourceReader-class.html">ResourceReader</a></li>
     <li class="self-crumb">getValues&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
 </ol>
@@ -136,7 +133,7 @@ final authors = reader.getValues&lt;Person&gt;(Dc.creator);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.6
+      0.8.7
   </span>
   
 </footer>

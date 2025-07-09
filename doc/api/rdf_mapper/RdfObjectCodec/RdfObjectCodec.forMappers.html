@@ -25,7 +25,7 @@
   <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../../index.html">rdf_mapper</a></li>
-    <li><a href="../../rdf_mapper">rdf_mapper.dart</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper.dart</a></li>
     <li><a href="../../rdf_mapper/RdfObjectCodec-class.html">RdfObjectCodec<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
     <li class="self-crumb">RdfObjectCodec.forMappers factory constructor</li>
   </ol>
@@ -33,17 +33,14 @@
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
-  <div class="toggle" id="theme-button" title="Toggle brightness">
-    <label for="theme">
-      <input type="checkbox" id="theme" value="light-theme">
-      <span id="dark-theme-button" class="material-symbols-outlined">
-        dark_mode
-      </span>
-      <span id="light-theme-button" class="material-symbols-outlined">
-        light_mode
-      </span>
-    </label>
-  </div>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
 </header>
 <main>
   <div
@@ -60,6 +57,7 @@
       <span class="name ">RdfObjectCodec&lt;<wbr><span class="type-parameter">T</span>&gt;.forMappers</span>(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="forMappers-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-registry"><span class="type-annotation"><a href="../../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span></li>
 </ol>)?, </span></li>
 <li><span class="parameter" id="forMappers-param-rdfMapper"><span class="type-annotation"><a href="../../rdf_mapper/RdfMapper-class.html">RdfMapper</a>?</span> <span class="parameter-name">rdfMapper</span>, </span></li>
+<li><span class="parameter" id="forMappers-param-completeness"><span class="type-annotation"><a href="../../rdf_mapper/CompletenessMode.html">CompletenessMode</a></span> <span class="parameter-name">completeness</span> = <span class="default-value">CompletenessMode.strict</span>, </span></li>
 </ol>})
     </section>
     
@@ -92,6 +90,7 @@ the <code>rdfMapper</code>'s registry.</li>
   <pre class="language-dart"><code class="language-dart">factory RdfObjectCodec.forMappers({
   void Function(RdfMapperRegistry registry)? register,
   RdfMapper? rdfMapper,
+  CompletenessMode completeness = CompletenessMode.strict,
 }) {
   if (rdfMapper == null &amp;&amp; register == null) {
     throw ArgumentError(
@@ -107,7 +106,9 @@ the <code>rdfMapper</code>'s registry.</li>
   if (register != null) {
     register(registry);
   }
-  return RdfObjectCodec&lt;T&gt;(service: RdfMapperService(registry: registry));
+  return RdfObjectCodec&lt;T&gt;(
+      service: RdfMapperService(registry: registry),
+      completeness: completeness);
 }</code></pre>
 </section>
 
@@ -122,7 +123,7 @@ the <code>rdfMapper</code>'s registry.</li>
 </header>
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../../index.html">rdf_mapper</a></li>
-    <li><a href="../../rdf_mapper">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper</a></li>
     <li><a href="../../rdf_mapper/RdfObjectCodec-class.html">RdfObjectCodec<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
     <li class="self-crumb">RdfObjectCodec.forMappers factory constructor</li>
 </ol>
@@ -136,7 +137,7 @@ the <code>rdfMapper</code>'s registry.</li>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.6
+      0.8.7
   </span>
   
 </footer>
