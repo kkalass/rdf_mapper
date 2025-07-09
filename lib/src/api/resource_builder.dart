@@ -70,6 +70,32 @@ class ResourceBuilder<S extends RdfSubject> {
     return this;
   }
 
+  /// Adds unmapped RDF triples from a previously captured unmapped data structure.
+  ///
+  /// This method is essential for lossless mapping, allowing you to restore triples
+  /// that were captured using [ResourceReader.getUnmapped] during a previous
+  /// deserialization operation. This ensures complete round-trip fidelity when
+  /// serializing objects that contain unmapped data.
+  ///
+  /// The [value] parameter should be a data structure containing RDF triples,
+  /// typically an [RdfGraph] or a custom type that implements [UnmappedTriplesMapper].
+  /// If no [unmappedTriplesSerializer] is provided, the system will attempt to
+  /// find a registered mapper for the type of [value].
+  ///
+  /// Usage example:
+  /// ```dart
+  /// return context.resourceBuilder(IriTerm(person.id))
+  ///   .addValue(foafName, person.name)
+  ///   .addValue(foafAge, person.age)
+  ///   .addUnmapped(person.unmappedGraph)  // Restore previously captured data
+  ///   .build();
+  /// ```
+  ///
+  /// Parameters:
+  /// * [value] - The unmapped data structure containing RDF triples to add
+  /// * [unmappedTriplesSerializer] - Optional custom serializer for the unmapped data type
+  ///
+  /// Returns this builder for method chaining.
   ResourceBuilder<S> addUnmapped<V>(
     V value, {
     UnmappedTriplesSerializer<V>? unmappedTriplesSerializer,

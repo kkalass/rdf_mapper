@@ -462,6 +462,60 @@ class RatingMapper implements LiteralTermMapper<Rating> {
 }
 ```
 
+### Lossless Mapping - Preserve All Your Data
+
+Want to ensure no RDF data is lost during conversion? rdf_mapper provides powerful lossless mapping features:
+
+```dart
+// Decode with remainder - get your object plus any unmapped data
+final (person, remainderGraph) = rdfMapper.decodeObjectLossless<Person>(turtle);
+
+// Your object contains all mapped properties
+print(person.name); // "John Smith"
+
+// remainderGraph contains any triples that weren't part of your object
+print('Preserved ${remainderGraph.triples.length} unmapped triples');
+
+// Encode back to preserve everything
+final restoredTurtle = rdfMapper.encodeObjectLossless((person, remainderGraph));
+// Now you have the complete original data back!
+```
+
+**Preserve unmapped properties within objects:**
+
+```dart
+class Person {
+  final String id;
+  final String name;
+  final RdfGraph unmappedGraph; // Catches unmapped properties
+  
+  Person({required this.id, required this.name, RdfGraph? unmappedGraph})
+    : unmappedGraph = unmappedGraph ?? RdfGraph({});
+}
+
+class PersonMapper implements GlobalResourceMapper<Person> {
+  @override
+  Person fromRdfResource(IriTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
+    return Person(
+      id: subject.iri,
+      name: reader.require<String>(foafName),
+      unmappedGraph: reader.getUnmapped<RdfGraph>(), // Captures unmapped data, should be the last reader call
+    );
+  }
+
+  @override
+  (IriTerm, List<Triple>) toRdfResource(Person person, SerializationContext context, {RdfSubject? parentSubject}) {
+    return context.resourceBuilder(IriTerm(person.id))
+      .addValue(foafName, person.name)
+      .addUnmapped(person.unmappedGraph) // Restores unmapped data
+      .build();
+  }
+}
+```
+
+Perfect for applications that need to preserve unknown properties, support evolving schemas, or maintain complete data fidelity. See the [Lossless Mapping Guide](doc/LOSSLESS_MAPPING.md) for complete details.
+
 ## Supported RDF Types
 
 The library includes built-in mappers for common Dart types:

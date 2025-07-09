@@ -36,6 +36,44 @@ abstract interface class LocalResourceMapper<T>
         LocalResourceDeserializer<T>,
         LocalResourceSerializer<T> {}
 
+/// Bidirectional mapper for converting between Dart objects and collections of unmapped RDF triples.
+///
+/// This mapper type is fundamental to lossless RDF mapping, enabling the preservation
+/// of RDF triples that are not explicitly handled by other mappers in your domain model.
+/// It provides the mechanism for round-trip fidelity when working with RDF data that
+/// contains more information than what your object model explicitly represents.
+///
+/// The mapper converts between:
+/// - Collections of [Triple] instances (representing raw RDF data)
+/// - Typed Dart objects that can store and manage these triples
+///
+/// Common implementations:
+/// - [RdfGraphMapper]: Maps to/from [RdfGraph] instances (default)
+/// - Custom mappers: For specialized graph data structures or optimized storage
+///
+/// Usage in lossless mapping:
+/// ```dart
+/// class Person {
+///   final String name;
+///   final RdfGraph unmappedGraph; // Handled by RdfGraphMapper
+/// }
+///
+/// class PersonMapper implements GlobalResourceMapper<Person> {
+///   @override
+///   Person fromRdfResource(IriTerm subject, DeserializationContext context) {
+///     final reader = context.reader(subject);
+///     return Person(
+///       name: reader.require<String>(foafName),
+///       unmappedGraph: reader.getUnmapped<RdfGraph>(), // Uses UnmappedTriplesMapper
+///     );
+///   }
+/// }
+/// ```
+///
+/// This mapper type is automatically discovered when:
+/// - Using [ResourceReader.getUnmapped] during deserialization
+/// - Using [ResourceBuilder.addUnmapped] during serialization
+/// - The type [T] has a registered [UnmappedTriplesMapper]
 abstract interface class UnmappedTriplesMapper<T>
     implements
         Mapper<T>,

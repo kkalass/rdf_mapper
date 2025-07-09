@@ -33,7 +33,13 @@ final class GraphOperations {
   /// or deserialization operations of the same type, which can be more efficient
   /// when working with multiple objects.
   ///
-  /// [register] Optional callback to register mappers that will be available for the lifetime of the returned codec
+  /// Parameters:
+  /// * [register] - Optional callback to register mappers that will be available for the lifetime of the returned codec
+  /// * [completeness] - Controls how incomplete deserialization is handled:
+  ///   - [CompletenessMode.strict] (default): Throws [IncompleteDeserializationException] if any triples cannot be mapped
+  ///   - [CompletenessMode.lenient]: Silently ignores unmapped triples (data loss may occur)
+  ///   - [CompletenessMode.warnOnly]: Logs warnings for unmapped triples but continues (data loss may occur)
+  ///   - [CompletenessMode.infoOnly]: Logs info messages for unmapped triples but continues (data loss may occur)
   ///
   /// Returns a codec for type T
   RdfObjectCodec<T> objectCodec<T>({
@@ -44,6 +50,29 @@ final class GraphOperations {
         service: _service, register: register, completeness: completeness);
   }
 
+  /// Creates a lossless codec for serializing and deserializing a single object of type [T].
+  ///
+  /// Returns a reusable codec that preserves all RDF data during round-trip operations.
+  /// The codec handles records of `(T object, RdfGraph remainderGraph)` where the remainder
+  /// graph contains any triples not consumed during object mapping.
+  ///
+  /// This codec is fundamental to lossless mapping workflows, ensuring complete data
+  /// preservation when working with RDF documents that contain unmapped information.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// final codec = rdfMapper.graph.objectLosslessCodec<Person>();
+  ///
+  /// // Decode preserves all data
+  /// final (person, remainder) = codec.decode(inputGraph);
+  ///
+  /// // Encode restores everything
+  /// final outputGraph = codec.encode((person, remainder));
+  /// ```
+  ///
+  /// [register] Optional callback to register mappers available for this codec's lifetime
+  ///
+  /// Returns a lossless codec for type T that handles `(T, RdfGraph)` records
   RdfObjectLosslessCodec<T> objectLosslessCodec<T>({
     void Function(RdfMapperRegistry registry)? register,
   }) {
@@ -56,7 +85,13 @@ final class GraphOperations {
   /// or deserialization operations of collections of the same type, which can be
   /// more efficient when processing multiple collections.
   ///
-  /// [register] Optional callback to register mappers that will be available for the lifetime of the returned codec
+  /// Parameters:
+  /// * [register] - Optional callback to register mappers that will be available for the lifetime of the returned codec
+  /// * [completeness] - Controls how incomplete deserialization is handled:
+  ///   - [CompletenessMode.strict] (default): Throws [IncompleteDeserializationException] if any triples cannot be mapped
+  ///   - [CompletenessMode.lenient]: Silently ignores unmapped triples (data loss may occur)
+  ///   - [CompletenessMode.warnOnly]: Logs warnings for unmapped triples but continues (data loss may occur)
+  ///   - [CompletenessMode.infoOnly]: Logs info messages for unmapped triples but continues (data loss may occur)
   ///
   /// Returns a codec for collections of type T
   RdfObjectsCodec<T> objectsCodec<T>({
@@ -67,6 +102,29 @@ final class GraphOperations {
         service: _service, register: register, completeness: completeness);
   }
 
+  /// Creates a lossless codec for serializing and deserializing collections of objects of type [T].
+  ///
+  /// Returns a reusable codec that preserves all RDF data during round-trip operations
+  /// for collections. The codec handles records of `(Iterable<T> objects, RdfGraph remainderGraph)`
+  /// where the remainder graph contains any triples not consumed during any object mapping.
+  ///
+  /// This codec is ideal for processing entire RDF documents with multiple objects while
+  /// ensuring no data loss during the conversion process.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// final codec = rdfMapper.graph.objectsLosslessCodec<Person>();
+  ///
+  /// // Decode preserves all data
+  /// final (people, remainder) = codec.decode(inputGraph);
+  ///
+  /// // Encode restores everything
+  /// final outputGraph = codec.encode((people, remainder));
+  /// ```
+  ///
+  /// [register] Optional callback to register mappers available for this codec's lifetime
+  ///
+  /// Returns a lossless codec for collections of type T that handles `(Iterable<T>, RdfGraph)` records
   RdfObjectsLosslessCodec<T> objectsLosslessCodec<T>({
     void Function(RdfMapperRegistry registry)? register,
   }) {
@@ -147,8 +205,14 @@ final class GraphOperations {
   /// final orgs = entities.whereType<Organization>().toList();
   /// ```
   ///
-  /// [graph] The RDF graph to deserialize from
-  /// [register] Optional callback to register mappers for this operation
+  /// Parameters:
+  /// * [graph] - The RDF graph to deserialize from
+  /// * [register] - Optional callback to register mappers for this operation
+  /// * [completeness] - Controls how incomplete deserialization is handled:
+  ///   - [CompletenessMode.strict] (default): Throws [IncompleteDeserializationException] if any triples cannot be mapped
+  ///   - [CompletenessMode.lenient]: Silently ignores unmapped triples (data loss may occur)
+  ///   - [CompletenessMode.warnOnly]: Logs warnings for unmapped triples but continues (data loss may occur)
+  ///   - [CompletenessMode.infoOnly]: Logs info messages for unmapped triples but continues (data loss may occur)
   ///
   /// Returns a list of deserialized objects of type T
   List<T> decodeObjects<T>(

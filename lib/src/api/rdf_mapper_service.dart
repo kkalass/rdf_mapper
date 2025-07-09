@@ -73,9 +73,15 @@ final class RdfMapperService {
   /// );
   /// ```
   ///
-  /// [graph] The RDF graph containing the data
-  /// [rdfSubject] The subject identifier to deserialize
-  /// [register] Optional callback to register temporary mappers
+  /// Parameters:
+  /// * [graph] - The RDF graph containing the data
+  /// * [rdfSubject] - The subject identifier to deserialize
+  /// * [register] - Optional callback to register temporary mappers
+  /// * [completeness] - Controls how incomplete deserialization is handled:
+  ///   - [CompletenessMode.strict] (default): Throws [IncompleteDeserializationException] if any triples cannot be mapped
+  ///   - [CompletenessMode.lenient]: Silently ignores unmapped triples (data loss may occur)
+  ///   - [CompletenessMode.warnOnly]: Logs warnings for unmapped triples but continues (data loss may occur)
+  ///   - [CompletenessMode.infoOnly]: Logs info messages for unmapped triples but continues (data loss may occur)
   ///
   /// Returns the deserialized object of type T
   ///
@@ -111,8 +117,14 @@ final class RdfMapperService {
   /// final person = service.deserialize<Person>(graph);
   /// ```
   ///
-  /// [graph] The RDF graph to deserialize from
-  /// [register] Optional callback to register temporary mappers
+  /// Parameters:
+  /// * [graph] - The RDF graph to deserialize from
+  /// * [register] - Optional callback to register temporary mappers
+  /// * [completeness] - Controls how incomplete deserialization is handled:
+  ///   - [CompletenessMode.strict] (default): Throws [IncompleteDeserializationException] if any triples cannot be mapped
+  ///   - [CompletenessMode.lenient]: Silently ignores unmapped triples (data loss may occur)
+  ///   - [CompletenessMode.warnOnly]: Logs warnings for unmapped triples but continues (data loss may occur)
+  ///   - [CompletenessMode.infoOnly]: Logs info messages for unmapped triples but continues (data loss may occur)
   ///
   /// Returns the deserialized object of type T
   ///
@@ -318,12 +330,9 @@ final class RdfMapperService {
   }
 
   RdfGraph _withoutTriples(RdfGraph graph, Set<Triple> processedTriples) {
-    // TODO: shouldn't we have something like graph.withoutTriples(triples: processedTriples)?
-    final remainder = RdfGraph(
-      triples:
-          graph.triples.where((t) => !processedTriples.contains(t)).toList(),
+    return graph.withoutTriples(
+      processedTriples,
     );
-    return remainder;
   }
 
   /// Serializes an object of type [T] to an RDF graph.
@@ -373,8 +382,6 @@ final class RdfMapperService {
   }) {
     final (instance, graph) = input;
     final serializedGraph = serialize(instance, register: register);
-    // TODO: the merge operation currently only appends lists. shouldn't
-    // it at least remove duplicates?
     return serializedGraph.merge(graph);
   }
 

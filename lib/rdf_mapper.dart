@@ -239,6 +239,11 @@ final class RdfMapper {
   /// * [register] - Allows temporary registration of custom mappers for this codec.
   /// * [stringDecoderOptions] - Additional options for string decoding.
   /// * [stringEncoderOptions] - Additional options for string encoding.
+  /// * [completeness] - Controls how incomplete deserialization is handled during decoding:
+  ///   - [CompletenessMode.strict] (default): Throws [IncompleteDeserializationException] if any triples cannot be mapped
+  ///   - [CompletenessMode.lenient]: Silently ignores unmapped triples (data loss may occur)
+  ///   - [CompletenessMode.warnOnly]: Logs warnings for unmapped triples but continues (data loss may occur)
+  ///   - [CompletenessMode.infoOnly]: Logs info messages for unmapped triples but continues (data loss may occur)
   RdfObjectStringCodec<T> objectCodec<T>({
     String? contentType,
     void Function(RdfMapperRegistry registry)? register,
@@ -257,6 +262,45 @@ final class RdfMapper {
     );
   }
 
+  /// Returns a lossless codec for converting between objects of type [T] and RDF strings with complete data preservation.
+  ///
+  /// The returned codec handles bidirectional conversion while preserving all RDF data:
+  /// - For encoding: (Object, RdfGraph) → Combined RDF Graph → String
+  /// - For decoding: String → RDF Graph → (Object, Remainder RdfGraph)
+  ///
+  /// This codec is essential for lossless mapping workflows where no RDF data should be lost
+  /// during round-trip operations. It works with records containing both the target object
+  /// and an RdfGraph with unmapped/remainder triples.
+  ///
+  /// The codec ensures perfect round-trip fidelity by:
+  /// - Capturing all triples not mapped to object properties during decoding
+  /// - Restoring all original triples (both mapped and unmapped) during encoding
+  /// - Preserving blank node structures and complex RDF patterns
+  ///
+  /// Note that you either need to register a [GlobalResourceMapper] for the type [T]
+  /// globally before using this codec or pass a [register] function to the codec
+  /// which registers this mapper (and any further custom ones, if applicable).
+  ///
+  /// Example:
+  /// ```dart
+  /// final codec = rdfMapper.objectLosslessCodec<Person>();
+  ///
+  /// // Decode with complete data preservation
+  /// final (person, remainder) = codec.decode(turtle, documentUrl: 'http://example.org/');
+  ///
+  /// // Modify the object as needed
+  /// final updatedPerson = person.copyWith(age: person.age + 1);
+  ///
+  /// // Encode back with all original data preserved
+  /// final restoredTurtle = codec.encode((updatedPerson, remainder), baseUri: 'http://example.org/');
+  /// ```
+  ///
+  /// Parameters:
+  /// * [contentType] - Specifies the RDF format (e.g., 'text/turtle', 'application/ld+json').
+  ///   If not specified, defaults to the format that was registered first in the RdfCodecRegistry - usually 'text/turtle'.
+  /// * [register] - Allows temporary registration of custom mappers for this codec.
+  /// * [stringDecoderOptions] - Additional options for string decoding.
+  /// * [stringEncoderOptions] - Additional options for string encoding.
   RdfObjectLosslessStringCodec<T> objectLosslessCodec<T>({
     String? contentType,
     void Function(RdfMapperRegistry registry)? register,
@@ -297,6 +341,11 @@ final class RdfMapper {
   /// * [register] - Allows temporary registration of custom mappers for this codec.
   /// * [stringDecoderOptions] - Additional options for string decoding.
   /// * [stringEncoderOptions] - Additional options for string encoding.
+  /// * [completeness] - Controls how incomplete deserialization is handled during decoding:
+  ///   - [CompletenessMode.strict] (default): Throws [IncompleteDeserializationException] if any triples cannot be mapped
+  ///   - [CompletenessMode.lenient]: Silently ignores unmapped triples (data loss may occur)
+  ///   - [CompletenessMode.warnOnly]: Logs warnings for unmapped triples but continues (data loss may occur)
+  ///   - [CompletenessMode.infoOnly]: Logs info messages for unmapped triples but continues (data loss may occur)
   RdfObjectsStringCodec<T> objectsCodec<T>({
     String? contentType,
     void Function(RdfMapperRegistry registry)? register,
@@ -315,6 +364,49 @@ final class RdfMapper {
     );
   }
 
+  /// Returns a lossless codec for converting between collections of type [T] and RDF strings with complete data preservation.
+  ///
+  /// The returned codec handles bidirectional conversion for collections while preserving all RDF data:
+  /// - For encoding: (Iterable<Object>, RdfGraph) → Combined RDF Graph → String
+  /// - For decoding: String → RDF Graph → (Iterable<Object>, Remainder RdfGraph)
+  ///
+  /// This codec is designed for lossless processing of entire RDF documents containing multiple
+  /// objects while ensuring no data loss during conversion. It works with records containing
+  /// both the target object collection and an RdfGraph with unmapped/remainder triples.
+  ///
+  /// The codec provides complete round-trip fidelity for complex documents by:
+  /// - Capturing all triples not mapped to any object properties during decoding
+  /// - Restoring all original document triples (both mapped and unmapped) during encoding
+  /// - Handling mixed object types and preserving unknown RDF structures
+  ///
+  /// Note that it is perfectly fine to use [Object] for [T] here, the actual type
+  /// will be inferred from the input. The decoder will rely on
+  /// `rdf:type` to find the correct mapper for each object.
+  ///
+  /// IMPORTANT: When using this method, the type [T] must be mapped using a
+  /// [GlobalResourceMapper] either globally in the [RdfMapper] instance or locally by
+  /// providing a register callback and register it there.
+  ///
+  /// Example:
+  /// ```dart
+  /// final codec = rdfMapper.objectsLosslessCodec<Person>();
+  ///
+  /// // Decode entire document with complete data preservation
+  /// final (people, remainder) = codec.decode(turtle, documentUrl: 'http://example.org/');
+  ///
+  /// // Process the objects as needed
+  /// final updatedPeople = people.map((p) => p.copyWith(age: p.age + 1)).toList();
+  ///
+  /// // Encode back with all original document data preserved
+  /// final restoredTurtle = codec.encode((updatedPeople, remainder), baseUri: 'http://example.org/');
+  /// ```
+  ///
+  /// Parameters:
+  /// * [contentType] - Specifies the RDF format (e.g., 'text/turtle', 'application/ld+json').
+  ///   If not specified, defaults to the format registered first in the RdfCodecRegistry.
+  /// * [register] - Allows temporary registration of custom mappers for this codec.
+  /// * [stringDecoderOptions] - Additional options for string decoding.
+  /// * [stringEncoderOptions] - Additional options for string encoding.
   RdfObjectsLosslessStringCodec<T> objectsLosslessCodec<T>({
     String? contentType,
     void Function(RdfMapperRegistry registry)? register,
@@ -354,6 +446,11 @@ final class RdfMapper {
   /// * [documentUrl] - Optional base URI for resolving relative references in the document.
   /// * [register] - Callback function to temporarily register custom mappers.
   /// * [stringDecoderOptions] - Additional options for string decoding.
+  /// * [completeness] - Controls how incomplete deserialization is handled:
+  ///   - [CompletenessMode.strict] (default): Throws [IncompleteDeserializationException] if any triples cannot be mapped
+  ///   - [CompletenessMode.lenient]: Silently ignores unmapped triples (data loss may occur)
+  ///   - [CompletenessMode.warnOnly]: Logs warnings for unmapped triples but continues (data loss may occur)
+  ///   - [CompletenessMode.infoOnly]: Logs info messages for unmapped triples but continues (data loss may occur)
   ///
   /// Usage:
   /// ```dart
@@ -386,6 +483,48 @@ final class RdfMapper {
     ).decode(rdfString, documentUrl: documentUrl, subject: subject);
   }
 
+  /// Deserializes a single object from an RDF string with lossless data preservation.
+  ///
+  /// This method provides lossless deserialization by returning both the deserialized
+  /// object and any RDF triples that were not part of the object's mapping. This ensures
+  /// complete data preservation and enables perfect round-trip operations.
+  ///
+  /// The method returns a record `(T object, RdfGraph remainderGraph)` where:
+  /// - `object` contains all explicitly mapped properties
+  /// - `remainderGraph` contains all triples not consumed during object deserialization
+  ///
+  /// If your object's mapper uses [ResourceReader.getUnmapped], the object itself
+  /// may also contain unmapped triples that were directly associated with its subject.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// final (person, remainder) = rdfMapper.decodeObjectLossless<Person>(turtle);
+  ///
+  /// // Use the object normally
+  /// print('Person: ${person.name}');
+  ///
+  /// // Inspect or preserve the remainder for later use
+  /// print('Preserved ${remainder.triples.length} unmapped triples');
+  ///
+  /// // Perfect round-trip is possible
+  /// final restored = rdfMapper.encodeObjectLossless((person, remainder));
+  /// ```
+  ///
+  /// IMPORTANT: When using this method, the type [T] must be mapped using a
+  /// [GlobalResourceMapper] either globally in the [RdfMapper] instance or locally by
+  /// providing a register callback.
+  ///
+  /// Parameters:
+  /// * [rdfString] - The RDF string to deserialize
+  /// * [subject] - Optional specific subject to deserialize (if null, finds suitable subject)
+  /// * [contentType] - MIME type of the RDF format (defaults to 'text/turtle')
+  /// * [documentUrl] - Optional base URL for relative IRI resolution
+  /// * [register] - Optional callback to register mappers for this operation
+  /// * [stringDecoderOptions] - Optional decoder configuration
+  ///
+  /// Returns a record containing the deserialized object and remainder graph.
+  ///
+  /// Throws [DeserializerNotFoundException] if no suitable mapper is registered for the target type.
   (T, RdfGraph) decodeObjectLossless<T>(
     String rdfString, {
     RdfSubject? subject,
@@ -429,6 +568,11 @@ final class RdfMapper {
   /// * [documentUrl] - Optional base URI for resolving relative references in the document.
   /// * [register] - Callback function to temporarily register custom mappers.
   /// * [stringDecoderOptions] - Additional options for string decoding.
+  /// * [completenessMode] - Controls how incomplete deserialization is handled:
+  ///   - [CompletenessMode.strict] (default): Throws [IncompleteDeserializationException] if any triples cannot be mapped
+  ///   - [CompletenessMode.lenient]: Silently ignores unmapped triples (data loss may occur)
+  ///   - [CompletenessMode.warnOnly]: Logs warnings for unmapped triples but continues (data loss may occur)
+  ///   - [CompletenessMode.infoOnly]: Logs info messages for unmapped triples but continues (data loss may occur)
   ///
   /// Usage:
   /// ```dart
@@ -463,6 +607,49 @@ final class RdfMapper {
     ).decode(rdfString, documentUrl: documentUrl).toList();
   }
 
+  /// Deserializes multiple objects from an RDF string with lossless data preservation.
+  ///
+  /// This method provides lossless deserialization of collections by returning both
+  /// the deserialized objects and any RDF triples that were not part of any object's
+  /// mapping. This ensures complete data preservation for entire RDF documents.
+  ///
+  /// The method returns a record `(List<T> objects, RdfGraph remainderGraph)` where:
+  /// - `objects` contains all successfully deserialized objects of type [T]
+  /// - `remainderGraph` contains all triples not consumed during any object deserialization
+  ///
+  /// Usage example:
+  /// ```dart
+  /// final (people, remainder) = rdfMapper.decodeObjectsLossless<Person>(turtle);
+  ///
+  /// // Process the deserialized objects
+  /// for (final person in people) {
+  ///   print('Person: ${person.name}');
+  /// }
+  ///
+  /// // Handle any unprocessed triples
+  /// if (remainder.triples.isNotEmpty) {
+  ///   print('Document contained ${remainder.triples.length} unmapped triples');
+  /// }
+  ///
+  /// // Perfect round-trip is possible
+  /// final restored = rdfMapper.encodeObjectsLossless((people, remainder));
+  /// ```
+  ///
+  /// IMPORTANT: When using this method, the type [T] must be mapped using a
+  /// [GlobalResourceMapper] either globally in the [RdfMapper] instance or locally by
+  /// providing a register callback. Use [Object] as the type parameter to deserialize
+  /// mixed object types.
+  ///
+  /// Parameters:
+  /// * [rdfString] - The RDF string to deserialize
+  /// * [contentType] - MIME type of the RDF format (defaults to 'text/turtle')
+  /// * [documentUrl] - Optional base URL for relative IRI resolution
+  /// * [register] - Optional callback to register mappers for this operation
+  /// * [stringDecoderOptions] - Optional decoder configuration
+  ///
+  /// Returns a record containing the list of deserialized objects and remainder graph.
+  ///
+  /// Throws [DeserializerNotFoundException] if no suitable mapper is registered for the target type.
   (List<T>, RdfGraph) decodeObjectsLossless<T>(
     String rdfString, {
     String? contentType,
@@ -529,6 +716,43 @@ final class RdfMapper {
     ).encode(instance, baseUri: baseUri);
   }
 
+  /// Serializes a Dart object with remainder graph to an RDF string with lossless preservation.
+  ///
+  /// This method enables lossless round-trip operations by combining a serialized object
+  /// with previously captured unmapped RDF data. The [instance] parameter should be a
+  /// record containing both the object to serialize and an [RdfGraph] with remainder triples.
+  ///
+  /// This is the counterpart to [decodeObjectLossless], allowing perfect restoration
+  /// of original RDF documents that contained data not explicitly mapped to object properties.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// // During deserialization, capture unmapped data
+  /// final (person, remainder) = rdfMapper.decodeObjectLossless<Person>(originalTurtle);
+  ///
+  /// // Modify the object as needed
+  /// final updatedPerson = person.copyWith(age: person.age + 1);
+  ///
+  /// // Restore to RDF with all original data preserved
+  /// final restoredTurtle = rdfMapper.encodeObjectLossless((updatedPerson, remainder));
+  ///
+  /// // restoredTurtle now contains both the updated object AND all unmapped triples
+  /// ```
+  ///
+  /// IMPORTANT: When using this method, the type [T] must be mapped using a
+  /// [GlobalResourceMapper] either globally in the [RdfMapper] instance or locally by
+  /// providing a register callback.
+  ///
+  /// Parameters:
+  /// * [instance] - A record containing the object to serialize and remainder graph
+  /// * [contentType] - MIME type for output format (defaults to 'text/turtle')
+  /// * [baseUri] - Optional base URI for the RDF document
+  /// * [stringEncoderOptions] - Optional encoder configuration
+  /// * [register] - Optional callback to register mappers for this operation
+  ///
+  /// Returns the complete RDF string representation with both object and remainder data.
+  ///
+  /// Throws [SerializerNotFoundException] if no suitable mapper is registered for the object type.
   String encodeObjectLossless<T>(
     (T, RdfGraph) instance, {
     String? contentType,
@@ -592,6 +816,43 @@ final class RdfMapper {
     ).encode(instance, baseUri: baseUri);
   }
 
+  /// Serializes a collection of Dart objects with remainder graph to an RDF string with lossless preservation.
+  ///
+  /// This method enables lossless round-trip operations for collections by combining serialized
+  /// objects with previously captured unmapped RDF data. The [instance] parameter should be a
+  /// record containing both the collection of objects to serialize and an [RdfGraph] with remainder triples.
+  ///
+  /// This is the counterpart to [decodeObjectsLossless], allowing perfect restoration
+  /// of original RDF documents containing multiple objects plus unmapped data.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// // During deserialization, capture unmapped data
+  /// final (people, remainder) = rdfMapper.decodeObjectsLossless<Person>(originalTurtle);
+  ///
+  /// // Process the collection as needed
+  /// final updatedPeople = people.map((p) => p.copyWith(age: p.age + 1)).toList();
+  ///
+  /// // Restore to RDF with all original data preserved
+  /// final restoredTurtle = rdfMapper.encodeObjectsLossless((updatedPeople, remainder));
+  ///
+  /// // restoredTurtle contains all objects AND all unmapped triples from the original
+  /// ```
+  ///
+  /// IMPORTANT: When using this method, the type [T] must be mapped using a
+  /// [GlobalResourceMapper] either globally in the [RdfMapper] instance or locally by
+  /// providing a register callback.
+  ///
+  /// Parameters:
+  /// * [instance] - A record containing the objects collection and remainder graph
+  /// * [contentType] - MIME type for output format (defaults to 'text/turtle')
+  /// * [baseUri] - Optional base URI for the RDF document
+  /// * [stringEncoderOptions] - Optional encoder configuration
+  /// * [register] - Optional callback to register mappers for this operation
+  ///
+  /// Returns the complete RDF string representation with both objects and remainder data.
+  ///
+  /// Throws [SerializerNotFoundException] if no suitable mapper is registered for the object type.
   String encodeObjectsLossless<T>(
     (Iterable<T>, RdfGraph) instance, {
     String? contentType,
@@ -613,7 +874,7 @@ final class RdfMapper {
   /// and deserialization of objects of type [T]. The mapper determines how objects are
   /// converted to RDF triples and reconstructed from them.
   ///
-  /// The registry supports four distinct mapper types based on RDF node characteristics:
+  /// The registry supports five distinct mapper types based on RDF node characteristics:
   ///
   /// - [GlobalResourceMapper]: Maps objects to/from IRI subjects (identified by URIs)
   ///   Used for entity objects with identity and complex properties
@@ -626,6 +887,17 @@ final class RdfMapper {
   ///
   /// - [IriTermMapper]: Maps objects to/from IRI reference terms
   ///   Used for object references and URIs
+  ///
+  /// - [UnmappedTriplesMapper]: Maps objects to/from collections of unmapped RDF triples
+  ///   Used for lossless mapping scenarios where unmapped data needs to be preserved
+  ///
+  /// **Special Behavior for UnmappedTriplesMapper:**
+  /// When you register an [UnmappedTriplesMapper], the registry automatically creates
+  /// and registers additional wrapper mappers to make the type available as both
+  /// a GlobalResourceMapper and LocalResourceMapper. This means:
+  /// - You can use the type directly with [ResourceReader.getUnmapped] and [ResourceBuilder.addUnmapped]
+  /// - You can also use the type as a regular property in object mappers
+  /// - The type becomes available for both IRI-based and blank node-based serialization
   ///
   /// Example with GlobalResourceMapper:
   /// ```dart
@@ -654,6 +926,30 @@ final class RdfMapper {
   ///
   /// // Register the mapper
   /// rdfMapper.registerMapper<Person>(PersonMapper());
+  /// ```
+  ///
+  /// Example with UnmappedTriplesMapper:
+  /// ```dart
+  /// class MyCustomGraphMapper implements UnmappedTriplesMapper<MyCustomGraph> {
+  ///   @override
+  ///   MyCustomGraph fromUnmappedTriples(Iterable<Triple> triples) {
+  ///     return MyCustomGraph(triples.toSet());
+  ///   }
+  ///
+  ///   @override
+  ///   Iterable<Triple> toUnmappedTriples(MyCustomGraph value) {
+  ///     return value.triples;
+  ///   }
+  /// }
+  ///
+  /// // Register the unmapped triples mapper
+  /// rdfMapper.registerMapper<MyCustomGraph>(MyCustomGraphMapper());
+  ///
+  /// // Now MyCustomGraph is automatically available for:
+  /// // 1. getUnmapped<MyCustomGraph>() in ResourceReader
+  /// // 2. addUnmapped(myGraph) in ResourceBuilder
+  /// // 3. As a regular property type in other mappers:
+  /// //    reader.require<MyCustomGraph>(someProperty)
   /// ```
   void registerMapper<T>(Mapper<T> mapper) {
     registry.registerMapper(mapper);

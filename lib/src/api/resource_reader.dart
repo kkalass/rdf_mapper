@@ -249,8 +249,41 @@ class ResourceReader {
     );
   }
 
-  /// The triples of the subject of this reader, which have not been
-  /// read via one of the other methods yet.
+  /// Returns unmapped RDF triples associated with this subject that haven't been consumed by other reader methods.
+  ///
+  /// This method is fundamental to lossless mapping, allowing you to capture triples
+  /// for this subject that weren't explicitly handled by [require], [optional], or
+  /// [getValues] calls. This ensures no data is lost during deserialization, making
+  /// complete round-trip operations possible.
+  ///
+  /// The method collects all remaining triples for the current subject (and optionally
+  /// connected blank nodes) and converts them into the specified type [T] using an
+  /// [UnmappedTriplesDeserializer]. The default implementation supports [RdfGraph].
+  ///
+  /// **Important**: This method should typically be called last in your mapper's
+  /// [fromRdfResource] method, after all explicit property mappings have been performed.
+  /// This ensures only truly unmapped triples are captured.
+  ///
+  /// Usage example:
+  /// ```dart
+  /// @override
+  /// Person fromRdfResource(IriTerm subject, DeserializationContext context) {
+  ///   final reader = context.reader(subject);
+  ///   final name = reader.require<String>(foafName);
+  ///   final age = reader.require<int>(foafAge);
+  ///
+  ///   // Capture any remaining unmapped triples - call this last
+  ///   final unmappedGraph = reader.getUnmapped<RdfGraph>();
+  ///
+  ///   return Person(id: subject.iri, name: name, age: age, unmappedGraph: unmappedGraph);
+  /// }
+  /// ```
+  ///
+  /// Parameters:
+  /// * [includeBlankNodes] - Whether to include connected blank node triples (default: true)
+  /// * [unmappedTriplesDeserializer] - Optional custom deserializer for the unmapped data type
+  ///
+  /// Returns the unmapped triples converted to type [T], typically an [RdfGraph].
   T getUnmapped<T>(
       {bool includeBlankNodes = true,
       UnmappedTriplesDeserializer<T>? unmappedTriplesDeserializer}) {

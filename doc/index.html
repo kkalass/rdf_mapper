@@ -177,6 +177,11 @@ class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
                         <h3>Compatible</h3>
                         <p>Built on top of <code>rdf_core</code> for seamless integration</p>
                     </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-save"></i></div>
+                        <h3>Lossless Mapping</h3>
+                        <p>Preserve unmapped RDF data with <code>getUnmapped</code>/<code>addUnmapped</code> APIs</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -237,6 +242,7 @@ final rdfMapper = RdfMapper.withDefaultRegistry();</code></pre>
                     <div class="tab-header">
                         <button class="tab-btn active" data-tab="serialization">Serialization</button>
                         <button class="tab-btn" data-tab="deserialization">Deserialization</button>
+                        <button class="tab-btn" data-tab="lossless">Lossless Mapping</button>
                         <button class="tab-btn" data-tab="model">Model</button>
                         <button class="tab-btn" data-tab="mapper">Mapper</button>
                     </div>
@@ -303,6 +309,43 @@ print('Author: ${book.author}');
 print('Published: ${book.published}');
 print('Rating: ${book.rating.stars} stars');
 print('Chapters: ${book.chapters.length}');</code></pre>
+                        </div>
+                        
+                        <div class="tab-pane" id="lossless">
+                            <pre class="code-block"><code class="language-dart">// Lossless mapping preserves unmapped RDF data
+// that couldn't be processed by your mappers
+
+// Deserialize with lossless APIs
+final (book, unmappedData) = rdf.decodeObjectLossless&lt;Book&gt;(turtleInput);
+
+// Access the original mapped object
+print('Book: ${book.title} by ${book.author}');
+
+// Check what RDF data wasn't mapped to Dart properties
+if (unmappedData.isNotEmpty) {
+  print('Found ${unmappedData.length} unmapped triples');
+  
+  // You could store this data, log it, or process it later
+  for (final triple in unmappedData) {
+    print('Unmapped: ${triple.subject} ${triple.predicate} ${triple.object}');
+  }
+}
+
+// When serializing back, preserve the unmapped data
+final modifiedBook = Book(
+  id: book.id,
+  title: 'The Hobbit (Annotated Edition)', // Modified title
+  author: book.author,
+  published: book.published,
+  isbn: book.isbn,
+  rating: book.rating,
+  chapters: book.chapters,
+);
+
+// Add unmapped data back during serialization
+final newTurtle = rdf.encodeObjectLossless(modifiedBook, unmappedData);
+
+// The result contains both your object changes AND the original unmapped RDF</code></pre>
                         </div>
                         
                         <div class="tab-pane" id="model">

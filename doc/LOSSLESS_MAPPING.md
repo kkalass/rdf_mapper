@@ -11,6 +11,101 @@ Preserving the Entire Document (decodeObjectLossless method): This strategy ensu
 
 These two strategies can be used independently or combined for comprehensive lossless mapping.
 
+## CompletenessMode: Controlling Incomplete Deserialization Handling
+
+The `CompletenessMode` enum is a crucial feature that controls how rdf_mapper handles situations where not all triples in an RDF graph can be mapped to Dart objects during **deserialization with the normal (non-lossless) API**. This mode only applies to deserialization operations and can be used to enforce exceptions when a deserialization would lose data.
+
+**Important**: CompletenessMode only affects deserialization methods like `decodeObject()` and `decodeObjects()`. It does not apply to serialization operations (`encodeObject()`, `encodeObjects()`) or to the lossless methods (`decodeObjectLossless()`, `encodeObjectLossless()`) which inherently preserve all data.
+
+### Available Modes
+
+- **`CompletenessMode.strict`** (default): Throws an `IncompleteDeserializationException` if any triples remain unmapped after deserialization. This ensures complete data processing and prevents data loss by failing when unmapped data is detected.
+
+- **`CompletenessMode.lenient`**: Silently ignores unmapped triples and continues processing. This allows for graceful handling of partially mappable data without errors, but **data will be lost**.
+
+- **`CompletenessMode.warnOnly`**: Logs warnings for unmapped triples but continues processing. Useful for development and debugging to identify potentially missing mappings while still **losing unmapped data**.
+
+- **`CompletenessMode.infoOnly`**: Logs informational messages about unmapped triples. The least intrusive mode for monitoring data completeness while **losing unmapped data**.
+
+### Usage Examples (Deserialization Only)
+
+```dart
+// Strict mode (default) - will throw exception if unmapped triples exist
+// This prevents data loss by failing when unmapped data is detected
+final person = rdfMapper.decodeObject<Person>(turtle);
+
+// Lenient mode - will silently ignore unmapped triples (DATA WILL BE LOST)
+final person = rdfMapper.decodeObject<Person>(turtle, 
+    completeness: CompletenessMode.lenient);
+
+// Warn mode - will log warnings for unmapped triples (DATA WILL BE LOST)
+final people = rdfMapper.decodeObjects<Person>(turtle,
+    completenessMode: CompletenessMode.warnOnly);
+
+// Also works with codec approach for deserialization
+final codec = rdfMapper.graph.objectCodec<Person>(
+    completeness: CompletenessMode.lenient);
+final person = codec.decode(graph); // Only decoding, not encoding
+
+// Note: CompletenessMode has NO EFFECT on encoding operations
+final graph = codec.encode(person); // CompletenessMode doesn't apply here
+```
+
+### Why CompletenessMode is Important for Data Integrity
+
+CompletenessMode serves as a safeguard against **accidental data loss** during deserialization:
+
+- **Strict mode** (default) ensures you're aware when your mappers don't cover all the data in your RDF
+- **Other modes** allow controlled data loss when you explicitly decide it's acceptable
+- This is particularly important when transitioning from simple mapping to lossless mapping approaches
+
+### CompletenessMode vs Lossless Mapping
+
+The key difference between CompletenessMode and lossless mapping:
+
+**Normal API with CompletenessMode**:
+- `CompletenessMode.strict`: Fails if data would be lost (throws exception)
+- `CompletenessMode.lenient/warnOnly/infoOnly`: Allows data loss but makes it visible
+
+**Lossless API** (no CompletenessMode needed):
+- `decodeObjectLossless()`: Never loses data - unmapped data goes to remainder graph
+- `encodeObjectLossless()`: Preserves all data from both object and remainder graph
+
+### Transition Strategy: Using CompletenessMode to Identify What Needs Lossless Handling
+
+CompletenessMode is particularly useful during the transition to lossless mapping to identify what data would be lost:
+
+```dart
+// Step 1: Use strict mode to identify what needs to be captured losslessly
+try {
+  final person = rdfMapper.decodeObject<Person>(turtle, 
+      completeness: CompletenessMode.strict);
+  // If this succeeds, your current mappers handle all the data
+} catch (IncompleteDeserializationException e) {
+  print('Data that would be lost:');
+  print('Unmapped subjects: ${e.unmappedSubjects}');
+  print('Unmapped types: ${e.unmappedTypes}');
+  print('Remaining triples: ${e.remainingTripleCount}');
+  
+  // Step 2: Implement lossless mapping to capture this data
+  final (person, remainder) = rdfMapper.decodeObjectLossless<Person>(turtle);
+  // Now no data is lost - unmapped data is in remainder graph
+}
+```
+
+### IncompleteDeserializationException Details
+
+When using `CompletenessMode.strict`, you may encounter `IncompleteDeserializationException` which provides detailed information about what couldn't be mapped:
+
+- `remainingGraph`: The complete graph of unmapped triples
+- `unmappedSubjects`: Set of subjects that couldn't be deserialized
+- `unmappedTypes`: Set of RDF types that lack registered mappers
+- `hasRemainingTriples`: Boolean indicating if any triples were left unmapped
+- `remainingTripleCount`: Number of unmapped triples
+- `unmappedSubjectCount` and `unmappedTypeCount`: Counts for analysis
+
+This information is invaluable for implementing comprehensive lossless mapping strategies.
+
 ## Strategy 1: Preserving Unmapped Triples within an Object
 The core idea is to designate a field in your Dart model to store any triples that are part of the original RDF graph and are about the same subject as your Dart object, but are not explicitly mapped to other properties of your object. These are often referred to as "unmapped triples" or "catch-all triples."
 
@@ -212,7 +307,18 @@ You have two options for using your custom UnmappedTriplesMapper:
 a) Register Globally (Recommended for common types)
 You can register your custom mapper with the RdfMapper's registry, similar to how GlobalResourceMappers are registered. This allows getUnmapped() and addUnmapped() to automatically discover and use your mapper when U is MyCustomGraphType. 
 
-**Note** that this automatically registers your unmapped triples mapper as a global and local type mapper (with the help of a wrapper). So you can not only use your type then with getUnmapped/addUnmapped, but also for a child which is mapped as a property.
+**Automatic Registration Behavior for UnmappedTriplesMapper:**
+When you register an UnmappedTriplesMapper using `registerMapper()`, the registry automatically creates and registers additional wrapper mappers:
+- `GlobalResourceUnmappedTriplesDeserializer` - enables the type for global resource deserialization
+- `LocalResourceUnmappedTriplesDeserializer` - enables the type for local resource deserialization  
+- `ResourceUnmappedTriplesSerializer` - enables the type for resource serialization
+
+This automatic wrapper registration means your custom unmapped triples type becomes fully integrated into the mapping system and can be used:
+- With `getUnmapped<T>()` and `addUnmapped()` for lossless mapping within objects
+- As a direct property type in your models (mapped as a resource)
+- In any context where a resource mapper is expected
+
+This seamless integration ensures maximum flexibility and reusability of your custom unmapped data types throughout your application.
 
 ```dart
 // In your RdfMapper initialization

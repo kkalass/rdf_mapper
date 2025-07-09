@@ -193,6 +193,19 @@ final class RdfMapperRegistry {
   /// - LocalResourceMapper: Combined LocalResourceSerializer/LocalResourceDeserializer
   /// - LiteralTermMapper: Combined LiteralTermSerializer/LiteralTermDeserializer
   /// - IriTermMapper: Combined IriTermSerializer/IriTermDeserializer
+  /// - UnmappedTriplesMapper: Combined UnmappedTriplesSerializer/UnmappedTriplesDeserializer
+  ///
+  /// Special behavior for UnmappedTriplesMapper:
+  /// When registering an UnmappedTriplesMapper, the registry automatically creates
+  /// and registers wrapper mappers that make the type available for both resource
+  /// and property mapping:
+  /// - GlobalResourceUnmappedTriplesDeserializer (wraps the deserializer)
+  /// - LocalResourceUnmappedTriplesDeserializer (wraps the deserializer)
+  /// - ResourceUnmappedTriplesSerializer (wraps the serializer)
+  ///
+  /// This enables objects handled by UnmappedTriplesMapper to be used seamlessly
+  /// in any mapping context where a resource is expected, providing full
+  /// integration with the mapping system for lossless round-trip operations.
   ///
   /// [mapper] The mapper to register
   void registerMapper<T>(Mapper<T> mapper) {
