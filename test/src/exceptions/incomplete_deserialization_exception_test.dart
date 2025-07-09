@@ -29,8 +29,6 @@ void main() {
 
         final exception = IncompleteDeserializationException(
           remainingGraph: graph,
-          unmappedSubjects: unmappedSubjects,
-          unmappedTypes: unmappedTypes,
         );
 
         expect(exception.remainingGraph, equals(graph));
@@ -46,8 +44,6 @@ void main() {
         final emptyGraph = RdfGraph(triples: []);
         final exception = IncompleteDeserializationException(
           remainingGraph: emptyGraph,
-          unmappedSubjects: <RdfSubject>{},
-          unmappedTypes: <IriTerm>{},
         );
 
         expect(exception.hasRemainingTriples, isFalse);
@@ -69,8 +65,6 @@ void main() {
 
         final exception = IncompleteDeserializationException(
           remainingGraph: graph,
-          unmappedSubjects: <RdfSubject>{},
-          unmappedTypes: <IriTerm>{},
         );
 
         final message = exception.toString();
@@ -98,82 +92,12 @@ void main() {
 
         final exception = IncompleteDeserializationException(
           remainingGraph: graph,
-          unmappedSubjects: <RdfSubject>{},
-          unmappedTypes: <IriTerm>{},
         );
 
         final message = exception.toString();
         expect(message, contains('2 unprocessed triples found'));
         expect(message, contains('CompletenessMode.warnOnly'));
         expect(message, contains('registerMapper'));
-      });
-
-      test('should format message with unmapped subjects', () {
-        final graph = RdfGraph(triples: []);
-        final unmappedSubjects = <RdfSubject>{
-          IriTerm('http://example.org/person/1'),
-          IriTerm('http://example.org/person/2'),
-        };
-
-        final exception = IncompleteDeserializationException(
-          remainingGraph: graph,
-          unmappedSubjects: unmappedSubjects,
-          unmappedTypes: <IriTerm>{},
-        );
-
-        final message = exception.toString();
-        expect(message, contains('Subjects without deserializers'));
-        expect(message, contains('http://example.org/person/1'));
-        expect(message, contains('http://example.org/person/2'));
-      });
-
-      test('should format message with unmapped types', () {
-        final graph = RdfGraph(triples: []);
-        final unmappedTypes = <IriTerm>{
-          IriTerm('http://example.org/ns#Person'),
-          IriTerm('http://example.org/ns#Company'),
-        };
-
-        final exception = IncompleteDeserializationException(
-          remainingGraph: graph,
-          unmappedSubjects: <RdfSubject>{},
-          unmappedTypes: unmappedTypes,
-        );
-
-        final message = exception.toString();
-        expect(message, contains('Unmapped type IRIs'));
-        expect(message, contains('http://example.org/ns#Person'));
-        expect(message, contains('http://example.org/ns#Company'));
-      });
-
-      test('should truncate long lists', () {
-        final graph = RdfGraph(
-            triples: List.generate(
-                15,
-                (i) => Triple(
-                      IriTerm('http://example.org/person/$i'),
-                      IriTerm('http://example.org/ns#name'),
-                      LiteralTerm('Person $i'),
-                    )));
-
-        final unmappedSubjects = <RdfSubject>{
-          for (int i = 0; i < 8; i++) IriTerm('http://example.org/person/$i')
-        };
-
-        final unmappedTypes = <IriTerm>{
-          for (int i = 0; i < 7; i++) IriTerm('http://example.org/ns#Type$i')
-        };
-
-        final exception = IncompleteDeserializationException(
-          remainingGraph: graph,
-          unmappedSubjects: unmappedSubjects,
-          unmappedTypes: unmappedTypes,
-        );
-
-        final message = exception.toString();
-        expect(message, contains('... and 5 more')); // 15 - 10 = 5 for triples
-        expect(message, contains('... and 3 more')); // 8 - 5 = 3 for subjects
-        expect(message, contains('... and 2 more')); // 7 - 5 = 2 for types
       });
     });
 
