@@ -32,9 +32,7 @@ class IncompleteDeserializationException extends DeserializationException {
     required this.remainingGraph,
     required this.unmappedSubjects,
     required this.unmappedTypes,
-    String? message,
-  }) : super(message ??
-            _generateMessage(remainingGraph, unmappedSubjects, unmappedTypes));
+  }) : super(_generateMessage(remainingGraph, unmappedSubjects, unmappedTypes));
 
   /// Generates a descriptive error message based on the unprocessed data.
   static String _generateMessage(
@@ -42,41 +40,89 @@ class IncompleteDeserializationException extends DeserializationException {
     Set<RdfSubject> unmappedSubjects,
     Set<IriTerm> unmappedTypes,
   ) {
+    final tripleCount = remainingGraph.triples.length;
+
+    return '''
+RDF Deserialization Incomplete: ${tripleCount} unprocessed triple${tripleCount == 1 ? '' : 's'} found
+
+Quick Fix (relaxed validation):
+  • Use CompletenessMode.lenient to ignore unprocessed triples:
+    
+    final objects = rdfMapper.decodeObjects<YourType>(rdfString, 
+      completenessMode: CompletenessMode.lenient);
+
+Alternative Solutions:
+
+1. Keep unprocessed triples (recommended for data preservation):
+   • Use lossless decode methods that return both objects and remaining graph:
+     
+     final (objects, remaining) = rdfMapper.decodeObjectsLossless<YourType>(rdfString);
+     // Process objects, inspect remaining graph for missing mappings
+   
+2. Register missing deserializers:
+   • For unmapped types, register appropriate mappers:
+     
+     final rdfMapper = RdfMapper.withMappers((registry) {
+       registry.registerMapper<YourType>(YourTypeMapper());
+       // Add other missing mappers
+     });
+
+3. Use different completeness modes:
+   • CompletenessMode.warnOnly - Log warnings but continue
+   • CompletenessMode.infoOnly - Log info messages but continue
+   • CompletenessMode.lenient - Silently ignore unprocessed triples
+   
+   final objects = rdfMapper.decodeObjects<YourType>(rdfString,
+     completenessMode: CompletenessMode.warnOnly);
+
+${_formatUnprocessedTriples(remainingGraph)}${_formatUnmappedInfo(unmappedSubjects, unmappedTypes)}
+
+Why this happens:
+Strict completeness validation ensures all RDF triples are processed, preventing
+data loss and highlighting missing mappings. This helps maintain data integrity
+and catch configuration issues early.
+''';
+  }
+
+  static String _formatUnprocessedTriples(RdfGraph remainingGraph) {
+    if (remainingGraph.triples.isEmpty) return '';
+
     final buffer = StringBuffer();
-    buffer.writeln('Incomplete RDF graph deserialization:');
-    buffer.writeln('  - ${remainingGraph.triples.length} unprocessed triples');
+    buffer.writeln('\nUnprocessed Triples (first 10):');
+    for (final triple in remainingGraph.triples.take(10)) {
+      buffer.writeln('  • $triple');
+    }
+    if (remainingGraph.triples.length > 10) {
+      buffer.writeln('  ... and ${remainingGraph.triples.length - 10} more');
+    }
+    return buffer.toString();
+  }
+
+  static String _formatUnmappedInfo(
+      Set<RdfSubject> unmappedSubjects, Set<IriTerm> unmappedTypes) {
+    final buffer = StringBuffer();
 
     if (unmappedSubjects.isNotEmpty) {
-      buffer.writeln(
-          '  - ${unmappedSubjects.length} subjects without deserializers:');
+      buffer.writeln('\nSubjects without deserializers (first 5):');
       for (final subject in unmappedSubjects.take(5)) {
-        buffer.writeln('    • $subject');
+        buffer.writeln('  • $subject');
       }
       if (unmappedSubjects.length > 5) {
-        buffer.writeln('    ... and ${unmappedSubjects.length - 5} more');
+        buffer.writeln('  ... and ${unmappedSubjects.length - 5} more');
       }
     }
 
     if (unmappedTypes.isNotEmpty) {
-      buffer.writeln('  - ${unmappedTypes.length} unmapped type IRIs:');
+      buffer.writeln('\nUnmapped type IRIs (first 5):');
       for (final type in unmappedTypes.take(5)) {
-        buffer.writeln('    • $type');
+        buffer.writeln('  • $type');
       }
       if (unmappedTypes.length > 5) {
-        buffer.writeln('    ... and ${unmappedTypes.length - 5} more');
+        buffer.writeln('  ... and ${unmappedTypes.length - 5} more');
       }
     }
-    if (remainingGraph.triples.isNotEmpty) {
-      buffer.writeln('  - Unprocessed triples (max 10):');
-      for (final triple in remainingGraph.triples.take(10)) {
-        buffer.writeln('    • $triple');
-      }
-      if (remainingGraph.triples.length > 10) {
-        buffer
-            .writeln('    ... and ${remainingGraph.triples.length - 10} more');
-      }
-    }
-    return buffer.toString().trim();
+
+    return buffer.toString();
   }
 
   /// Whether the remaining graph contains any triples
@@ -84,4 +130,10 @@ class IncompleteDeserializationException extends DeserializationException {
 
   /// Number of unprocessed triples
   int get remainingTripleCount => remainingGraph.triples.length;
+
+  /// Number of subjects without deserializers
+  int get unmappedSubjectCount => unmappedSubjects.length;
+
+  /// Number of unmapped type IRIs
+  int get unmappedTypeCount => unmappedTypes.length;
 }
