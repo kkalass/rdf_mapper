@@ -91,7 +91,7 @@ final class RdfMapperService {
       rdfSubject,
       register: register,
     );
-    _checkCompleteness(completeness, remaining, {}, {});
+    _checkCompleteness(completeness, remaining);
     return result;
   }
 
@@ -124,8 +124,8 @@ final class RdfMapperService {
     CompletenessMode completeness = CompletenessMode.strict,
   }) {
     final (result, remaining) =
-        deserializeLossless<T>(graph, register: register);
-    _checkCompleteness(completeness, remaining, {}, {});
+        _deserializeLossless<T>(graph, register: register);
+    _checkCompleteness(completeness, remaining);
     return result;
   }
 
@@ -171,13 +171,15 @@ final class RdfMapperService {
     void Function(RdfMapperRegistry registry)? register,
     CompletenessMode completeness = CompletenessMode.strict,
   }) {
-    var (result, remaining, failedSubjects, failedTypes) =
-        _deserializeAllLosslessInternal<T>(
+    var (result, remaining) = _deserializeAllLosslessInternal<T>(
       graph,
       register: register,
     );
 
-    _checkCompleteness(completeness, remaining, failedSubjects, failedTypes);
+    _checkCompleteness(
+      completeness,
+      remaining,
+    );
 
     return result;
   }
@@ -185,22 +187,20 @@ final class RdfMapperService {
   void _checkCompleteness(
     CompletenessMode completeness,
     RdfGraph remaining,
-    Set<RdfSubject> failedSubjects,
-    Set<IriTerm> failedTypes,
   ) {
     // Handle completeness validation based on mode
     if (remaining.triples.isNotEmpty) {
       if (completeness.shouldThrow) {
         throw IncompleteDeserializationException(
           remainingGraph: remaining,
-          unmappedSubjects: failedSubjects,
-          unmappedTypes: failedTypes,
         );
       } else if (completeness.shouldLog) {
+        final (unmappedSubjects, unmappedTypes) =
+            IncompleteDeserializationException.getUnmappedInfo(remaining);
         final message = 'Incomplete RDF deserialization: '
             '${remaining.triples.length} unprocessed triples, '
-            '${failedSubjects.length} failed subjects, '
-            '${failedTypes.length} unmapped types';
+            '${unmappedSubjects.length} failed subjects, '
+            '${unmappedTypes.length} unmapped types';
 
         if (completeness.shouldLogWarning) {
           _log.warning(message);
@@ -218,25 +218,22 @@ final class RdfMapperService {
     RdfGraph graph, {
     void Function(RdfMapperRegistry registry)? register,
   }) {
-    var (result, remaining, _, _) = _deserializeAllLosslessInternal<T>(
+    return _deserializeAllLosslessInternal<T>(
       graph,
       register: register,
     );
-    return (result, remaining);
   }
 
   (
     List<T> rootObjects,
     RdfGraph remaining,
-    Set<RdfSubject> failedSubjects,
-    Set<IriTerm> failedTypes
   ) _deserializeAllLosslessInternal<T>(RdfGraph graph,
       {void Function(RdfMapperRegistry registry)? register, int? maxSubjects}) {
     // Find all subjects with a type
     final typedSubjects = graph.findTriples(predicate: Rdf.type);
 
     if (typedSubjects.isEmpty) {
-      return (<T>[], graph, <RdfSubject>{}, <IriTerm>{});
+      return (<T>[], graph);
     }
 
     // Clone registry if registration callback is provided
@@ -317,7 +314,7 @@ final class RdfMapperService {
     }
 
     RdfGraph remainder = _withoutTriples(graph, processedTriples);
-    return (rootObjects, remainder, failedSubjects, failedTypes);
+    return (rootObjects, remainder);
   }
 
   RdfGraph _withoutTriples(RdfGraph graph, Set<Triple> processedTriples) {
@@ -443,6 +440,16 @@ final class RdfMapperService {
     RdfGraph graph, {
     void Function(RdfMapperRegistry registry)? register,
   }) {
+    return _deserializeLossless<T>(graph, register: register);
+  }
+
+  (
+    T root,
+    RdfGraph remaining,
+  ) _deserializeLossless<T>(
+    RdfGraph graph, {
+    void Function(RdfMapperRegistry registry)? register,
+  }) {
     var subjects = graph.triples.map((t) => t.subject).toSet();
     if (subjects.length == 1) {
       // Easy case: only one subject in the graph
@@ -465,8 +472,8 @@ final class RdfMapperService {
         }
       }
     }
-    var (result, remaining, failedSubjects, failedTypes) =
-        _deserializeAllLosslessInternal<T>(graph, register: register);
+    var (result, remaining) = _deserializeAllLosslessInternal<T>(graph,
+        register: register, maxSubjects: 1);
     if (result.isEmpty) {
       throw DeserializationException('No subject found in graph');
     }

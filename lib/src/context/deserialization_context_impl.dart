@@ -100,9 +100,8 @@ class DeserializationContextImpl extends DeserializationContext
           var deser = globalResourceDeserializer ??
               _registry.getGlobalResourceDeserializer<T>();
           _onDeserializeChildResource(term);
-          final ret = deser.fromRdfResource(term, context);
           _registerTypeRead(deser, term);
-          return ret;
+          return deser.fromRdfResource(term, context);
         }
         var deser =
             iriTermDeserializer ?? _registry.getIriTermDeserializer<T>();
@@ -113,9 +112,8 @@ class DeserializationContextImpl extends DeserializationContext
         var deser = localResourceDeserializer ??
             _registry.getLocalResourceDeserializer<T>();
         _onDeserializeChildResource(term);
-        final ret = deser.fromRdfResource(term, context);
         _registerTypeRead(deser, term);
-        return ret;
+        return deser.fromRdfResource(term, context);
     }
   }
 

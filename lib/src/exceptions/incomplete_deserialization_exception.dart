@@ -1,5 +1,6 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/exceptions/deserialization_exception.dart';
+import 'package:rdf_vocabularies/rdf.dart';
 
 /// Exception thrown when RDF graph deserialization is incomplete.
 ///
@@ -15,30 +16,27 @@ import 'package:rdf_mapper/src/exceptions/deserialization_exception.dart';
 class IncompleteDeserializationException extends DeserializationException {
   /// The RDF graph containing unprocessed triples
   final RdfGraph remainingGraph;
-
-  /// Set of subject IRIs that had rdf:type declarations but no deserializers
-  final Set<RdfSubject> unmappedSubjects;
-
-  /// Set of type IRIs that were encountered but had no registered deserializers
-  final Set<IriTerm> unmappedTypes;
+  late final Set<RdfSubject> unmappedSubjects;
+  late final Set<IriTerm> unmappedTypes;
 
   /// Creates a new incomplete deserialization exception.
   ///
   /// [remainingGraph] The RDF graph containing unprocessed triples
-  /// [unmappedSubjects] Subjects that couldn't be deserialized
-  /// [unmappedTypes] Type IRIs that had no deserializers
   /// [message] Optional custom error message
   IncompleteDeserializationException({
     required this.remainingGraph,
-    required this.unmappedSubjects,
-    required this.unmappedTypes,
-  }) : super(_generateMessage(remainingGraph, unmappedSubjects, unmappedTypes));
+  }) : super(_generateMessage(remainingGraph)) {
+    final (unmappedSubjects, unmappedTypes) = getUnmappedInfo(remainingGraph);
+    this.unmappedSubjects = unmappedSubjects;
+    this.unmappedTypes = unmappedTypes;
+  }
+
+  int get unmappedSubjectCount => unmappedSubjects.length;
+  int get unmappedTypeCount => unmappedTypes.length;
 
   /// Generates a descriptive error message based on the unprocessed data.
   static String _generateMessage(
     RdfGraph remainingGraph,
-    Set<RdfSubject> unmappedSubjects,
-    Set<IriTerm> unmappedTypes,
   ) {
     final tripleCount = remainingGraph.triples.length;
 
@@ -53,13 +51,38 @@ Quick Fix (relaxed validation):
 
 Alternative Solutions:
 
-1. Keep unprocessed triples (recommended for data preservation):
+1. Enhance domain objects with catch-all fields (recommended for complete preservation):
+   • Add RdfGraph fields to your classes and use getUnmapped()/addUnmapped():
+     
+     class YourType {
+       // ... your mapped properties ...
+       late final RdfGraph unmappedTriples;  // Add this field
+     }
+     
+     class YourTypeMapper implements LocalResourceMapper<YourType> {
+       @override
+       fromRdfResource(subject, DeserializationContext context) {
+         var reader = context.reader(subject);
+         return YourType()
+           // ... map your properties ...
+           ..unmappedTriples = reader.getUnmapped();  // Capture unmapped triples
+       }
+       
+       @override
+       (subject, List<Triple>) toRdfResource(value, SerializationContext context, {...}) =>
+         context.resourceBuilder(subject)
+           // ... add your properties ...
+           .addUnmapped(value.unmappedTriples)  // Restore unmapped triples
+           .build();
+     }
+
+2. Keep unprocessed triples externally (for global analysis):
    • Use lossless decode methods that return both objects and remaining graph:
      
      final (objects, remaining) = rdfMapper.decodeObjectsLossless<YourType>(rdfString);
      // Process objects, inspect remaining graph for missing mappings
    
-2. Register missing deserializers and check existing are complete:
+3. Register missing deserializers and check existing are complete:
    • For unmapped types, register appropriate mappers:
      
      final rdfMapper = RdfMapper.withMappers((registry) {
@@ -67,7 +90,7 @@ Alternative Solutions:
        // Add other missing mappers
      });
 
-3. Use different completeness modes:
+4. Use different completeness modes:
    • CompletenessMode.warnOnly - Log warnings but continue
    • CompletenessMode.infoOnly - Log info messages but continue
    • CompletenessMode.lenient - Silently ignore unprocessed triples
@@ -75,7 +98,7 @@ Alternative Solutions:
    final objects = rdfMapper.decodeObjects<YourType>(rdfString,
      completenessMode: CompletenessMode.warnOnly);
 
-${_formatUnprocessedTriples(remainingGraph)}${_formatUnmappedInfo(unmappedSubjects, unmappedTypes)}
+${_formatUnprocessedTriples(remainingGraph)}${_formatUnmappedInfo(remainingGraph)}
 
 Why this happens:
 Strict completeness validation ensures all RDF triples are processed, preventing
@@ -98,8 +121,18 @@ and catch configuration issues early.
     return buffer.toString();
   }
 
-  static String _formatUnmappedInfo(
-      Set<RdfSubject> unmappedSubjects, Set<IriTerm> unmappedTypes) {
+  static (Set<RdfSubject>, Set<IriTerm>) getUnmappedInfo(RdfGraph graph) {
+    final unmappedSubjects = graph.triples.map((t) => t.subject).toSet();
+    final unmappedTypes = graph
+        .findTriples(predicate: Rdf.type)
+        .map((t) => t.object)
+        .whereType<IriTerm>()
+        .toSet();
+    return (unmappedSubjects, unmappedTypes);
+  }
+
+  static String _formatUnmappedInfo(RdfGraph graph) {
+    final (unmappedSubjects, unmappedTypes) = getUnmappedInfo(graph);
     final buffer = StringBuffer();
 
     if (unmappedSubjects.isNotEmpty) {
@@ -130,10 +163,4 @@ and catch configuration issues early.
 
   /// Number of unprocessed triples
   int get remainingTripleCount => remainingGraph.triples.length;
-
-  /// Number of subjects without deserializers
-  int get unmappedSubjectCount => unmappedSubjects.length;
-
-  /// Number of unmapped type IRIs
-  int get unmappedTypeCount => unmappedTypes.length;
 }
