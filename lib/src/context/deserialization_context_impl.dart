@@ -36,23 +36,17 @@ class DeserializationContextImpl extends DeserializationContext
     var context = this;
     switch (subjectIri) {
       case BlankNodeTerm _:
-        var dartType = _registry.getLocalResourceDartTypeByIriType(typeIri);
-        if (dartType != null) {
-          _registerTypeRead(dartType, subjectIri, typeIri: typeIri);
-        }
         var deser = _registry.getLocalResourceDeserializerByType(typeIri);
+        _registerTypeRead(deser, subjectIri, typeIri: typeIri);
         return deser.fromRdfResource(subjectIri, context);
       case IriTerm _:
-        var dartType = _registry.getGlobalResourceDartTypeByIriType(typeIri);
-        if (dartType != null) {
-          _registerTypeRead(dartType, subjectIri, typeIri: typeIri);
-        }
         var deser = _registry.getGlobalResourceDeserializerByType(typeIri);
+        _registerTypeRead(deser, subjectIri, typeIri: typeIri);
         return deser.fromRdfResource(subjectIri, context);
     }
   }
 
-  void _registerTypeRead(Type dartType, RdfSubject subject,
+  void _registerTypeRead<T>(ResourceDeserializer<T> deser, RdfSubject subject,
       {IriTerm? typeIri}) {
     if (typeIri == null) {
       typeIri = _graph
@@ -61,11 +55,11 @@ class DeserializationContextImpl extends DeserializationContext
           ?.object as IriTerm?;
     }
     if (typeIri == null) {
-      _log.fine('Cannot register type read for $dartType without a type IRI.');
+      _log.fine('Cannot register type read for $deser without a type IRI.');
       return;
     }
-    var ser = _registry.getResourceSerializerByType(dartType);
-    if (ser.typeIri == typeIri) {
+
+    if (deser.typeIri == typeIri) {
       _readTriplesBySubject.putIfAbsent(subject, () => []).add(
             Triple(
               subject,
@@ -95,7 +89,7 @@ class DeserializationContextImpl extends DeserializationContext
               _registry.getGlobalResourceDeserializer<T>();
           _onDeserializeResource(term);
           final ret = deser.fromRdfResource(term, context);
-          _registerTypeRead(T, term);
+          _registerTypeRead(deser, term);
           return ret;
         }
         var deser =
@@ -108,7 +102,7 @@ class DeserializationContextImpl extends DeserializationContext
             _registry.getLocalResourceDeserializer<T>();
         _onDeserializeResource(term);
         final ret = deser.fromRdfResource(term, context);
-        _registerTypeRead(T, term);
+        _registerTypeRead(deser, term);
         return ret;
     }
   }
