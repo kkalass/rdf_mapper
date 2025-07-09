@@ -59,7 +59,7 @@ Alternative Solutions:
      final (objects, remaining) = rdfMapper.decodeObjectsLossless<YourType>(rdfString);
      // Process objects, inspect remaining graph for missing mappings
    
-2. Register missing deserializers:
+2. Register missing deserializers and check existing are complete:
    • For unmapped types, register appropriate mappers:
      
      final rdfMapper = RdfMapper.withMappers((registry) {
