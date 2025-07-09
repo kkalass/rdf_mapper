@@ -5,12 +5,13 @@ class RdfGraphMapper implements UnmappedTriplesMapper<RdfGraph> {
   const RdfGraphMapper();
 
   @override
-  RdfGraph fromUnmappedTriples(List<Triple> triples) {
-    return RdfGraph(triples: triples);
+  RdfGraph fromUnmappedTriples(Iterable<Triple> triples) {
+    return RdfGraph(
+        triples: triples is List<Triple> ? triples : triples.toList());
   }
 
   @override
-  List<Triple> toUnmappedTriples(RdfGraph value) {
+  Iterable<Triple> toUnmappedTriples(RdfGraph value) {
     return value.triples;
   }
 }

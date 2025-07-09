@@ -5,6 +5,46 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.7] - 2025-07-09
+
+### Added
+
+- **Lossless RDF Mapping**: Complete framework for preserving all RDF data during serialization/deserialization cycles
+  - Added `CompletenessMode` enum with `strict`, `lenient`, `warnOnly`, and `infoOnly` modes for handling incomplete deserialization
+  - Added `IncompleteDeserializationException` with detailed error reporting including unmapped subjects, types, and remaining triple counts
+  - Added support for preserving unmapped triples within objects using `reader.getUnmapped()` and `builder.addUnmapped()` methods
+  - Added lossless codecs for both single objects and collections: `RdfObjectLosslessCodec<T>` and `RdfObjectsLosslessCodec<T>`
+  - Added string-based lossless codecs: `RdfObjectLosslessStringCodec<T>` and `RdfObjectsLosslessStringCodec<T>`
+
+- **New RdfMapper Convenience Methods**: High-level API methods for lossless operations
+  - Added `decodeObjectLossless<T>()` method for decoding single objects with remainder graph preservation
+  - Added `encodeObjectLossless<T>()` method for encoding single objects with remainder graph combination
+  - Added `decodeObjectsLossless<T>()` method for decoding multiple objects with remainder graph preservation  
+  - Added `encodeObjectsLossless<T>()` method for encoding multiple objects with remainder graph combination
+
+- **Enhanced Graph Operations**: Extended graph-based codec support
+  - Added `objectLosslessCodec<T>()` method to `GraphOperations` for graph-based lossless single object codecs
+  - Added `objectsLosslessCodec<T>()` method to `GraphOperations` for graph-based lossless multiple objects codecs
+
+- **Comprehensive Documentation**: Complete lossless mapping documentation
+  - Added detailed `LOSSLESS_MAPPING.md` documentation covering both unmapped triples preservation and complete document preservation strategies
+  - Added practical examples demonstrating round-trip consistency and data integrity preservation
+  - Added guidance on combining both lossless mapping strategies for comprehensive data preservation
+
+### Enhanced
+
+- Enhanced `RdfMapper` API with comprehensive lossless mapping support across all content types (Turtle, JSON-LD, N-Triples, etc.)
+- Enhanced error handling with detailed information about incomplete deserialization scenarios
+- Enhanced existing `decodeObject()` and `decodeObjects()` methods with `CompletenessMode` support for backward-compatible lossless behavior
+- Enhanced test coverage with comprehensive lossless mapping test suites covering edge cases, error scenarios, and round-trip fidelity
+
+### Technical Details
+
+- All lossless codecs return tuples `(T, RdfGraph)` or `(Iterable<T>, RdfGraph)` where the second element contains unmapped/remainder triples
+- Lossless methods preserve complete RDF document integrity, enabling perfect round-trip serialization
+- CompletenessMode integration allows gradual migration from strict to lenient deserialization behavior
+- Full backward compatibility maintained - existing code continues to work without changes
+
 ## [0.8.6] - 2025-07-03
 
 ### Fixed

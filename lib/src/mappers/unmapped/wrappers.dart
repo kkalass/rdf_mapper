@@ -2,7 +2,7 @@ import 'package:rdf_core/src/graph/rdf_term.dart';
 import 'package:rdf_core/src/graph/triple.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
 
-RdfSubject _getSingleRootSubject(List<Triple> triples) {
+RdfSubject _getSingleRootSubject(Iterable<Triple> triples) {
   if (triples.isEmpty) {
     throw ArgumentError("Cannot get root subject from empty triples list");
   }
@@ -13,7 +13,7 @@ RdfSubject _getSingleRootSubject(List<Triple> triples) {
   final objects = triples.map((t) => t.object).toSet();
   final toplevelCandidates = {...subjects}..removeAll(objects);
   if (toplevelCandidates.isEmpty) {
-    // FIXME: is this really always an error? For example, if we know that the
+    // TODO: is this really always an error? For example, if we know that the
     // subject must be an iri term and there are blank nodes that are referenced by the iri term, but also reference the iri term themselves.
     throw ArgumentError(
         "No toplevel subject found in triples - the graph cannot be deserialized because it is cyclic or malformed");
@@ -21,7 +21,7 @@ RdfSubject _getSingleRootSubject(List<Triple> triples) {
   if (toplevelCandidates.length == 1) {
     return toplevelCandidates.first;
   }
-  // FIXME: we could go further and check children of children
+  // TODO: we could go further and check children of children
   throw ArgumentError(
       "Multiple toplevel subjects found in triples - the graph cannot be deserialized because it is malformed: $toplevelCandidates");
 }
@@ -62,7 +62,7 @@ class ResourceUnmappedTriplesSerializer<T>
     final subject = _getSingleRootSubject(triples);
     return (
       subject,
-      triples,
+      triples is List<Triple> ? triples : triples.toList(),
     );
   }
 
@@ -88,7 +88,7 @@ class LocalResourceUnmappedTriplesSerializer<T>
     final subject = _getSingleRootSubject(triples);
     return (
       subject as BlankNodeTerm,
-      triples,
+      triples is List<Triple> ? triples : triples.toList(),
     );
   }
 

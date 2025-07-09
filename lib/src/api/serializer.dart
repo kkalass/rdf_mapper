@@ -26,7 +26,7 @@ abstract interface class UnmappedTriplesSerializer<T> implements Serializer<T> {
   /// [context] The current serialization context
   ///
   /// Returns the resulting list of triples
-  List<Triple> toUnmappedTriples(T value);
+  Iterable<Triple> toUnmappedTriples(T value);
 }
 
 /// Groups those serializers that serialize a Dart object to an RDF term

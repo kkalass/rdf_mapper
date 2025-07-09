@@ -26,7 +26,7 @@ abstract interface class UnmappedTriplesDeserializer<T>
   /// [context] The current deserialization context
   ///
   /// Returns the resulting Dart object
-  T fromUnmappedTriples(List<Triple> triples);
+  T fromUnmappedTriples(Iterable<Triple> triples);
 }
 
 /// Base class for deserializers that convert RDF terms to Dart objects.
