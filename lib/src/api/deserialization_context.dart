@@ -1,7 +1,6 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserializer.dart';
 import 'package:rdf_mapper/src/api/resource_reader.dart';
-import 'package:rdf_mapper/src/api/serializer.dart';
 
 /// Context for deserialization operations in the RDF mapping process.
 ///

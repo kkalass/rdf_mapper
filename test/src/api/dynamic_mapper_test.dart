@@ -86,7 +86,6 @@ class ChildClassMapper implements GlobalResourceMapper<ChildClass> {
     final value = reader.require<String>(valuePredicate);
 
     // Use the parentId that was passed to the mapper constructor
-    // This is why we need a dynamically created mapper
 
     return ChildClass(id: subject.iri, value: value, parentId: parentId);
   }
@@ -141,7 +140,32 @@ void main() {
       expect(childTriples.length, greaterThan(0));
     });
 
-    test('deserialize works with dynamically provided mapper', () {
+    test(
+        'deserialize works with dynamically provided mapper (fails due to strict mode)',
+        () {
+      final turtle = '''
+      @prefix ex: <http://example.org/> .
+      
+      <http://example.org/parent/1> a ex:ParentClass ;
+        ex:name "Parent Name" ;
+        ex:child <http://example.org/child/1> .
+        
+      <http://example.org/child/1> a ex:ChildClass ;
+        ex:value "Child Value" ;
+        ex:parentId "http://example.org/parent/1" .
+      ''';
+
+      // Should fail in strict mode due to incomplete deserialization
+      expect(
+        () => rdfMapper.decodeObject<ParentClass>(turtle,
+            completeness: CompletenessMode.strict),
+        throwsA(isA<IncompleteDeserializationException>()),
+      );
+    });
+
+    test(
+        'deserialize works with dynamically provided mapper (passes in lenient mode)',
+        () {
       final turtle = '''
       @prefix ex: <http://example.org/> .
       
@@ -155,12 +179,15 @@ void main() {
       ''';
 
       // Single object deserialization works fine
-      final parent = rdfMapper.decodeObject<ParentClass>(turtle);
+      final parent = rdfMapper.decodeObject<ParentClass>(turtle,
+          completeness: CompletenessMode.lenient);
       expect(parent.name, equals('Parent Name'));
       expect(parent.child.value, equals('Child Value'));
     });
 
-    test('deserializeAll fails with dynamically provided mapper', () {
+    test(
+        'deserialize works with dynamically provided mapper (works with lossless)',
+        () {
       final turtle = '''
       @prefix ex: <http://example.org/> .
       
@@ -173,9 +200,37 @@ void main() {
         ex:parentId "http://example.org/parent/1" .
       ''';
 
-      // This will fail because deserializeAll tries to deserialize all subjects,
-      // including the child, but no ChildClassMapper is globally registered
-      final result = rdfMapper.decodeObjects(turtle);
+      // Single object deserialization works fine
+      final (parent, remainder) =
+          rdfMapper.decodeObjectLossless<ParentClass>(turtle);
+      expect(parent.name, equals('Parent Name'));
+      expect(parent.child.value, equals('Child Value'));
+      expect(remainder.triples.isEmpty, isFalse);
+      expect(remainder.triples.length, 1);
+      expect(
+          remainder.triples[0].subject, IriTerm('http://example.org/child/1'));
+      expect(remainder.triples[0].predicate,
+          IriTerm('http://example.org/parentId'));
+      expect(remainder.triples[0].object,
+          LiteralTerm('http://example.org/parent/1'));
+    });
+    test(
+        'decodeObjects also works with dynamically registered mapper - in lenient mode',
+        () {
+      final turtle = '''
+      @prefix ex: <http://example.org/> .
+      
+      <http://example.org/parent/1> a ex:ParentClass ;
+        ex:name "Parent Name" ;
+        ex:child <http://example.org/child/1> .
+        
+      <http://example.org/child/1> a ex:ChildClass ;
+        ex:value "Child Value" ;
+        ex:parentId "http://example.org/parent/1" .
+      ''';
+
+      final result = rdfMapper.decodeObjects(turtle,
+          completenessMode: CompletenessMode.lenient);
       expect(
         result.length,
         equals(1),
@@ -186,6 +241,28 @@ void main() {
       expect(parent.child, isNotNull); // Child should be deserialized
       expect(parent.child.value, equals('Child Value'));
       expect(parent.child.parentId, equals('http://example.org/parent/1'));
+    });
+
+    test(
+        'decodeObjects throws IncompleteDeserializationException with dynamically registered mapper in strict mode, because it serializes a property that it does not read back (parentId).',
+        () {
+      final turtle = '''
+      @prefix ex: <http://example.org/> .
+      
+      <http://example.org/parent/1> a ex:ParentClass ;
+        ex:name "Parent Name" ;
+        ex:child <http://example.org/child/1> .
+        
+      <http://example.org/child/1> a ex:ChildClass ;
+        ex:value "Child Value" ;
+        ex:parentId "http://example.org/parent/1" .
+      ''';
+
+      expect(
+        () => rdfMapper.decodeObjects(turtle,
+            completenessMode: CompletenessMode.strict),
+        throwsA(isA<IncompleteDeserializationException>()),
+      );
     });
   });
 }

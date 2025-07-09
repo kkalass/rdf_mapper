@@ -9,7 +9,6 @@ import 'package:rdf_core/rdf_core.dart' as _i4;
 import 'package:rdf_mapper/src/api/deserialization_context.dart' as _i3;
 import 'package:rdf_mapper/src/api/deserializer.dart' as _i5;
 import 'package:rdf_mapper/src/api/resource_reader.dart' as _i2;
-import 'package:rdf_mapper/src/api/serializer.dart' as _i7;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -61,6 +60,20 @@ class MockDeserializationContext extends _i1.Mock
       ) as _i2.ResourceReader);
 
   @override
+  List<_i4.Triple> getTriplesForSubject(
+    _i4.RdfSubject? subject, {
+    bool? includeBlankNodes = true,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getTriplesForSubject,
+          [subject],
+          {#includeBlankNodes: includeBlankNodes},
+        ),
+        returnValue: <_i4.Triple>[],
+      ) as List<_i4.Triple>);
+
+  @override
   T fromLiteralTerm<T>(
     _i4.LiteralTerm? term, {
     _i5.LiteralTermDeserializer<T>? deserializer,
@@ -87,18 +100,4 @@ class MockDeserializationContext extends _i1.Mock
           ),
         ),
       ) as T);
-
-  @override
-  List<_i4.Triple> resource<T>(
-    T? instance, {
-    _i7.ResourceSerializer<T>? serializer,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #resource,
-          [instance],
-          {#serializer: serializer},
-        ),
-        returnValue: <_i4.Triple>[],
-      ) as List<_i4.Triple>);
 }

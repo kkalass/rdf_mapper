@@ -1,14 +1,12 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/src/api/deserializer.dart';
-import 'package:rdf_mapper/src/api/serializer.dart';
-import 'package:rdf_vocabularies/xsd.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
-import 'package:rdf_mapper/src/api/resource_reader.dart';
 import 'package:rdf_mapper/src/api/resource_builder.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
+import 'package:rdf_mapper/src/api/serializer.dart';
 import 'package:rdf_mapper/src/exceptions/deserialization_exception.dart';
 import 'package:rdf_mapper/src/mappers/literal/base_rdf_literal_term_deserializer.dart';
 import 'package:rdf_mapper/src/mappers/literal/base_rdf_literal_term_serializer.dart';
+import 'package:rdf_vocabularies/xsd.dart';
 import 'package:test/test.dart';
 
 import '../deserializers/mock_deserialization_context.dart';

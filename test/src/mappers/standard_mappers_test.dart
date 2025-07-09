@@ -1,5 +1,7 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/src/api/deserializer.dart';
+import 'package:rdf_mapper/src/api/deserialization_context.dart';
+import 'package:rdf_mapper/src/api/resource_builder.dart';
+import 'package:rdf_mapper/src/api/serialization_context.dart';
 import 'package:rdf_mapper/src/api/serializer.dart';
 import 'package:rdf_mapper/src/mappers/literal/bool_mapper.dart';
 import 'package:rdf_mapper/src/mappers/literal/date_time_mapper.dart';
@@ -7,10 +9,6 @@ import 'package:rdf_mapper/src/mappers/literal/double_mapper.dart';
 import 'package:rdf_mapper/src/mappers/literal/int_mapper.dart';
 import 'package:rdf_mapper/src/mappers/literal/string_mapper.dart';
 import 'package:rdf_vocabularies/xsd.dart';
-import 'package:rdf_mapper/src/api/deserialization_context.dart';
-import 'package:rdf_mapper/src/api/resource_builder.dart';
-import 'package:rdf_mapper/src/api/resource_reader.dart';
-import 'package:rdf_mapper/src/api/serialization_context.dart';
 import 'package:test/test.dart';
 
 import '../deserializers/mock_deserialization_context.dart';

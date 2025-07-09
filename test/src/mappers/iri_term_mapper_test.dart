@@ -3,7 +3,6 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 import 'package:test/test.dart';
 
 import '../deserializers/mock_deserialization_context.dart';
-import 'standard_mappers_test.dart';
 
 void main() {
   group('IriTermMapper', () {

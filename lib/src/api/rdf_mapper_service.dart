@@ -84,17 +84,15 @@ final class RdfMapperService {
     RdfGraph graph,
     RdfSubject rdfSubject, {
     void Function(RdfMapperRegistry registry)? register,
+    CompletenessMode completeness = CompletenessMode.strict,
   }) {
-    _log.fine('Delegated mapping graph to ${T.toString()}');
-
-    // Clone registry if registration callback is provided
-    final registry = register != null ? _registry.clone() : _registry;
-    if (register != null) {
-      register(registry);
-    }
-    var context = DeserializationContextImpl(graph: graph, registry: registry);
-
-    return context.deserialize<T>(rdfSubject, null, null, null, null);
+    final (result, remaining) = deserializeBySubjectLossless<T>(
+      graph,
+      rdfSubject,
+      register: register,
+    );
+    _checkCompleteness(completeness, remaining, {}, {});
+    return result;
   }
 
   /// Deserializes the single subject of type [T] from an RDF graph.
@@ -123,38 +121,12 @@ final class RdfMapperService {
   T deserialize<T>(
     RdfGraph graph, {
     void Function(RdfMapperRegistry registry)? register,
+    CompletenessMode completeness = CompletenessMode.strict,
   }) {
-    var subjects = graph.triples.map((t) => t.subject).toSet();
-    if (subjects.length == 1) {
-      // Easy case: only one subject in the graph
-      return deserializeBySubject(graph, subjects.single, register: register);
-    }
-    var deserializer = registry.findDeserializerByType<T>();
-    if (deserializer is ResourceDeserializer<T>) {
-      var typeIri = deserializer.typeIri; // Ensure the deserializer is valid
-      if (typeIri != null) {
-        subjects = graph
-            .findTriples(predicate: Rdf.type, object: typeIri)
-            .map((t) => t.subject)
-            .toSet();
-        if (subjects.length == 1) {
-          // We found exactly one subject with the type IRI handled by the deserializer
-          // identified by the result Type.
-          return deserializeBySubject(graph, subjects.single,
-              register: register);
-        }
-      }
-    }
-    var result = deserializeAll(graph, register: register);
-    if (result.isEmpty) {
-      throw DeserializationException('No subject found in graph');
-    }
-    if (result.length > 1) {
-      throw DeserializationException(
-        'More than one subject found in graph: ${result.map((e) => e.toString()).join(', ')}',
-      );
-    }
-    return result[0] as T;
+    final (result, remaining) =
+        deserializeLossless<T>(graph, register: register);
+    _checkCompleteness(completeness, remaining, {}, {});
+    return result;
   }
 
   /// Deserializes a list of objects from all subjects in an RDF graph.
@@ -171,29 +143,100 @@ final class RdfMapperService {
   /// This ensures that only the top-level objects are returned, not their nested
   /// components, avoiding duplicate or inappropriate objects in the result list.
   ///
+  /// The [completeness] parameter controls how incomplete deserialization is handled:
+  /// - [CompletenessMode.strict]: Throws [IncompleteDeserializationException] if any triples remain
+  /// - [CompletenessMode.warnOnly]: Logs warning message and continues
+  /// - [CompletenessMode.infoOnly]: Logs info message and continues
+  /// - [CompletenessMode.lenient]: Silently ignores unprocessed triples
+  ///
   /// Example:
   /// ```dart
-  /// // Deserialize all objects from a graph
-  /// final objects = service.deserializeAll(graph);
+  /// // Deserialize all objects from a graph with strict validation
+  /// final objects = service.deserializeAll(graph,
+  ///   completeness: CompletenessMode.strict);
   /// final people = objects.whereType<Person>().toList();
   /// final organizations = objects.whereType<Organization>().toList();
   /// ```
   ///
   /// [graph] The RDF graph to deserialize from
   /// [register] Optional callback to register temporary mappers
+  /// [completeness] How to handle incomplete deserialization (defaults to strict)
   ///
   /// Returns a list of deserialized objects (potentially of different types)
   ///
+  /// Throws [IncompleteDeserializationException] if completeness is strict and triples remain
   /// Throws [DeserializerNotFoundException] if a deserializer is missing for any subject
-  List<Object> deserializeAll(
+  List<T> deserializeAll<T>(
+    RdfGraph graph, {
+    void Function(RdfMapperRegistry registry)? register,
+    CompletenessMode completeness = CompletenessMode.strict,
+  }) {
+    var (result, remaining, failedSubjects, failedTypes) =
+        _deserializeAllLosslessInternal<T>(
+      graph,
+      register: register,
+    );
+
+    _checkCompleteness(completeness, remaining, failedSubjects, failedTypes);
+
+    return result;
+  }
+
+  void _checkCompleteness(
+    CompletenessMode completeness,
+    RdfGraph remaining,
+    Set<RdfSubject> failedSubjects,
+    Set<IriTerm> failedTypes,
+  ) {
+    // Handle completeness validation based on mode
+    if (remaining.triples.isNotEmpty) {
+      if (completeness.shouldThrow) {
+        throw IncompleteDeserializationException(
+          remainingGraph: remaining,
+          unmappedSubjects: failedSubjects,
+          unmappedTypes: failedTypes,
+        );
+      } else if (completeness.shouldLog) {
+        final message = 'Incomplete RDF deserialization: '
+            '${remaining.triples.length} unprocessed triples, '
+            '${failedSubjects.length} failed subjects, '
+            '${failedTypes.length} unmapped types';
+
+        if (completeness.shouldLogWarning) {
+          _log.warning(message);
+        } else {
+          _log.info(message);
+        }
+      }
+    }
+  }
+
+  (
+    List<T> rootObjects,
+    RdfGraph remaining,
+  ) deserializeAllLossless<T>(
     RdfGraph graph, {
     void Function(RdfMapperRegistry registry)? register,
   }) {
+    var (result, remaining, _, _) = _deserializeAllLosslessInternal<T>(
+      graph,
+      register: register,
+    );
+    return (result, remaining);
+  }
+
+  (
+    List<T> rootObjects,
+    RdfGraph remaining,
+    Set<RdfSubject> failedSubjects,
+    Set<IriTerm> failedTypes
+  ) _deserializeAllLosslessInternal<T>(RdfGraph graph,
+      {void Function(RdfMapperRegistry registry)? register, int? maxSubjects}) {
     // Find all subjects with a type
     final typedSubjects = graph.findTriples(predicate: Rdf.type);
 
     if (typedSubjects.isEmpty) {
-      return [];
+      return (<T>[], graph, <RdfSubject>{}, <IriTerm>{});
     }
 
     // Clone registry if registration callback is provided
@@ -210,8 +253,11 @@ final class RdfMapperService {
 
     // Map to store deserialized objects by subject
     final Map<RdfSubject, Object> deserializedObjects = {};
+    final Map<RdfSubject, Set<Triple>> processedTriplesBySubject = {};
     // Keep track of subjects that couldn't be deserialized due to missing mappers
     final Set<RdfSubject> failedSubjects = {};
+    // Keep track of types that had no deserializers
+    final Set<IriTerm> failedTypes = {};
 
     // First pass: deserialize all typed subjects
     for (final triple in typedSubjects) {
@@ -227,11 +273,14 @@ final class RdfMapperService {
 
       try {
         // Deserialize the object and track it by subject
+        context.clearProcessedTriples();
         final obj = context.deserializeResource(subject, type);
+        processedTriplesBySubject[subject] = context.getProcessedTriples();
         deserializedObjects[subject] = obj;
       } on DeserializerNotFoundException {
         // Record this subject as failed to deserialize
         failedSubjects.add(subject);
+        failedTypes.add(type);
         _log.fine("No deserializer found for subject $subject with type $type");
         // Don't rethrow - we'll check if it's a root node later
       }
@@ -241,8 +290,8 @@ final class RdfMapperService {
     final subjectReferences = context.getProcessedSubjects();
 
     // Third pass: filter out subjects that are primarily referenced by others
-    final rootObjects = <Object>[];
-
+    final rootObjects = <T>[];
+    final processedTriples = <Triple>{};
     for (final entry in deserializedObjects.entries) {
       final subject = entry.key;
       final object = entry.value;
@@ -250,30 +299,34 @@ final class RdfMapperService {
       // A subject is considered a root object if:
       // 1. It has a type triple (which we've guaranteed above)
       // 2. It is not primarily referenced by other subjects
-      if (!subjectReferences.contains(subject)) {
-        rootObjects.add(object);
+      if (!subjectReferences.contains(subject) && object is T) {
+        rootObjects.add(object as T);
+        final processed = processedTriplesBySubject[subject] ?? <Triple>{};
+
+        processedTriples.addAll(processed);
+        if (maxSubjects != null && rootObjects.length >= maxSubjects) {
+          _log.fine(
+              'Reached max subjects limit of $maxSubjects, stopping early.');
+          break;
+        }
+        _log.fine('Adding root object $object with subject $subject');
+      } else {
+        _log.fine('Skipping $object with subject $subject, '
+            'referenced by others: ${subjectReferences.contains(subject)} and type: ${T}');
       }
     }
 
-    // Final check: If any root subject failed to deserialize, that's an error
-    // because we couldn't find a mapper for a top-level object
-    for (final subject in failedSubjects) {
-      // Only throw if this failed subject isn't referenced by other objects
-      // (meaning it's a root node)
-      if (!subjectReferences.contains(subject)) {
-        final type = graph
-            .findTriples(subject: subject, predicate: Rdf.type)
-            .firstOrNull
-            ?.object;
+    RdfGraph remainder = _withoutTriples(graph, processedTriples);
+    return (rootObjects, remainder, failedSubjects, failedTypes);
+  }
 
-        throw DeserializerNotFoundException.forTypeIri(
-          "GlobalResourceDeserializer",
-          type as IriTerm,
-        );
-      }
-    }
-
-    return rootObjects;
+  RdfGraph _withoutTriples(RdfGraph graph, Set<Triple> processedTriples) {
+    // TODO: shouldn't we have something like graph.withoutTriples(triples: processedTriples)?
+    final remainder = RdfGraph(
+      triples:
+          graph.triples.where((t) => !processedTriples.contains(t)).toList(),
+    );
+    return remainder;
   }
 
   /// Serializes an object of type [T] to an RDF graph.
@@ -317,6 +370,17 @@ final class RdfMapperService {
     return RdfGraph(triples: context.resource<T>(instance));
   }
 
+  RdfGraph serializeLossless<T>(
+    (T, RdfGraph) input, {
+    void Function(RdfMapperRegistry registry)? register,
+  }) {
+    final (instance, graph) = input;
+    final serializedGraph = serialize(instance, register: register);
+    // TODO: the merge operation currently only appends lists. shouldn't
+    // it at least remove duplicates?
+    return serializedGraph.merge(graph);
+  }
+
   /// Serializes a list of objects to a combined RDF graph.
   ///
   /// This method converts multiple objects into a single RDF graph by serializing
@@ -355,5 +419,91 @@ final class RdfMapperService {
     }).toList();
 
     return RdfGraph(triples: triples);
+  }
+
+  RdfGraph serializeListLossless<T>(
+    (Iterable<T>, RdfGraph) input, {
+    void Function(RdfMapperRegistry registry)? register,
+  }) {
+    final (instances, remainder) = input;
+    final graph = serializeList<T>(instances, register: register);
+    return graph.merge(remainder);
+  }
+
+  /// Deserializes a single object from an RDF graph preserving the remainder.
+  ///
+  /// This method is similar to [deserialize] but returns both the deserialized object
+  /// and any remaining RDF triples that weren't processed.
+  ///
+  /// [graph] The RDF graph to deserialize from
+  /// [register] Optional callback to register temporary mappers
+  ///
+  /// Returns a tuple containing the deserialized object and remaining graph
+  (T, RdfGraph) deserializeLossless<T>(
+    RdfGraph graph, {
+    void Function(RdfMapperRegistry registry)? register,
+  }) {
+    var subjects = graph.triples.map((t) => t.subject).toSet();
+    if (subjects.length == 1) {
+      // Easy case: only one subject in the graph
+      return deserializeBySubjectLossless<T>(graph, subjects.single,
+          register: register);
+    }
+    var deserializer = registry.findDeserializerByType<T>();
+    if (deserializer is ResourceDeserializer<T>) {
+      var typeIri = deserializer.typeIri; // Ensure the deserializer is valid
+      if (typeIri != null) {
+        subjects = graph
+            .findTriples(predicate: Rdf.type, object: typeIri)
+            .map((t) => t.subject)
+            .toSet();
+        if (subjects.length == 1) {
+          // We found exactly one subject with the type IRI handled by the deserializer
+          // identified by the result Type.
+          return deserializeBySubjectLossless<T>(graph, subjects.single,
+              register: register);
+        }
+      }
+    }
+    var (result, remaining, failedSubjects, failedTypes) =
+        _deserializeAllLosslessInternal<T>(graph, register: register);
+    if (result.isEmpty) {
+      throw DeserializationException('No subject found in graph');
+    }
+    if (result.length > 1) {
+      throw DeserializationException(
+        'More than one subject found in graph: ${result.map((e) => e.toString()).join(', ')}',
+      );
+    }
+    return (result[0], remaining);
+  }
+
+  /// Deserializes an object from a specific subject preserving the remainder.
+  ///
+  /// This method is similar to [deserializeBySubject] but returns both the deserialized
+  /// object and any remaining RDF triples that weren't processed.
+  ///
+  /// [graph] The RDF graph containing the data
+  /// [rdfSubject] The subject identifier to deserialize
+  /// [register] Optional callback to register temporary mappers
+  ///
+  /// Returns a tuple containing the deserialized object and remaining graph
+  (T, RdfGraph) deserializeBySubjectLossless<T>(
+    RdfGraph graph,
+    RdfSubject rdfSubject, {
+    void Function(RdfMapperRegistry registry)? register,
+  }) {
+    _log.fine('Delegated mapping graph to ${T.toString()}');
+
+    // Clone registry if registration callback is provided
+    final registry = register != null ? _registry.clone() : _registry;
+    if (register != null) {
+      register(registry);
+    }
+    var context = DeserializationContextImpl(graph: graph, registry: registry);
+
+    var result = context.deserialize<T>(rdfSubject, null, null, null, null);
+
+    return (result, _withoutTriples(graph, context.getAllProcessedTriples()));
   }
 }

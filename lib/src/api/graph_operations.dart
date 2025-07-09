@@ -1,4 +1,5 @@
 import 'package:rdf_core/rdf_core.dart';
+import 'package:rdf_mapper/src/api/completeness_mode.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_service.dart';
 import 'package:rdf_mapper/src/codec/rdf_mapper_codec.dart';
@@ -37,8 +38,16 @@ final class GraphOperations {
   /// Returns a codec for type T
   RdfObjectCodec<T> objectCodec<T>({
     void Function(RdfMapperRegistry registry)? register,
+    CompletenessMode completeness = CompletenessMode.strict,
   }) {
-    return RdfObjectCodec<T>(service: _service, register: register);
+    return RdfObjectCodec<T>(
+        service: _service, register: register, completeness: completeness);
+  }
+
+  RdfObjectLosslessCodec<T> objectLosslessCodec<T>({
+    void Function(RdfMapperRegistry registry)? register,
+  }) {
+    return RdfObjectLosslessCodec<T>(service: _service, register: register);
   }
 
   /// Creates a codec for serializing and deserializing collections of objects of type [T].
@@ -52,8 +61,16 @@ final class GraphOperations {
   /// Returns a codec for collections of type T
   RdfObjectsCodec<T> objectsCodec<T>({
     void Function(RdfMapperRegistry registry)? register,
+    CompletenessMode completeness = CompletenessMode.strict,
   }) {
-    return RdfObjectsCodec<T>(service: _service, register: register);
+    return RdfObjectsCodec<T>(
+        service: _service, register: register, completeness: completeness);
+  }
+
+  RdfObjectsLosslessCodec<T> objectsLosslessCodec<T>({
+    void Function(RdfMapperRegistry registry)? register,
+  }) {
+    return RdfObjectsLosslessCodec<T>(service: _service, register: register);
   }
 
   /// Deserializes an object of type [T] from an RDF graph.
@@ -137,8 +154,11 @@ final class GraphOperations {
   List<T> decodeObjects<T>(
     RdfGraph graph, {
     void Function(RdfMapperRegistry registry)? register,
+    CompletenessMode completeness = CompletenessMode.strict,
   }) {
-    return objectsCodec<T>().decode(graph, register: register).toList();
+    return objectsCodec<T>(completeness: completeness)
+        .decode(graph, register: register)
+        .toList();
   }
 
   /// Serializes an object of type [T] to an RDF graph.

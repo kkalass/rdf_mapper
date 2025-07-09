@@ -130,8 +130,6 @@ abstract class DeserializationService {
     LocalResourceDeserializer<MapEntry<K, V>>? localResourceDeserializer,
   });
 
-  List<Triple> getAllRemainingTriples();
-
   T getUnmapped<T>(RdfSubject subject,
       {bool includeBlankNodes = true,
       UnmappedTriplesDeserializer? unmappedTriplesDeserializer});

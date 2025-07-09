@@ -60,18 +60,30 @@ class DeserializationContextImpl extends DeserializationContext
     }
 
     if (deser.typeIri == typeIri) {
-      _readTriplesBySubject.putIfAbsent(subject, () => []).add(
-            Triple(
-              subject,
-              Rdf.type,
-              typeIri,
-            ),
-          );
+      _trackTriplesRead(
+        subject,
+        [
+          Triple(
+            subject,
+            Rdf.type,
+            typeIri,
+          )
+        ],
+      );
     }
   }
 
+  void _trackTriplesRead(RdfSubject subject, List<Triple> triples) {
+    _readTriplesBySubject.putIfAbsent(subject, () => []).addAll(triples);
+    _onTriplesRead(triples);
+  }
+
   // Hook for the Tracking implementation to track deserialized resources.
-  void _onDeserializeResource(RdfTerm term) {}
+  /// Called when a resource is deserialized as a Resource instead of IriTerm
+  /// within deserialization of another resource,
+  /// not when the toplevel deserializeResource is called!
+  void _onDeserializeChildResource(RdfTerm term) {}
+  void _onTriplesRead(List<Triple> triples) {}
 
   T deserialize<T>(
     RdfTerm term,
@@ -87,7 +99,7 @@ class DeserializationContextImpl extends DeserializationContext
             _registry.hasGlobalResourceDeserializerFor<T>()) {
           var deser = globalResourceDeserializer ??
               _registry.getGlobalResourceDeserializer<T>();
-          _onDeserializeResource(term);
+          _onDeserializeChildResource(term);
           final ret = deser.fromRdfResource(term, context);
           _registerTypeRead(deser, term);
           return ret;
@@ -100,7 +112,7 @@ class DeserializationContextImpl extends DeserializationContext
       case BlankNodeTerm _:
         var deser = localResourceDeserializer ??
             _registry.getLocalResourceDeserializer<T>();
-        _onDeserializeResource(term);
+        _onDeserializeChildResource(term);
         final ret = deser.fromRdfResource(term, context);
         _registerTypeRead(deser, term);
         return ret;
@@ -151,7 +163,8 @@ class DeserializationContextImpl extends DeserializationContext
       RdfSubject subject, RdfPredicate predicate) {
     final readTriples =
         _graph.findTriples(subject: subject, predicate: predicate);
-    _readTriplesBySubject.putIfAbsent(subject, () => []).addAll(readTriples);
+
+    _trackTriplesRead(subject, readTriples);
     // Hook for tracking deserialization
     return readTriples;
   }
@@ -184,16 +197,8 @@ class DeserializationContextImpl extends DeserializationContext
         includeBlankNodes: includeBlankNodes);
     unmappedTriplesDeserializer ??=
         _registry.getUnmappedTriplesDeserializer<T>();
+    _trackTriplesRead(subject, triples);
     return unmappedTriplesDeserializer.fromUnmappedTriples(triples);
-  }
-
-  @override
-  List<Triple> getAllRemainingTriples() {
-    final allReadTriples =
-        _readTriplesBySubject.values.expand((e) => e).toSet();
-    return _graph.triples
-        .where((triple) => !allReadTriples.contains(triple))
-        .toList(growable: false);
   }
 
   @override
@@ -328,19 +333,18 @@ class DeserializationContextImpl extends DeserializationContext
       ...triples,
       ...blankNodes.expand((term) => _graph.findTriples(subject: term)),
     ];
-    _readTriplesBySubject.putIfAbsent(subject, () => []).addAll(result);
+    _trackTriplesRead(subject, result);
     return result;
+  }
+
+  Set<Triple> getAllProcessedTriples() {
+    return _readTriplesBySubject.values.expand((triples) => triples).toSet();
   }
 }
 
-/// A specialized deserialization context that tracks subject processing order.
-///
-/// This context extends the standard implementation to maintain a record of when
-/// each subject was first processed. This allows determining which subjects were
-/// processed as part of other objects' deserialization and which were root objects.
 class TrackingDeserializationContext extends DeserializationContextImpl {
-  // Maps subjects to their first processing index
   final Set<RdfSubject> _processedSubjects = {};
+  Set<Triple> _processedTriples = {};
 
   TrackingDeserializationContext({
     required RdfGraph graph,
@@ -348,14 +352,25 @@ class TrackingDeserializationContext extends DeserializationContextImpl {
   }) : super(graph: graph, registry: registry);
 
   @override
-  void _onDeserializeResource(RdfTerm term) {
-    super._onDeserializeResource(term);
+  void _onDeserializeChildResource(RdfTerm term) {
+    super._onDeserializeChildResource(term);
     // Track processing of subject terms
     if (term is RdfSubject) {
       _processedSubjects.add(term);
     }
   }
 
-  /// Returns the map of processed subjects with their first processing index
+  @override
+  void _onTriplesRead(List<Triple> triples) {
+    _processedTriples.addAll(triples);
+  }
+
+  void clearProcessedTriples() {
+    _processedTriples = {};
+  }
+
+  Set<Triple> getProcessedTriples() => _processedTriples;
+
+  /// Returns the set of processed subjects
   Set<RdfSubject> getProcessedSubjects() => _processedSubjects;
 }

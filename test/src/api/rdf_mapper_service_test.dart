@@ -195,7 +195,8 @@ void main() {
         );
 
         // Deserialize all subjects
-        final objects = service.deserializeAll(graph);
+        final objects = service.deserializeAll(graph,
+            completeness: CompletenessMode.lenient);
 
         // Verify the deserialized objects
         expect(objects.length, equals(2));
@@ -252,10 +253,10 @@ void main() {
         ],
       );
 
-      // Attempt to deserialize all subjects should throw a DeserializerNotFoundException
+      // Attempt to deserialize all subjects should throw an IncompleteDeserializationException
       expect(
         () => service.deserializeAll(graph),
-        throwsA(isA<DeserializerNotFoundException>()),
+        throwsA(isA<IncompleteDeserializationException>()),
       );
     });
 
@@ -471,7 +472,8 @@ void main() {
         );
 
         // Execute deserializeAll
-        final objects = service.deserializeAll(graph);
+        final objects = service.deserializeAll(graph,
+            completeness: CompletenessMode.lenient);
 
         // Verify we get only Person objects, not addresses
         expect(objects.length, equals(2));

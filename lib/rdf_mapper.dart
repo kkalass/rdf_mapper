@@ -86,6 +86,7 @@
 library rdf_mapper;
 
 import 'package:rdf_core/rdf_core.dart';
+import 'package:rdf_mapper/src/api/completeness_mode.dart';
 import 'package:rdf_mapper/src/api/graph_operations.dart';
 import 'package:rdf_mapper/src/api/mapper.dart';
 import 'package:rdf_mapper/src/codec/rdf_mapper_string_codec.dart';
@@ -94,6 +95,7 @@ import 'src/api/rdf_mapper_registry.dart';
 import 'src/api/rdf_mapper_service.dart';
 
 // Core API exports
+export 'src/api/completeness_mode.dart';
 export 'src/api/deserialization_context.dart';
 export 'src/api/deserialization_service.dart';
 export 'src/api/deserializer.dart';
@@ -113,6 +115,7 @@ export 'src/exceptions/codec_exceptions.dart';
 export 'src/exceptions/deserialization_exception.dart';
 export 'src/exceptions/deserializer_datatype_mismatch_exception.dart';
 export 'src/exceptions/deserializer_not_found_exception.dart';
+export 'src/exceptions/incomplete_deserialization_exception.dart';
 export 'src/exceptions/property_value_not_found_exception.dart';
 export 'src/exceptions/rdf_mapping_exception.dart';
 export 'src/exceptions/serialization_exception.dart';
@@ -241,9 +244,27 @@ final class RdfMapper {
     void Function(RdfMapperRegistry registry)? register,
     RdfGraphDecoderOptions? stringDecoderOptions,
     RdfGraphEncoderOptions? stringEncoderOptions,
+    CompletenessMode completeness = CompletenessMode.strict,
   }) {
     return RdfObjectStringCodec<T>(
-      objectCodec: _graphOperations.objectCodec<T>(register: register),
+      objectCodec: _graphOperations.objectCodec<T>(
+          register: register, completeness: completeness),
+      graphCodec: _rdfCore.codec(
+        contentType: contentType,
+        encoderOptions: stringEncoderOptions,
+        decoderOptions: stringDecoderOptions,
+      ),
+    );
+  }
+
+  RdfObjectLosslessStringCodec<T> objectLosslessCodec<T>({
+    String? contentType,
+    void Function(RdfMapperRegistry registry)? register,
+    RdfGraphDecoderOptions? stringDecoderOptions,
+    RdfGraphEncoderOptions? stringEncoderOptions,
+  }) {
+    return RdfObjectLosslessStringCodec<T>(
+      objectCodec: _graphOperations.objectLosslessCodec<T>(register: register),
       graphCodec: _rdfCore.codec(
         contentType: contentType,
         encoderOptions: stringEncoderOptions,
@@ -281,9 +302,28 @@ final class RdfMapper {
     void Function(RdfMapperRegistry registry)? register,
     RdfGraphDecoderOptions? stringDecoderOptions,
     RdfGraphEncoderOptions? stringEncoderOptions,
+    CompletenessMode completeness = CompletenessMode.strict,
   }) {
     return RdfObjectsStringCodec<T>(
-      objectsCodec: _graphOperations.objectsCodec<T>(register: register),
+      objectsCodec: _graphOperations.objectsCodec<T>(
+          register: register, completeness: completeness),
+      graphCodec: _rdfCore.codec(
+        contentType: contentType,
+        encoderOptions: stringEncoderOptions,
+        decoderOptions: stringDecoderOptions,
+      ),
+    );
+  }
+
+  RdfObjectsLosslessStringCodec<T> objectsLosslessCodec<T>({
+    String? contentType,
+    void Function(RdfMapperRegistry registry)? register,
+    RdfGraphDecoderOptions? stringDecoderOptions,
+    RdfGraphEncoderOptions? stringEncoderOptions,
+  }) {
+    return RdfObjectsLosslessStringCodec<T>(
+      objectsCodec:
+          _graphOperations.objectsLosslessCodec<T>(register: register),
       graphCodec: _rdfCore.codec(
         contentType: contentType,
         encoderOptions: stringEncoderOptions,
@@ -336,8 +376,25 @@ final class RdfMapper {
     String? documentUrl,
     void Function(RdfMapperRegistry registry)? register,
     RdfGraphDecoderOptions? stringDecoderOptions,
+    CompletenessMode completeness = CompletenessMode.strict,
   }) {
     return objectCodec<T>(
+      contentType: contentType,
+      register: register,
+      stringDecoderOptions: stringDecoderOptions,
+      completeness: completeness,
+    ).decode(rdfString, documentUrl: documentUrl, subject: subject);
+  }
+
+  (T, RdfGraph) decodeObjectLossless<T>(
+    String rdfString, {
+    RdfSubject? subject,
+    String? contentType,
+    String? documentUrl,
+    void Function(RdfMapperRegistry registry)? register,
+    RdfGraphDecoderOptions? stringDecoderOptions,
+  }) {
+    return objectLosslessCodec<T>(
       contentType: contentType,
       register: register,
       stringDecoderOptions: stringDecoderOptions,
@@ -396,12 +453,29 @@ final class RdfMapper {
     String? documentUrl,
     void Function(RdfMapperRegistry registry)? register,
     RdfGraphDecoderOptions? stringDecoderOptions,
+    CompletenessMode completenessMode = CompletenessMode.strict,
   }) {
     return objectsCodec<T>(
       contentType: contentType,
       register: register,
       stringDecoderOptions: stringDecoderOptions,
+      completeness: completenessMode,
     ).decode(rdfString, documentUrl: documentUrl).toList();
+  }
+
+  (List<T>, RdfGraph) decodeObjectsLossless<T>(
+    String rdfString, {
+    String? contentType,
+    String? documentUrl,
+    void Function(RdfMapperRegistry registry)? register,
+    RdfGraphDecoderOptions? stringDecoderOptions,
+  }) {
+    final r = objectsLosslessCodec<T>(
+      contentType: contentType,
+      register: register,
+      stringDecoderOptions: stringDecoderOptions,
+    ).decode(rdfString, documentUrl: documentUrl);
+    return (r.$1.toList(), r.$2);
   }
 
   /// Serializes a Dart object or collection to an RDF string representation.
@@ -455,6 +529,21 @@ final class RdfMapper {
     ).encode(instance, baseUri: baseUri);
   }
 
+  String encodeObjectLossless<T>(
+    (T, RdfGraph) instance, {
+    String? contentType,
+    String? baseUri,
+    RdfGraphEncoderOptions? stringEncoderOptions,
+    void Function(RdfMapperRegistry registry)? register,
+  }) {
+    // Use the codec approach with the appropriate type
+    return objectLosslessCodec<T>(
+      contentType: contentType,
+      stringEncoderOptions: stringEncoderOptions,
+      register: register,
+    ).encode(instance, baseUri: baseUri);
+  }
+
   /// Serializes a collection of Dart objects to an RDF string representation.
   ///
   /// This method is similar to [encodeObject] but optimized for collections of objects.
@@ -497,6 +586,21 @@ final class RdfMapper {
   }) {
     // Use the codec approach with the appropriate type
     return objectsCodec<T>(
+      contentType: contentType,
+      stringEncoderOptions: stringEncoderOptions,
+      register: register,
+    ).encode(instance, baseUri: baseUri);
+  }
+
+  String encodeObjectsLossless<T>(
+    (Iterable<T>, RdfGraph) instance, {
+    String? contentType,
+    String? baseUri,
+    RdfGraphEncoderOptions? stringEncoderOptions,
+    void Function(RdfMapperRegistry registry)? register,
+  }) {
+    // Use the codec approach with the appropriate type
+    return objectsLosslessCodec<T>(
       contentType: contentType,
       stringEncoderOptions: stringEncoderOptions,
       register: register,
