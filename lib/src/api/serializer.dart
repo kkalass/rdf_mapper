@@ -15,6 +15,20 @@ import 'package:rdf_mapper/src/api/serialization_context.dart';
 /// It doesn't define any methods itself but acts as a common ancestor.
 sealed class Serializer<T> {}
 
+abstract interface class UnmappedTriplesSerializer<T> implements Serializer<T> {
+  /// Converts a Dart object to a set of unmapped triples.
+  ///
+  /// This method processes the given object and converts it into a list of triples
+  /// that are not mapped to any specific property or type. This is useful for
+  /// handling additional data that doesn't fit into the standard serialization model.
+  ///
+  /// [value] The object to convert
+  /// [context] The current serialization context
+  ///
+  /// Returns the resulting list of triples
+  List<Triple> toUnmappedTriples(T value);
+}
+
 /// Groups those serializers that serialize a Dart object to an RDF term
 /// (i.e. IriTerm or LiteralTerm) and not to a list of Triples.
 ///
@@ -183,6 +197,16 @@ abstract interface class GlobalResourceSerializer<T>
   /// @param parentSubject Optional parent subject for establishing relationships
   /// @return A tuple with the IRI term and associated triples
   (IriTerm, List<Triple>) toRdfResource(
+    T value,
+    SerializationContext context, {
+    RdfSubject? parentSubject,
+  });
+}
+
+abstract interface class GenericResourceSerializer<T>
+    implements ResourceSerializer<T> {
+  @override
+  (RdfSubject, List<Triple>) toRdfResource(
     T value,
     SerializationContext context, {
     RdfSubject? parentSubject,

@@ -19,6 +19,12 @@ class MockDeserializationContext extends DeserializationContext {
   }
 
   @override
+  List<Triple> getTriplesForSubject(RdfSubject subject,
+      {bool includeBlankNodes = true}) {
+    throw UnimplementedError();
+  }
+
+  @override
   T fromLiteralTerm<T>(
     LiteralTerm term, {
     LiteralTermDeserializer<T>? deserializer,

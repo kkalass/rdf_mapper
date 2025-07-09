@@ -9,6 +9,8 @@ import 'package:rdf_mapper/src/api/deserializer.dart';
 import 'package:rdf_mapper/src/mappers/iri/iri_full_mapper.dart';
 import 'package:test/test.dart';
 
+import '../deserializers/mock_deserialization_context.dart';
+
 // Mock implementation of SerializationContext for testing
 class MockSerializationContext extends SerializationContext {
   @override
@@ -25,23 +27,6 @@ class MockSerializationContext extends SerializationContext {
   LiteralTerm toLiteralTerm<T>(
     T value, {
     LiteralTermSerializer<T>? serializer,
-  }) {
-    throw UnimplementedError();
-  }
-}
-
-// Mock implementation of DeserializationContext for testing
-class MockDeserializationContext extends DeserializationContext {
-  @override
-  ResourceReader reader(RdfSubject subject) {
-    throw UnimplementedError();
-  }
-
-  @override
-  T fromLiteralTerm<T>(
-    LiteralTerm term, {
-    LiteralTermDeserializer<T>? deserializer,
-    bool bypassDatatypeCheck = false,
   }) {
     throw UnimplementedError();
   }

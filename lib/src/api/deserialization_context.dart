@@ -48,6 +48,9 @@ abstract class DeserializationContext {
   /// Returns a [ResourceReader] instance for fluent property access.
   ResourceReader reader(RdfSubject subject);
 
+  List<Triple> getTriplesForSubject(RdfSubject subject,
+      {bool includeBlankNodes = true});
+
   /// Converts an RDF literal term into a typed Dart value.
   ///
   /// This method transforms an RDF literal (a data value in the RDF graph) into

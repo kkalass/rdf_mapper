@@ -2,6 +2,9 @@ import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
 import 'package:test/test.dart';
 
+import '../deserializers/mock_deserialization_context.dart';
+import 'standard_mappers_test.dart';
+
 void main() {
   group('IriTermMapper', () {
     late RdfMapperRegistry registry;
@@ -31,7 +34,7 @@ void main() {
       // Deserialize from term
       final deserializedReference = mapper.fromRdfTerm(
         term,
-        CustomDeserializationContext(),
+        MockDeserializationContext(),
       );
 
       // Verify deserialized object
@@ -324,20 +327,6 @@ class CustomSerializationContext extends SerializationContext {
     T value, {
     LiteralTermSerializer<T>? serializer,
   }) {
-    throw UnimplementedError();
-  }
-}
-
-class CustomDeserializationContext extends DeserializationContext {
-  @override
-  ResourceReader reader(RdfSubject subject) {
-    throw UnimplementedError();
-  }
-
-  @override
-  T fromLiteralTerm<T>(LiteralTerm term,
-      {LiteralTermDeserializer<T>? deserializer,
-      bool bypassDatatypeCheck = false}) {
     throw UnimplementedError();
   }
 }

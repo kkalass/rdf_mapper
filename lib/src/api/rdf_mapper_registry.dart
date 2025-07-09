@@ -11,6 +11,8 @@ import 'package:rdf_mapper/src/mappers/literal/date_time_mapper.dart';
 import 'package:rdf_mapper/src/mappers/literal/double_mapper.dart';
 import 'package:rdf_mapper/src/mappers/literal/int_mapper.dart';
 import 'package:rdf_mapper/src/mappers/literal/string_mapper.dart';
+import 'package:rdf_mapper/src/mappers/unmapped/rdf_graph_mapper.dart';
+import 'package:rdf_mapper/src/mappers/unmapped/wrappers.dart';
 
 final _log = Logger("rdf_orm.registry");
 
@@ -65,6 +67,8 @@ final class RdfMapperRegistry {
     copy._iriTermDeserializers.addAll(_iriTermDeserializers);
     copy._literalTermSerializers.addAll(_literalTermSerializers);
     copy._literalTermDeserializers.addAll(_literalTermDeserializers);
+    copy._unmappedTriplesDeserializers.addAll(_unmappedTriplesDeserializers);
+    copy._unmappedTriplesSerializers.addAll(_unmappedTriplesSerializers);
     return copy;
   }
 
@@ -82,12 +86,18 @@ final class RdfMapperRegistry {
       {};
   final Map<Type, LiteralTermSerializer<dynamic>> _literalTermSerializers = {};
   final Map<Type, ResourceSerializer<dynamic>> _resourceSerializers = {};
+  final Map<Type, UnmappedTriplesDeserializer<dynamic>>
+      _unmappedTriplesDeserializers = {};
+  final Map<Type, UnmappedTriplesSerializer<dynamic>>
+      _unmappedTriplesSerializers = {};
 
   // RDF type IRI-based registries (for dynamic type resolution during deserialization)
   final Map<IriTerm, GlobalResourceDeserializer<dynamic>>
       _globalResourceDeserializersByType = {};
   final Map<IriTerm, LocalResourceDeserializer<dynamic>>
       _localResourceDeserializersByType = {};
+  final Map<IriTerm, Type> _globalResourceDartTypeByIriType = {};
+  final Map<IriTerm, Type> _localResourceDartTypeByIriType = {};
 
   /// Creates a new RDF mapper registry with standard mappers pre-registered.
   ///
@@ -107,6 +117,9 @@ final class RdfMapperRegistry {
     registerMapper(const DoubleMapper());
     registerMapper(const BoolMapper());
     registerMapper(const DateTimeMapper());
+
+    // Register mappers for unmapped triples
+    registerMapper(const RdfGraphMapper());
   }
 
   /// Registers a serializer with the appropriate registry based on its type.
@@ -130,6 +143,9 @@ final class RdfMapperRegistry {
         break;
       case ResourceSerializer<T>():
         _registerResourceSerializer(serializer);
+        break;
+      case UnmappedTriplesSerializer<T>():
+        _registerUnmappedTriplesSerializer(serializer);
         break;
     }
   }
@@ -159,6 +175,9 @@ final class RdfMapperRegistry {
         break;
       case GlobalResourceDeserializer<T>():
         _registerGlobalResourceDeserializer(deserializer);
+        break;
+      case UnmappedTriplesDeserializer<T>():
+        _registerUnmappedTriplesDeserializer(deserializer);
         break;
     }
   }
@@ -194,7 +213,34 @@ final class RdfMapperRegistry {
         _registerIriTermSerializer<T>(mapper);
         _registerIriTermDeserializer<T>(mapper);
         break;
+      case UnmappedTriplesMapper<T>():
+        _registerUnmappedTriplesDeserializer<T>(mapper);
+        _registerUnmappedTriplesSerializer<T>(mapper);
+        break;
     }
+  }
+
+  void _registerUnmappedTriplesDeserializer<T>(
+    UnmappedTriplesDeserializer<T> deserializer,
+  ) {
+    _log.fine(
+        'Registering UnmappedTriples deserializer for type ${T.toString()}');
+    _unmappedTriplesDeserializers[T] = deserializer;
+    // automatically register wrappers that make this type available as a resource
+    _registerGlobalResourceDeserializer(
+        GlobalResourceUnmappedTriplesDeserializer(deserializer));
+    _registerLocalResourceDeserializer(
+        LocalResourceUnmappedTriplesDeserializer(deserializer));
+  }
+
+  void _registerUnmappedTriplesSerializer<T>(
+    UnmappedTriplesSerializer<T> serializer,
+  ) {
+    _log.fine(
+        'Registering UnmappedTriples serializer for type ${T.toString()}');
+    _unmappedTriplesSerializers[T] = serializer;
+    // automatically register wrappers that make this type available as a resource
+    _registerResourceSerializer(ResourceUnmappedTriplesSerializer(serializer));
   }
 
   void _registerIriTermDeserializer<T>(IriTermDeserializer<T> deserializer) {
@@ -227,6 +273,7 @@ final class RdfMapperRegistry {
     var typeIri = deserializer.typeIri;
     if (typeIri != null) {
       _localResourceDeserializersByType[typeIri] = deserializer;
+      _localResourceDartTypeByIriType[typeIri] = T;
     }
   }
 
@@ -238,6 +285,7 @@ final class RdfMapperRegistry {
     var typeIri = deserializer.typeIri;
     if (typeIri != null) {
       _globalResourceDeserializersByType[typeIri] = deserializer;
+      _globalResourceDartTypeByIriType[typeIri] = T;
     }
   }
 
@@ -277,12 +325,46 @@ final class RdfMapperRegistry {
     return deserializer;
   }
 
+  Type? getGlobalResourceDartTypeByIriType(IriTerm typeIri) {
+    return _globalResourceDartTypeByIriType[typeIri];
+  }
+
+  Type? getLocalResourceDartTypeByIriType(IriTerm typeIri) {
+    return _localResourceDartTypeByIriType[typeIri];
+  }
+
   IriTermSerializer<T> getIriTermSerializer<T>() {
     final serializer = _iriTermSerializers[T];
     if (serializer == null) {
       throw SerializerNotFoundException('IriTermSerializer', T);
     }
     return serializer as IriTermSerializer<T>;
+  }
+
+  UnmappedTriplesDeserializer<T> getUnmappedTriplesDeserializer<T>() {
+    final deserializer = _unmappedTriplesDeserializers[T];
+    if (deserializer == null) {
+      throw DeserializerNotFoundException('UnmappedTriplesDeserializer', T);
+    }
+    return deserializer as UnmappedTriplesDeserializer<T>;
+  }
+
+  UnmappedTriplesSerializer<T> getUnmappedTriplesSerializer<T>() {
+    final serializer = _unmappedTriplesSerializers[T];
+    if (serializer == null) {
+      throw SerializerNotFoundException('UnmappedTriplesSerializer', T);
+    }
+    return serializer as UnmappedTriplesSerializer<T>;
+  }
+
+  UnmappedTriplesSerializer<T> getUnmappedTriplesSerializerByType<T>(
+    Type type,
+  ) {
+    final serializer = _unmappedTriplesSerializers[type];
+    if (serializer == null) {
+      throw SerializerNotFoundException('UnmappedTriplesSerializer', type);
+    }
+    return serializer as UnmappedTriplesSerializer<T>;
   }
 
   /// Gets a IRI serializer by runtime type rather than generic type parameter.
@@ -391,13 +473,15 @@ final class RdfMapperRegistry {
     return (_iriTermDeserializers[T] ??
         _literalTermDeserializers[T] ??
         _localResourceDeserializers[T] ??
-        _globalResourceDeserializers[T]) as Deserializer<T>?;
+        _globalResourceDeserializers[T] ??
+        _unmappedTriplesDeserializers[T]) as Deserializer<T>?;
   }
 
   Serializer<T>? findSerializerByType<T>() {
     return (_iriTermSerializers[T] ??
         _literalTermSerializers[T] ??
-        _resourceSerializers[T]) as Serializer<T>?;
+        _resourceSerializers[T] ??
+        _unmappedTriplesSerializers[T]) as Serializer<T>?;
   }
 
   /// Checks if a mapper exists for a type.
@@ -416,4 +500,8 @@ final class RdfMapperRegistry {
   bool hasLiteralTermSerializerFor<T>() =>
       _literalTermSerializers.containsKey(T);
   bool hasResourceSerializerFor<T>() => _resourceSerializers.containsKey(T);
+  bool hasUnmappedTriplesDeserializerFor<T>() =>
+      _unmappedTriplesDeserializers.containsKey(T);
+  bool hasUnmappedTriplesSerializerFor<T>() =>
+      _unmappedTriplesSerializers.containsKey(T);
 }

@@ -1,0 +1,383 @@
+
+WARNING: WORK IN PROGRESS!
+
+# Lossless RDF Mapping in rdf_mapper
+
+This document explains how to use rdf_mapper to perform lossless RDF mapping, ensuring that all information from an original RDF document is preserved when converting to Dart objects and back again. This is crucial for scenarios where you need to maintain the integrity of the full RDF graph, even for triples that aren't explicitly mapped to properties in your Dart model.
+
+## Core Concepts for Lossless Mapping
+rdf_mapper offers two complementary strategies to achieve lossless mapping:
+
+Preserving Unmapped Triples within an Object (unmappedGraph field): This strategy focuses on retaining all triples directly associated with a specific subject (your Dart object's ID) that are not explicitly mapped to other properties of that object. This ensures that the object itself is a complete representation of its part of the RDF graph.
+
+Preserving the Entire Document (decodeObjectLossless method): This strategy ensures that all triples from the original input document are preserved, even those completely unrelated to the primary object being decoded. It provides a way to retrieve the primary object and any other entities or "remainder" triples from the document.
+
+These two strategies can be used independently or combined for comprehensive lossless mapping.
+
+## Strategy 1: Preserving Unmapped Triples within an Object
+The core idea is to designate a field in your Dart model to store any triples that are part of the original RDF graph and are about the same subject as your Dart object, but are not explicitly mapped to other properties of your object. These are often referred to as "unmapped triples" or "catch-all triples."
+
+For this purpose, we recommend using an RdfGraph instance (from package:rdf_core/rdf_core.dart) as the type for this field, as it provides a robust way to manage a collection of RDF triples, including handling blank nodes.
+
+### 1. Update Your Dart Model
+Add an RdfGraph field to your model class. This field will hold all triples directly related to the object's subject that aren't mapped to other properties.
+
+```dart
+import 'package:rdf_mapper/rdf_mapper.dart';
+import 'package:rdf_vocabularies/schema.dart';
+import 'package:rdf_core/rdf_core.dart'; // Correct import for RdfGraph
+
+class Person {
+  final String id;
+  final String name;
+  final int age;
+  final RdfGraph unmappedGraph; // Field to store unmapped triples
+
+  Person({
+    required this.id,
+    required this.name,
+    required this.age,
+    RdfGraph? unmappedGraph,
+  }) : unmappedGraph = unmappedGraph ?? RdfGraph({}); // Initialize with an empty graph
+
+  @override
+  String toString() {
+    return 'Person(id: $id, name: $name, age: $age, unmappedGraph: ${unmappedGraph.triples.length} triples)';
+  }
+}
+```
+
+### 2. Decoding - Using reader.getUnmapped in your GlobalResourceMapper
+
+Within your GlobalResourceMapper's fromRdfResource method, you'll use the reader.getUnmapped<U>() method. This is the core mechanism for the 'Preserving Unmapped Triples within an Object' strategy, ensuring your Dart object fully captures its relevant subgraph. This method automatically collects all triples for the current subject (and its connected blank nodes) that were not consumed by other reader.require or reader.optional calls. These triples are then converted into the type U (e.g., RdfGraph) using an UnmappedTriplesMapper.
+
+Important: The reader.getUnmapped<U>() call should typically be the last operation performed on the reader for a given subject. This ensures that all explicit property mappings have had the opportunity to consume their respective triples, leaving only the truly unmapped triples to be collected.
+
+```dart
+import 'package:rdf_mapper/rdf_mapper.dart';
+import 'package:rdf_vocabularies/schema.dart';
+import 'package:rdf_core/rdf_core.dart'; // Correct import for RdfGraph
+import 'package:rdf_mapper/src/model/triple.dart'; // Assuming Triple is here
+import 'package:rdf_mapper/src/model/term.dart'; // Assuming Term is here
+
+class PersonMapper implements GlobalResourceMapper<Person> {
+  @override
+  IriTerm? get typeIri => SchemaPerson.classIri;
+
+  @override
+  Person fromRdfResource(IriTerm term, DeserializationContext context) {
+    final reader = context.reader(term);
+
+    final name = reader.require<String>(SchemaPerson.foafName);
+    final age = reader.require<int>(SchemaPerson.foafAge);
+
+    // Use getUnmapped to retrieve the remaining triples for this subject
+    // This should generally be the last call on the reader.
+    // The default RdfGraphUnmappedTriplesMapper is used here implicitly.
+    final unmappedGraph = reader.getUnmapped<RdfGraph>();
+
+    return Person(
+      id: term.iri,
+      name: name,
+      age: age,
+      unmappedGraph: unmappedGraph,
+    );
+  }
+
+  // ... toRdfResource implementation will be covered next ...
+}
+```
+
+### 3. Encoding - Using builder.addUnmapped in your GlobalResourceMapper
+
+In your GlobalResourceMapper's toRdfResource method, use the builder.addUnmapped(value.unmappedGraph) method. This method is essential for the 'Preserving Unmapped Triples within an Object' strategy during serialization, ensuring all local triples are included in the output. This will take the RdfGraph from your model's unmappedGraph field and add its triples to the output.
+
+```dart
+import 'package:rdf_mapper/rdf_mapper.dart';
+import 'package:rdf_vocabularies/schema.dart';
+import 'package:rdf_core/rdf_core.dart'; // Correct import for RdfGraph
+import 'package:rdf_mapper/src/model/triple.dart'; // Assuming Triple is here
+import 'package:rdf_mapper/src/model/term.dart'; // Assuming Term is here
+
+class PersonMapper implements GlobalResourceMapper<Person> {
+  @override
+  IriTerm? get typeIri => SchemaPerson.classIri;
+
+  @override
+  (IriTerm, List<Triple>) toRdfResource(Person value, SerializationContext context, {RdfSubject? parentSubject}) {
+    final builder = context.resourceBuilder(IriTerm(value.id))
+      .addValue(SchemaPerson.foafName, value.name)
+      .addValue(SchemaPerson.foafAge, value.age)
+
+      // Add the unmapped graph's triples to the builder
+      // The default RdfGraphUnmappedTriplesMapper is used here implicitly.
+      .addUnmapped(value.unmappedGraph);
+
+    // The build() method will now return all triples, including the unmapped ones.
+    return builder.build();
+  }
+
+  // ... fromRdfResource implementation as covered above ...
+}
+```
+
+## Strategy 2: Preserving the Entire Document
+This strategy focuses on ensuring that the entire original RDF document can be round-tripped, even if it contains entities or triples not directly related to the primary object being mapped.
+
+### 1. Decoding: Using rdfMapper.decodeObjectLossless
+The decodeObjectLossless method allows you to process an entire RDF document and retrieve your primary mapped object along with all other triples that were not part of that object's subgraph. This method takes the full Turtle string and returns a Dart record (T object, RdfGraph remainderGraph).
+
+The object (T) will contain all its explicitly mapped properties, and if its GlobalResourceMapper is implemented to use reader.getUnmapped, its unmappedGraph field will be populated with relevant triples.
+
+The remainderGraph will contain all other triples from the original document that were not consumed by the mapping process for the object (i.e., not directly about the object or its connected blank nodes, and not explicitly mapped or captured in the unmappedGraph field).
+
+```dart
+// Example usage of decodeObjectLossless
+final turtleInput = '''
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix ex: <http://example.org/> .
+
+<http://example.org/person/1> a foaf:Person ;
+  foaf:name "John Smith" ;
+  foaf:age 30 ;
+  ex:hasSecret _:secret .
+
+_:secret ex:code "XYZ" ;
+         ex:notes "Top secret info" .
+
+<http://example.org/event/party> a ex:Event ;
+  ex:location "Central Park" ;
+  ex:date "2024-07-09" .
+''';
+
+final (person, remainderGraph) = rdfMapper.decodeObjectLossless<Person>(
+  turtleInput,
+  initialSubjectIri: IriTerm('http://example.org/person/1'),
+);
+
+print('Decoded Person: $person');
+print('Unmapped Triples within Person: ${person.unmappedGraph.triples.length}');
+print('Remainder Graph Triples: ${remainderGraph.triples.length}');
+```
+
+### 2. Encoding: Using rdfMapper.encodeObjectLossless
+To complete the lossless round-trip for the entire document, you need a way to combine the re-serialized primary object's graph with the remainderGraph obtained during decoding. The encodeObjectLossless method facilitates this by taking your mapped object and the remainderGraph, producing a single RdfGraph that represents the entire document.
+
+```dart
+// Conceptual method signature for encodeObjectLossless
+// In lib/src/rdf_mapper.dart
+class RdfMapper {
+  // ... other methods ...
+
+  /// Combines a mapped Dart object's graph with a remainder graph
+  /// to form a complete RdfGraph representing the original document.
+  ///
+  /// The [object] is serialized using its registered GlobalResourceMapper,
+  /// which should include its `unmappedGraph` field if implemented for lossless object mapping.
+  /// The [remainderGraph] contains any other triples from the original document
+  /// that were not part of the object's subgraph.
+  RdfGraph encodeObjectLossless<T>(T object, RdfGraph remainderGraph) {
+    // 1. Serialize the main object using its registered mapper.
+    // This will produce triples for the object, including those from its unmappedGraph.
+    final (objectSubject, objectTriples) = encodeObject(object);
+    final objectGraph = RdfGraph(objectTriples.toSet());
+
+    // 2. Combine the object's graph with the remainder graph.
+    // This creates a new graph containing all triples from both sources.
+    return RdfGraph({
+      ...objectGraph.triples,
+      ...remainderGraph.triples,
+    });
+  }
+}
+```
+
+## Advanced Use Cases: Custom UnmappedTriplesMapper
+While rdf_mapper provides a default UnmappedTriplesMapper for RdfGraph, you might have a custom graph-like data structure (U) you prefer to use for storing unmapped triples. This might be due to a preference for a different graph library, specific performance requirements, or integration with existing data models.
+
+### Define Your Custom UnmappedTriplesMapper
+Implement the UnmappedTriplesMapper<U> interface, where U is your custom type.
+
+```dart
+import 'package:rdf_mapper/rdf_mapper.dart';
+import 'package:rdf_core/rdf_core.dart'; // For Triple, IriTerm, etc.
+
+// Assume you have a custom class like this:
+class MyCustomGraphType {
+  final Set<Triple> internalTriples;
+  MyCustomGraphType(this.internalTriples);
+  // Add methods as needed for your custom graph type
+}
+
+/// A custom implementation of UnmappedTriplesMapper for MyCustomGraphType.
+class MyCustomUnmappedTriplesMapper implements UnmappedTriplesMapper<MyCustomGraphType> {
+  @override
+  MyCustomGraphType fromTriples(IriTerm subject, Set<Triple> triples, DeserializationContext context) {
+    // Convert the raw triples into your custom graph type
+    return MyCustomGraphType(triples);
+  }
+
+  @override
+  Set<Triple> toTriples(IriTerm subject, MyCustomGraphType value, SerializationContext context) {
+    // Convert your custom graph type back into a set of triples
+    // Ensure only triples relevant to the subject are returned if your custom type holds more.
+    return value.internalTriples.where((t) => t.subject == subject).toSet();
+  }
+}
+```
+
+### 6. Registering or Passing Your Custom Mapper
+You have two options for using your custom UnmappedTriplesMapper:
+
+a) Register Globally (Recommended for common types)
+You can register your custom mapper with the RdfMapper's registry, similar to how GlobalResourceMappers are registered. This allows getUnmapped() and addUnmapped() to automatically discover and use your mapper when U is MyCustomGraphType.
+
+```dart
+// In your RdfMapper initialization
+final rdfMapper = RdfMapper.withDefaultRegistry();
+rdfMapper.registerMapper<MyCustomGraphType>(MyCustomUnmappedTriplesMapper());
+
+// Now, in your GlobalResourceMapper, you can simply call:
+// final unmappedData = reader.getUnmapped<MyCustomGraphType>();
+// builder.addUnmapped(value.unmappedData);
+```
+
+b) Pass Directly (For specific, non-globally registered uses)
+If you don't want to register it globally, or if you need to use a specific instance, you can pass it directly to the getUnmapped and addUnmapped methods:
+
+```dart
+// In your GlobalResourceMapper
+final myCustomMapper = MyCustomUnmappedTriplesMapper(); // Create an instance
+
+// Deserialization
+final unmappedData = reader.getUnmapped<MyCustomGraphType>( unmappedTriplesSerializer: myCustomMapper);
+
+// Serialization
+builder.addUnmapped(value.unmappedData,unmappedTriplesSerializer: myCustomMapper);
+```
+
+## Complete Example
+Here's a full example demonstrating the lossless mapping process:
+```dart
+import 'package:rdf_mapper/rdf_mapper.dart';
+import 'package:rdf_vocabularies/schema.dart';
+import 'package:rdf_core/rdf_core.dart'; // Correct import for RdfGraph
+
+// 1. Define the Model with unmappedGraph field
+class Person {
+  final String id;
+  final String name;
+  final int age;
+  final RdfGraph unmappedGraph;
+
+  Person({
+    required this.id,
+    required this.name,
+    required this.age,
+    RdfGraph? unmappedGraph,
+  }) : unmappedGraph = unmappedGraph ?? RdfGraph({});
+
+  @override
+  String toString() {
+    return 'Person(id: $id, name: $name, age: $age, unmappedGraph: ${unmappedGraph.triples.length} triples)';
+  }
+}
+
+// 2. Implement the GlobalResourceMapper with getUnmapped and addUnmapped
+class PersonMapper implements GlobalResourceMapper<Person> {
+  @override
+  IriTerm? get typeIri => SchemaPerson.classIri;
+
+  @override
+  (IriTerm, List<Triple>) toRdfResource(Person value, SerializationContext context, {RdfSubject? parentSubject}) {
+    final builder = context.resourceBuilder(IriTerm(value.id))
+      .addValue(SchemaPerson.foafName, value.name)
+      .addValue(SchemaPerson.foafAge, value.age);
+
+    // Add the unmapped graph's triples
+    builder.addUnmapped(value.unmappedGraph); // Uses default RdfGraphUnmappedTriplesMapper
+
+    return builder.build();
+  }
+
+  @override
+  Person fromRdfResource(IriTerm term, DeserializationContext context) {
+    final reader = context.reader(term);
+
+    final name = reader.require<String>(SchemaPerson.foafName);
+    final age = reader.require<int>(SchemaPerson.foafAge);
+
+    // Get the unmapped triples as an RdfGraph
+    final unmappedGraph = reader.getUnmapped<RdfGraph>(); // Uses default RdfGraphUnmappedTriplesMapper
+
+    return Person(
+      id: term.iri,
+      name: name,
+      age: age,
+      unmappedGraph: unmappedGraph,
+    );
+  }
+}
+
+void main() {
+  // Setup the RDF Mapper
+  final rdfMapper = RdfMapper.withDefaultRegistry();
+  rdfMapper.registerMapper<Person>(PersonMapper());
+
+  final turtleInput = '''
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix ex: <http://example.org/> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+
+<http://example.org/person/1> a foaf:Person ;
+  foaf:name "John Smith" ;
+  foaf:age 30 ;
+  ex:hasSecret _:secret ;
+  ex:favoriteColor "blue" . # This will be unmapped
+
+_:secret ex:code "XYZ" ;
+         ex:notes "Top secret info" ;
+         geo:hasGeometry _:geom . # Nested blank node in unmapped part
+
+_:geom geo:asWKT "POINT(10 20)" . # Further nested blank node
+
+<http://example.org/event/party> a ex:Event ;
+  ex:location "Central Park" ;
+  ex:date "2024-07-09" . # This will be in the remainder graph
+
+<http://example.org/organization/acme> ex:name "Acme Corp" . # Also in remainder
+''';
+
+  print('--- Original Turtle Input ---');
+  print(turtleInput);
+
+  // Decode the Person object in a lossless way
+  final (person, remainderGraph) = rdfMapper.decodeObjectLossless<Person>(
+    turtleInput,
+    initialSubjectIri: IriTerm('http://example.org/person/1'),
+  );
+
+  print('\n--- Decoded Person Object ---');
+  print(person);
+
+  print('\n--- Unmapped Triples within Person.unmappedGraph ---');
+  for (final triple in person.unmappedGraph.triples) {
+    print(triple);
+  }
+
+  print('\n--- Remainder Graph (Triples not about Person 1) ---');
+  // Assuming rdfMapper.turtleEncoder.encode is available and synchronous
+  final remainderTurtle = rdfMapper.turtleEncoder.encode(remainderGraph);
+  print(remainderTurtle);
+
+  // Re-serialize the Person object and combine with the remainder graph for full round-trip
+  final fullRoundTripGraph = rdfMapper.encodeObjectLossless(person, remainderGraph);
+
+  print('\n--- Full Document Re-serialized (Person + Remainder) ---');
+  final fullRoundTripTurtle = rdfMapper.turtleEncoder.encode(fullRoundTripGraph);
+  print(fullRoundTripTurtle);
+
+  // Verify that the full round-trip is semantically equivalent to the original
+  // (Note: Blank node identifiers might change, but the graph structure should be equivalent)
+}
+```

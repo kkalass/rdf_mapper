@@ -70,6 +70,17 @@ class ResourceBuilder<S extends RdfSubject> {
     return this;
   }
 
+  ResourceBuilder<S> addUnmapped<V>(
+    V value, {
+    UnmappedTriplesSerializer<V>? unmappedTriplesSerializer,
+  }) {
+    _triples.addAll(
+      _service.unmappedTriples(_subject, value,
+          unmappedTriplesSerializer: unmappedTriplesSerializer),
+    );
+    return this;
+  }
+
   ResourceBuilder<S> addValueIfNotNull<V>(
     RdfPredicate predicate,
     V? value, {

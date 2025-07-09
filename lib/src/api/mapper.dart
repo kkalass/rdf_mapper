@@ -36,6 +36,12 @@ abstract interface class LocalResourceMapper<T>
         LocalResourceDeserializer<T>,
         LocalResourceSerializer<T> {}
 
+abstract interface class UnmappedTriplesMapper<T>
+    implements
+        Mapper<T>,
+        UnmappedTriplesDeserializer<T>,
+        UnmappedTriplesSerializer<T> {}
+
 /// Bidirectional mapper between Dart objects and RDF IRI terms.
 ///
 /// Combines the functionality of both [IriTermSerializer] and [IriTermDeserializer]

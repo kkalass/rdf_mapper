@@ -409,4 +409,20 @@ class SerializationContextImpl extends SerializationContext
         iriTermSerializer: iriTermSerializer,
         literalTermSerializer: literalTermSerializer,
       );
+
+  @override
+  Iterable<Triple> unmappedTriples<T>(RdfSubject subject, T value,
+      {UnmappedTriplesSerializer<T>? unmappedTriplesSerializer}) {
+    var ser = unmappedTriplesSerializer ??
+        _getSerializerFallbackToRuntimeType(
+          null,
+          value,
+          _registry.getUnmappedTriplesSerializer,
+          _registry.getUnmappedTriplesSerializerByType,
+        );
+    if (ser == null) {
+      throw SerializerNotFoundException('UnmappedTriplesSerializer', T);
+    }
+    return ser.toUnmappedTriples(value);
+  }
 }

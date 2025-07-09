@@ -50,4 +50,7 @@ abstract class SerializationService {
   /// @param serializer Optional serializer for the object type
 
   List<Triple> resource<T>(T instance, {ResourceSerializer<T>? serializer});
+
+  Iterable<Triple> unmappedTriples<T>(RdfSubject subject, T value,
+      {UnmappedTriplesSerializer<T>? unmappedTriplesSerializer});
 }

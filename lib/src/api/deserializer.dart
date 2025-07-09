@@ -15,6 +15,20 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 /// It doesn't define any methods itself but acts as a common ancestor.
 sealed class Deserializer<T> {}
 
+abstract interface class UnmappedTriplesDeserializer<T>
+    implements Deserializer<T> {
+  /// Converts a set of unmapped triples to a Dart object.
+  ///
+  /// This method processes the given triples that were not mapped to any specific
+  /// property or type and converts them into a Dart object.
+  ///
+  /// [triples] The list of triples to convert
+  /// [context] The current deserialization context
+  ///
+  /// Returns the resulting Dart object
+  T fromUnmappedTriples(List<Triple> triples);
+}
+
 /// Base class for deserializers that convert RDF terms to Dart objects.
 ///
 /// Term deserializers handle the conversion of individual RDF terms to Dart objects.

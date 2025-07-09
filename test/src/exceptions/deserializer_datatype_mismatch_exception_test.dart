@@ -3,29 +3,14 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 import 'package:rdf_vocabularies/xsd.dart';
 import 'package:test/test.dart';
 
-/// Simple test context implementation that's sufficient for testing datatype checking
-class TestDeserializationContext extends DeserializationContext {
-  @override
-  ResourceReader reader(RdfSubject subject) {
-    throw UnimplementedError('Not needed for datatype mismatch tests');
-  }
-
-  @override
-  T fromLiteralTerm<T>(
-    LiteralTerm term, {
-    LiteralTermDeserializer<T>? deserializer,
-    bool bypassDatatypeCheck = false,
-  }) {
-    throw UnimplementedError('Not needed for datatype mismatch tests');
-  }
-}
+import '../deserializers/mock_deserialization_context.dart';
 
 void main() {
   group('DeserializerDatatypeMismatchException', () {
-    late TestDeserializationContext context;
+    late MockDeserializationContext context;
 
     setUp(() {
-      context = TestDeserializationContext();
+      context = MockDeserializationContext();
     });
 
     group('datatype mismatch error handling', () {

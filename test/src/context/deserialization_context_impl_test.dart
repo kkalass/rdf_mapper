@@ -224,6 +224,132 @@ void main() {
       ); // Custom deserializer converts to uppercase
     });
   });
+
+  group('getTriplesForSubject with cycles', () {
+    test('handles cyclic blank node references without infinite recursion', () {
+      // Create a cycle: blankNode1 -> blankNode2 -> blankNode1
+      final blankNode1 = BlankNodeTerm();
+      final blankNode2 = BlankNodeTerm();
+      final predicate = IriTerm('http://example.org/references');
+
+      final cyclicGraph = RdfGraph(triples: [
+        Triple(blankNode1, predicate, blankNode2),
+        Triple(blankNode2, predicate, blankNode1),
+        Triple(subject, predicate, blankNode1),
+      ]);
+
+      final cyclicContext = DeserializationContextImpl(
+        graph: cyclicGraph,
+        registry: registry,
+      );
+
+      // This should not cause a stack overflow or infinite recursion
+      final result =
+          cyclicContext.getTriplesForSubject(subject, includeBlankNodes: true);
+
+      // Should include all triples in the cycle
+      expect(result.length, equals(3));
+      expect(result.any((t) => t.subject == subject), isTrue);
+      expect(result.any((t) => t.subject == blankNode1), isTrue);
+      expect(result.any((t) => t.subject == blankNode2), isTrue);
+    });
+
+    test('handles self-referencing blank nodes', () {
+      final selfRefBlankNode = BlankNodeTerm();
+      final predicate = IriTerm('http://example.org/self');
+
+      final selfRefGraph = RdfGraph(triples: [
+        Triple(subject, predicate, selfRefBlankNode),
+        Triple(selfRefBlankNode, predicate, selfRefBlankNode), // Self-reference
+      ]);
+
+      final selfRefContext = DeserializationContextImpl(
+        graph: selfRefGraph,
+        registry: registry,
+      );
+
+      // This should not cause infinite recursion
+      final result =
+          selfRefContext.getTriplesForSubject(subject, includeBlankNodes: true);
+
+      expect(result.length, equals(2));
+      expect(result.any((t) => t.subject == subject), isTrue);
+      expect(result.any((t) => t.subject == selfRefBlankNode), isTrue);
+    });
+
+    test('handles complex cycles with multiple interconnected blank nodes', () {
+      final blankNode1 = BlankNodeTerm();
+      final blankNode2 = BlankNodeTerm();
+      final blankNode3 = BlankNodeTerm();
+      final predicate = IriTerm('http://example.org/connects');
+
+      final complexGraph = RdfGraph(triples: [
+        Triple(subject, predicate, blankNode1),
+        Triple(blankNode1, predicate, blankNode2),
+        Triple(blankNode2, predicate, blankNode3),
+        Triple(blankNode3, predicate, blankNode1), // Creates cycle
+        Triple(blankNode2, predicate, blankNode1), // Additional connection
+      ]);
+
+      final complexContext = DeserializationContextImpl(
+        graph: complexGraph,
+        registry: registry,
+      );
+
+      final result =
+          complexContext.getTriplesForSubject(subject, includeBlankNodes: true);
+
+      expect(result.length, equals(5));
+      expect(result.any((t) => t.subject == subject), isTrue);
+      expect(result.any((t) => t.subject == blankNode1), isTrue);
+      expect(result.any((t) => t.subject == blankNode2), isTrue);
+      expect(result.any((t) => t.subject == blankNode3), isTrue);
+    });
+  });
+
+  group('getBlankNodesDeepImpl', () {
+    test('handles empty triples list', () {
+      final result = DeserializationContextImpl.getBlankNodeObjectsDeep(
+          graph, [], <BlankNodeTerm>{});
+
+      expect(result, isEmpty);
+    });
+
+    test('prevents infinite recursion with cycles', () {
+      final blankNode1 = BlankNodeTerm();
+      final blankNode2 = BlankNodeTerm();
+      final testGraph = RdfGraph(triples: [
+        Triple(blankNode1, IriTerm('http://example.org/ref'), blankNode2),
+        Triple(blankNode2, IriTerm('http://example.org/ref'), blankNode1),
+      ]);
+
+      final result = DeserializationContextImpl.getBlankNodeObjectsDeep(
+          testGraph, testGraph.triples, <BlankNodeTerm>{});
+
+      expect(result, contains(blankNode1));
+      expect(result, contains(blankNode2));
+      expect(result, hasLength(2));
+    });
+
+    test('respects visited set to avoid reprocessing', () {
+      final blankNode1 = BlankNodeTerm();
+      final blankNode2 = BlankNodeTerm();
+      final visited = <BlankNodeTerm>{blankNode1};
+
+      final testGraph = RdfGraph(triples: [
+        Triple(blankNode1, IriTerm('http://example.org/ref'), blankNode2),
+        Triple(blankNode2, IriTerm('http://example.org/prop'),
+            LiteralTerm.string('value')),
+      ]);
+
+      final result = DeserializationContextImpl.getBlankNodeObjectsDeep(
+          testGraph, testGraph.triples, visited);
+
+      expect(result, isNot(contains(blankNode1))); // Already visited
+      expect(result, contains(blankNode2));
+      expect(result, hasLength(1));
+    });
+  });
 }
 
 // Test classes and custom deserializers
@@ -276,5 +402,19 @@ class CustomLocalResourceDeserializer
     final reader = context.reader(term);
     var city = reader.require<String>(VcardUniversalProperties.locality);
     return TestAddress(city: city);
+  }
+}
+
+// Additional test deserializer for map testing
+class KeyValueDeserializer
+    implements LiteralTermDeserializer<MapEntry<String, String>> {
+  @override
+  MapEntry<String, String> fromRdfTerm(
+    LiteralTerm term,
+    DeserializationContext context, {
+    bool bypassDatatypeCheck = false,
+  }) {
+    final parts = term.value.split(':');
+    return MapEntry(parts[0], parts[1]);
   }
 }

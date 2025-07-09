@@ -12,6 +12,8 @@ import 'package:rdf_mapper/src/mappers/iri/iri_full_serializer.dart';
 import 'package:rdf_mapper/src/mappers/iri/iri_id_serializer.dart';
 import 'package:test/test.dart';
 
+import '../deserializers/mock_deserialization_context.dart';
+
 // Definition for a simple test resource class
 class Resource {
   final String host;
@@ -47,22 +49,6 @@ class MockSerializationContext extends SerializationContext {
   LiteralTerm toLiteralTerm<T>(
     T value, {
     LiteralTermSerializer<T>? serializer,
-  }) {
-    throw UnimplementedError();
-  }
-}
-
-class MockDeserializationContext extends DeserializationContext {
-  @override
-  ResourceReader reader(RdfSubject subject) {
-    throw UnimplementedError();
-  }
-
-  @override
-  T fromLiteralTerm<T>(
-    LiteralTerm term, {
-    LiteralTermDeserializer<T>? deserializer,
-    bool bypassDatatypeCheck = false,
   }) {
     throw UnimplementedError();
   }
