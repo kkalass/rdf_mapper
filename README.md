@@ -514,7 +514,11 @@ class PersonMapper implements GlobalResourceMapper<Person> {
 }
 ```
 
-Perfect for applications that need to preserve unknown properties, support evolving schemas, or maintain complete data fidelity. See the [Lossless Mapping Guide](doc/LOSSLESS_MAPPING.md) for complete details.
+Perfect for applications that need to preserve unknown properties, support evolving schemas, or maintain complete data fidelity. 
+
+**Alternative unmapped types:** You can also use `Map<IriTerm, List<RdfObject>>` or `Map<RdfPredicate, List<RdfObject>>` for simpler, shallow unmapped data handling (without nested blank node triples).
+
+See the [Lossless Mapping Guide](doc/LOSSLESS_MAPPING.md) for complete details.
 
 ## Supported RDF Types
 
@@ -710,9 +714,6 @@ context.fromLiteralTerm(term, bypassDatatypeCheck: true);
 
 - Detect cycles, optimally support them.
 - Properly Support Collection (`rdf:first` / `rdf:rest` / `rdf:nil` pattern) for serialization and derserialization as dart List.
-- Implement default behaviour for nodes without mapper ((Json-LD?) Maps)
-- Support generating mappers based on annotations
-- Support "any" feature and annotation which puts the remaining properties of a node into a (Json-LD?) Map that is a property of the dart class
 - Support mapping to / from multiple RDF classes (e.g. schema:Person and foaf:Person)
 - Improve test coverage
 

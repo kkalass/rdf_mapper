@@ -466,3 +466,83 @@ _:geom geo:asWKT "POINT(10 20)" . # Further nested blank node
   // (Note: Blank node identifiers might change, but the graph structure should be equivalent)
 }
 ```
+
+### Alternative Unmapped Types for Shallow Mapping
+
+While `RdfGraph` is the recommended type for unmapped triples due to its deep mapping capabilities (automatically including connected blank nodes), rdf_mapper also provides two alternative types for unmapped triples that use shallow mapping:
+
+#### `Map<RdfPredicate, List<RdfObject>>`
+This type groups unmapped triples by their predicates, where predicates can be any `RdfPredicate` (actually can only be `IriTerm` according to RDF spec, so it is sort of an alias).
+
+#### `Map<IriTerm, List<RdfObject>>`
+This type is similar but clearly names the predicates as being `IriTerm`.
+
+**Important: Shallow vs Deep Mapping**
+- **RdfGraph (Deep)**: Automatically includes all triples connected to the subject through blank nodes, preserving the complete subgraph structure
+- **Map Types (Shallow)**: Only include direct triples about the subject, **not** connected blank node triples
+
+**Example of the difference:**
+```dart
+// Input RDF with nested blank nodes
+final turtle = '''
+<http://example.org/person> 
+  foaf:name "John" ;
+  ex:hasAddress _:addr .
+
+_:addr 
+  ex:street "123 Main St" ;
+  ex:city "Anytown" .
+''';
+
+// With RdfGraph (deep=true) - includes blank node triples
+final unmappedGraph = reader.getUnmapped<RdfGraph>();
+// Contains: person -> hasAddress -> _:addr AND _:addr -> street/city -> values
+
+// With Map<IriTerm, List<RdfObject>> (deep=false) - only direct triples
+final unmappedMap = reader.getUnmapped<Map<IriTerm, List<RdfObject>>>();
+// Contains: person -> hasAddress -> _:addr ONLY (no blank node content)
+```
+
+**Usage example:**
+```dart
+class PersonWithMapUnmapped {
+  final String id;
+  final String name;
+  final Map<IriTerm, List<RdfObject>> unmappedData;
+
+  PersonWithMapUnmapped({
+    required this.id,
+    required this.name,
+    Map<IriTerm, List<RdfObject>>? unmappedData,
+  }) : unmappedData = unmappedData ?? {};
+}
+
+class PersonWithMapMapper implements GlobalResourceMapper<PersonWithMapUnmapped> {
+  @override
+  PersonWithMapUnmapped fromRdfResource(IriTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
+    return PersonWithMapUnmapped(
+      id: subject.iri,
+      name: reader.require<String>(foafName),
+      unmappedData: reader.getUnmapped<Map<IriTerm, List<RdfObject>>>(),
+    );
+  }
+
+  @override
+  (IriTerm, List<Triple>) toRdfResource(PersonWithMapUnmapped value, SerializationContext context, {RdfSubject? parentSubject}) {
+    return context.resourceBuilder(IriTerm(value.id))
+      .addValue(foafName, value.name)
+      .addUnmapped(value.unmappedData)
+      .build();
+  }
+}
+```
+
+These map types are automatically registered by default and can be useful when:
+- You need a simpler data structure than `RdfGraph`
+- You want to process unmapped data programmatically by predicate
+- You're certain your unmapped data doesn't contain complex blank node structures
+- You're working with flat RDF data where deep mapping isn't necessary
+
+**Choose RdfGraph when you need complete subgraph preservation, and choose Map types when you need simple, shallow unmapped data handling.**
+
