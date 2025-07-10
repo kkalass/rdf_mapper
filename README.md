@@ -13,12 +13,16 @@ A powerful library for bidirectional mapping between Dart objects and RDF (Resou
 
 `rdf_mapper` provides an elegant solution for transforming between Dart object models and RDF graphs, similar to an ORM for databases. This enables developers to work with semantic data in an object-oriented manner without manually managing the complexity of transforming between dart objects and RDF triples.
 
+> **🎯 New: Code Generation Available!**  
+> For the ultimate developer experience, use our **annotation-driven code generation** with [`rdf_mapper_annotations`](https://pub.dev/packages/rdf_mapper_annotations) and [`rdf_mapper_generator`](https://pub.dev/packages/rdf_mapper_generator). Simply annotate your classes, run `dart run build_runner build`, and get type-safe, zero-boilerplate RDF mappers automatically generated!
+
 ---
 
 ## Part of a whole family of projects
 
 If you are looking for more rdf-related functionality, have a look at our companion projects:
 
+* **Easy code generation**: [rdf_mapper_annotations](https://github.com/kkalass/rdf_mapper_annotations) + [rdf_mapper_generator](https://github.com/kkalass/rdf_mapper_generator) - Generate type-safe mappers with zero boilerplate using annotations
 * basic graph classes as well as turtle/jsonld/n-triple encoding and decoding: [rdf_core](https://github.com/kkalass/rdf_core) 
 * encode and decode rdf/xml format: [rdf_xml](https://github.com/kkalass/rdf_xml) 
 * easy-to-use constants for many well-known vocabularies: [rdf_vocabularies](https://github.com/kkalass/rdf_vocabularies)
@@ -30,6 +34,7 @@ If you are looking for more rdf-related functionality, have a look at our compan
 
 - **Bidirectional Mapping**: Seamless conversion between Dart objects and RDF representations
 - **Type-Safe**: Fully typed API for safe RDF mapping operations
+- **Code Generation**: Zero-boilerplate mapping with [`rdf_mapper_generator`](https://pub.dev/packages/rdf_mapper_generator) - annotate your classes and get optimized mappers automatically
 - **Extensible**: Easy creation of custom mappers for domain-specific types
 - **Flexible**: Support for all core RDF concepts: IRI nodes, blank nodes, and literals
 - **Dual API**: Work with RDF strings or directly with graph structures
@@ -146,6 +151,70 @@ class PersonMapper implements GlobalResourceMapper<Person> {
   }
 }
 ```
+
+## 🔥 Zero-Boilerplate Code Generation
+
+**Want to eliminate all that mapper boilerplate?** Use our code generation approach for the ultimate developer experience:
+
+### 1. Add dependencies:
+
+```sh
+dart pub add rdf_mapper rdf_mapper_annotations
+dart pub add rdf_mapper_generator build_runner --dev
+```
+
+### 2. Annotate your classes:
+
+```dart
+import 'package:rdf_mapper_annotations/rdf_mapper_annotations.dart';
+import 'package:rdf_vocabularies/schema.dart';
+
+@RdfGlobalResource(
+  SchemaPerson.classIri,
+  IriStrategy('http://example.org/person/{id}'),
+)
+class Person {
+  @RdfIriPart('id')
+  final String id;
+
+  @RdfProperty(SchemaPerson.foafName)
+  final String name;
+
+  @RdfProperty(SchemaPerson.foafAge)
+  final int age;
+
+  Person({required this.id, required this.name, required this.age});
+}
+```
+
+### 3. Generate mappers:
+
+```bash
+dart run build_runner build
+```
+
+### 4. Use your generated mappers:
+
+```dart
+// Initialize the mapper system (auto-generated)
+final mapper = initRdfMapper();
+
+// Use exactly like the manual approach - same API!
+final person = Person(id: '1', name: 'John Smith', age: 30);
+final turtle = mapper.encodeObject(person);
+final deserializedPerson = mapper.decodeObject<Person>(turtle);
+```
+
+**That's it!** No manual mapping code, no runtime reflection, just pure generated performance.
+
+**Key Benefits:**
+- 🔥 **Zero boilerplate** - Write business logic, not serialization code
+- 🛡️ **Type safety** - Compile-time guarantees for your RDF mappings
+- ⚡ **Performance** - Generated code with no runtime overhead
+- 🎯 **Schema.org support** - Works seamlessly with rdf_vocabularies
+- 🔧 **Flexible mapping** - Custom mappers, IRI templates, complex relationships
+
+Learn more: [rdf_mapper_generator documentation](https://kkalass.github.io/rdf_mapper_generator/)
 
 ## Architecture
 
@@ -483,11 +552,14 @@ final restoredTurtle = rdfMapper.encodeObjectLossless((person, remainderGraph));
 
 **Preserve unmapped properties within objects:**
 
-Using annotations (recommended):
+Using annotations with code generation (recommended):
 ```dart
-@RdfLocalResource()
+@RdfGlobalResource(SchemaPerson.classIri, IriStrategy('http://example.org/person/{id}'))
 class Person {
+  @RdfIriPart('id')
   final String id;
+  
+  @RdfProperty(SchemaPerson.foafName)
   final String name;
   
   @RdfUnmappedTriples()
