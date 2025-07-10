@@ -47,11 +47,20 @@ Quick Fix (relaxed validation):
   • Use CompletenessMode.lenient to ignore unprocessed triples:
     
     final objects = rdfMapper.decodeObjects<YourType>(rdfString, 
-      completenessMode: CompletenessMode.lenient);
+      completeness: CompletenessMode.lenient);
+
+  • OR add unmapped triples field (preserves all data of the corresponding subject):
+    
+    @RdfLocalResource()
+    class YourType {
+      // ... your mapped properties ...
+      @RdfUnmappedTriples()
+      late final RdfGraph unmappedTriples;  // Captures all unmapped triples
+    }
 
 Alternative Solutions:
 
-1. Enhance domain objects with catch-all fields (recommended for complete preservation):
+1. Enhance domain objects with catch-all fields (manual implementation):
    • Add RdfGraph fields to your classes and use getUnmapped()/addUnmapped():
      
      class YourType {
@@ -96,7 +105,7 @@ Alternative Solutions:
    • CompletenessMode.lenient - Silently ignore unprocessed triples
    
    final objects = rdfMapper.decodeObjects<YourType>(rdfString,
-     completenessMode: CompletenessMode.warnOnly);
+     completeness: CompletenessMode.warnOnly);
 
 ${_formatUnprocessedTriples(remainingGraph)}${_formatUnmappedInfo(remainingGraph)}
 

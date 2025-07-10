@@ -483,6 +483,24 @@ final restoredTurtle = rdfMapper.encodeObjectLossless((person, remainderGraph));
 
 **Preserve unmapped properties within objects:**
 
+Using annotations (recommended):
+```dart
+@RdfLocalResource()
+class Person {
+  final String id;
+  final String name;
+  
+  @RdfUnmappedTriples()
+  final RdfGraph unmappedGraph; // Automatically captures unmapped properties
+  
+  Person({required this.id, required this.name, RdfGraph? unmappedGraph})
+    : unmappedGraph = unmappedGraph ?? RdfGraph();
+}
+// Run: dart run build_runner build
+// That's it! The generator creates the mapper automatically.
+```
+
+Manual implementation:
 ```dart
 class Person {
   final String id;
@@ -490,7 +508,7 @@ class Person {
   final RdfGraph unmappedGraph; // Catches unmapped properties
   
   Person({required this.id, required this.name, RdfGraph? unmappedGraph})
-    : unmappedGraph = unmappedGraph ?? RdfGraph({});
+    : unmappedGraph = unmappedGraph ?? RdfGraph();
 }
 
 class PersonMapper implements GlobalResourceMapper<Person> {

@@ -360,7 +360,7 @@ class Person {
     required this.name,
     required this.age,
     RdfGraph? unmappedGraph,
-  }) : unmappedGraph = unmappedGraph ?? RdfGraph({});
+  }) : unmappedGraph = unmappedGraph ?? RdfGraph();
 
   @override
   String toString() {
@@ -513,6 +513,7 @@ class PersonWithMapUnmapped {
   PersonWithMapUnmapped({
     required this.id,
     required this.name,
+    required this.age,
     Map<IriTerm, List<RdfObject>>? unmappedData,
   }) : unmappedData = unmappedData ?? {};
 }
@@ -545,4 +546,65 @@ These map types are automatically registered by default and can be useful when:
 - You're working with flat RDF data where deep mapping isn't necessary
 
 **Choose RdfGraph when you need complete subgraph preservation, and choose Map types when you need simple, shallow unmapped data handling.**
+
+## Quick Start: Using Annotations (Recommended)
+
+For the easiest implementation of lossless mapping, we highly recommend using the `rdf_mapper_annotations` and `rdf_mapper_generator` packages. This approach requires minimal code and automatically generates the necessary mapper implementation.
+
+### 1. Add Dependencies
+
+```sh
+dart pub add rdf_mapper rdf_mapper_annotations
+dart pub add rdf_mapper_generator build_runner --dev
+```
+
+### 2. Annotate Your Class
+
+```dart
+import 'package:rdf_core/rdf_core.dart';
+import 'package:rdf_mapper_annotations/rdf_mapper_annotations.dart';
+
+@RdfLocalResource()
+class Data {
+  
+  @RdfUnmappedTriples()
+  late final RdfGraph unmappedGraph; // Automatically captures all unmapped triples
+}
+
+// works for global resource as well
+@RdfGlobalResource(SchemaPerson.classIri, IriStrategy())
+class Person {
+  @RdfIriPart
+  late final String iri;
+
+  @RdfUnmappedTriples()
+  late final RdfGraph unmappedGraph; // Automatically captures all unmapped triples
+}
+```
+
+### 3. Generate the Mapper
+
+```bash
+dart run build_runner build
+```
+
+That's it! The generator creates a complete mapper implementation that automatically handles unmapped triples. The generated mapper will:
+- Map all your annotated properties to RDF
+- Capture any unmapped triples in the `@RdfUnmappedTriples()` field
+- Handle both serialization and deserialization automatically
+
+### 4. Use with RdfMapper
+
+```dart
+final rdfMapper = RdfMapper.withDefaultRegistry();
+// The generated mapper is automatically registered
+
+// Lossless decoding - unmapped triples are captured in unmappedGraph
+final person = rdfMapper.decodeObject<Data>(turtle);
+
+// Lossless encoding - unmapped triples are included in output
+final encodedTurtle = rdfMapper.encodeObject(person);
+```
+
+This annotation-based approach is much simpler than manual mapper implementation and handles all the complexity of lossless mapping automatically. For more control or custom logic, you can always fall back to the manual implementation described in the previous sections.
 
