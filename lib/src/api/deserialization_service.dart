@@ -131,6 +131,5 @@ abstract class DeserializationService {
   });
 
   T getUnmapped<T>(RdfSubject subject,
-      {bool includeBlankNodes = true,
-      UnmappedTriplesDeserializer? unmappedTriplesDeserializer});
+      {UnmappedTriplesDeserializer? unmappedTriplesDeserializer});
 }

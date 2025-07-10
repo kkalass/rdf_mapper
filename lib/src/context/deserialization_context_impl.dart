@@ -189,13 +189,15 @@ class DeserializationContextImpl extends DeserializationContext
 
   @override
   T getUnmapped<T>(RdfSubject subject,
-      {bool includeBlankNodes = true,
-      UnmappedTriplesDeserializer? unmappedTriplesDeserializer}) {
-    final triples = _getRemainingTriplesForSubject(subject,
-        includeBlankNodes: includeBlankNodes);
+      {UnmappedTriplesDeserializer? unmappedTriplesDeserializer}) {
     unmappedTriplesDeserializer ??=
         _registry.getUnmappedTriplesDeserializer<T>();
+
+    final triples = _getRemainingTriplesForSubject(subject,
+        includeBlankNodes: unmappedTriplesDeserializer.deep);
+
     _trackTriplesRead(subject, triples);
+
     return unmappedTriplesDeserializer.fromUnmappedTriples(triples);
   }
 

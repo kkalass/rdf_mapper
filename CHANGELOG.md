@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.8] - 2025-07-10
+
+### Changed
+
+- **Breaking Change**: Removed `includeBlankNodes` parameter from `ResourceReader.getUnmapped()` method
+- **Breaking Change**: Removed `includeBlankNodes` parameter from `DeserializationService.getUnmapped()` method
+- **Breaking Change**: Modified `RdfGraphMapper` constructor to accept optional `deep` parameter (defaults to `true`)
+- **Breaking Change**: Removed `includeBlankNodes` parameter from wrapper constructors (`GlobalResourceUnmappedTriplesDeserializer`, `LocalResourceUnmappedTriplesDeserializer`)
+
+Note: while this is a "breaking change" in theory, the changed API were released yesterday and very, very
+specific so it is highly unlikely that this really breaks anyone's usage.
+
+### Added
+
+- Added `deep` property to `UnmappedTriplesDeserializer` interface to control blank node collection behavior
+- Added documentation for the `deep` property explaining when to use deep vs shallow triple collection
+
+### Technical Details
+
+- The `deep` property on deserializers now controls whether blank nodes are recursively followed when collecting unmapped triples
+- This change provides more fine-grained control over blank node handling and removes the need for runtime parameters
+- Blank node collection behavior is now determined by the deserializer implementation rather than the call site
+
 ## [0.8.7] - 2025-07-09
 
 ### Added

@@ -29,14 +29,12 @@ RdfSubject _getSingleRootSubject(Iterable<Triple> triples) {
 class GlobalResourceUnmappedTriplesDeserializer<T>
     implements GlobalResourceDeserializer<T> {
   final UnmappedTriplesDeserializer<T> _mapper;
-  final bool includeBlankNodes;
-  GlobalResourceUnmappedTriplesDeserializer(this._mapper,
-      {this.includeBlankNodes = true});
+  const GlobalResourceUnmappedTriplesDeserializer(this._mapper);
 
   @override
   T fromRdfResource(IriTerm term, DeserializationContext context) {
-    final triples = context.getTriplesForSubject(term,
-        includeBlankNodes: includeBlankNodes);
+    final triples =
+        context.getTriplesForSubject(term, includeBlankNodes: _mapper.deep);
     return _mapper.fromUnmappedTriples(triples);
   }
 
@@ -46,7 +44,7 @@ class GlobalResourceUnmappedTriplesDeserializer<T>
 
   @override
   String toString() {
-    return 'GlobalResourceUnmappedTriplesWrapper($_mapper, includeBlankNodes: $includeBlankNodes)';
+    return 'GlobalResourceUnmappedTriplesWrapper($_mapper)';
   }
 }
 
@@ -105,14 +103,13 @@ class LocalResourceUnmappedTriplesSerializer<T>
 class LocalResourceUnmappedTriplesDeserializer<T>
     implements LocalResourceDeserializer<T> {
   final UnmappedTriplesDeserializer<T> _mapper;
-  final bool includeBlankNodes;
-  LocalResourceUnmappedTriplesDeserializer(this._mapper,
-      {this.includeBlankNodes = true});
+
+  const LocalResourceUnmappedTriplesDeserializer(this._mapper);
 
   @override
   T fromRdfResource(BlankNodeTerm term, DeserializationContext context) {
-    final triples = context.getTriplesForSubject(term,
-        includeBlankNodes: includeBlankNodes);
+    final triples =
+        context.getTriplesForSubject(term, includeBlankNodes: _mapper.deep);
     return _mapper.fromUnmappedTriples(triples);
   }
 
@@ -122,6 +119,6 @@ class LocalResourceUnmappedTriplesDeserializer<T>
 
   @override
   String toString() {
-    return 'LocalResourceUnmappedTriplesWrapper($_mapper, includeBlankNodes: $includeBlankNodes)';
+    return 'LocalResourceUnmappedTriplesWrapper($_mapper)';
   }
 }

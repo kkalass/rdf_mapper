@@ -257,7 +257,7 @@ class ResourceReader {
   /// complete round-trip operations possible.
   ///
   /// The method collects all remaining triples for the current subject (and optionally
-  /// connected blank nodes) and converts them into the specified type [T] using an
+  /// connected blank nodes if [UnmappedTriplesDeserializer.deep] of the unmappedTriplesDeserializer is true) and converts them into the specified type [T] using an
   /// [UnmappedTriplesDeserializer]. The default implementation supports [RdfGraph].
   ///
   /// **Important**: This method should typically be called last in your mapper's
@@ -280,15 +280,12 @@ class ResourceReader {
   /// ```
   ///
   /// Parameters:
-  /// * [includeBlankNodes] - Whether to include connected blank node triples (default: true)
   /// * [unmappedTriplesDeserializer] - Optional custom deserializer for the unmapped data type
   ///
   /// Returns the unmapped triples converted to type [T], typically an [RdfGraph].
   T getUnmapped<T>(
-      {bool includeBlankNodes = true,
-      UnmappedTriplesDeserializer<T>? unmappedTriplesDeserializer}) {
+      {UnmappedTriplesDeserializer<T>? unmappedTriplesDeserializer}) {
     return _service.getUnmapped(_subject,
-        includeBlankNodes: includeBlankNodes,
         unmappedTriplesDeserializer: unmappedTriplesDeserializer);
   }
 }

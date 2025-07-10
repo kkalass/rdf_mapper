@@ -17,6 +17,19 @@ sealed class Deserializer<T> {}
 
 abstract interface class UnmappedTriplesDeserializer<T>
     implements Deserializer<T> {
+  /// Indicates whether this deserializer requires deep triple collection for blank nodes.
+  ///
+  /// When `true`, the caller should recursively collect all triples
+  /// associated with blank nodes that are referenced by the top-level triples
+  /// before calling `fromUnmappedTriples`. This includes transitively following
+  /// all blank node references to ensure the complete object graph is available.
+  ///
+  /// When `false`, only the direct top-level triples should be passed to
+  /// `fromUnmappedTriples` without following blank node references.
+  ///
+  /// Returns `false` by default, indicating shallow triple collection.
+  bool get deep => false;
+
   /// Converts a set of unmapped triples to a Dart object.
   ///
   /// This method processes the given triples that were not mapped to any specific

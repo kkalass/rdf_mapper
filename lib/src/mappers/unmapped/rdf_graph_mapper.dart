@@ -22,7 +22,10 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 /// }
 /// ```
 class RdfGraphMapper implements UnmappedTriplesMapper<RdfGraph> {
-  const RdfGraphMapper();
+  @override
+  final bool deep;
+
+  const RdfGraphMapper({this.deep = true});
 
   @override
   RdfGraph fromUnmappedTriples(Iterable<Triple> triples) {
