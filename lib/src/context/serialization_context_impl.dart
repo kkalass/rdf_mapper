@@ -423,6 +423,6 @@ class SerializationContextImpl extends SerializationContext
     if (ser == null) {
       throw SerializerNotFoundException('UnmappedTriplesSerializer', T);
     }
-    return ser.toUnmappedTriples(value);
+    return ser.toUnmappedTriples(subject, value);
   }
 }

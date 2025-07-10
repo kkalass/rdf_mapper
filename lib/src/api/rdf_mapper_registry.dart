@@ -11,8 +11,8 @@ import 'package:rdf_mapper/src/mappers/literal/date_time_mapper.dart';
 import 'package:rdf_mapper/src/mappers/literal/double_mapper.dart';
 import 'package:rdf_mapper/src/mappers/literal/int_mapper.dart';
 import 'package:rdf_mapper/src/mappers/literal/string_mapper.dart';
+import 'package:rdf_mapper/src/mappers/unmapped/predicates_map_mapper.dart';
 import 'package:rdf_mapper/src/mappers/unmapped/rdf_graph_mapper.dart';
-import 'package:rdf_mapper/src/mappers/unmapped/wrappers.dart';
 
 final _log = Logger("rdf_orm.registry");
 
@@ -119,7 +119,12 @@ final class RdfMapperRegistry {
     registerMapper(const DateTimeMapper());
 
     // Register mappers for unmapped triples
-    registerMapper(const RdfGraphMapper());
+    registerMapper(const RdfGraphUnmappedTriplesMapper());
+    registerMapper(const PredicatesMapMapper());
+
+    // Register generic mappers for resources
+    registerMapper(const RdfGraphGlobalResourceMapper());
+    registerMapper(const RdfGraphLocalResourceMapper());
   }
 
   /// Registers a serializer with the appropriate registry based on its type.
@@ -195,17 +200,12 @@ final class RdfMapperRegistry {
   /// - IriTermMapper: Combined IriTermSerializer/IriTermDeserializer
   /// - UnmappedTriplesMapper: Combined UnmappedTriplesSerializer/UnmappedTriplesDeserializer
   ///
-  /// Special behavior for UnmappedTriplesMapper:
-  /// When registering an UnmappedTriplesMapper, the registry automatically creates
-  /// and registers wrapper mappers that make the type available for both resource
-  /// and property mapping:
-  /// - GlobalResourceUnmappedTriplesDeserializer (wraps the deserializer)
-  /// - LocalResourceUnmappedTriplesDeserializer (wraps the deserializer)
-  /// - ResourceUnmappedTriplesSerializer (wraps the serializer)
-  ///
-  /// This enables objects handled by UnmappedTriplesMapper to be used seamlessly
-  /// in any mapping context where a resource is expected, providing full
-  /// integration with the mapping system for lossless round-trip operations.
+  /// Note: UnmappedTriplesMapper registration only registers the mapper for unmapped
+  /// triples handling. To use unmapped types as resources (subjects), separate
+  /// GlobalResourceMapper and LocalResourceMapper implementations must be registered.
+  /// For RdfGraph, these are provided as RdfGraphGlobalResourceMapper and
+  /// RdfGraphLocalResourceMapper, but they require a clear single root subject for
+  /// serialization to work correctly.
   ///
   /// [mapper] The mapper to register
   void registerMapper<T>(Mapper<T> mapper) {
@@ -239,11 +239,6 @@ final class RdfMapperRegistry {
     _log.fine(
         'Registering UnmappedTriples deserializer for type ${T.toString()}');
     _unmappedTriplesDeserializers[T] = deserializer;
-    // automatically register wrappers that make this type available as a resource
-    _registerGlobalResourceDeserializer(
-        GlobalResourceUnmappedTriplesDeserializer(deserializer));
-    _registerLocalResourceDeserializer(
-        LocalResourceUnmappedTriplesDeserializer(deserializer));
   }
 
   void _registerUnmappedTriplesSerializer<T>(
@@ -252,8 +247,6 @@ final class RdfMapperRegistry {
     _log.fine(
         'Registering UnmappedTriples serializer for type ${T.toString()}');
     _unmappedTriplesSerializers[T] = serializer;
-    // automatically register wrappers that make this type available as a resource
-    _registerResourceSerializer(ResourceUnmappedTriplesSerializer(serializer));
   }
 
   void _registerIriTermDeserializer<T>(IriTermDeserializer<T> deserializer) {

@@ -9,24 +9,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Breaking Change**: Removed `includeBlankNodes` parameter from `ResourceReader.getUnmapped()` method
-- **Breaking Change**: Removed `includeBlankNodes` parameter from `DeserializationService.getUnmapped()` method
-- **Breaking Change**: Modified `RdfGraphMapper` constructor to accept optional `deep` parameter (defaults to `true`)
-- **Breaking Change**: Removed `includeBlankNodes` parameter from wrapper constructors (`GlobalResourceUnmappedTriplesDeserializer`, `LocalResourceUnmappedTriplesDeserializer`)
+- **Breaking Change**: Modified `UnmappedTriplesSerializer.toUnmappedTriples()` method signature to include `RdfSubject subject` parameter
+- **Breaking Change**: Renamed `RdfGraphMapper` to `RdfGraphUnmappedTriplesMapper` for clarity
+- **Breaking Change**: Removed automatic resource mapper registration when registering `UnmappedTriplesMapper` implementations
+- **Breaking Change**: Removed `includeBlankNodes` parameter from `ResourceReader.getUnmapped()` and `DeserializationService.getUnmapped()` methods
+- **Breaking Change**: Modified `RdfGraphUnmappedTriplesMapper` constructor to accept optional `deep` parameter (defaults to `true`)
+- Separated UnmappedTriplesMapper registration from resource mapping - UnmappedTriplesMapper now only handles unmapped triples, not resource serialization
 
-Note: while this is a "breaking change" in theory, the changed API were released yesterday and very, very
-specific so it is highly unlikely that this really breaks anyone's usage.
+*Note* even though there are breaking changes we stick to increasing the patch version only, because
+the interfaces that were changed were added in yesterdays release and are very specific, so it is very
+unlikely to really affect any users.
 
 ### Added
 
+- Added `RdfGraphGlobalResourceMapper` and `RdfGraphLocalResourceMapper` for explicit RdfGraph resource mapping
+- Added improved root subject detection algorithm for RdfGraph with enhanced cycle handling and heuristics
 - Added `deep` property to `UnmappedTriplesDeserializer` interface to control blank node collection behavior
-- Added documentation for the `deep` property explaining when to use deep vs shallow triple collection
+- Added comprehensive test suite for `_getSingleRootSubject` implementation covering edge cases and complex scenarios
+- Added extensive documentation about the distinction between unmapped triples mapping and resource mapping
+
+### Fixed
+
+- Fixed RdfGraph root subject detection to properly handle cyclic graphs with a single identifiable root
+- Fixed error messages to be more specific about the type of root subject detection failure
+
+### Enhanced
+
+- Enhanced lossless mapping documentation to clarify the relationship between UnmappedTriplesMapper and resource mappers
+- Enhanced RdfGraph resource mappers to require single root subjects, ensuring clear graph structure
+- Enhanced error handling in root subject detection with detailed diagnostic messages
 
 ### Technical Details
 
-- The `deep` property on deserializers now controls whether blank nodes are recursively followed when collecting unmapped triples
-- This change provides more fine-grained control over blank node handling and removes the need for runtime parameters
-- Blank node collection behavior is now determined by the deserializer implementation rather than the call site
+- The `toUnmappedTriples` method now receives the subject parameter to enable proper context-aware serialization
+- RdfGraph resource mappers now validate that the graph has a single unambiguous root subject before serialization
+- The `deep` property on deserializers controls whether blank nodes are recursively followed when collecting unmapped triples
+- The root subject detection algorithm uses heuristics to handle common cyclic patterns while maintaining strict validation
 
 ## [0.8.7] - 2025-07-09
 

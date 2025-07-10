@@ -21,11 +21,11 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 ///     : unmappedGraph = unmappedGraph ?? RdfGraph({});
 /// }
 /// ```
-class RdfGraphMapper implements UnmappedTriplesMapper<RdfGraph> {
+class RdfGraphUnmappedTriplesMapper implements UnmappedTriplesMapper<RdfGraph> {
   @override
   final bool deep;
 
-  const RdfGraphMapper({this.deep = true});
+  const RdfGraphUnmappedTriplesMapper({this.deep = true});
 
   @override
   RdfGraph fromUnmappedTriples(Iterable<Triple> triples) {
@@ -34,7 +34,148 @@ class RdfGraphMapper implements UnmappedTriplesMapper<RdfGraph> {
   }
 
   @override
-  Iterable<Triple> toUnmappedTriples(RdfGraph value) {
+  Iterable<Triple> toUnmappedTriples(RdfSubject subject, RdfGraph value) {
     return value.triples;
   }
+}
+
+class RdfGraphGlobalResourceMapper extends _RDFGraphResourceMapper
+    implements GlobalResourceMapper<RdfGraph> {
+  const RdfGraphGlobalResourceMapper({bool deep = true}) : super(deep: deep);
+
+  @override
+  RdfGraph fromRdfResource(IriTerm subject, DeserializationContext context) =>
+      fromResource(subject, context);
+
+  @override
+  (IriTerm, List<Triple>) toRdfResource(
+          RdfGraph value, SerializationContext context,
+          {RdfSubject? parentSubject}) =>
+      toResource(value, context, parentSubject: parentSubject);
+
+  @override
+  String toString() => 'RDFGraphGlobalResourceMapper';
+}
+
+class RdfGraphLocalResourceMapper extends _RDFGraphResourceMapper
+    implements GlobalResourceMapper<RdfGraph> {
+  const RdfGraphLocalResourceMapper({bool deep = true}) : super(deep: deep);
+
+  @override
+  RdfGraph fromRdfResource(IriTerm subject, DeserializationContext context) =>
+      fromResource(subject, context);
+
+  @override
+  (IriTerm, List<Triple>) toRdfResource(
+          RdfGraph value, SerializationContext context,
+          {RdfSubject? parentSubject}) =>
+      toResource(value, context, parentSubject: parentSubject);
+
+  @override
+  String toString() => 'RDFGraphGlobalResourceMapper';
+}
+
+class _RDFGraphResourceMapper {
+  final bool deep;
+  const _RDFGraphResourceMapper({this.deep = true});
+
+  RdfGraph fromResource(RdfSubject subject, DeserializationContext context) {
+    final triples =
+        context.getTriplesForSubject(subject, includeBlankNodes: deep);
+    final rootSubject = _getSingleRootSubject(triples);
+    if (rootSubject != subject) {
+      throw ArgumentError(
+          "Root subject of the graph does not match the provided subject: $subject != $rootSubject");
+    }
+    // If the subject is not the root, we cannot deserialize it as an RdfGraph
+    // because it would not have a single root subject.
+    // This is a design choice to ensure that RdfGraph always has a clear root.
+    // If you need to deserialize a graph with multiple root subjects, consider
+    // using a different approach or structure.
+    return RdfGraph(triples: triples);
+  }
+
+  (T, List<Triple>) toResource<T extends RdfSubject>(
+      RdfGraph value, SerializationContext context,
+      {RdfSubject? parentSubject}) {
+    final triples = value.triples;
+    final subject = _getSingleRootSubject(triples) as T;
+    return (subject, triples);
+  }
+
+  IriTerm? get typeIri => null;
+
+  /// Determines the single root subject from a collection of triples.
+  ///
+  /// This method implements a heuristic approach to identify the most appropriate
+  /// root subject in RDF graphs that should have a single entry point.
+  ///
+  /// Algorithm:
+  /// 1. If only one subject exists, return it immediately
+  /// 2. Find all subjects that don't appear as objects (toplevel candidates)
+  /// 3. If exactly one toplevel candidate exists, return it
+  /// 4. If no toplevel candidates exist (all subjects are cyclic), apply heuristics:
+  ///    - Prefer IRI terms over blank nodes
+  ///    - If multiple IRIs exist, fail (ambiguous)
+  ///    - If only blank nodes exist, fail (no clear root)
+  /// 5. If multiple toplevel candidates exist, fail (multiple roots)
+  ///
+  /// Limitations:
+  /// - Does not perform deep cycle analysis
+  /// - Conservative approach may reject valid graphs with resolvable cycles
+  /// - No semantic analysis of predicates to determine hierarchy
+  ///
+  /// Throws [ArgumentError] if:
+  /// - Triple collection is empty
+  /// - Multiple toplevel subjects exist (ambiguous root)
+  /// - Cyclic graph with no clear root can be determined
+  RdfSubject _getSingleRootSubject(Iterable<Triple> triples) {
+    if (triples.isEmpty) {
+      throw ArgumentError("Cannot get root subject from empty triples list");
+    }
+
+    final subjects = triples.map((t) => t.subject).toSet();
+
+    // Simple case: single subject
+    if (subjects.length == 1) {
+      return subjects.first;
+    }
+
+    // Find subjects that are not objects (potential roots)
+    final objects = triples.map((t) => t.object).toSet();
+    final toplevelCandidates = {...subjects}..removeAll(objects);
+
+    // Ideal case: exactly one toplevel subject
+    if (toplevelCandidates.length == 1) {
+      return toplevelCandidates.first;
+    }
+
+    // Handle cyclic graphs with heuristics
+    if (toplevelCandidates.isEmpty) {
+      // All subjects appear as objects - apply heuristics
+      final iriSubjects = subjects.whereType<IriTerm>().toList();
+
+      if (iriSubjects.length == 1) {
+        // Single IRI in a cyclic graph - use as root
+        return iriSubjects.first;
+      }
+
+      if (iriSubjects.length > 1) {
+        // Multiple IRIs in cyclic graph - ambiguous
+        throw ArgumentError(
+            "Multiple IRI subjects found in cyclic graph - cannot determine root: $iriSubjects");
+      }
+
+      // Only blank nodes in cyclic graph - no clear root
+      throw ArgumentError(
+          "No toplevel subject found in triples - the graph cannot be deserialized because it contains only cyclic blank nodes");
+    }
+
+    // Multiple toplevel subjects - ambiguous root
+    throw ArgumentError(
+        "Multiple toplevel subjects found in triples - the graph cannot be deserialized because it is malformed: $toplevelCandidates");
+  }
+
+  @override
+  String toString() => 'RDFGraphResourceMapper';
 }

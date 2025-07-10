@@ -307,18 +307,15 @@ You have two options for using your custom UnmappedTriplesMapper:
 a) Register Globally (Recommended for common types)
 You can register your custom mapper with the RdfMapper's registry, similar to how GlobalResourceMappers are registered. This allows getUnmapped() and addUnmapped() to automatically discover and use your mapper when U is MyCustomGraphType. 
 
-**Automatic Registration Behavior for UnmappedTriplesMapper:**
-When you register an UnmappedTriplesMapper using `registerMapper()`, the registry automatically creates and registers additional wrapper mappers:
-- `GlobalResourceUnmappedTriplesDeserializer` - enables the type for global resource deserialization
-- `LocalResourceUnmappedTriplesDeserializer` - enables the type for local resource deserialization  
-- `ResourceUnmappedTriplesSerializer` - enables the type for resource serialization
+**Important**: UnmappedTriplesMapper registration only enables the type for unmapped triples handling through getUnmapped() and addUnmapped(). It does NOT automatically create resource mappers.
 
-This automatic wrapper registration means your custom unmapped triples type becomes fully integrated into the mapping system and can be used:
-- With `getUnmapped<T>()` and `addUnmapped()` for lossless mapping within objects
-- As a direct property type in your models (mapped as a resource)
-- In any context where a resource mapper is expected
+**Using the type as a resource**: If you need to use your custom unmapped type as a resource (e.g., as a property value that gets its own subject), you must register separate GlobalResourceMapper and LocalResourceMapper implementations. 
 
-This seamless integration ensures maximum flexibility and reusability of your custom unmapped data types throughout your application.
+For RdfGraph, the library provides `RdfGraphGlobalResourceMapper` and `RdfGraphLocalResourceMapper`, but these have important limitations:
+- The RdfGraph must have a clear single root subject for serialization to work correctly
+- Multiple root subjects or disconnected graphs will cause serialization errors
+
+This design ensures better control over how unmapped data types are used throughout your application.
 
 ```dart
 // In your RdfMapper initialization

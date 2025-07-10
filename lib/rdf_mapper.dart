@@ -141,6 +141,8 @@ export 'src/mappers/literal/delegating_rdf_literal_term_mapper.dart';
 export 'src/mappers/literal/double_mapper.dart';
 export 'src/mappers/literal/int_mapper.dart';
 export 'src/mappers/literal/string_mapper.dart';
+export 'src/mappers/unmapped/rdf_graph_mapper.dart';
+export 'src/mappers/unmapped/predicates_map_mapper.dart';
 export 'src/util/namespace.dart';
 
 /// Central facade for the RDF Mapper library, providing access to object mapping and registry operations.
@@ -891,13 +893,15 @@ final class RdfMapper {
   /// - [UnmappedTriplesMapper]: Maps objects to/from collections of unmapped RDF triples
   ///   Used for lossless mapping scenarios where unmapped data needs to be preserved
   ///
-  /// **Special Behavior for UnmappedTriplesMapper:**
-  /// When you register an [UnmappedTriplesMapper], the registry automatically creates
-  /// and registers additional wrapper mappers to make the type available as both
-  /// a GlobalResourceMapper and LocalResourceMapper. This means:
-  /// - You can use the type directly with [ResourceReader.getUnmapped] and [ResourceBuilder.addUnmapped]
-  /// - You can also use the type as a regular property in object mappers
-  /// - The type becomes available for both IRI-based and blank node-based serialization
+  /// **Note about UnmappedTriplesMapper:**
+  /// Registering an [UnmappedTriplesMapper] only enables the type for unmapped triples
+  /// handling through [ResourceReader.getUnmapped] and [ResourceBuilder.addUnmapped].
+  /// To use the type as a resource (e.g., as a property value), you must register
+  /// separate GlobalResourceMapper and LocalResourceMapper implementations.
+  ///
+  /// For RdfGraph, the library provides RdfGraphGlobalResourceMapper and
+  /// RdfGraphLocalResourceMapper, but these require a clear single root subject
+  /// for serialization to work correctly.
   ///
   /// Example with GlobalResourceMapper:
   /// ```dart

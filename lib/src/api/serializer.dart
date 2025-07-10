@@ -22,11 +22,11 @@ abstract interface class UnmappedTriplesSerializer<T> implements Serializer<T> {
   /// that are not mapped to any specific property or type. This is useful for
   /// handling additional data that doesn't fit into the standard serialization model.
   ///
+  /// [subject] The subject IRI of the object being serialized
   /// [value] The object to convert
-  /// [context] The current serialization context
   ///
   /// Returns the resulting list of triples
-  Iterable<Triple> toUnmappedTriples(T value);
+  Iterable<Triple> toUnmappedTriples(RdfSubject subject, T value);
 }
 
 /// Groups those serializers that serialize a Dart object to an RDF term
