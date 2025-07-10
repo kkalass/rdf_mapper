@@ -84,7 +84,13 @@ basic data types without requiring custom mappers.</p>
   registerMapper(const DateTimeMapper());
 
   &#47;&#47; Register mappers for unmapped triples
-  registerMapper(const RdfGraphMapper());
+  registerMapper(const RdfGraphUnmappedTriplesMapper());
+  registerMapper(const PredicatesMapMapper());
+  registerMapper(const IriTermMapMapper());
+
+  &#47;&#47; Register generic mappers for resources
+  registerMapper(const RdfGraphGlobalResourceMapper());
+  registerMapper(const RdfGraphLocalResourceMapper());
 }</code></pre>
 </section>
 
@@ -113,7 +119,7 @@ basic data types without requiring custom mappers.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.7
+      0.8.8
   </span>
   
 </footer>

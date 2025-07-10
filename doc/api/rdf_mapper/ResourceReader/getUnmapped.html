@@ -55,8 +55,7 @@
     <section class="multi-line-signature">
       
 <span class="returntype">T</span>
-<span class="name ">getUnmapped</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="getUnmapped-param-includeBlankNodes"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">includeBlankNodes</span> = <span class="default-value">true</span>, </span></li>
-<li><span class="parameter" id="getUnmapped-param-unmappedTriplesDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/UnmappedTriplesDeserializer-class.html">UnmappedTriplesDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">unmappedTriplesDeserializer</span>, </span></li>
+<span class="name ">getUnmapped</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="getUnmapped-param-unmappedTriplesDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/UnmappedTriplesDeserializer-class.html">UnmappedTriplesDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">unmappedTriplesDeserializer</span>, </span></li>
 </ol>})
 
       
@@ -70,7 +69,7 @@ for this subject that weren't explicitly handled by <a href="../../rdf_mapper/Re
 <a href="../../rdf_mapper/ResourceReader/getValues.html">getValues</a> calls. This ensures no data is lost during deserialization, making
 complete round-trip operations possible.</p>
 <p>The method collects all remaining triples for the current subject (and optionally
-connected blank nodes) and converts them into the specified type <code>T</code> using an
+connected blank nodes if <a href="../../rdf_mapper/UnmappedTriplesDeserializer/deep.html">UnmappedTriplesDeserializer.deep</a> of the unmappedTriplesDeserializer is true) and converts them into the specified type <code>T</code> using an
 <a href="../../rdf_mapper/UnmappedTriplesDeserializer-class.html">UnmappedTriplesDeserializer</a>. The default implementation supports <a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfGraph-class.html">RdfGraph</a>.</p>
 <p><strong>Important</strong>: This method should typically be called last in your mapper's
 <code>fromRdfResource</code> method, after all explicit property mappings have been performed.
@@ -90,7 +89,6 @@ Person fromRdfResource(IriTerm subject, DeserializationContext context) {
 </code></pre>
 <p>Parameters:</p>
 <ul>
-<li><code>includeBlankNodes</code> - Whether to include connected blank node triples (default: true)</li>
 <li><code>unmappedTriplesDeserializer</code> - Optional custom deserializer for the unmapped data type</li>
 </ul>
 <p>Returns the unmapped triples converted to type <code>T</code>, typically an <a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfGraph-class.html">RdfGraph</a>.</p>
@@ -101,10 +99,8 @@ Person fromRdfResource(IriTerm subject, DeserializationContext context) {
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">T getUnmapped&lt;T&gt;(
-    {bool includeBlankNodes = true,
-    UnmappedTriplesDeserializer&lt;T&gt;? unmappedTriplesDeserializer}) {
+    {UnmappedTriplesDeserializer&lt;T&gt;? unmappedTriplesDeserializer}) {
   return _service.getUnmapped(_subject,
-      includeBlankNodes: includeBlankNodes,
       unmappedTriplesDeserializer: unmappedTriplesDeserializer);
 }</code></pre>
 </section>
@@ -134,7 +130,7 @@ Person fromRdfResource(IriTerm subject, DeserializationContext context) {
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.7
+      0.8.8
   </span>
   
 </footer>

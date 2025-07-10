@@ -55,7 +55,8 @@
     <section class="multi-line-signature">
       
 <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
-<span class="name ">toUnmappedTriples</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="toUnmappedTriples-param-value"><span class="type-annotation">T</span> <span class="parameter-name">value</span></span></li>
+<span class="name ">toUnmappedTriples</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="toUnmappedTriples-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span></li>
+<li><span class="parameter" id="toUnmappedTriples-param-value"><span class="type-annotation">T</span> <span class="parameter-name">value</span></span></li>
 </ol>)
 
       
@@ -67,8 +68,8 @@
 <p>This method processes the given object and converts it into a list of triples
 that are not mapped to any specific property or type. This is useful for
 handling additional data that doesn't fit into the standard serialization model.</p>
-<p><code>value</code> The object to convert
-<a href="https://api.flutter.dev/flutter/dart-js/context.html">context</a> The current serialization context</p>
+<p><code>subject</code> The subject IRI of the object being serialized
+<code>value</code> The object to convert</p>
 <p>Returns the resulting list of triples</p>
 </section>
 
@@ -76,7 +77,7 @@ handling additional data that doesn't fit into the standard serialization model.
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Iterable&lt;Triple&gt; toUnmappedTriples(T value);</code></pre>
+  <pre class="language-dart"><code class="language-dart">Iterable&lt;Triple&gt; toUnmappedTriples(RdfSubject subject, T value);</code></pre>
 </section>
 
 
@@ -104,7 +105,7 @@ handling additional data that doesn't fit into the standard serialization model.
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.7
+      0.8.8
   </span>
   
 </footer>

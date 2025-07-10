@@ -75,18 +75,12 @@ are implemented and registers the mapper with all relevant registries.</p>
 <li>IriTermMapper: Combined IriTermSerializer/IriTermDeserializer</li>
 <li>UnmappedTriplesMapper: Combined UnmappedTriplesSerializer/UnmappedTriplesDeserializer</li>
 </ul>
-<p>Special behavior for UnmappedTriplesMapper:
-When registering an UnmappedTriplesMapper, the registry automatically creates
-and registers wrapper mappers that make the type available for both resource
-and property mapping:</p>
-<ul>
-<li>GlobalResourceUnmappedTriplesDeserializer (wraps the deserializer)</li>
-<li>LocalResourceUnmappedTriplesDeserializer (wraps the deserializer)</li>
-<li>ResourceUnmappedTriplesSerializer (wraps the serializer)</li>
-</ul>
-<p>This enables objects handled by UnmappedTriplesMapper to be used seamlessly
-in any mapping context where a resource is expected, providing full
-integration with the mapping system for lossless round-trip operations.</p>
+<p>Note: UnmappedTriplesMapper registration only registers the mapper for unmapped
+triples handling. To use unmapped types as resources (subjects), separate
+GlobalResourceMapper and LocalResourceMapper implementations must be registered.
+For RdfGraph, these are provided as RdfGraphGlobalResourceMapper and
+RdfGraphLocalResourceMapper, but they require a clear single root subject for
+serialization to work correctly.</p>
 <p><code>mapper</code> The mapper to register</p>
 </section>
 
@@ -145,7 +139,7 @@ integration with the mapping system for lossless round-trip operations.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.7
+      0.8.8
   </span>
   
 </footer>

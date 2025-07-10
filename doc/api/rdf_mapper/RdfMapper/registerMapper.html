@@ -90,15 +90,14 @@ Used for object references and URIs</p>
 Used for lossless mapping scenarios where unmapped data needs to be preserved</p>
 </li>
 </ul>
-<p><strong>Special Behavior for UnmappedTriplesMapper:</strong>
-When you register an <a href="../../rdf_mapper/UnmappedTriplesMapper-class.html">UnmappedTriplesMapper</a>, the registry automatically creates
-and registers additional wrapper mappers to make the type available as both
-a GlobalResourceMapper and LocalResourceMapper. This means:</p>
-<ul>
-<li>You can use the type directly with <a href="../../rdf_mapper/ResourceReader/getUnmapped.html">ResourceReader.getUnmapped</a> and <a href="../../rdf_mapper/ResourceBuilder/addUnmapped.html">ResourceBuilder.addUnmapped</a></li>
-<li>You can also use the type as a regular property in object mappers</li>
-<li>The type becomes available for both IRI-based and blank node-based serialization</li>
-</ul>
+<p><strong>Note about UnmappedTriplesMapper:</strong>
+Registering an <a href="../../rdf_mapper/UnmappedTriplesMapper-class.html">UnmappedTriplesMapper</a> only enables the type for unmapped triples
+handling through <a href="../../rdf_mapper/ResourceReader/getUnmapped.html">ResourceReader.getUnmapped</a> and <a href="../../rdf_mapper/ResourceBuilder/addUnmapped.html">ResourceBuilder.addUnmapped</a>.
+To use the type as a resource (e.g., as a property value), you must register
+separate GlobalResourceMapper and LocalResourceMapper implementations.</p>
+<p>For RdfGraph, the library provides RdfGraphGlobalResourceMapper and
+RdfGraphLocalResourceMapper, but these require a clear single root subject
+for serialization to work correctly.</p>
 <p>Example with GlobalResourceMapper:</p>
 <pre class="language-dart"><code class="language-dart">class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
 
@@ -184,7 +183,7 @@ rdfMapper.registerMapper&lt;MyCustomGraph&gt;(MyCustomGraphMapper());
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.7
+      0.8.8
   </span>
   
 </footer>
