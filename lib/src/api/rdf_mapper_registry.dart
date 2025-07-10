@@ -121,6 +121,7 @@ final class RdfMapperRegistry {
     // Register mappers for unmapped triples
     registerMapper(const RdfGraphUnmappedTriplesMapper());
     registerMapper(const PredicatesMapMapper());
+    registerMapper(const IriTermMapMapper());
 
     // Register generic mappers for resources
     registerMapper(const RdfGraphGlobalResourceMapper());
