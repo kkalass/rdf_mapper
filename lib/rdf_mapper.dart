@@ -141,7 +141,7 @@ export 'src/mappers/literal/delegating_rdf_literal_term_mapper.dart';
 export 'src/mappers/literal/double_mapper.dart';
 export 'src/mappers/literal/int_mapper.dart';
 export 'src/mappers/literal/string_mapper.dart';
-export 'src/mappers/unmapped/rdf_graph_mapper.dart';
+export 'src/mappers/resource/rdf_graph_mapper.dart';
 export 'src/mappers/unmapped/predicates_map_mapper.dart';
 export 'src/util/namespace.dart';
 

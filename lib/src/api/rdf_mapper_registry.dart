@@ -12,7 +12,7 @@ import 'package:rdf_mapper/src/mappers/literal/double_mapper.dart';
 import 'package:rdf_mapper/src/mappers/literal/int_mapper.dart';
 import 'package:rdf_mapper/src/mappers/literal/string_mapper.dart';
 import 'package:rdf_mapper/src/mappers/unmapped/predicates_map_mapper.dart';
-import 'package:rdf_mapper/src/mappers/unmapped/rdf_graph_mapper.dart';
+import 'package:rdf_mapper/src/mappers/resource/rdf_graph_mapper.dart';
 
 final _log = Logger("rdf_orm.registry");
 
