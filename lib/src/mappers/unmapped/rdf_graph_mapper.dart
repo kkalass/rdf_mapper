@@ -39,47 +39,12 @@ class RdfGraphUnmappedTriplesMapper implements UnmappedTriplesMapper<RdfGraph> {
   }
 }
 
-class RdfGraphGlobalResourceMapper extends _RDFGraphResourceMapper
-    implements GlobalResourceMapper<RdfGraph> {
-  const RdfGraphGlobalResourceMapper({bool deep = true}) : super(deep: deep);
-
-  @override
-  RdfGraph fromRdfResource(IriTerm subject, DeserializationContext context) =>
-      fromResource(subject, context);
-
-  @override
-  (IriTerm, List<Triple>) toRdfResource(
-          RdfGraph value, SerializationContext context,
-          {RdfSubject? parentSubject}) =>
-      toResource(value, context, parentSubject: parentSubject);
-
-  @override
-  String toString() => 'RDFGraphGlobalResourceMapper';
-}
-
-class RdfGraphLocalResourceMapper extends _RDFGraphResourceMapper
-    implements GlobalResourceMapper<RdfGraph> {
-  const RdfGraphLocalResourceMapper({bool deep = true}) : super(deep: deep);
-
-  @override
-  RdfGraph fromRdfResource(IriTerm subject, DeserializationContext context) =>
-      fromResource(subject, context);
-
-  @override
-  (IriTerm, List<Triple>) toRdfResource(
-          RdfGraph value, SerializationContext context,
-          {RdfSubject? parentSubject}) =>
-      toResource(value, context, parentSubject: parentSubject);
-
-  @override
-  String toString() => 'RDFGraphGlobalResourceMapper';
-}
-
-class _RDFGraphResourceMapper {
+class RDFGraphResourceMapper extends CommonResourceMapper<RdfGraph> {
   final bool deep;
-  const _RDFGraphResourceMapper({this.deep = true});
+  const RDFGraphResourceMapper({this.deep = true});
 
-  RdfGraph fromResource(RdfSubject subject, DeserializationContext context) {
+  RdfGraph fromRdfResource<S extends RdfSubject>(
+      S subject, DeserializationContext context) {
     final triples =
         context.getTriplesForSubject(subject, includeBlankNodes: deep);
     final rootSubject = _getSingleRootSubject(triples);
@@ -95,11 +60,11 @@ class _RDFGraphResourceMapper {
     return RdfGraph(triples: triples);
   }
 
-  (T, List<Triple>) toResource<T extends RdfSubject>(
+  (RdfSubject, List<Triple>) toRdfResource(
       RdfGraph value, SerializationContext context,
       {RdfSubject? parentSubject}) {
     final triples = value.triples;
-    final subject = _getSingleRootSubject(triples) as T;
+    final subject = _getSingleRootSubject(triples);
     return (subject, triples);
   }
 

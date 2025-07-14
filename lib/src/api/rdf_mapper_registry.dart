@@ -124,8 +124,7 @@ final class RdfMapperRegistry {
     registerMapper(const IriTermMapMapper());
 
     // Register generic mappers for resources
-    registerMapper(const RdfGraphGlobalResourceMapper());
-    registerMapper(const RdfGraphLocalResourceMapper());
+    registerMapper(const RDFGraphResourceMapper());
   }
 
   /// Registers a serializer with the appropriate registry based on its type.
@@ -230,6 +229,10 @@ final class RdfMapperRegistry {
       case UnmappedTriplesMapper<T>():
         _registerUnmappedTriplesDeserializer<T>(mapper);
         _registerUnmappedTriplesSerializer<T>(mapper);
+      case CommonResourceMapper<T>():
+        _registerGlobalResourceDeserializer(mapper.asGlobalDeserializer());
+        _registerLocalResourceDeserializer(mapper.asLocalDeserializer());
+        _registerResourceSerializer(mapper.asSerializer());
         break;
     }
   }

@@ -4,10 +4,9 @@ import 'package:test/test.dart';
 
 void main() {
   group('RdfGraphResourceMapper _getSingleRootSubject tests', () {
-    late RdfGraphGlobalResourceMapper mapper;
-
+    late RDFGraphResourceMapper mapper;
     setUp(() {
-      mapper = const RdfGraphGlobalResourceMapper();
+      mapper = const RDFGraphResourceMapper();
     });
 
     group('Valid single root scenarios', () {
@@ -22,7 +21,7 @@ void main() {
         final graph = RdfGraph(triples: triples);
 
         // This should work since there's only one subject and all objects are literals
-        expect(() => mapper.toResource(graph, _createSerializationContext()),
+        expect(() => mapper.toRdfResource(graph, _createSerializationContext()),
             returnsNormally);
       });
 
@@ -41,7 +40,8 @@ void main() {
 
         final graph = RdfGraph(triples: triples);
 
-        final result = mapper.toResource(graph, _createSerializationContext());
+        final result =
+            mapper.toRdfResource(graph, _createSerializationContext());
         expect(result.$1, equals(person));
         expect(result.$2, hasLength(4));
       });
@@ -63,7 +63,8 @@ void main() {
 
         final graph = RdfGraph(triples: triples);
 
-        final result = mapper.toResource(graph, _createSerializationContext());
+        final result =
+            mapper.toRdfResource(graph, _createSerializationContext());
         expect(result.$1, equals(person));
       });
     });
@@ -82,7 +83,7 @@ void main() {
         final graph = RdfGraph(triples: triples);
 
         expect(
-            () => mapper.toResource(graph, _createSerializationContext()),
+            () => mapper.toRdfResource(graph, _createSerializationContext()),
             throwsA(isA<ArgumentError>().having((e) => e.message, 'message',
                 contains('Multiple toplevel subjects'))));
       });
@@ -103,7 +104,7 @@ void main() {
 
         final graph = RdfGraph(triples: triples);
 
-        expect(() => mapper.toResource(graph, _createSerializationContext()),
+        expect(() => mapper.toRdfResource(graph, _createSerializationContext()),
             throwsA(isA<ArgumentError>()));
       });
     });
@@ -125,7 +126,7 @@ void main() {
 
         // Should fail with improved error message for multiple IRI subjects in cycle
         expect(
-            () => mapper.toResource(graph, _createSerializationContext()),
+            () => mapper.toRdfResource(graph, _createSerializationContext()),
             throwsA(isA<ArgumentError>().having((e) => e.message, 'message',
                 contains('Multiple IRI subjects'))));
       });
@@ -143,7 +144,8 @@ void main() {
 
         // This should work since person is still the only subject
         // The algorithm correctly identifies a single root subject
-        final result = mapper.toResource(graph, _createSerializationContext());
+        final result =
+            mapper.toRdfResource(graph, _createSerializationContext());
         expect(result.$1, equals(person));
         expect(result.$2, hasLength(2));
       });
@@ -169,7 +171,8 @@ void main() {
 
         // This should work - person is clearly the root despite the blank node cycle
         // The algorithm correctly identifies person as the toplevel subject
-        final result = mapper.toResource(graph, _createSerializationContext());
+        final result =
+            mapper.toRdfResource(graph, _createSerializationContext());
         expect(result.$1, equals(person));
         expect(result.$2, hasLength(6));
       });
@@ -187,7 +190,8 @@ void main() {
 
         final graph = RdfGraph(triples: triples);
 
-        final result = mapper.toResource(graph, _createSerializationContext());
+        final result =
+            mapper.toRdfResource(graph, _createSerializationContext());
         expect(result.$1, equals(blank));
         expect(result.$2, hasLength(2));
       });
@@ -203,7 +207,8 @@ void main() {
 
         final graph = RdfGraph(triples: triples);
 
-        final result = mapper.toResource(graph, _createSerializationContext());
+        final result =
+            mapper.toRdfResource(graph, _createSerializationContext());
         expect(result.$1, equals(blank));
         expect(result.$2, hasLength(2));
       });
@@ -225,7 +230,8 @@ void main() {
 
         final graph = RdfGraph(triples: triples);
 
-        final result = mapper.toResource(graph, _createSerializationContext());
+        final result =
+            mapper.toRdfResource(graph, _createSerializationContext());
         expect(result.$1, equals(rootBlank));
         expect(result.$2, hasLength(5));
       });
@@ -244,7 +250,7 @@ void main() {
 
         // Should fail because multiple toplevel subjects exist
         expect(
-            () => mapper.toResource(graph, _createSerializationContext()),
+            () => mapper.toRdfResource(graph, _createSerializationContext()),
             throwsA(isA<ArgumentError>().having((e) => e.message, 'message',
                 contains('Multiple toplevel subjects'))));
       });
@@ -266,7 +272,8 @@ void main() {
 
         final graph = RdfGraph(triples: triples);
 
-        final result = mapper.toResource(graph, _createSerializationContext());
+        final result =
+            mapper.toRdfResource(graph, _createSerializationContext());
         expect(result.$1, equals(rootBlank));
         expect(result.$2, hasLength(5));
       });
@@ -282,7 +289,8 @@ void main() {
 
         final graph = RdfGraph(triples: triples);
 
-        final result = mapper.toResource(graph, _createSerializationContext());
+        final result =
+            mapper.toRdfResource(graph, _createSerializationContext());
         expect(result.$1, equals(blank));
         expect(result.$2, hasLength(2));
       });
@@ -309,7 +317,8 @@ void main() {
 
         final graph = RdfGraph(triples: triples);
 
-        final result = mapper.toResource(graph, _createSerializationContext());
+        final result =
+            mapper.toRdfResource(graph, _createSerializationContext());
         expect(result.$1, equals(rootBlank));
         expect(result.$2, hasLength(7));
       });
@@ -331,7 +340,8 @@ void main() {
         final graph = RdfGraph(triples: triples);
 
         // Should use IRI as root since it's the only IRI in the cycle
-        final result = mapper.toResource(graph, _createSerializationContext());
+        final result =
+            mapper.toRdfResource(graph, _createSerializationContext());
         expect(result.$1, equals(iri));
         expect(result.$2, hasLength(4));
       });
@@ -342,7 +352,7 @@ void main() {
         final graph = RdfGraph(triples: []);
 
         expect(
-            () => mapper.toResource(graph, _createSerializationContext()),
+            () => mapper.toRdfResource(graph, _createSerializationContext()),
             throwsA(isA<ArgumentError>().having(
                 (e) => e.message, 'message', contains('empty triples'))));
       });
@@ -360,7 +370,8 @@ void main() {
 
         final graph = RdfGraph(triples: triples);
 
-        final result = mapper.toResource(graph, _createSerializationContext());
+        final result =
+            mapper.toRdfResource(graph, _createSerializationContext());
         expect(result.$1, equals(blank1));
       });
 
@@ -379,7 +390,8 @@ void main() {
         final graph = RdfGraph(triples: triples);
 
         // Should identify iri as root despite the cycle using improved heuristics
-        final result = mapper.toResource(graph, _createSerializationContext());
+        final result =
+            mapper.toRdfResource(graph, _createSerializationContext());
         expect(result.$1, equals(iri));
       });
 
@@ -400,7 +412,8 @@ void main() {
         final graph = RdfGraph(triples: triples);
 
         // Should now identify the IRI as root using improved heuristics
-        final result = mapper.toResource(graph, _createSerializationContext());
+        final result =
+            mapper.toRdfResource(graph, _createSerializationContext());
         expect(result.$1, equals(iri));
       });
 
@@ -419,7 +432,7 @@ void main() {
 
         // Should fail with improved error message for blank node cycles
         expect(
-            () => mapper.toResource(graph, _createSerializationContext()),
+            () => mapper.toRdfResource(graph, _createSerializationContext()),
             throwsA(isA<ArgumentError>().having(
                 (e) => e.message, 'message', contains('cyclic blank nodes'))));
       });
@@ -438,7 +451,8 @@ void main() {
         final graph = RdfGraph(triples: triples);
 
         // Should identify subject2 as root since subject1 is in objects
-        final result = mapper.toResource(graph, _createSerializationContext());
+        final result =
+            mapper.toRdfResource(graph, _createSerializationContext());
         expect(result.$1, equals(subject2));
       });
 
@@ -456,7 +470,8 @@ void main() {
         final graph = RdfGraph(triples: triples);
 
         // Should identify subject as root since it's not in objects
-        final result = mapper.toResource(graph, _createSerializationContext());
+        final result =
+            mapper.toRdfResource(graph, _createSerializationContext());
         expect(result.$1, equals(subject));
       });
 
@@ -472,7 +487,7 @@ void main() {
 
         // Should fail because multiple IRIs exist in cycle
         expect(
-            () => mapper.toResource(graph, _createSerializationContext()),
+            () => mapper.toRdfResource(graph, _createSerializationContext()),
             throwsA(isA<ArgumentError>().having((e) => e.message, 'message',
                 contains('Multiple IRI subjects'))));
       });
@@ -490,13 +505,13 @@ void main() {
         final context = _createDeserializationContext(triples);
 
         // Should work with correct subject
-        final result = mapper.fromResource(correctSubject, context);
+        final result = mapper.fromRdfResource(correctSubject, context);
         expect(result.triples, hasLength(1));
         expect(result.triples.first.subject, equals(correctSubject));
 
         // Should fail with wrong subject - context returns empty list for wrong subject
         expect(
-            () => mapper.fromResource(wrongSubject, context),
+            () => mapper.fromRdfResource(wrongSubject, context),
             throwsA(isA<ArgumentError>().having(
                 (e) => e.message, 'message', contains('empty triples'))));
       });
@@ -516,7 +531,7 @@ void main() {
 
         // Should fail because there are multiple toplevel subjects
         expect(
-            () => mapper.fromResource(wrongSubject, context),
+            () => mapper.fromRdfResource(wrongSubject, context),
             throwsA(isA<ArgumentError>().having((e) => e.message, 'message',
                 contains('Multiple toplevel subjects'))));
       });

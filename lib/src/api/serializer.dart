@@ -203,7 +203,7 @@ abstract interface class GlobalResourceSerializer<T>
   });
 }
 
-abstract interface class GenericResourceSerializer<T>
+abstract interface class CommonResourceSerializer<T>
     implements ResourceSerializer<T> {
   @override
   (RdfSubject, List<Triple>) toRdfResource(
