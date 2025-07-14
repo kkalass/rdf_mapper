@@ -2,6 +2,7 @@ import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
 import 'package:rdf_vocabularies/rdf.dart';
 import 'package:rdf_vocabularies/schema.dart';
+import 'package:rdf_vocabularies/xsd.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -1381,6 +1382,8 @@ class _TestType {
 
 // Test serializers and deserializers for registration tests
 class _TestLiteralMapper implements LiteralTermMapper<_TestType> {
+  final IriTerm datatype = Xsd.string;
+
   const _TestLiteralMapper();
   @override
   LiteralTerm toRdfTerm(_TestType value, SerializationContext context) {

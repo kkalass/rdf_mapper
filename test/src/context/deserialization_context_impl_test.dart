@@ -6,6 +6,7 @@ import 'package:rdf_mapper/src/context/deserialization_context_impl.dart';
 import 'package:rdf_mapper/src/exceptions/property_value_not_found_exception.dart';
 import 'package:rdf_mapper/src/exceptions/too_many_property_values_exception.dart';
 import 'package:rdf_vocabularies/vcard.dart';
+import 'package:rdf_vocabularies/xsd.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -384,7 +385,10 @@ class CustomIriDeserializer implements IriTermDeserializer<String> {
 }
 
 class CustomStringDeserializer implements LiteralTermDeserializer<String> {
-  const CustomStringDeserializer();
+  final IriTerm datatype;
+
+  const CustomStringDeserializer([this.datatype = Xsd.string]);
+
   @override
   String fromRdfTerm(LiteralTerm term, DeserializationContext context,
       {bool bypassDatatypeCheck = false}) {
@@ -408,6 +412,8 @@ class CustomLocalResourceDeserializer
 // Additional test deserializer for map testing
 class KeyValueDeserializer
     implements LiteralTermDeserializer<MapEntry<String, String>> {
+  final IriTerm datatype;
+  const KeyValueDeserializer([this.datatype = Xsd.string]);
   @override
   MapEntry<String, String> fromRdfTerm(
     LiteralTerm term,

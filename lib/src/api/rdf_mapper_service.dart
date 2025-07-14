@@ -516,7 +516,7 @@ final class RdfMapperService {
     }
     var context = DeserializationContextImpl(graph: graph, registry: registry);
 
-    var result = context.deserialize<T>(rdfSubject, null, null, null, null);
+    var result = context.deserialize<T>(rdfSubject);
 
     return (result, _withoutTriples(graph, context.getAllProcessedTriples()));
   }

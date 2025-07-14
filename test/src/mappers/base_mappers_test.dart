@@ -1,8 +1,6 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
-import 'package:rdf_mapper/src/api/resource_builder.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
-import 'package:rdf_mapper/src/api/serializer.dart';
 import 'package:rdf_mapper/src/exceptions/deserialization_exception.dart';
 import 'package:rdf_mapper/src/mappers/literal/base_rdf_literal_term_deserializer.dart';
 import 'package:rdf_mapper/src/mappers/literal/base_rdf_literal_term_serializer.dart';
@@ -10,27 +8,7 @@ import 'package:rdf_vocabularies/xsd.dart';
 import 'package:test/test.dart';
 
 import '../deserializers/mock_deserialization_context.dart';
-
-// Mock implementation of SerializationContext for testing
-class MockSerializationContext extends SerializationContext {
-  @override
-  ResourceBuilder<S> resourceBuilder<S extends RdfSubject>(S subject) {
-    throw UnimplementedError();
-  }
-
-  @override
-  List<Triple> resource<T>(T instance, {ResourceSerializer<T>? serializer}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  LiteralTerm toLiteralTerm<T>(
-    T value, {
-    LiteralTermSerializer<T>? serializer,
-  }) {
-    throw UnimplementedError();
-  }
-}
+import '../serializers/mock_serialization_context.dart';
 
 // Concrete implementation for testing BaseRdfLiteralTermSerializer
 class TestPointSerializer extends BaseRdfLiteralTermSerializer<Point> {

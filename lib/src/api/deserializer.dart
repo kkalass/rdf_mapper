@@ -99,6 +99,13 @@ abstract interface class IriTermDeserializer<T> implements TermDeserializer<T> {
 /// - Any value where the string representation is sufficient
 abstract interface class LiteralTermDeserializer<T>
     implements TermDeserializer<T> {
+  /// The RDF datatype this deserializer handles.
+  ///
+  /// When deserializing a literal term and we do not find a deserializer for
+  /// the dart type, we will take a deserializer that matches the
+  /// datatype of the literal term.
+  IriTerm get datatype;
+
   /// Converts a literal term to a value.
   ///
   /// This method transforms the given RDF literal term into a Dart object.

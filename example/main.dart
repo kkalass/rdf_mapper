@@ -2,6 +2,7 @@ import 'package:rdf_core/rdf_core.dart';
 
 import 'package:rdf_mapper/rdf_mapper.dart';
 import 'package:rdf_vocabularies/schema.dart';
+import 'package:rdf_vocabularies/xsd.dart';
 
 void main() {
   final rdf =
@@ -299,6 +300,7 @@ class ISBNMapper implements IriTermMapper<ISBN> {
 
 // Custom literal mapper
 class RatingMapper implements LiteralTermMapper<Rating> {
+  final IriTerm datatype = Xsd.integer;
   const RatingMapper();
 
   @override

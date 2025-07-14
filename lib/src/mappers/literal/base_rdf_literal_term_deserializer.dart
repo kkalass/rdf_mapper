@@ -33,6 +33,8 @@ abstract class BaseRdfLiteralTermDeserializer<T>
     implements LiteralTermDeserializer<T> {
   final IriTerm _datatype;
 
+  IriTerm get datatype => _datatype;
+
   /// Creates a new base literal term deserializer.
   ///
   /// @param datatype The XSD or custom datatype IRI that this deserializer handles

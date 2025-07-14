@@ -2,6 +2,9 @@ import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
 import 'package:test/test.dart';
 
+import '../deserializers/mock_deserialization_context.dart';
+import '../serializers/mock_serialization_context.dart';
+
 void main() {
   group('RdfGraphResourceMapper _getSingleRootSubject tests', () {
     late RDFGraphResourceMapper mapper;
@@ -541,8 +544,7 @@ void main() {
 
 // Helper function to create a mock SerializationContext
 SerializationContext _createSerializationContext() {
-  final registry = RdfMapperRegistry();
-  return SerializationContextImpl(registry);
+  return MockSerializationContext();
 }
 
 // Helper function to create a mock DeserializationContext
@@ -561,75 +563,30 @@ DeserializationContext _createDeserializationContextWithAllTriples(
 }
 
 // Mock implementations for testing
-class SerializationContextImpl extends SerializationContext {
-  final RdfMapperRegistry registry;
 
-  SerializationContextImpl(this.registry);
-
-  @override
-  List<Triple> resource<T>(T value, {ResourceSerializer<T>? serializer}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  ResourceBuilder<S> resourceBuilder<S extends RdfSubject>(S subject) {
-    throw UnimplementedError();
-  }
-
-  @override
-  LiteralTerm toLiteralTerm<T>(T value,
-      {LiteralTermSerializer<T>? serializer}) {
-    throw UnimplementedError();
-  }
-}
-
-class DeserializationContextImpl extends DeserializationContext {
+class DeserializationContextImpl extends MockDeserializationContext {
   final RdfGraph graph;
   final RdfMapperRegistry registry;
 
   DeserializationContextImpl(this.graph, this.registry);
 
   @override
-  T fromLiteralTerm<T>(LiteralTerm term,
-      {LiteralTermDeserializer<T>? deserializer,
-      bool bypassDatatypeCheck = false}) {
-    throw UnimplementedError();
-  }
-
-  @override
   List<Triple> getTriplesForSubject(RdfSubject subject,
-      {bool includeBlankNodes = true}) {
+      {bool includeBlankNodes = true, bool trackRead = true}) {
     return graph.triples.where((t) => t.subject == subject).toList();
-  }
-
-  @override
-  ResourceReader reader(RdfSubject subject) {
-    throw UnimplementedError();
   }
 }
 
-class DeserializationContextAllTriplesImpl extends DeserializationContext {
+class DeserializationContextAllTriplesImpl extends MockDeserializationContext {
   final RdfGraph graph;
   final RdfMapperRegistry registry;
 
   DeserializationContextAllTriplesImpl(this.graph, this.registry);
 
   @override
-  T fromLiteralTerm<T>(LiteralTerm term,
-      {LiteralTermDeserializer<T>? deserializer,
-      bool bypassDatatypeCheck = false}) {
-    throw UnimplementedError();
-  }
-
-  @override
   List<Triple> getTriplesForSubject(RdfSubject subject,
-      {bool includeBlankNodes = true}) {
+      {bool includeBlankNodes = true, bool trackRead = true}) {
     // Return all triples to simulate the scenario where we get all triples for root detection
     return graph.triples.toList();
-  }
-
-  @override
-  ResourceReader reader(RdfSubject subject) {
-    throw UnimplementedError();
   }
 }

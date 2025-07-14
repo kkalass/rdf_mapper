@@ -1,13 +1,7 @@
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/src/api/deserialization_context.dart';
-import 'package:rdf_mapper/src/api/deserialization_service.dart';
-import 'package:rdf_mapper/src/api/deserializer.dart';
-import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
-import 'package:rdf_mapper/src/api/resource_reader.dart';
-import 'package:rdf_mapper/src/exceptions/property_value_not_found_exception.dart';
-import 'package:rdf_mapper/src/exceptions/too_many_property_values_exception.dart';
+import 'package:rdf_mapper/rdf_mapper.dart';
 import 'package:rdf_vocabularies/rdf.dart';
 
 final _log = Logger('DeserializationContextImpl');
@@ -60,7 +54,7 @@ class DeserializationContextImpl extends DeserializationContext
     }
 
     if (deser.typeIri == typeIri) {
-      _trackTriplesRead(
+      trackTriplesRead(
         subject,
         [
           Triple(
@@ -73,7 +67,7 @@ class DeserializationContextImpl extends DeserializationContext
     }
   }
 
-  void _trackTriplesRead(RdfSubject subject, List<Triple> triples) {
+  void trackTriplesRead(RdfSubject subject, Iterable<Triple> triples) {
     _readTriplesBySubject.putIfAbsent(subject, () => []).addAll(triples);
     _onTriplesRead(triples);
   }
@@ -83,34 +77,36 @@ class DeserializationContextImpl extends DeserializationContext
   /// within deserialization of another resource,
   /// not when the toplevel deserializeResource is called!
   void _onDeserializeChildResource(RdfTerm term) {}
-  void _onTriplesRead(List<Triple> triples) {}
+  void _onTriplesRead(Iterable<Triple> triples) {}
 
   T deserialize<T>(
-    RdfTerm term,
-    IriTermDeserializer<T>? iriTermDeserializer,
-    GlobalResourceDeserializer<T>? globalResourceDeserializer,
-    LiteralTermDeserializer<T>? literalTermDeserializer,
-    LocalResourceDeserializer<T>? localResourceDeserializer,
-  ) {
+    RdfTerm term, {
+    Deserializer<T>? deserializer,
+  }) {
     var context = this;
     switch (term) {
       case IriTerm _:
-        if (globalResourceDeserializer != null ||
+        if (deserializer is GlobalResourceDeserializer<T> ||
             _registry.hasGlobalResourceDeserializerFor<T>()) {
-          var deser = globalResourceDeserializer ??
-              _registry.getGlobalResourceDeserializer<T>();
+          var deser = deserializer is GlobalResourceDeserializer<T>
+              ? deserializer
+              : _registry.getGlobalResourceDeserializer<T>();
           _onDeserializeChildResource(term);
           _registerTypeRead(deser, term);
           return deser.fromRdfResource(term, context);
         }
-        var deser =
-            iriTermDeserializer ?? _registry.getIriTermDeserializer<T>();
-        return deser.fromRdfTerm(term, context);
+        return fromIriTerm(term,
+            deserializer:
+                deserializer is IriTermDeserializer<T> ? deserializer : null);
       case LiteralTerm _:
-        return fromLiteralTerm(term, deserializer: literalTermDeserializer);
+        return fromLiteralTerm(term,
+            deserializer: deserializer is LiteralTermDeserializer<T>
+                ? deserializer
+                : null);
       case BlankNodeTerm _:
-        var deser = localResourceDeserializer ??
-            _registry.getLocalResourceDeserializer<T>();
+        var deser = deserializer is LocalResourceDeserializer<T>
+            ? deserializer
+            : _registry.getLocalResourceDeserializer<T>();
         _onDeserializeChildResource(term);
         _registerTypeRead(deser, term);
         return deser.fromRdfResource(term, context);
@@ -120,9 +116,27 @@ class DeserializationContextImpl extends DeserializationContext
   T fromLiteralTerm<T>(LiteralTerm term,
       {LiteralTermDeserializer<T>? deserializer,
       bool bypassDatatypeCheck = false}) {
-    var deser = deserializer ?? _registry.getLiteralTermDeserializer<T>();
-    return deser.fromRdfTerm(term, this,
+    try {
+      deserializer ??= _registry.getLiteralTermDeserializer<T>();
+    } on DeserializerNotFoundException catch (_) {
+      // could not find a deserializer for the requested target type,
+      // lets look for a deserializer by datatype
+      deserializer =
+          _registry.getLiteralTermDeserializerByType<T>(term.datatype);
+    }
+    return deserializer.fromRdfTerm(term, this,
         bypassDatatypeCheck: bypassDatatypeCheck);
+  }
+
+  T fromIriTerm<T>(IriTerm term, {IriTermDeserializer<T>? deserializer}) {
+    try {
+      deserializer ??= _registry.getIriTermDeserializer<T>();
+    } on DeserializerNotFoundException catch (_) {
+      // could not find a deserializer for the requested target type,
+      // lets look for a deserializer by datatype
+      deserializer = _registry.getFirstIriTermDeserializer<T>();
+    }
+    return deserializer.fromRdfTerm(term, this);
   }
 
   @override
@@ -150,10 +164,10 @@ class DeserializationContextImpl extends DeserializationContext
     final rdfObject = triples.first.object;
     return deserialize<T>(
       rdfObject,
-      iriTermDeserializer,
-      globalResourceDeserializer,
-      literalTermDeserializer,
-      localResourceDeserializer,
+      deserializer: iriTermDeserializer ??
+          globalResourceDeserializer ??
+          literalTermDeserializer ??
+          localResourceDeserializer,
     );
   }
 
@@ -162,7 +176,7 @@ class DeserializationContextImpl extends DeserializationContext
     final readTriples =
         _graph.findTriples(subject: subject, predicate: predicate);
 
-    _trackTriplesRead(subject, readTriples);
+    trackTriplesRead(subject, readTriples);
     // Hook for tracking deserialization
     return readTriples;
   }
@@ -196,7 +210,7 @@ class DeserializationContextImpl extends DeserializationContext
     final triples = _getRemainingTriplesForSubject(subject,
         includeBlankNodes: unmappedTriplesDeserializer.deep);
 
-    _trackTriplesRead(subject, triples);
+    trackTriplesRead(subject, triples);
 
     return unmappedTriplesDeserializer.fromUnmappedTriples(triples);
   }
@@ -215,10 +229,10 @@ class DeserializationContextImpl extends DeserializationContext
     final convertedTriples = triples.map(
       (triple) => deserialize(
         triple.object,
-        iriTermDeserializer,
-        globalResourceDeserializer,
-        literalTermDeserializer,
-        localResourceDeserializer,
+        deserializer: iriTermDeserializer ??
+            globalResourceDeserializer ??
+            literalTermDeserializer ??
+            localResourceDeserializer,
       ),
     );
     return collector(convertedTriples);
@@ -322,7 +336,7 @@ class DeserializationContextImpl extends DeserializationContext
 
   @override
   List<Triple> getTriplesForSubject(RdfSubject subject,
-      {bool includeBlankNodes = true}) {
+      {bool includeBlankNodes = true, bool trackRead = true}) {
     final triples = _graph.findTriples(subject: subject);
     if (!includeBlankNodes) {
       return triples;
@@ -333,12 +347,51 @@ class DeserializationContextImpl extends DeserializationContext
       ...triples,
       ...blankNodes.expand((term) => _graph.findTriples(subject: term)),
     ];
-    _trackTriplesRead(subject, result);
+    if (trackRead) {
+      trackTriplesRead(subject, result);
+    }
     return result;
   }
 
   Set<Triple> getAllProcessedTriples() {
     return _readTriplesBySubject.values.expand((triples) => triples).toSet();
+  }
+
+  @override
+  Iterable<V> readRdfList<V>(RdfSubject subject,
+      {Deserializer<V>? deserializer}) sync* {
+    if (subject == Rdf.nil) {
+      return; // rdf:nil represents an empty list
+    }
+
+    RdfSubject cur = subject;
+    final visitedNodes = <RdfSubject>{};
+
+    while (cur != Rdf.nil) {
+      // Cycle detection: check if we've seen this node before
+      if (visitedNodes.contains(cur)) {
+        throw StateError(
+            'Circular reference detected in RDF list at node: $cur');
+      }
+      visitedNodes.add(cur);
+
+      final triples =
+          getTriplesForSubject(cur, includeBlankNodes: false, trackRead: false);
+
+      final first = triples.singleWhere(
+          (triple) => triple.subject == cur && triple.predicate == Rdf.first);
+      final rest = triples.singleWhere(
+          (triple) => triple.subject == cur && triple.predicate == Rdf.rest);
+
+      trackTriplesRead(cur, [first, rest]);
+
+      final object = first.object;
+      final deserialized = deserialize<V>(object, deserializer: deserializer);
+      yield deserialized;
+
+      // Move to next node after successful processing
+      cur = rest.object as RdfSubject;
+    }
   }
 }
 
@@ -361,7 +414,7 @@ class TrackingDeserializationContext extends DeserializationContextImpl {
   }
 
   @override
-  void _onTriplesRead(List<Triple> triples) {
+  void _onTriplesRead(Iterable<Triple> triples) {
     _processedTriples.addAll(triples);
   }
 

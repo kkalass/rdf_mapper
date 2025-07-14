@@ -110,7 +110,7 @@ abstract class BaseRdfLiteralTermMapper<T> implements LiteralTermMapper<T> {
   /// [datatype] The RDF datatype IRI that this mapper produces and expects
   const BaseRdfLiteralTermMapper({
     required IriTerm datatype,
-  }) : datatype = datatype;
+  }) : this.datatype = datatype;
 
   /// Converts an RDF literal term to a Dart value of type T.
   ///

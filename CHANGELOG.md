@@ -11,12 +11,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added `CommonResourceMapper` abstract base class for unified handling of both IRI and blank node subjects
 - Added `CommonResourceSerializer` interface for generic resource serialization
+- Added `datatype` property to `LiteralTermDeserializer` interface for enhanced type resolution
+- Added enhanced deserialization fallback to find deserializers by RDF datatype when type-based lookup fails
+- Added comprehensive RDF list support with `readRdfList()` and `buildRdfList()` methods in serialization/deserialization contexts
+- Added `RdfListMapper<T>` for mapping Dart Lists to RDF list structures
+- Added `UriIriMapper` for mapping Dart `Uri` objects to IRI terms (replaces `IriFullMapper` )
+- Added `serialize()` and `deserialize()` core methods to contexts for unified value processing
+- Added cycle detection in RDF list processing to prevent infinite loops
+- Added tracking functionality with `trackTriplesRead()` method for completeness monitoring
 
 ### Changed
 
 - **Breaking Change**: Renamed `GenericResourceSerializer` to `CommonResourceSerializer`
 - **Breaking Change**: Unified `RdfGraphGlobalResourceMapper` and `RdfGraphLocalResourceMapper` into `RDFGraphResourceMapper`
+- **Breaking Change**: Enhanced `DeserializationContext.getTriplesForSubject()` with `trackRead` parameter (defaults to true)
+- **Breaking Change**: Modified `DeserializationContext.deserialize()` method signature to use optional deserializer parameter
+- **Breaking Change**: All `LiteralTermDeserializer` implementations now require `datatype` property
+- **Breaking Change**: Updated test deserializers throughout codebase to include required `datatype` field
 - Updated `RdfMapperRegistry.registerMapper()` to automatically handle `CommonResourceMapper` registration via adapter pattern
+- Updated registry to support deserializer lookup by RDF datatype for improved type resolution
+- Enhanced serialization context with unified `serialize()` method supporting all value types
+- Improved error handling in registry with proper exception propagation for missing serializers
 
 ## [0.8.8] - 2025-07-10
 

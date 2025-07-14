@@ -36,3 +36,27 @@ final class IriFullMapper implements IriTermMapper<String> {
     return term.iri;
   }
 }
+
+final class UriIriMapper implements IriTermMapper<Uri> {
+  const UriIriMapper();
+
+  /// Converts a URI to an IRI term.
+  ///
+  /// @param uri The URI to convert
+  /// @param context The serialization context (unused in this implementation)
+  /// @return An IRI term with the specified URI
+  @override
+  IriTerm toRdfTerm(Uri uri, SerializationContext context) {
+    return IriTerm(uri.toString());
+  }
+
+  /// Converts an IRI term to its full URI representation.
+  ///
+  /// @param term The IRI term to convert
+  /// @param context The deserialization context (unused in this implementation)
+  /// @return The complete URI
+  @override
+  Uri fromRdfTerm(IriTerm term, DeserializationContext context) {
+    return Uri.parse(term.iri);
+  }
+}

@@ -63,7 +63,7 @@ class SerializationContextImpl extends SerializationContext
       try {
         // First attempt with exact type T
         ser = lookup();
-      } catch (_) {
+      } on SerializerNotFoundException catch (_) {
         // If exact type fails (likely because T is nullable), try with the runtime type.
         // We get here because there was no serializer registered for the nullable T,
         // so we implement null behaviour by simply returning an empty list for null.
@@ -72,7 +72,11 @@ class SerializationContextImpl extends SerializationContext
         }
 
         final Type runtimeType = instance.runtimeType;
-        ser = lookupByType(runtimeType);
+        try {
+          ser = lookupByType(runtimeType);
+        } on SerializerNotFoundException catch (_) {
+          return null;
+        }
       }
     }
     return ser;
@@ -102,6 +106,21 @@ class SerializationContextImpl extends SerializationContext
     IriTermSerializer<T>? iriTermSerializer,
     ResourceSerializer<T>? resourceSerializer,
   }) {
+    final (valueTerm, triples) = serialize(
+      instance,
+      parentSubject: subject,
+      serializer:
+          literalTermSerializer ?? iriTermSerializer ?? resourceSerializer,
+    );
+    return [Triple(subject, predicate, valueTerm as RdfObject), ...triples];
+  }
+
+  @override
+  (RdfTerm, Iterable<Triple>) serialize<T>(
+    T instance, {
+    Serializer<T>? serializer,
+    RdfSubject? parentSubject,
+  }) {
     if (instance == null) {
       throw ArgumentError(
         'Instance cannot be null for serialization, the caller should handle null values.',
@@ -110,90 +129,77 @@ class SerializationContextImpl extends SerializationContext
 
     // Check if the instance is already an RDF term
     if (instance is RdfObject) {
-      return [Triple(subject, predicate, instance as RdfObject)];
+      return (instance as RdfObject, const []);
     }
 
     // Try serializers in priority order if explicitly provided
 
     // 1. Try IRI serializer if provided
-    if (iriTermSerializer != null) {
-      var term = iriTermSerializer.toRdfTerm(instance, this);
-      return [Triple(subject, predicate, term)];
+    if (serializer is IriTermSerializer<T>) {
+      var term = serializer.toRdfTerm(instance, this);
+      return (term, const []);
     }
 
     // 2. Try literal serializer if provided
-    if (literalTermSerializer != null) {
-      var term = literalTermSerializer.toRdfTerm(instance, this);
-      return [Triple(subject, predicate, term)];
+    if (serializer is LiteralTermSerializer<T>) {
+      var term = serializer.toRdfTerm(instance, this);
+      return (term, const []);
     }
 
     // 3. Try resource serializer if provided
-    if (resourceSerializer != null) {
+    if (serializer is ResourceSerializer<T>) {
       return _createChildResource(
-        subject,
-        predicate,
         instance,
-        serializer: resourceSerializer,
+        serializer,
+        parentSubject: parentSubject,
       );
     }
 
     // If no explicit serializers were provided, try to find registered ones
 
-    // 1. First try IRI serialization
-    try {
-      final iriSer = _getSerializerFallbackToRuntimeType(
-        null,
-        instance,
-        _registry.getIriTermSerializer,
-        _registry.getIriTermSerializerByType,
-      );
+    // 1. try literal serialization
+    final literalSer = _getSerializerFallbackToRuntimeType(
+      null,
+      instance,
+      _registry.getLiteralTermSerializer,
+      _registry.getLiteralTermSerializerByType,
+    );
 
-      if (iriSer != null) {
-        var term = iriSer.toRdfTerm(instance, this);
-        return [Triple(subject, predicate, term)];
-      }
-    } catch (_) {
-      // If IRI serialization fails, continue to literal serialization
+    if (literalSer != null) {
+      // If we have a literal serializer, use it
+      // This is the case for String, int, double, etc.
+      // We can also use it for other types if we have a custom serializer
+      var term = literalSer.toRdfTerm(instance, this);
+      return (term, const []);
     }
 
-    // 2. Then try literal serialization
-    try {
-      final literalSer = _getSerializerFallbackToRuntimeType(
-        null,
-        instance,
-        _registry.getLiteralTermSerializer,
-        _registry.getLiteralTermSerializerByType,
-      );
+    // 2. try IRI serialization
+    final iriSer = _getSerializerFallbackToRuntimeType(
+      null,
+      instance,
+      _registry.getIriTermSerializer,
+      _registry.getIriTermSerializerByType,
+    );
 
-      if (literalSer != null) {
-        // If we have a literal serializer, use it
-        // This is the case for String, int, double, etc.
-        // We can also use it for other types if we have a custom serializer
-        var term = literalSer.toRdfTerm(instance, this);
-        return [Triple(subject, predicate, term)];
-      }
-    } catch (_) {
-      // If literal serialization fails, try resource serialization
+    if (iriSer != null) {
+      var term = iriSer.toRdfTerm(instance, this);
+      return (term, const []);
     }
 
     // 3. Finally try resource serialization
-    try {
-      final resourceSer = _getSerializerFallbackToRuntimeType(
-        null,
-        instance,
-        _registry.getResourceSerializer,
-        _registry.getResourceSerializerByType,
-      );
+    final resourceSer = _getSerializerFallbackToRuntimeType(
+      null,
+      instance,
+      _registry.getResourceSerializer,
+      _registry.getResourceSerializerByType,
+    );
 
-      if (resourceSer != null) {
-        return _createChildResource(subject, predicate, instance,
-            serializer: resourceSer);
-      }
-    } catch (_) {
-      // If all serialization attempts fail, throw an exception
+    if (resourceSer != null) {
+      return _createChildResource(instance, resourceSer,
+          parentSubject: parentSubject);
     }
 
-    throw SerializerNotFoundException('Any serializer', T);
+    throw SerializerNotFoundException('', T);
   }
 
   /// Adds values from a collection to the subject with the given predicate.
@@ -284,35 +290,16 @@ class SerializationContextImpl extends SerializationContext
   }
 
   // Private implementation of childResource with support for different resource serializers
-  List<Triple> _createChildResource<T>(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    T instance, {
-    ResourceSerializer<T>? serializer,
-  }) {
+  (RdfTerm, Iterable<Triple>) _createChildResource<T>(
+      T instance, ResourceSerializer<T> serializer,
+      {RdfSubject? parentSubject}) {
     // Check if we have a custom serializer or should use registry
     ResourceSerializer<T>? ser = serializer;
-
-    // If no explicit serializer was provided, try the registry
-    if (ser == null) {
-      // Try to get serializer from registry
-      ser = _getSerializerFallbackToRuntimeType(
-        null,
-        instance,
-        _registry.getResourceSerializer,
-        _registry.getResourceSerializerByType,
-      );
-    }
-
-    // If we couldn't find any serializer, return empty result
-    if (ser == null) {
-      return [];
-    }
 
     var (childIri, childTriples) = ser.toRdfResource(
       instance,
       this,
-      parentSubject: subject,
+      parentSubject: parentSubject,
     );
 
     // Check if a type triple already exists for the child
@@ -328,14 +315,15 @@ class SerializationContextImpl extends SerializationContext
     }
 
     final typeIri = ser.typeIri;
-    return [
-      // Add rdf:type for the child only if not already present
-      if (!hasTypeTriple && typeIri != null)
-        Triple(childIri, Rdf.type, typeIri),
-      ...childTriples,
-      // connect the parent to the child
-      Triple(subject, predicate, childIri),
-    ];
+    return (
+      childIri,
+      [
+        // Add rdf:type for the child only if not already present
+        if (!hasTypeTriple && typeIri != null)
+          Triple(childIri, Rdf.type, typeIri),
+        ...childTriples,
+      ]
+    );
   }
 
   @override
@@ -424,5 +412,56 @@ class SerializationContextImpl extends SerializationContext
       throw SerializerNotFoundException('UnmappedTriplesSerializer', T);
     }
     return ser.toUnmappedTriples(subject, value);
+  }
+
+  (RdfSubject, Iterable<Triple>) buildRdfList<V>(Iterable<V> values,
+      {RdfSubject? headNode, Serializer<V>? serializer}) {
+    if (values.isEmpty) {
+      return (Rdf.nil, const []);
+    }
+
+    headNode ??= BlankNodeTerm();
+    return (
+      headNode,
+      _buildRdfListTriples(values.iterator, headNode, serializer: serializer)
+    );
+  }
+
+  Iterable<Triple> _buildRdfListTriples<V>(
+      Iterator<V> iterator, RdfSubject headNode,
+      {Serializer<V>? serializer}) sync* {
+    if (!iterator.moveNext()) {
+      return;
+    }
+
+    var currentNode = headNode;
+
+    do {
+      final value = iterator.current;
+
+      // Serialize the current value
+      final (valueTerm, valueTriples) = serialize<V>(value,
+          parentSubject: currentNode, serializer: serializer);
+
+      // Yield all triples from the serialized value
+      yield* valueTriples;
+
+      // Add rdf:first triple
+      yield Triple(currentNode, Rdf.first, valueTerm as RdfObject);
+
+      // Check if there are more elements
+      final hasNext = iterator.moveNext();
+
+      if (hasNext) {
+        // Not last element: create next node and point to it
+        final nextNode = BlankNodeTerm();
+        yield Triple(currentNode, Rdf.rest, nextNode);
+        currentNode = nextNode;
+      } else {
+        // Last element: point to rdf:nil
+        yield Triple(currentNode, Rdf.rest, Rdf.nil);
+        break;
+      }
+    } while (true);
   }
 }

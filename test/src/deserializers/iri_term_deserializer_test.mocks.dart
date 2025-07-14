@@ -60,18 +60,59 @@ class MockDeserializationContext extends _i1.Mock
       ) as _i2.ResourceReader);
 
   @override
+  T deserialize<T>(
+    _i4.RdfTerm? term, {
+    _i5.Deserializer<T>? deserializer,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #deserialize,
+          [term],
+          {#deserializer: deserializer},
+        ),
+        returnValue: _i6.dummyValue<T>(
+          this,
+          Invocation.method(
+            #deserialize,
+            [term],
+            {#deserializer: deserializer},
+          ),
+        ),
+      ) as T);
+
+  @override
   List<_i4.Triple> getTriplesForSubject(
     _i4.RdfSubject? subject, {
     bool? includeBlankNodes = true,
+    bool? trackRead = true,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #getTriplesForSubject,
           [subject],
-          {#includeBlankNodes: includeBlankNodes},
+          {
+            #includeBlankNodes: includeBlankNodes,
+            #trackRead: trackRead,
+          },
         ),
         returnValue: <_i4.Triple>[],
       ) as List<_i4.Triple>);
+
+  @override
+  void trackTriplesRead(
+    _i4.RdfSubject? subject,
+    Iterable<_i4.Triple>? triples,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #trackTriplesRead,
+          [
+            subject,
+            triples,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
 
   @override
   T fromLiteralTerm<T>(

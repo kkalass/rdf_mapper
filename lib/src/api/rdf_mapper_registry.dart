@@ -77,6 +77,10 @@ final class RdfMapperRegistry {
 
   // Type-based registries
   final Map<Type, IriTermDeserializer<dynamic>> _iriTermDeserializers = {};
+
+  /// Keep original order of IriTermDeserializers for when we need to find
+  /// a roughly matching deserializer by type.
+  final List<IriTermDeserializer<dynamic>> _allIriTermDeserializers = [];
   final Map<Type, GlobalResourceDeserializer<dynamic>>
       _globalResourceDeserializers = {};
   final Map<Type, IriTermSerializer<dynamic>> _iriTermSerializers = {};
@@ -84,6 +88,7 @@ final class RdfMapperRegistry {
       _localResourceDeserializers = {};
   final Map<Type, LiteralTermDeserializer<dynamic>> _literalTermDeserializers =
       {};
+
   final Map<Type, LiteralTermSerializer<dynamic>> _literalTermSerializers = {};
   final Map<Type, ResourceSerializer<dynamic>> _resourceSerializers = {};
   final Map<Type, UnmappedTriplesDeserializer<dynamic>>
@@ -96,6 +101,8 @@ final class RdfMapperRegistry {
       _globalResourceDeserializersByType = {};
   final Map<IriTerm, LocalResourceDeserializer<dynamic>>
       _localResourceDeserializersByType = {};
+  final Map<IriTerm, List<LiteralTermDeserializer<dynamic>>>
+      _literalTermDeserializersByType = {};
   final Map<IriTerm, Type> _globalResourceDartTypeByIriType = {};
   final Map<IriTerm, Type> _localResourceDartTypeByIriType = {};
 
@@ -109,7 +116,7 @@ final class RdfMapperRegistry {
   /// basic data types without requiring custom mappers.
   RdfMapperRegistry() {
     // Register standard mappers
-    registerMapper(const IriFullMapper());
+    registerMapper(const UriIriMapper());
 
     // Register mappers for common literal types
     registerMapper(const StringMapper());
@@ -256,6 +263,7 @@ final class RdfMapperRegistry {
   void _registerIriTermDeserializer<T>(IriTermDeserializer<T> deserializer) {
     _log.fine('Registering IriTerm deserializer for type ${T.toString()}');
     _iriTermDeserializers[T] = deserializer;
+    _allIriTermDeserializers.add(deserializer);
   }
 
   void _registerIriTermSerializer<T>(IriTermSerializer<T> serializer) {
@@ -268,6 +276,9 @@ final class RdfMapperRegistry {
   ) {
     _log.fine('Registering LiteralTerm deserializer for type ${T.toString()}');
     _literalTermDeserializers[T] = deserializer;
+    _literalTermDeserializersByType.putIfAbsent(
+        deserializer.datatype, () => <LiteralTermDeserializer<dynamic>>[])
+      ..add(deserializer);
   }
 
   void _registerLiteralTermSerializer<T>(LiteralTermSerializer<T> serializer) {
@@ -313,6 +324,14 @@ final class RdfMapperRegistry {
       throw DeserializerNotFoundException('IriTermDeserializer', T);
     }
     return deserializer as IriTermDeserializer<T>;
+  }
+
+  IriTermDeserializer<T> getFirstIriTermDeserializer<T>() {
+    return _allIriTermDeserializers.lastWhere(
+      (deserializer) => deserializer is IriTermDeserializer<T>,
+      orElse: () =>
+          throw DeserializerNotFoundException('IriTermDeserializer', T),
+    ) as IriTermDeserializer<T>;
   }
 
   GlobalResourceDeserializer<T> getGlobalResourceDeserializer<T>() {
@@ -402,6 +421,19 @@ final class RdfMapperRegistry {
       throw DeserializerNotFoundException('LiteralTermDeserializer', T);
     }
     return deserializer as LiteralTermDeserializer<T>;
+  }
+
+  LiteralTermDeserializer<T> getLiteralTermDeserializerByType<T>(
+      IriTerm typeIri) {
+    final deserializers = _literalTermDeserializersByType[typeIri];
+    if (deserializers == null) {
+      throw DeserializerNotFoundException(
+          'LiteralTermDeserializer by datatype IRI $typeIri', T);
+    }
+    return deserializers.firstWhere((d) => d is LiteralTermDeserializer<T>,
+        orElse: () => throw DeserializerNotFoundException(
+            'LiteralTermDeserializer by datatype IRI $typeIri - found deserializers, but none matched type $T',
+            T)) as LiteralTermDeserializer<T>;
   }
 
   LiteralTermSerializer<T> getLiteralTermSerializer<T>() {

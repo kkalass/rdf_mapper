@@ -138,6 +138,8 @@ final class LanguageOverrideMapper<T> implements LiteralTermMapper<T> {
   /// such as 'en', 'de', 'en-US', 'fr-CA', etc.
   final String language;
 
+  final IriTerm datatype = Rdf.langString;
+
   /// Creates a language override mapper with the specified [language] tag.
   ///
   /// The [language] should be a valid RFC 5646 language tag that will be
@@ -163,11 +165,11 @@ final class LanguageOverrideMapper<T> implements LiteralTermMapper<T> {
   @override
   T fromRdfTerm(LiteralTerm term, DeserializationContext context,
       {bool bypassDatatypeCheck = false}) {
-    if (!bypassDatatypeCheck && term.datatype != Rdf.langString) {
+    if (!bypassDatatypeCheck && term.datatype != datatype) {
       throw DeserializerDatatypeMismatchException(
           'Failed to parse ${T.toString()}: ${term.value}. ',
           actual: term.datatype,
-          expected: Rdf.langString,
+          expected: datatype,
           targetType: T,
           mapperRuntimeType: this.runtimeType);
     }

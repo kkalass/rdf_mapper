@@ -1,8 +1,6 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
-import 'package:rdf_mapper/src/api/resource_builder.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
-import 'package:rdf_mapper/src/api/serializer.dart';
 import 'package:rdf_mapper/src/exceptions/deserialization_exception.dart';
 import 'package:rdf_mapper/src/mappers/iri/extracting_iri_term_deserializer.dart';
 import 'package:rdf_mapper/src/mappers/iri/iri_full_deserializer.dart';
@@ -11,6 +9,7 @@ import 'package:rdf_mapper/src/mappers/iri/iri_id_serializer.dart';
 import 'package:test/test.dart';
 
 import '../deserializers/mock_deserialization_context.dart';
+import '../serializers/mock_serialization_context.dart';
 
 // Definition for a simple test resource class
 class Resource {
@@ -29,27 +28,6 @@ class Resource {
 
   @override
   int get hashCode => host.hashCode ^ path.hashCode;
-}
-
-// Mock implementations for testing
-class MockSerializationContext extends SerializationContext {
-  @override
-  ResourceBuilder<S> resourceBuilder<S extends RdfSubject>(S subject) {
-    throw UnimplementedError();
-  }
-
-  @override
-  List<Triple> resource<T>(T instance, {ResourceSerializer<T>? serializer}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  LiteralTerm toLiteralTerm<T>(
-    T value, {
-    LiteralTermSerializer<T>? serializer,
-  }) {
-    throw UnimplementedError();
-  }
 }
 
 void main() {

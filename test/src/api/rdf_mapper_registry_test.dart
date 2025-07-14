@@ -258,7 +258,12 @@ class TestIriSerializer implements IriTermSerializer<CustomType> {
 }
 
 class TestLiteralDeserializer implements LiteralTermDeserializer<CustomType> {
-  const TestLiteralDeserializer();
+  final IriTerm datatype;
+
+  const TestLiteralDeserializer(
+      [this.datatype =
+          const IriTerm.prevalidated('http://example.org/CustomType')]);
+
   @override
   CustomType fromRdfTerm(LiteralTerm term, DeserializationContext context,
       {bool bypassDatatypeCheck = false}) {

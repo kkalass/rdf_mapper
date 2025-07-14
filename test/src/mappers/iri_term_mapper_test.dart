@@ -3,6 +3,7 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 import 'package:test/test.dart';
 
 import '../deserializers/mock_deserialization_context.dart';
+import '../serializers/mock_serialization_context.dart';
 
 void main() {
   group('IriTermMapper', () {
@@ -22,7 +23,7 @@ void main() {
       );
 
       // Serialize to term
-      final context = CustomSerializationContext();
+      final context = MockSerializationContext();
       final mapper = ResourceReferenceMapper();
       final term = mapper.toRdfTerm(reference, context);
 
@@ -307,27 +308,6 @@ class PersonReference {
   final String uri;
 
   PersonReference({required this.uri});
-}
-
-// Simple context implementations for isolated tests
-class CustomSerializationContext extends SerializationContext {
-  @override
-  ResourceBuilder<S> resourceBuilder<S extends RdfSubject>(S subject) {
-    throw UnimplementedError();
-  }
-
-  @override
-  List<Triple> resource<T>(T instance, {ResourceSerializer<T>? serializer}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  LiteralTerm toLiteralTerm<T>(
-    T value, {
-    LiteralTermSerializer<T>? serializer,
-  }) {
-    throw UnimplementedError();
-  }
 }
 
 // Mappers

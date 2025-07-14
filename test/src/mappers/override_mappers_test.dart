@@ -3,25 +3,16 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 import 'package:rdf_vocabularies/rdf.dart';
 import 'package:rdf_vocabularies/xsd.dart';
 import 'package:test/test.dart';
+import '../deserializers/mock_deserialization_context.dart' as mdc;
+import '../serializers/mock_serialization_context.dart' as msc;
 
 /// Mock DeserializationContext for testing override mappers
-class MockDeserializationContext extends DeserializationContext {
+class MockDeserializationContext extends mdc.MockDeserializationContext {
   final Map<Type, dynamic> _mockResults = {};
 
   /// Set the expected result for a given type when fromLiteralTerm is called
   void setMockResult<T>(T result) {
     _mockResults[T] = result;
-  }
-
-  @override
-  ResourceReader reader(RdfSubject subject) {
-    throw UnimplementedError('Not needed for override mapper tests');
-  }
-
-  @override
-  List<Triple> getTriplesForSubject(RdfSubject subject,
-      {bool includeBlankNodes = true}) {
-    throw UnimplementedError();
   }
 
   @override
@@ -55,22 +46,12 @@ class MockDeserializationContext extends DeserializationContext {
 }
 
 /// Mock SerializationContext for testing override mappers
-class MockSerializationContext extends SerializationContext {
+class MockSerializationContext extends msc.MockSerializationContext {
   final Map<dynamic, LiteralTerm> _mockResults = {};
 
   /// Set the expected literal term result for a given value when toLiteralTerm is called
   void setMockResult<T>(T value, LiteralTerm result) {
     _mockResults[value] = result;
-  }
-
-  @override
-  List<Triple> resource<T>(T instance, {ResourceSerializer<T>? serializer}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  ResourceBuilder<S> resourceBuilder<S extends RdfSubject>(S subject) {
-    throw UnimplementedError('Not needed for override mapper tests');
   }
 
   @override

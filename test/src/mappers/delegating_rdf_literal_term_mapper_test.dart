@@ -4,6 +4,7 @@ import 'package:rdf_vocabularies/xsd.dart';
 import 'package:test/test.dart';
 
 import '../deserializers/mock_deserialization_context.dart';
+import '../serializers/mock_serialization_context.dart';
 
 /// Example custom wrapper class for testing
 class MyCustomDouble {
@@ -37,35 +38,16 @@ class MyCustomDoubleMapper
   double convertTo(MyCustomDouble value) => value.value;
 }
 
-/// Simple test serialization context
-class TestSerializationContext extends SerializationContext {
-  @override
-  ResourceBuilder<S> resourceBuilder<S extends RdfSubject>(S subject) {
-    throw UnimplementedError('Not needed for delegating mapper tests');
-  }
-
-  @override
-  List<Triple> resource<T>(T instance, {ResourceSerializer<T>? serializer}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  LiteralTerm toLiteralTerm<T>(T value,
-      {LiteralTermSerializer<T>? serializer}) {
-    throw UnimplementedError('Not needed for delegating mapper tests');
-  }
-}
-
 void main() {
   group('DelegatingRdfLiteralTermMapper', () {
     late MyCustomDoubleMapper mapper;
     late MockDeserializationContext deserializationContext;
-    late TestSerializationContext serializationContext;
+    late MockSerializationContext serializationContext;
 
     setUp(() {
       mapper = const MyCustomDoubleMapper();
       deserializationContext = MockDeserializationContext();
-      serializationContext = TestSerializationContext();
+      serializationContext = MockSerializationContext();
     });
 
     group('deserialization', () {

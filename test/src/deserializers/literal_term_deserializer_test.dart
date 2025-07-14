@@ -1,11 +1,9 @@
 import 'package:mockito/annotations.dart';
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_vocabularies/xsd.dart';
-import 'package:rdf_mapper/src/api/deserializer.dart';
-
-import 'package:test/test.dart';
-
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
+import 'package:rdf_mapper/src/api/deserializer.dart';
+import 'package:rdf_vocabularies/xsd.dart';
+import 'package:test/test.dart';
 
 @GenerateMocks([DeserializationContext])
 import 'literal_term_deserializer_test.mocks.dart';
@@ -111,7 +109,9 @@ void main() {
 
 /// Test implementation of a custom RdfLiteralTermDeserializer for Point objects
 class CustomLiteralDeserializer implements LiteralTermDeserializer<Point> {
-  const CustomLiteralDeserializer();
+  final IriTerm datatype;
+  const CustomLiteralDeserializer(
+      [this.datatype = const IriTerm.prevalidated('http://example.org/Point')]);
   @override
   Point fromRdfTerm(
       LiteralTerm term, covariant MockDeserializationContext context,
@@ -134,7 +134,10 @@ class Point {
 
 /// Implementation of the standard string deserializer for testing
 class StringLiteralDeserializer implements LiteralTermDeserializer<String> {
-  const StringLiteralDeserializer();
+  final IriTerm datatype;
+
+  const StringLiteralDeserializer([this.datatype = Xsd.string]);
+
   @override
   String fromRdfTerm(
       LiteralTerm term, covariant MockDeserializationContext context,
@@ -145,7 +148,10 @@ class StringLiteralDeserializer implements LiteralTermDeserializer<String> {
 
 /// Implementation of the standard integer deserializer for testing
 class IntegerLiteralDeserializer implements LiteralTermDeserializer<int> {
-  const IntegerLiteralDeserializer();
+  final IriTerm datatype;
+
+  const IntegerLiteralDeserializer([this.datatype = Xsd.integer]);
+
   @override
   int fromRdfTerm(
       LiteralTerm term, covariant MockDeserializationContext context,
@@ -156,7 +162,10 @@ class IntegerLiteralDeserializer implements LiteralTermDeserializer<int> {
 
 /// Implementation of the standard boolean deserializer for testing
 class BooleanLiteralDeserializer implements LiteralTermDeserializer<bool> {
-  const BooleanLiteralDeserializer();
+  final IriTerm datatype;
+
+  const BooleanLiteralDeserializer([this.datatype = Xsd.boolean]);
+
   @override
   bool fromRdfTerm(
       LiteralTerm term, covariant MockDeserializationContext context,
@@ -167,7 +176,10 @@ class BooleanLiteralDeserializer implements LiteralTermDeserializer<bool> {
 
 /// Implementation of the standard double deserializer for testing
 class DoubleLiteralDeserializer implements LiteralTermDeserializer<double> {
-  const DoubleLiteralDeserializer();
+  final IriTerm datatype;
+
+  const DoubleLiteralDeserializer([this.datatype = Xsd.decimal]);
+
   @override
   double fromRdfTerm(
       LiteralTerm term, covariant MockDeserializationContext context,
