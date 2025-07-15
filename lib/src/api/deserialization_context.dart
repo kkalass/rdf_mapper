@@ -71,7 +71,7 @@ abstract class DeserializationContext {
   ///
   /// Returns the deserialized object of type T.
   ///
-  /// Throws [DeserializationException] if no suitable deserializer is found or deserialization fails.
+  /// Throws [DeserializerNotFoundException] if no suitable deserializer is found or deserialization fails.
   T deserialize<T>(
     RdfTerm term, {
     Deserializer<T>? deserializer,
@@ -166,45 +166,4 @@ abstract class DeserializationContext {
   T fromLiteralTerm<T>(LiteralTerm term,
       {LiteralTermDeserializer<T>? deserializer,
       bool bypassDatatypeCheck = false});
-
-  /// Reads an RDF list structure and converts it to a typed Dart iterable.
-  ///
-  /// This method traverses an RDF list (linked list structure using `rdf:first` and `rdf:rest`)
-  /// and deserializes each element to the specified type T. RDF lists are commonly used
-  /// to represent ordered collections in RDF graphs.
-  ///
-  /// **RDF List Structure**: An RDF list consists of nodes where each node has:
-  /// - `rdf:first`: Points to the value/element of the current list item
-  /// - `rdf:rest`: Points to the next list node, or `rdf:nil` for the last element
-  ///
-  /// **Lazy Evaluation**: The method returns an iterable that processes list elements
-  /// on-demand, making it memory-efficient for large lists.
-  ///
-  /// **Empty List Handling**: If the subject is `rdf:nil`, returns an empty iterable.
-  ///
-  /// Example usage:
-  /// ```dart
-  /// // Read a list of strings
-  /// final names = context.readRdfList<String>(listHead);
-  ///
-  /// // Read a list of custom objects with specific deserializer
-  /// final persons = context.readRdfList<Person>(
-  ///   listHead,
-  ///   deserializer: PersonDeserializer()
-  /// );
-  ///
-  /// // Process lazily
-  /// for (final item in context.readRdfList<int>(numberList)) {
-  ///   print(item);
-  /// }
-  /// ```
-  ///
-  /// [subject] The RDF subject representing the head of the list (or `rdf:nil` for empty list).
-  /// [deserializer] Optional custom deserializer for list elements. If null, uses registered deserializer for type V.
-  ///
-  /// Returns a lazy iterable of deserialized list elements of type V.
-  ///
-  /// Throws [DeserializationException] if the list structure is malformed or element deserialization fails.
-  Iterable<V> readRdfList<V>(RdfSubject subject,
-      {Deserializer<V>? deserializer});
 }

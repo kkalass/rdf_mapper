@@ -18,13 +18,7 @@ class MockDeserializationContext extends DeserializationContext {
   }
 
   @override
-  T deserialize<T>(RdfTerm term, {Deserializer<T>? deserializer}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Iterable<V> readRdfList<V>(RdfSubject subject,
-      {Deserializer<V>? deserializer}) {
+  T deserialize<T>(RdfTerm term, {BaseDeserializer<T>? deserializer}) {
     throw UnimplementedError();
   }
 

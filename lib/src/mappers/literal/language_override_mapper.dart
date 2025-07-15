@@ -64,14 +64,14 @@ import 'package:rdf_vocabularies/rdf.dart';
 /// final germanMapper = LanguageOverrideMapper<String>('de');
 ///
 /// // Use with ResourceBuilder (manual serialization)
-/// builder.addValue(Schema.name, "Hello World", literalTermSerializer: englishMapper);
+/// builder.addValue(Schema.name, "Hello World", serializer: englishMapper);
 /// // Results in: "Hello World"@en
 ///
-/// builder.addValue(Schema.name, "Hallo Welt", literalTermSerializer: germanMapper);
+/// builder.addValue(Schema.name, "Hallo Welt", serializer: germanMapper);
 /// // Results in: "Hallo Welt"@de
 ///
 /// // Use with ResourceReader (manual deserialization)
-/// final englishText = reader.require<String>(Schema.name, literalTermDeserializer: englishMapper);
+/// final englishText = reader.require<String>(Schema.name, deserializer: englishMapper);
 /// // Validates rdf:langString datatype and returns: "Hello World" (as String)
 /// ```
 ///
@@ -112,11 +112,11 @@ import 'package:rdf_vocabularies/rdf.dart';
 /// ```dart
 /// // With ResourceBuilder for serialization
 /// final builder = context.resourceBuilder(subject);
-/// builder.addValue(predicate, value, literalTermSerializer: languageMapper);
+/// builder.addValue(predicate, value, serializer: languageMapper);
 ///
 /// // With ResourceReader for deserialization
 /// final reader = context.reader(subject);
-/// final value = reader.require<String>(predicate, literalTermDeserializer: languageMapper);
+/// final value = reader.require<String>(predicate, deserializer: languageMapper);
 ///
 /// // Direct context usage (less common)
 /// context.fromLiteralTerm<String>(term, deserializer: languageMapper);

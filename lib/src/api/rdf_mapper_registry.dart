@@ -145,7 +145,7 @@ final class RdfMapperRegistry {
   /// - ResourceSerializer: For serializing objects to RDF resources (subjects with triples)
   ///
   /// [serializer] The serializer to register
-  void registerSerializer<T>(Serializer<T> serializer) {
+  void registerSerializer<T>(BaseSerializer<T> serializer) {
     switch (serializer) {
       case IriTermSerializer<T>():
         _registerIriTermSerializer(serializer);
@@ -174,7 +174,7 @@ final class RdfMapperRegistry {
   /// - GlobalResourceDeserializer: For deserializing global resources with triples to objects
   ///
   /// [deserializer] The deserializer to register
-  void registerDeserializer<T>(Deserializer<T> deserializer) {
+  void registerDeserializer<T>(BaseDeserializer<T> deserializer) {
     switch (deserializer) {
       case IriTermDeserializer<T>():
         _registerIriTermDeserializer(deserializer);
@@ -188,6 +188,10 @@ final class RdfMapperRegistry {
       case GlobalResourceDeserializer<T>():
         _registerGlobalResourceDeserializer(deserializer);
         break;
+      case CollectionDeserializer<T>():
+        throw ArgumentError(
+            'CollectionDeserializer is not supported in RdfMapperRegistry. '
+            'Use the reader.requireCollection or reader.optionalCollection methods instead and provide a factory function that instantiates your deserializer.');
       case UnmappedTriplesDeserializer<T>():
         _registerUnmappedTriplesDeserializer(deserializer);
         break;
@@ -511,12 +515,12 @@ final class RdfMapperRegistry {
     return serializer as ResourceSerializer<T>;
   }
 
-  Deserializer<T>? findDeserializerByType<T>() {
+  BaseDeserializer<T>? findDeserializerByType<T>() {
     return (_iriTermDeserializers[T] ??
         _literalTermDeserializers[T] ??
         _localResourceDeserializers[T] ??
         _globalResourceDeserializers[T] ??
-        _unmappedTriplesDeserializers[T]) as Deserializer<T>?;
+        _unmappedTriplesDeserializers[T]) as BaseDeserializer<T>?;
   }
 
   Serializer<T>? findSerializerByType<T>() {

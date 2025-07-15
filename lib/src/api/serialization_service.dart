@@ -6,32 +6,22 @@ import 'package:rdf_mapper/src/api/serializer.dart';
 /// This service encapsulates the low-level operations needed during RDF serialization.
 /// It provides the foundation for both direct serialization and the Builder API.
 abstract class SerializationService {
-  List<Triple> value<T>(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    T instance, {
-    LiteralTermSerializer<T>? literalTermSerializer,
-    IriTermSerializer<T>? iriTermSerializer,
-    ResourceSerializer<T>? resourceSerializer,
-  });
+  List<Triple> value<T>(RdfSubject subject, RdfPredicate predicate, T instance,
+      {Serializer<T>? serializer});
 
   List<Triple> valuesFromSource<A, T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> Function(A) toIterable,
     A instance, {
-    LiteralTermSerializer<T>? literalTermSerializer,
-    IriTermSerializer<T>? iriTermSerializer,
-    ResourceSerializer<T>? resourceSerializer,
+    Serializer<T>? serializer,
   });
 
   List<Triple> values<T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> instance, {
-    LiteralTermSerializer<T>? literalTermSerializer,
-    IriTermSerializer<T>? iriTermSerializer,
-    ResourceSerializer<T>? resourceSerializer,
+    Serializer<T>? serializer,
   });
 
   /// Creates triples for a map of child nodes.
@@ -39,9 +29,7 @@ abstract class SerializationService {
     RdfSubject subject,
     RdfPredicate predicate,
     Map<K, V> instance, {
-    LiteralTermSerializer<MapEntry<K, V>>? literalTermSerializer,
-    IriTermSerializer<MapEntry<K, V>>? iriTermSerializer,
-    ResourceSerializer<MapEntry<K, V>>? resourceSerializer,
+    Serializer<MapEntry<K, V>>? serializer,
   });
 
   /// Serializes an object to a RDF resource.
@@ -53,4 +41,11 @@ abstract class SerializationService {
 
   Iterable<Triple> unmappedTriples<T>(RdfSubject subject, T value,
       {UnmappedTriplesSerializer<T>? unmappedTriplesSerializer});
+
+  Iterable<Triple> collection<C, T>(
+      RdfSubject subject,
+      RdfPredicate predicate,
+      C collection,
+      CollectionSerializerFactory<C, T> collectionSerializerFactory,
+      {Serializer<T>? itemSerializer});
 }

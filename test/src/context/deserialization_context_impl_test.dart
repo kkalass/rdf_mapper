@@ -216,7 +216,7 @@ void main() {
       final value = context.optional<String>(
         subject,
         IriTerm('http://example.org/name'),
-        literalTermDeserializer: customLiteralDeserializer,
+        deserializer: customLiteralDeserializer,
       );
 
       expect(

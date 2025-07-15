@@ -1,6 +1,7 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/serialization_service.dart';
 import 'package:rdf_mapper/src/api/serializer.dart';
+import 'package:rdf_mapper/src/mappers/resource/rdf_list_serializer.dart';
 
 /// Builder for fluent RDF resource serialization.
 ///
@@ -47,25 +48,45 @@ class ResourceBuilder<S extends RdfSubject> {
   /// This constructor is typically not called directly. Instead, create a
   /// builder through the [SerializationContext.resourceBuilder] method.
   ///
-  /// Parameters:
-  /// - [_subject]: The RDF subject to build properties for.
-  /// - [_service]: The serialization service for converting objects to RDF.
-  /// - [initialTriples]: Optional list of initial triples to include.
+  /// The [_subject] is the RDF subject to build properties for.
+  /// The [_service] is the serialization service for converting objects to RDF.
+  /// The optional [initialTriples] can provide a list of initial triples to include.
   ResourceBuilder(this._subject, this._service, {List<Triple>? initialTriples})
       : _triples = initialTriples ?? [];
 
-  ResourceBuilder<S> addValue<V>(
-    RdfPredicate predicate,
-    V value, {
-    LiteralTermSerializer<V>? literalTermSerializer,
-    IriTermSerializer<V>? iriTermSerializer,
-    ResourceSerializer<V>? resourceSerializer,
-  }) {
+  /// Adds a single property value to the resource being built.
+  ///
+  /// This is the fundamental method for adding properties to RDF resources. It converts
+  /// the provided value to the appropriate RDF representation and creates triples linking
+  /// the current subject to the value via the specified predicate.
+  ///
+  /// The method handles various value types automatically:
+  /// - **Primitives**: Converted to literal terms (strings, numbers, booleans, dates)
+  /// - **Objects**: Serialized as linked resources with their own subject IRIs
+  /// - **Collections**: May be handled by specialized serializers
+  ///
+  /// Example usage:
+  /// ```dart
+  /// builder
+  ///   .addValue(Dc.title, 'The Great Gatsby')
+  ///   .addValue(Dc.creator, Person(name: 'F. Scott Fitzgerald'))
+  ///   .addValue(Schema.datePublished, DateTime(1925, 4, 10));
+  /// ```
+  ///
+  /// The [predicate] is the RDF predicate that defines the relationship.
+  /// The [value] is the Dart object to be serialized and linked to the subject.
+  /// The optional [serializer] can be provided for custom serialization of the value.
+  ///
+  /// Returns this builder for method chaining.
+  ResourceBuilder<S> addValue<V>(RdfPredicate predicate, V value,
+      {Serializer<V>? serializer}) {
     _triples.addAll(
-      _service.value(_subject, predicate, value,
-          literalTermSerializer: literalTermSerializer,
-          iriTermSerializer: iriTermSerializer,
-          resourceSerializer: resourceSerializer),
+      _service.value(
+        _subject,
+        predicate,
+        value,
+        serializer: serializer,
+      ),
     );
     return this;
   }
@@ -91,9 +112,8 @@ class ResourceBuilder<S extends RdfSubject> {
   ///   .build();
   /// ```
   ///
-  /// Parameters:
-  /// * [value] - The unmapped data structure containing RDF triples to add
-  /// * [unmappedTriplesSerializer] - Optional custom serializer for the unmapped data type
+  /// The [value] is the unmapped data structure containing RDF triples to add.
+  /// The optional [unmappedTriplesSerializer] can be provided for custom serialization of the unmapped data type.
   ///
   /// Returns this builder for method chaining.
   ResourceBuilder<S> addUnmapped<V>(
@@ -107,54 +127,127 @@ class ResourceBuilder<S extends RdfSubject> {
     return this;
   }
 
-  ResourceBuilder<S> addValueIfNotNull<V>(
-    RdfPredicate predicate,
-    V? value, {
-    LiteralTermSerializer<V>? literalTermSerializer,
-    IriTermSerializer<V>? iriTermSerializer,
-    ResourceSerializer<V>? resourceSerializer,
-  }) {
+  /// Conditionally adds a property value only if it's not null.
+  ///
+  /// This convenience method provides null-safe property addition, automatically
+  /// skipping the addition if the value is null. This is particularly useful when
+  /// working with optional properties or data that may be incomplete.
+  ///
+  /// The method is equivalent to manually checking for null before calling [addValue],
+  /// but provides a more fluent and readable API for conditional property addition.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// builder
+  ///   .addValue(Dc.title, book.title)              // Always add title
+  ///   .addValueIfNotNull(Dc.description, book.description)  // Only if description exists
+  ///   .addValueIfNotNull(Dc.publisher, book.publisher);     // Only if publisher exists
+  /// ```
+  ///
+  /// The [predicate] is the RDF predicate that defines the relationship.
+  /// The [value] is the potentially null Dart object to be serialized.
+  /// The optional [serializer] can be provided for custom serialization of the value.
+  ///
+  /// Returns this builder for method chaining.
+  ResourceBuilder<S> addValueIfNotNull<V>(RdfPredicate predicate, V? value,
+      {Serializer<V>? serializer}) {
     if (value == null) {
       return this;
     }
-    return addValue(predicate, value,
-        literalTermSerializer: literalTermSerializer,
-        iriTermSerializer: iriTermSerializer,
-        resourceSerializer: resourceSerializer);
+    return addValue(predicate, value, serializer: serializer);
   }
 
+  /// Adds multiple property values extracted from a source object using a transformation function.
+  ///
+  /// This advanced method allows for indirect value extraction, where values are obtained
+  /// by applying a transformation function to a source object. This is particularly useful
+  /// when the source object contains the values in a different structure than needed for RDF.
+  ///
+  /// The transformation function receives the source instance and must return an iterable
+  /// of values that will be individually serialized and added as separate triples with
+  /// the same predicate.
+  ///
+  /// Common use cases:
+  /// - Extracting values from nested collections
+  /// - Transforming or filtering data during serialization
+  /// - Adapting data structures that don't directly match RDF patterns
+  ///
+  /// Example usage:
+  /// ```dart
+  /// // Extract email addresses from a person's contact info
+  /// builder.addValuesFromSource(
+  ///   Schema.email,
+  ///   (person) => person.contactInfo.emailAddresses,
+  ///   person
+  /// );
+  ///
+  /// // Transform and filter a list of roles
+  /// builder.addValuesFromSource(
+  ///   Schema.jobTitle,
+  ///   (employee) => employee.roles.where((r) => r.isActive).map((r) => r.title),
+  ///   employee
+  /// );
+  /// ```
+  ///
+  /// The [predicate] is the RDF predicate that defines the relationship.
+  /// The [toIterable] is a function that extracts values from the source instance.
+  /// The [instance] is the source object to extract values from.
+  /// The optional [serializer] can be provided for custom serialization of each extracted value.
+  ///
+  /// Returns this builder for method chaining.
   ResourceBuilder<S> addValuesFromSource<A, T>(
     RdfPredicate predicate,
     Iterable<T> Function(A) toIterable,
     A instance, {
-    LiteralTermSerializer<T>? literalTermSerializer,
-    IriTermSerializer<T>? iriTermSerializer,
-    ResourceSerializer<T>? resourceSerializer,
+    Serializer<T>? serializer,
   }) {
     _triples.addAll(
       _service.valuesFromSource(_subject, predicate, toIterable, instance,
-          literalTermSerializer: literalTermSerializer,
-          iriTermSerializer: iriTermSerializer,
-          resourceSerializer: resourceSerializer),
+          serializer: serializer),
     );
     return this;
   }
 
+  /// Adds multiple property values from an iterable collection.
+  ///
+  /// This method allows adding multiple values for the same predicate in a single call,
+  /// creating separate triples for each value. This is useful for properties that can
+  /// have multiple values, such as tags, categories, authors, or related resources.
+  ///
+  /// Each value in the iterable is individually serialized and added as a separate
+  /// triple with the same predicate but different objects. This creates a one-to-many
+  /// relationship in the RDF graph.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// // Add multiple authors to a book
+  /// builder.addValues(Dc.creator, [
+  ///   Person(name: 'Jane Austen'),
+  ///   Person(name: 'Charlotte Brontë')
+  /// ]);
+  ///
+  /// // Add multiple tags
+  /// builder.addValues(Schema.keywords, [
+  ///   'fiction', 'classic', 'literature'
+  /// ]);
+  /// ```
+  ///
+  /// The [predicate] is the RDF predicate that defines the relationship.
+  /// The [values] is an iterable collection of values to be added.
+  /// The optional [serializer] can be provided for custom serialization of each value.
+  ///
+  /// Returns this builder for method chaining.
   ResourceBuilder<S> addValues<V>(
     RdfPredicate predicate,
     Iterable<V> values, {
-    LiteralTermSerializer<V>? literalTermSerializer,
-    IriTermSerializer<V>? iriTermSerializer,
-    ResourceSerializer<V>? resourceSerializer,
+    Serializer<V>? serializer,
   }) {
     _triples.addAll(
       _service.values(
         _subject,
         predicate,
         values,
-        literalTermSerializer: literalTermSerializer,
-        iriTermSerializer: iriTermSerializer,
-        resourceSerializer: resourceSerializer,
+        serializer: serializer,
       ),
     );
     return this;
@@ -173,47 +266,170 @@ class ResourceBuilder<S extends RdfSubject> {
   /// builder.addMap(
   ///   Schema.additionalProperty,
   ///   metadata,
-  ///   resourceSerializer: MetadataEntrySerializer(),
+  ///   serializer: MetadataEntrySerializer(),
   /// );
   ///
   /// // Serializes map entries as IRI terms
   /// builder.addMap(
   ///   Schema.sameAs,
   ///   uriMappings,
-  ///   iriTermSerializer: UriMappingSerializer(),
+  ///   serializer: UriMappingSerializer(),
   /// );
   ///
   /// // Serializes map entries as literal terms
   /// builder.addMap(
   ///   Schema.propertyValue,
   ///   keyValuePairs,
-  ///   literalTermSerializer: KeyValueSerializer(),
+  ///   serializer: KeyValueSerializer(),
   /// );
   /// ```
   ///
-  /// Parameters:
-  /// - [predicate]: The predicate for the relationships.
-  /// - [instance]: The map to serialize.
-  /// - [literalTermSerializer]: Optional serializer for map entries as literals.
-  /// - [iriTermSerializer]: Optional serializer for map entries as IRIs.
-  /// - [resourceSerializer]: Optional serializer for map entries as resources.
+  /// The [predicate] is the predicate for the relationships.
+  /// The [instance] is the map to serialize.
+  /// The optional [serializer] can be provided for custom serialization of map entries.
   ///
   /// Returns this builder for method chaining.
-  ResourceBuilder<S> addMap<K, V>(
-    RdfPredicate predicate,
-    Map<K, V> instance, {
-    LiteralTermSerializer<MapEntry<K, V>>? literalTermSerializer,
-    IriTermSerializer<MapEntry<K, V>>? iriTermSerializer,
-    ResourceSerializer<MapEntry<K, V>>? resourceSerializer,
-  }) {
+  ResourceBuilder<S> addMap<K, V>(RdfPredicate predicate, Map<K, V> instance,
+      {Serializer<MapEntry<K, V>>? serializer}) {
     _triples.addAll(
-      _service.valueMap(_subject, predicate, instance,
-          resourceSerializer: resourceSerializer,
-          iriTermSerializer: iriTermSerializer,
-          literalTermSerializer: literalTermSerializer),
+      _service.valueMap(
+        _subject,
+        predicate,
+        instance,
+        serializer: serializer,
+      ),
     );
     return this;
   }
+
+  /// Adds a collection using a specialized collection serializer factory.
+  ///
+  /// This is an advanced method for handling complex collection types that require
+  /// specialized serialization logic. Unlike [addValues] which creates separate triples
+  /// for each item, this method can create structured collections like RDF lists,
+  /// sets, or other custom collection representations.
+  ///
+  /// The collection serializer factory determines how the collection structure itself
+  /// is represented in RDF. For example, RDF lists use a specific linked structure
+  /// with `rdf:first` and `rdf:rest` predicates.
+  ///
+  /// **Convenience Methods**: For common collection types, prefer the specialized convenience methods:
+  /// - Use [addRdfList] for ordered sequences (RDF Lists with rdf:first/rdf:rest)
+  /// - Use [addValues] for simple unordered multi-value properties
+  ///
+  /// **Advanced Collection Types** that require this method:
+  /// - **RDF Structure Control**: RDF Bags (rdf:Bag), RDF Sequences (rdf:Seq) with specific vocabulary
+  /// - **Custom Dart Types**: Converting from custom collection classes (e.g., `ImmutableList<T>`, `OrderedSet<T>`)
+  /// - **Third-Party Libraries**: Integration with popular collection libraries (e.g., `built_collection`, `dartz`, `kt_dart`)
+  /// - **Domain-Specific Collections**: Specialized structures like trees, graphs, or business-specific containers
+  ///
+  /// **Extensibility Pattern**: For frequently used collections, consider creating extension methods:
+  /// ```dart
+  /// extension MyCollectionExtensions<S extends RdfSubject> on ResourceBuilder<S> {
+  ///   ResourceBuilder<S> addImmutableList<T>(RdfPredicate predicate, ImmutableList<T> items) =>
+  ///     addCollection(predicate, items, ImmutableListSerializer<T>.new);
+  ///
+  ///   ResourceBuilder<S> addBuiltSet<T>(RdfPredicate predicate, BuiltSet<T> items) =>
+  ///     addCollection(predicate, items, BuiltSetSerializer<T>.new);
+  /// }
+  /// ```
+  ///
+  /// Example usage:
+  /// ```dart
+  /// // RDF structure control: Create an RDF Bag for unordered collection
+  /// builder.addCollection(
+  ///   Schema.keywords,
+  ///   keywordSet,
+  ///   RdfBagSerializer<String>.new,
+  /// );
+  ///
+  /// // Custom Dart types: Serialize immutable collections
+  /// builder.addCollection(
+  ///   Schema.author,
+  ///   immutableAuthorList,
+  ///   ImmutableListSerializer<Person>.new,
+  /// );
+  ///
+  /// // Third-party library: Use built_collection
+  /// builder.addCollection(
+  ///   Schema.keywords,
+  ///   builtKeywordSet,
+  ///   BuiltSetSerializer<String>.new,
+  /// );
+  ///
+  /// // Prefer convenience method for standard RDF Lists:
+  /// builder.addRdfList(Schema.author, standardList);
+  /// ```
+  ///
+  /// The [predicate] is the RDF predicate that links to the collection.
+  /// The [collection] is the collection instance to be serialized.
+  /// The [collectionSerializerFactory] creates the appropriate serializer for the collection type.
+  /// The optional [itemSerializer] can be provided for custom serialization of collection items.
+  ///
+  /// Returns this builder for method chaining.
+  ResourceBuilder<S> addCollection<C, T>(
+    RdfPredicate predicate,
+    C collection,
+    CollectionSerializerFactory<C, T> collectionSerializerFactory, {
+    Serializer<T>? itemSerializer,
+  }) {
+    _triples.addAll(
+      _service.collection(
+          _subject, predicate, collection, collectionSerializerFactory,
+          itemSerializer: itemSerializer),
+    );
+    return this;
+  }
+
+  /// Adds a list as an RDF List structure.
+  ///
+  /// This convenience method creates an RDF List (ordered sequence) using the standard
+  /// RDF list vocabulary. RDF Lists are represented using a linked structure with
+  /// `rdf:first` and `rdf:rest` predicates, terminated by `rdf:nil`.
+  ///
+  /// RDF Lists preserve the order of items and are suitable for representing ordered
+  /// sequences where the position of elements matters. This is different from [addValues]
+  /// which creates separate, unordered triples for each value.
+  ///
+  /// The generated RDF structure looks like:
+  /// ```turtle
+  /// :subject :predicate ( :item1 :item2 :item3 ) .
+  /// ```
+  ///
+  /// Which expands to the full linked structure:
+  /// ```turtle
+  /// :subject :predicate _:list1 .
+  /// _:list1 rdf:first :item1 ;
+  ///         rdf:rest _:list2 .
+  /// _:list2 rdf:first :item2 ;
+  ///         rdf:rest _:list3 .
+  /// _:list3 rdf:first :item3 ;
+  ///         rdf:rest rdf:nil .
+  /// ```
+  ///
+  /// Example usage:
+  /// ```dart
+  /// // Create an ordered list of authors
+  /// builder.addRdfList(Schema.author, [
+  ///   Person(name: 'First Author'),
+  ///   Person(name: 'Second Author'),
+  ///   Person(name: 'Third Author')
+  /// ]);
+  /// ```
+  ///
+  /// The [predicate] is the RDF predicate that links to the list.
+  /// The [values] is the ordered list of items to be serialized.
+  /// The optional [itemSerializer] can be provided for custom serialization of list items.
+  ///
+  /// Returns this builder for method chaining.
+  ResourceBuilder<S> addRdfList<T>(RdfPredicate predicate, List<T> values,
+          {Serializer<T>? itemSerializer}) =>
+      addCollection<List<T>, T>(
+        predicate,
+        values,
+        RdfListSerializer<T>.new,
+        itemSerializer: itemSerializer,
+      );
 
   /// Conditionally applies a transformation to this builder.
   ///
@@ -230,9 +446,8 @@ class ResourceBuilder<S extends RdfSubject> {
   /// );
   /// ```
   ///
-  /// Parameters:
-  /// - [condition]: The boolean condition to evaluate.
-  /// - [action]: The function to apply to the builder when the condition is true.
+  /// The [condition] is the boolean condition to evaluate.
+  /// The [action] is the function to apply to the builder when the condition is true.
   ///
   /// Returns this builder for method chaining.
   ResourceBuilder<S> when(

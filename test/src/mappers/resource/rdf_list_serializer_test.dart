@@ -3,6 +3,7 @@ import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
 import 'package:rdf_mapper/src/api/serializer.dart';
 import 'package:rdf_mapper/src/context/serialization_context_impl.dart';
+import 'package:rdf_mapper/src/mappers/resource/rdf_list_serializer.dart';
 import 'package:rdf_vocabularies/rdf.dart';
 import 'package:test/test.dart';
 
@@ -229,45 +230,45 @@ void main() {
     context = SerializationContextImpl(registry: registry);
   });
 
-  group('buildRdfList', () {
-    test('builds empty list (returns rdf:nil)', () {
-      final (head, triples) = context.buildRdfList<String>([]);
+  group('RdfListSerializer', () {
+    test('serializes empty list (returns rdf:nil)', () {
+      final serializer = RdfListSerializer<String>();
+      final (head, triples) = serializer.toRdfResource([], context);
 
       expect(head, equals(Rdf.nil));
-      expect(triples.toList(), isEmpty);
+      expect(triples, isEmpty);
     });
 
-    test('builds single element string list', () {
-      final (head, triples) = context.buildRdfList(['hello']);
-      final tripleList = triples.toList();
+    test('serializes single element string list', () {
+      final serializer = RdfListSerializer<String>();
+      final (head, triples) = serializer.toRdfResource(['hello'], context);
 
       expect(head, isA<BlankNodeTerm>());
-      expect(tripleList.length, equals(2));
+      expect(triples.length, equals(2));
 
       // Should have rdf:first pointing to the string literal
-      final firstTriple =
-          tripleList.firstWhere((t) => t.predicate == Rdf.first);
+      final firstTriple = triples.firstWhere((t) => t.predicate == Rdf.first);
       expect(firstTriple.subject, equals(head));
       expect(firstTriple.object, equals(LiteralTerm.string('hello')));
 
       // Should have rdf:rest pointing to rdf:nil
-      final restTriple = tripleList.firstWhere((t) => t.predicate == Rdf.rest);
+      final restTriple = triples.firstWhere((t) => t.predicate == Rdf.rest);
       expect(restTriple.subject, equals(head));
       expect(restTriple.object, equals(Rdf.nil));
     });
 
-    test('builds multi-element string list', () {
+    test('serializes multi-element string list', () {
       final values = ['apple', 'banana', 'cherry'];
-      final (head, triples) = context.buildRdfList(values);
-      final tripleList = triples.toList();
+      final serializer = RdfListSerializer<String>();
+      final (head, triples) = serializer.toRdfResource(values, context);
 
       expect(head, isA<BlankNodeTerm>());
 
       // Should have 6 triples total (2 per element: first + rest)
-      expect(tripleList.length, equals(6));
+      expect(triples.length, equals(6));
 
       // Extract all subjects (list nodes)
-      final subjects = tripleList.map((t) => t.subject).toSet();
+      final subjects = triples.map((t) => t.subject).toSet();
       expect(subjects.length, equals(3)); // 3 list nodes
 
       // Verify the list structure by following rdf:rest chain
@@ -276,13 +277,13 @@ void main() {
 
       for (int i = 0; i < 3; i++) {
         // Find rdf:first triple for current node
-        final firstTriple = tripleList.firstWhere(
+        final firstTriple = triples.firstWhere(
             (t) => t.subject == currentNode && t.predicate == Rdf.first);
         final valueString = (firstTriple.object as LiteralTerm).value;
         visitedValues.add(valueString);
 
         // Find rdf:rest triple for current node
-        final restTriple = tripleList.firstWhere(
+        final restTriple = triples.firstWhere(
             (t) => t.subject == currentNode && t.predicate == Rdf.rest);
 
         if (i < 2) {
@@ -298,28 +299,28 @@ void main() {
       expect(visitedValues, equals(['apple', 'banana', 'cherry']));
     });
 
-    test('builds integer list', () {
-      final (head, triples) = context.buildRdfList([42, 99, 123]);
-      final tripleList = triples.toList();
+    test('serializes integer list', () {
+      final serializer = RdfListSerializer<int>();
+      final (head, triples) = serializer.toRdfResource([42, 99, 123], context);
 
       expect(head, isA<BlankNodeTerm>());
-      expect(tripleList.length, equals(6)); // 3 elements × 2 triples each
+      expect(triples.length, equals(6)); // 3 elements × 2 triples each
 
       // Check first element
-      final firstTriple = tripleList
+      final firstTriple = triples
           .firstWhere((t) => t.subject == head && t.predicate == Rdf.first);
       expect(firstTriple.object, equals(LiteralTerm.typed('42', 'integer')));
     });
 
-    test('builds list with custom string serializer', () {
-      final (head, triples) = context.buildRdfList(['hello', 'world'],
-          serializer: UpperCaseStringSerializer());
-      final tripleList = triples.toList();
+    test('serializes list with custom string serializer', () {
+      final serializer = RdfListSerializer<String>(UpperCaseStringSerializer());
+      final (head, triples) =
+          serializer.toRdfResource(['hello', 'world'], context);
 
       expect(head, isA<BlankNodeTerm>());
 
       // Check that strings are converted to uppercase
-      final firstValues = tripleList
+      final firstValues = triples
           .where((t) => t.predicate == Rdf.first)
           .map((t) => (t.object as LiteralTerm).value)
           .toList();
@@ -327,7 +328,7 @@ void main() {
       expect(firstValues, equals(['HELLO', 'WORLD']));
     });
 
-    test('builds list of local resources (blank nodes)', () {
+    test('serializes list of local resources (blank nodes)', () {
       final persons = [
         TestPerson(name: 'Alice', age: 25),
         TestPerson(name: 'Bob', age: 30),
@@ -336,18 +337,18 @@ void main() {
       // Register the serializer
       registry.registerSerializer(TestPersonSerializer());
 
-      final (head, triples) = context.buildRdfList(persons);
-      final tripleList = triples.toList();
+      final serializer = RdfListSerializer<TestPerson>();
+      final (head, triples) = serializer.toRdfResource(persons, context);
 
       expect(head, isA<BlankNodeTerm>());
 
       // Should have list structure triples + person property triples
       // List: 4 triples (2 elements × 2 list triples)
       // Persons: 6 triples (2 persons × 2 properties each + 1 type each)
-      expect(tripleList.length, equals(10));
+      expect(triples.length, equals(10));
 
       // Check that person properties are included
-      final nameTriples = tripleList
+      final nameTriples = triples
           .where((t) => t.predicate == IriTerm('http://example.org/name'))
           .toList();
       expect(nameTriples.length, equals(2));
@@ -357,7 +358,7 @@ void main() {
       expect(names, equals({'Alice', 'Bob'}));
     });
 
-    test('builds list of global resources (IRIs)', () {
+    test('serializes list of global resources (IRIs)', () {
       final products = [
         TestProduct(id: '1', name: 'Laptop', price: 999.99),
         TestProduct(id: '2', name: 'Phone', price: 599.99),
@@ -366,17 +367,17 @@ void main() {
       // Register the serializer
       registry.registerSerializer(TestProductSerializer());
 
-      final (head, triples) = context.buildRdfList(products);
-      final tripleList = triples.toList();
+      final serializer = RdfListSerializer<TestProduct>();
+      final (head, triples) = serializer.toRdfResource(products, context);
 
       expect(head, isA<BlankNodeTerm>());
 
       // List structure + product properties
-      expect(tripleList.length, equals(10));
+      expect(triples.length, equals(10));
 
       // Check that the first elements point to IRIs
       final firstTriples =
-          tripleList.where((t) => t.predicate == Rdf.first).toList();
+          triples.where((t) => t.predicate == Rdf.first).toList();
       expect(firstTriples.length, equals(2));
 
       final productIris =
@@ -389,63 +390,19 @@ void main() {
           }));
     });
 
-    test('builds list with explicit head node', () {
-      final customHead = BlankNodeTerm();
-      final (head, triples) =
-          context.buildRdfList(['test'], headNode: customHead);
-
-      expect(head, equals(customHead));
-
-      final tripleList = triples.toList();
-      final firstTriple =
-          tripleList.firstWhere((t) => t.predicate == Rdf.first);
-      expect(firstTriple.subject, equals(customHead));
-    });
-
-    test('builds list with explicit IRI head node', () {
-      final customHead = IriTerm('http://example.org/mylist');
-      final (head, triples) =
-          context.buildRdfList(['item1', 'item2'], headNode: customHead);
-
-      expect(head, equals(customHead));
-
-      final tripleList = triples.toList();
-
-      // First element should use the custom head
-      final firstTriple = tripleList.firstWhere(
-          (t) => t.subject == customHead && t.predicate == Rdf.first);
-      expect(firstTriple.object, equals(LiteralTerm.string('item1')));
-    });
-
-    test('processes iterable lazily', () {
-      // Create a lazy iterable that tracks access
-      var accessCount = 0;
-      final lazyIterable = [1, 2, 3, 4, 5].map((x) {
-        accessCount++;
-        return x * 2;
-      });
-
-      final (head, triples) = context.buildRdfList(lazyIterable);
-
-      // The iterable should not be fully processed until triples are consumed
-      expect(accessCount, equals(0));
-
-      // Now consume some triples
-      final tripleList =
-          triples.take(4).toList(); // Take 2 elements worth of triples
-
-      // Should have processed at least 2 elements
-      expect(accessCount, greaterThanOrEqualTo(2));
-      expect(tripleList.length, equals(4));
+    test('has correct typeIri', () {
+      final serializer = RdfListSerializer<String>();
+      expect(serializer.typeIri, equals(Rdf.List));
     });
 
     test('handles boolean list', () {
-      final (head, triples) = context.buildRdfList([true, false, true]);
-      final tripleList = triples.toList();
+      final serializer = RdfListSerializer<bool>();
+      final (head, triples) =
+          serializer.toRdfResource([true, false, true], context);
 
       expect(head, isA<BlankNodeTerm>());
 
-      final firstValues = tripleList
+      final firstValues = triples
           .where((t) => t.predicate == Rdf.first)
           .map((t) => t.object as LiteralTerm)
           .toList();
@@ -461,25 +418,26 @@ void main() {
       registry.registerSerializer(TestPersonSerializer());
 
       // Mix of primitive and object
-      final (head, triples) = context.buildRdfList(['start', person, 'end']);
-      final tripleList = triples.toList();
+      final serializer = RdfListSerializer<dynamic>();
+      final (head, triples) =
+          serializer.toRdfResource(['start', person, 'end'], context);
 
       expect(head, isA<BlankNodeTerm>());
 
       // Should have list structure + person properties
-      expect(tripleList.length,
-          equals(9)); // 6 list + 2 person properties + 1 type
+      expect(
+          triples.length, equals(9)); // 6 list + 2 person properties + 1 type
 
       // Verify the sequence by following the list
       var currentNode = head;
       final sequence = <dynamic>[];
 
       for (int i = 0; i < 3; i++) {
-        final firstTriple = tripleList.firstWhere(
+        final firstTriple = triples.firstWhere(
             (t) => t.subject == currentNode && t.predicate == Rdf.first);
         sequence.add(firstTriple.object);
 
-        final restTriple = tripleList.firstWhere(
+        final restTriple = triples.firstWhere(
             (t) => t.subject == currentNode && t.predicate == Rdf.rest);
 
         if (i < 2) {
@@ -495,34 +453,18 @@ void main() {
     test('throws exception when no serializer found for custom type', () {
       // Create an unregistered custom type
       final unknownObject = TestPerson(name: 'Unknown', age: 999);
+      final serializer = RdfListSerializer<TestPerson>();
 
       // Should throw when trying to serialize without a registered serializer
-      expect(() => context.buildRdfList([unknownObject]).$2.toList(),
+      expect(() => serializer.toRdfResource([unknownObject], context),
           throwsA(isA<Exception>()));
     });
 
-    test('handles null values in iterable by throwing exception', () {
-      // The toLiteralTerm method throws ArgumentError for null values
-      expect(() => context.buildRdfList(<String?>[null]).$2.toList(),
+    test('handles null values in list by throwing exception', () {
+      final serializer = RdfListSerializer<String?>();
+      // The serialize method throws ArgumentError for null values
+      expect(() => serializer.toRdfResource([null], context),
           throwsA(isA<ArgumentError>()));
-    });
-
-    test('builds list from very large iterable efficiently', () {
-      // Test with a large lazy sequence to ensure memory efficiency
-      final largeSequence = Iterable.generate(10000, (i) => i.toString());
-
-      final (head, triples) = context.buildRdfList(largeSequence);
-
-      expect(head, isA<BlankNodeTerm>());
-
-      // Take only the first few triples to verify structure without full evaluation
-      final firstTriples = triples.take(6).toList();
-      expect(firstTriples.length, equals(6)); // 3 elements worth
-
-      // Verify first element
-      final firstTriple = firstTriples
-          .firstWhere((t) => t.subject == head && t.predicate == Rdf.first);
-      expect(firstTriple.object, equals(LiteralTerm.string('0')));
     });
 
     test('preserves order in complex nested structures', () {
@@ -534,21 +476,21 @@ void main() {
 
       registry.registerSerializer(TestProductSerializer());
 
-      final (head, triples) = context.buildRdfList(products);
-      final tripleList = triples.toList();
+      final serializer = RdfListSerializer<TestProduct>();
+      final (head, triples) = serializer.toRdfResource(products, context);
 
       // Extract IRIs in order by following the list structure
       var currentNode = head;
       final orderedIris = <String>[];
 
       for (int i = 0; i < 3; i++) {
-        final firstTriple = tripleList.firstWhere(
+        final firstTriple = triples.firstWhere(
             (t) => t.subject == currentNode && t.predicate == Rdf.first);
         final iri = (firstTriple.object as IriTerm).iri;
         orderedIris.add(iri);
 
         if (i < 2) {
-          final restTriple = tripleList.firstWhere(
+          final restTriple = triples.firstWhere(
               (t) => t.subject == currentNode && t.predicate == Rdf.rest);
           currentNode = restTriple.object as BlankNodeTerm;
         }
@@ -563,24 +505,14 @@ void main() {
           ]));
     });
 
-    test('handles empty nested iterables', () {
-      // Test with iterables that may be empty or contain empty elements
+    test('handles empty nested lists', () {
+      // Test with empty list
       final emptyList = <String>[];
-      final (head, triples) = context.buildRdfList(emptyList);
+      final serializer = RdfListSerializer<String>();
+      final (head, triples) = serializer.toRdfResource(emptyList, context);
 
       expect(head, equals(Rdf.nil));
-      expect(triples.toList(), isEmpty);
-    });
-
-    test('processes iterator that throws during iteration', () {
-      // Create an iterator that fails after some elements
-      final problematicIterable = [1, 2, 3].map((x) {
-        if (x == 3) throw StateError('Iterator failure');
-        return x.toString();
-      });
-
-      expect(() => context.buildRdfList(problematicIterable).$2.toList(),
-          throwsA(isA<StateError>()));
+      expect(triples, isEmpty);
     });
 
     test('handles DateTime values correctly', () {
@@ -590,15 +522,15 @@ void main() {
         DateTime(2024, 12, 31),
       ];
 
-      final (head, triples) = context.buildRdfList(dates);
-      final tripleList = triples.toList();
+      final serializer = RdfListSerializer<DateTime>();
+      final (head, triples) = serializer.toRdfResource(dates, context);
 
       expect(head, isA<BlankNodeTerm>());
-      expect(tripleList.length, equals(6)); // 3 elements × 2 triples each
+      expect(triples.length, equals(6)); // 3 elements × 2 triples each
 
       // Check that dates are properly serialized as literals
       final firstTriples =
-          tripleList.where((t) => t.predicate == Rdf.first).toList();
+          triples.where((t) => t.predicate == Rdf.first).toList();
 
       for (final triple in firstTriples) {
         expect(triple.object, isA<LiteralTerm>());
@@ -616,14 +548,14 @@ void main() {
       ];
 
       // Force URIs to be treated as string literals using StringMapper
-      final (head, triples) = context.buildRdfList(uris);
-      final tripleList = triples.toList();
+      final serializer = RdfListSerializer<String>();
+      final (head, triples) = serializer.toRdfResource(uris, context);
 
       expect(head, isA<BlankNodeTerm>());
 
       // URIs should be serialized as string literals in this context
       final firstTriples =
-          tripleList.where((t) => t.predicate == Rdf.first).toList();
+          triples.where((t) => t.predicate == Rdf.first).toList();
 
       final uriStrings =
           firstTriples.map((t) => (t.object as LiteralTerm).value).toList();
@@ -632,7 +564,7 @@ void main() {
     });
   });
 
-  group('Circular Reference Detection in buildRdfList', () {
+  group('RdfListSerializer - Circular Reference Detection', () {
     setUp(() {
       // Reset any static counters before each test
       CycleDetectingPersonSerializer.reset();
@@ -645,12 +577,14 @@ void main() {
       final reg = registry.clone()
         ..registerSerializer(CycleDetectingPersonSerializer());
       final context = SerializationContextImpl(registry: reg);
+
       // Create enough objects to potentially trigger the cycle detection
       final persons =
           List.generate(10, (i) => TestPerson(name: 'Person$i', age: 20 + i));
 
+      final serializer = RdfListSerializer<TestPerson>();
       // Should detect when serialization count exceeds threshold
-      expect(() => context.buildRdfList(persons).$2.toList(),
+      expect(() => serializer.toRdfResource(persons, context),
           throwsA(isA<StateError>()));
     });
 
@@ -662,15 +596,15 @@ void main() {
 
       registry.registerSerializer(SafePersonSerializer());
 
+      final serializer = RdfListSerializer<TestPerson>();
       // The same object appears multiple times - this should work fine
-      final (head, triples) =
-          context.buildRdfList([sharedPerson, sharedPerson, sharedPerson]);
-      final tripleList = triples.toList();
+      final (head, triples) = serializer
+          .toRdfResource([sharedPerson, sharedPerson, sharedPerson], context);
 
       expect(head, isA<BlankNodeTerm>());
 
       // Should handle shared references correctly
-      final listTriples = tripleList
+      final listTriples = triples
           .where((t) => t.predicate == Rdf.first || t.predicate == Rdf.rest)
           .length;
       expect(listTriples, equals(6)); // 3 elements × 2 list triples each
@@ -685,8 +619,9 @@ void main() {
 
       registry.registerSerializer(FailingPersonSerializer());
 
+      final serializer = RdfListSerializer<TestPerson>();
       // Should propagate the serialization failure
-      expect(() => context.buildRdfList(persons).$2.toList(),
+      expect(() => serializer.toRdfResource(persons, context),
           throwsA(isA<StateError>()));
     });
 
@@ -697,25 +632,26 @@ void main() {
       // Should work fine for reasonable list sizes
       final persons =
           List.generate(10, (i) => TestPerson(name: 'Person$i', age: 20 + i));
-      final (head, triples) = context.buildRdfList(persons);
-      final tripleList = triples.toList();
+      final serializer = RdfListSerializer<TestPerson>();
+      final (head, triples) = serializer.toRdfResource(persons, context);
 
       expect(head, isA<BlankNodeTerm>());
-      expect(tripleList.isNotEmpty, isTrue);
+      expect(triples.isNotEmpty, isTrue);
 
       // Verify all persons were serialized
-      final nameTriples = tripleList
+      final nameTriples = triples
           .where((t) => t.predicate == IriTerm('http://example.org/name'))
           .length;
       expect(nameTriples, equals(10));
     });
 
-    test('handles empty iterable correctly without cycle issues', () {
-      // Ensure empty iterables are handled correctly
-      final (head, triples) = context.buildRdfList(<TestPerson>[]);
+    test('handles empty list correctly without cycle issues', () {
+      // Ensure empty lists are handled correctly
+      final serializer = RdfListSerializer<TestPerson>();
+      final (head, triples) = serializer.toRdfResource(<TestPerson>[], context);
 
       expect(head, equals(Rdf.nil));
-      expect(triples.toList(), isEmpty);
+      expect(triples, isEmpty);
     });
 
     test('handles very large lists without performance degradation', () {
@@ -725,17 +661,17 @@ void main() {
       final largeList =
           List.generate(1000, (i) => TestPerson(name: 'Person$i', age: 20));
 
+      final serializer = RdfListSerializer<TestPerson>();
       // Should complete without throwing cycle detection errors
-      final (head, triples) = context.buildRdfList(largeList);
+      final (head, triples) = serializer.toRdfResource(largeList, context);
 
       expect(head, isA<BlankNodeTerm>());
 
-      // Just verify structure without fully evaluating (for performance)
-      final firstFewTriples = triples.take(10).toList();
-      expect(firstFewTriples.isNotEmpty, isTrue);
+      // Verify structure without fully evaluating (for performance)
+      expect(triples.isNotEmpty, isTrue);
 
-      // Verify first element is properly structured
-      final firstElementTriple = firstFewTriples
+      // Verify first element is properly structured by checking first few triples
+      final firstElementTriple = triples
           .firstWhere((t) => t.subject == head && t.predicate == Rdf.first);
       expect(firstElementTriple.object, isA<BlankNodeTerm>());
     });

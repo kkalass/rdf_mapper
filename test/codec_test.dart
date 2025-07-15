@@ -325,7 +325,7 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
           .addValue<String>(Rdf.type, _ns('Person').iri,
               // String value would default to Literal, so we need to specify
               // the IriTermSerializer to ensure it is serialized as an Iri
-              iriTermSerializer: const IriFullSerializer())
+              serializer: const IriFullSerializer())
           .addValue<String>(_ns('name'), instance.name)
           .addValue<int>(_ns('age'), instance.age)
           .addValueIfNotNull<TestAddress>(_ns('address'), instance.address)
@@ -359,7 +359,7 @@ class TestAddressMapper implements LocalResourceMapper<TestAddress> {
           .addValue<String>(Rdf.type, _ns('Address').iri,
               // String value would default to Literal, so we need to specify
               // the IriTermSerializer to ensure it is serialized as an Iri
-              iriTermSerializer: const IriFullSerializer())
+              serializer: const IriFullSerializer())
           .addValue(_ns('street'), instance.street)
           .addValue(_ns('city'), instance.city)
           .build();

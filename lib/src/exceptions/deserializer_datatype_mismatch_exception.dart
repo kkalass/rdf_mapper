@@ -89,8 +89,8 @@ Other Solutions:
 
    • Manual (Custom resource mapper):
 
-     reader.require(myPredicate, literalTermDeserializer: ${mapperRuntimeType}(${dartActual}))
-     builder.addValue(myPredicate, myValue, literalTermSerializer: ${mapperRuntimeType}(${dartActual}))
+     reader.require(myPredicate, deserializer: ${mapperRuntimeType}(${dartActual}))
+     builder.addValue(myPredicate, myValue, serializer: ${mapperRuntimeType}(${dartActual}))
 
 3. Custom mapper bypass:
    Use bypassDatatypeCheck: true when calling context.fromLiteralTerm

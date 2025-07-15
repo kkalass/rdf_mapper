@@ -87,8 +87,8 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 ///
 /// **Manual approach:**
 /// ```dart
-/// reader.require(myPredicate, literalTermDeserializer: DoubleMapper(Xsd.double));
-/// builder.addValue(myPredicate, myValue, literalTermSerializer: DoubleMapper(Xsd.double));
+/// reader.require(myPredicate, deserializer: DoubleMapper(Xsd.double));
+/// builder.addValue(myPredicate, myValue, serializer: DoubleMapper(Xsd.double));
 /// ```
 ///
 /// ### 4. Bypass Datatype Check (use carefully)

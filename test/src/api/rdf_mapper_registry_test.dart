@@ -33,8 +33,8 @@ void main() {
       expect(registry.hasLiteralTermSerializerFor<DateTime>(), isTrue);
 
       // Verify IRI serializers/deserializers (IriFullDeserializer is for String type)
-      expect(registry.hasIriTermDeserializerFor<String>(), isTrue);
-      expect(registry.hasIriTermSerializerFor<String>(), isTrue);
+      expect(registry.hasIriTermDeserializerFor<Uri>(), isTrue);
+      expect(registry.hasIriTermSerializerFor<Uri>(), isTrue);
     });
 
     test('registerDeserializer registers a new IRI deserializer', () {

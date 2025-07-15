@@ -777,7 +777,7 @@ class MyCustomDoubleMapper extends DelegatingRdfLiteralTermMapper<MyCustomDouble
 #### Local Scope (for specific predicates)
 ```dart
 // In custom resource mappers
-reader.require(myPredicate, literalTermDeserializer: DoubleMapper(Xsd.double));
+reader.require(myPredicate, deserializer: DoubleMapper(Xsd.double));
 
 // With annotations - simpler option
 @RdfProperty(myPredicate, 

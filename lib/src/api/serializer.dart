@@ -1,6 +1,8 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
 
+sealed class BaseSerializer<T> {}
+
 /// Base marker interface for all RDF serializers.
 ///
 /// Serializers convert Dart objects into RDF representations, enabling the transformation
@@ -13,9 +15,10 @@ import 'package:rdf_mapper/src/api/serialization_context.dart';
 ///
 /// This serves as a semantic marker to group all serializers in the system.
 /// It doesn't define any methods itself but acts as a common ancestor.
-sealed class Serializer<T> {}
+sealed class Serializer<T> extends BaseSerializer<T> {}
 
-abstract interface class UnmappedTriplesSerializer<T> implements Serializer<T> {
+abstract interface class UnmappedTriplesSerializer<T>
+    extends BaseSerializer<T> {
   /// Converts a Dart object to a set of unmapped triples.
   ///
   /// This method processes the given object and converts it into a list of triples
@@ -212,3 +215,15 @@ abstract interface class CommonResourceSerializer<T>
     RdfSubject? parentSubject,
   });
 }
+
+typedef CollectionSerializerFactory<C, T> = CollectionSerializer<C> Function(
+    Serializer<T>? itemSerializer);
+
+/// Interface for serializing a Dart collection or container [C] of items [T] into an RDF collection structure.
+///
+/// Implementations are responsible for creating the RDF triples that define
+/// the collection's structure (e.g., rdf:first/rdf:rest for rdf:List, or rdf:_1, rdf:_2 etc. for rdf:Seq etc.).
+/// They should use the provided [context] to serialize the individual [T] items,
+/// and must accept a Serializer&lt;T&gt; in the constructor for allowing the user to control type-specific serialization.
+abstract interface class CollectionSerializer<C>
+    extends CommonResourceSerializer<C> {}

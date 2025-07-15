@@ -249,8 +249,8 @@ Other Solutions:
 
    • Manual (Custom resource mapper):
 
-     reader.require(myPredicate, literalTermDeserializer: DoubleMapper(Xsd.double))
-     builder.addValue(myPredicate, myValue, literalTermSerializer: DoubleMapper(Xsd.double))
+     reader.require(myPredicate, deserializer: DoubleMapper(Xsd.double))
+     builder.addValue(myPredicate, myValue, serializer: DoubleMapper(Xsd.double))
 
 3. Custom mapper bypass:
    Use bypassDatatypeCheck: true when calling context.fromLiteralTerm
@@ -324,8 +324,8 @@ Other Solutions:
 
    • Manual (Custom resource mapper):
 
-     reader.require(myPredicate, literalTermDeserializer: DoubleMapper(IriTerm('http://example.org/other-number-type')))
-     builder.addValue(myPredicate, myValue, literalTermSerializer: DoubleMapper(IriTerm('http://example.org/other-number-type')))
+     reader.require(myPredicate, deserializer: DoubleMapper(IriTerm('http://example.org/other-number-type')))
+     builder.addValue(myPredicate, myValue, serializer: DoubleMapper(IriTerm('http://example.org/other-number-type')))
 
 3. Custom mapper bypass:
    Use bypassDatatypeCheck: true when calling context.fromLiteralTerm

@@ -10,6 +10,21 @@ import 'package:rdf_vocabularies/rdf.dart';
 
 final _log = Logger("rdf_orm.serialization");
 
+/// Implementation of [SerializationContext] that provides core serialization
+/// functionality for converting Dart objects to RDF triples.
+///
+/// This class handles the serialization of various object types by intelligently
+/// selecting appropriate serializers based on the object type and available
+/// serializers in the registry. It supports literal terms, IRI terms, and
+/// complex resources.
+///
+/// The serialization process follows a priority order:
+/// 1. Direct RDF objects are used as-is
+/// 2. Explicitly provided serializers are used first
+/// 3. Registry-based serializers are used as fallback
+///
+/// The implementation ensures proper type handling, including automatic type
+/// triple generation for resources when not already provided by the serializer.
 class SerializationContextImpl extends SerializationContext
     implements SerializationService {
   final RdfMapperRegistry _registry;
@@ -23,6 +38,14 @@ class SerializationContextImpl extends SerializationContext
     return ResourceBuilder<S>(subject, this);
   }
 
+  /// Converts a Dart object to an RDF literal term.
+  ///
+  /// The [instance] is the object to convert to a literal term.
+  /// The optional [serializer] is a custom serializer for the literal term.
+  ///
+  /// Returns the RDF literal term representation of the instance.
+  ///
+  /// Throws [ArgumentError] if the instance is null.
   @override
   LiteralTerm toLiteralTerm<T>(
     T instance, {
@@ -87,34 +110,39 @@ class SerializationContextImpl extends SerializationContext
   /// This method is a unified approach to creating triples from various value types.
   /// It intelligently selects the appropriate serialization strategy based on:
   /// 1. If the instance is already an RdfObject, it will be used directly
-  /// 2. If explicit serializers are provided, they will be used in order of priority
+  /// 2. If an explicit serializer is provided, it will be used
   /// 3. Otherwise, it will try to find a registered serializer for the type
   ///
-  /// @param subject The subject of the triple
-  /// @param predicate The predicate linking subject to value
-  /// @param instance The value to add as an object (can be a Dart object or RDF term)
-  /// @param literalTermSerializer Optional custom serializer for literal terms
-  /// @param iriTermSerializer Optional custom serializer for IRI terms
-  /// @param resourceSerializer Optional custom serializer for resources
-  /// @return A list of triples connecting the subject to the serialized value
+  /// The [subject] is the subject of the triple.
+  /// The [predicate] is the predicate linking subject to value.
+  /// The [instance] is the value to add as an object (can be a Dart object or RDF term).
+  /// The optional [serializer] is a custom serializer for the value.
+  ///
+  /// Returns a list of triples connecting the subject to the serialized value.
   @override
-  List<Triple> value<T>(
-    RdfSubject subject,
-    RdfPredicate predicate,
-    T instance, {
-    LiteralTermSerializer<T>? literalTermSerializer,
-    IriTermSerializer<T>? iriTermSerializer,
-    ResourceSerializer<T>? resourceSerializer,
-  }) {
+  List<Triple> value<T>(RdfSubject subject, RdfPredicate predicate, T instance,
+      {Serializer<T>? serializer}) {
     final (valueTerm, triples) = serialize(
       instance,
       parentSubject: subject,
-      serializer:
-          literalTermSerializer ?? iriTermSerializer ?? resourceSerializer,
+      serializer: serializer,
     );
     return [Triple(subject, predicate, valueTerm as RdfObject), ...triples];
   }
 
+  /// Serializes a Dart object to an RDF term and associated triples.
+  ///
+  /// This method handles the core serialization logic, determining the appropriate
+  /// serialization strategy based on the type of object and available serializers.
+  ///
+  /// The [instance] is the object to serialize.
+  /// The optional [serializer] is a custom serializer to use.
+  /// The optional [parentSubject] is the parent subject for nested resources.
+  ///
+  /// Returns a tuple containing the RDF term and any associated triples.
+  ///
+  /// Throws [ArgumentError] if the instance is null.
+  /// Throws [SerializerNotFoundException] if no suitable serializer is found.
   @override
   (RdfTerm, Iterable<Triple>) serialize<T>(
     T instance, {
@@ -206,30 +234,25 @@ class SerializationContextImpl extends SerializationContext
   ///
   /// Processes each item in the collection and creates triples for each non-null value.
   ///
-  /// @param subject The subject of the triples
-  /// @param predicate The predicate linking subject to values
-  /// @param instance Collection of values to add
-  /// @param literalTermSerializer Optional custom serializer for literal terms
-  /// @param iriTermSerializer Optional custom serializer for IRI terms
-  /// @param resourceSerializer Optional custom serializer for resources
-  /// @return List of triples connecting the subject to the values
+  /// The [subject] is the subject of the triples.
+  /// The [predicate] is the predicate linking subject to values.
+  /// The [instance] is the collection of values to add.
+  /// The optional [serializer] is a custom serializer for the values.
+  ///
+  /// Returns a list of triples connecting the subject to the values.
   @override
   List<Triple> values<T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> instance, {
-    LiteralTermSerializer<T>? literalTermSerializer,
-    IriTermSerializer<T>? iriTermSerializer,
-    ResourceSerializer<T>? resourceSerializer,
+    Serializer<T>? serializer,
   }) {
     return valuesFromSource<Iterable<T>, T>(
       subject,
       predicate,
       (it) => it,
       instance,
-      literalTermSerializer: literalTermSerializer,
-      iriTermSerializer: iriTermSerializer,
-      resourceSerializer: resourceSerializer,
+      serializer: serializer,
     );
   }
 
@@ -238,23 +261,20 @@ class SerializationContextImpl extends SerializationContext
   /// This method first applies a transformation function to extract values from a source,
   /// then serializes each extracted value into one or more triples.
   ///
-  /// @param subject The subject of the triples
-  /// @param predicate The predicate linking subject to extracted values
-  /// @param toIterable Function to extract values from the source
-  /// @param instance Source object containing the values to extract
-  /// @param literalTermSerializer Optional custom serializer for literal terms
-  /// @param iriTermSerializer Optional custom serializer for IRI terms
-  /// @param resourceSerializer Optional custom serializer for resources
-  /// @return List of triples connecting the subject to all extracted values
+  /// The [subject] is the subject of the triples.
+  /// The [predicate] is the predicate linking subject to extracted values.
+  /// The [toIterable] function extracts values from the source.
+  /// The [instance] is the source object containing the values to extract.
+  /// The optional [serializer] is a custom serializer for the extracted values.
+  ///
+  /// Returns a list of triples connecting the subject to all extracted values.
   @override
   List<Triple> valuesFromSource<A, T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> Function(A) toIterable,
     A instance, {
-    LiteralTermSerializer<T>? literalTermSerializer,
-    IriTermSerializer<T>? iriTermSerializer,
-    ResourceSerializer<T>? resourceSerializer,
+    Serializer<T>? serializer,
   }) {
     final result = <Triple>[];
 
@@ -273,9 +293,7 @@ class SerializationContextImpl extends SerializationContext
           subject,
           predicate,
           item,
-          literalTermSerializer: literalTermSerializer,
-          iriTermSerializer: iriTermSerializer,
-          resourceSerializer: resourceSerializer,
+          serializer: serializer,
         );
 
         // Add all triples to our results
@@ -289,7 +307,16 @@ class SerializationContextImpl extends SerializationContext
     return result;
   }
 
-  // Private implementation of childResource with support for different resource serializers
+  /// Creates a child resource using the specified resource serializer.
+  ///
+  /// This private method handles the creation of child resources, including
+  /// automatic type triple addition if not already provided by the serializer.
+  ///
+  /// The [instance] is the object to serialize as a child resource.
+  /// The [serializer] is the resource serializer to use.
+  /// The optional [parentSubject] is the parent subject for context.
+  ///
+  /// Returns a tuple containing the child RDF term and associated triples.
   (RdfTerm, Iterable<Triple>) _createChildResource<T>(
       T instance, ResourceSerializer<T> serializer,
       {RdfSubject? parentSubject}) {
@@ -326,6 +353,15 @@ class SerializationContextImpl extends SerializationContext
     );
   }
 
+  /// Serializes an object to RDF triples as a resource.
+  ///
+  /// The [instance] is the object to serialize as a resource.
+  /// The optional [serializer] is a custom resource serializer to use.
+  ///
+  /// Returns a list of triples representing the resource.
+  ///
+  /// Throws [ArgumentError] if the instance is null.
+  /// Throws [SerializerNotFoundException] if no suitable serializer is found.
   @override
   List<Triple> resource<T>(T instance, {ResourceSerializer<T>? serializer}) {
     if (instance == null) {
@@ -379,25 +415,43 @@ class SerializationContextImpl extends SerializationContext
     ];
   }
 
+  /// Serializes a map as key-value pairs using the given predicate.
+  ///
+  /// Each map entry is serialized as a separate triple with the same predicate.
+  ///
+  /// The [subject] is the subject of the triples.
+  /// The [predicate] is the predicate for each key-value pair.
+  /// The [instance] is the map to serialize.
+  /// The optional [serializer] is a custom serializer for map entries.
+  ///
+  /// Returns a list of triples representing the map entries.
   @override
   List<Triple> valueMap<K, V>(
     RdfSubject subject,
     RdfPredicate predicate,
     Map<K, V> instance, {
-    LiteralTermSerializer<MapEntry<K, V>>? literalTermSerializer,
-    IriTermSerializer<MapEntry<K, V>>? iriTermSerializer,
-    ResourceSerializer<MapEntry<K, V>>? resourceSerializer,
+    Serializer<MapEntry<K, V>>? serializer,
   }) =>
       valuesFromSource<Map<K, V>, MapEntry<K, V>>(
         subject,
         predicate,
         (it) => it.entries,
         instance,
-        resourceSerializer: resourceSerializer,
-        iriTermSerializer: iriTermSerializer,
-        literalTermSerializer: literalTermSerializer,
+        serializer: serializer,
       );
 
+  /// Serializes unmapped triples from an object.
+  ///
+  /// This method extracts triples that were not mapped to specific properties
+  /// during the original serialization process.
+  ///
+  /// The [subject] is the subject for the unmapped triples.
+  /// The [value] is the object containing unmapped data.
+  /// The optional [unmappedTriplesSerializer] is a custom serializer for unmapped triples.
+  ///
+  /// Returns an iterable of unmapped triples.
+  ///
+  /// Throws [SerializerNotFoundException] if no suitable serializer is found.
   @override
   Iterable<Triple> unmappedTriples<T>(RdfSubject subject, T value,
       {UnmappedTriplesSerializer<T>? unmappedTriplesSerializer}) {
@@ -414,54 +468,23 @@ class SerializationContextImpl extends SerializationContext
     return ser.toUnmappedTriples(subject, value);
   }
 
-  (RdfSubject, Iterable<Triple>) buildRdfList<V>(Iterable<V> values,
-      {RdfSubject? headNode, Serializer<V>? serializer}) {
-    if (values.isEmpty) {
-      return (Rdf.nil, const []);
-    }
-
-    headNode ??= BlankNodeTerm();
-    return (
-      headNode,
-      _buildRdfListTriples(values.iterator, headNode, serializer: serializer)
-    );
-  }
-
-  Iterable<Triple> _buildRdfListTriples<V>(
-      Iterator<V> iterator, RdfSubject headNode,
-      {Serializer<V>? serializer}) sync* {
-    if (!iterator.moveNext()) {
-      return;
-    }
-
-    var currentNode = headNode;
-
-    do {
-      final value = iterator.current;
-
-      // Serialize the current value
-      final (valueTerm, valueTriples) = serialize<V>(value,
-          parentSubject: currentNode, serializer: serializer);
-
-      // Yield all triples from the serialized value
-      yield* valueTriples;
-
-      // Add rdf:first triple
-      yield Triple(currentNode, Rdf.first, valueTerm as RdfObject);
-
-      // Check if there are more elements
-      final hasNext = iterator.moveNext();
-
-      if (hasNext) {
-        // Not last element: create next node and point to it
-        final nextNode = BlankNodeTerm();
-        yield Triple(currentNode, Rdf.rest, nextNode);
-        currentNode = nextNode;
-      } else {
-        // Last element: point to rdf:nil
-        yield Triple(currentNode, Rdf.rest, Rdf.nil);
-        break;
-      }
-    } while (true);
+  /// Serializes a collection using a factory-created serializer.
+  ///
+  /// The [subject] is the subject of the triple.
+  /// The [predicate] is the predicate linking to the collection.
+  /// The [collection] is the collection to serialize.
+  /// The [collectionSerializerFactory] creates the appropriate collection serializer.
+  /// The optional [itemSerializer] is a custom serializer for collection items.
+  ///
+  /// Returns an iterable of triples representing the collection.
+  @override
+  Iterable<Triple> collection<C, T>(
+      RdfSubject subject,
+      RdfPredicate predicate,
+      C collection,
+      CollectionSerializerFactory<C, T> collectionSerializerFactory,
+      {Serializer<T>? itemSerializer}) {
+    final serializer = collectionSerializerFactory(itemSerializer);
+    return value(subject, predicate, collection, serializer: serializer);
   }
 }

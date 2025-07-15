@@ -745,7 +745,7 @@ class DocumentWithTagReferencesDeserializer
 
     final tagIris = reader.getValues<String>(
       IriTerm('http://example.org/tag'),
-      iriTermDeserializer: IriStringDeserializer(),
+      deserializer: IriStringDeserializer(),
     );
 
     return Document(id: subject.iri, title: title, tags: tagIris);

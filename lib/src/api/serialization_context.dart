@@ -67,7 +67,7 @@ abstract class SerializationContext {
   ///
   /// Returns a list of triples representing the object's properties.
   ///
-  /// Throws [SerializationException] if no suitable serializer is found or serialization fails.
+  /// Throws [SerializerNotFoundException] if no suitable serializer is found or serialization fails.
   List<Triple> resource<T>(T instance, {ResourceSerializer<T>? serializer});
 
   /// Serializes any Dart value to its RDF representation.
@@ -106,56 +106,10 @@ abstract class SerializationContext {
   /// - The RDF term representing the value
   /// - An iterable of triples needed to fully represent the value
   ///
-  /// Throws [SerializationException] if no suitable serializer is found or serialization fails.
+  /// Throws [SerializerNotFoundException] if no suitable serializer is found or serialization fails.
   (RdfTerm, Iterable<Triple>) serialize<T>(
     T value, {
     Serializer<T>? serializer,
     RdfSubject? parentSubject,
   });
-
-  /// Builds an RDF list structure from a Dart iterable.
-  ///
-  /// This method creates the standard RDF list representation using `rdf:first` and
-  /// `rdf:rest` properties to form a linked list structure. RDF lists are commonly
-  /// used to represent ordered collections in RDF graphs while maintaining order
-  /// information that is not guaranteed by RDF's set-based triple model.
-  ///
-  /// **RDF List Structure**: Each list node contains:
-  /// - `rdf:first`: Points to the current element's serialized form
-  /// - `rdf:rest`: Points to the next list node, or `rdf:nil` for the last element
-  ///
-  /// **Lazy Processing**: The method processes the iterable lazily, generating
-  /// triples on-demand. This enables efficient handling of large collections
-  /// without loading everything into memory at once.
-  ///
-  /// **Element Serialization**: Each element in the iterable is serialized using
-  /// the provided serializer or registry-based lookup, allowing complex objects
-  /// to be embedded within lists.
-  ///
-  /// **Head Node Control**: The optional `headNode` parameter allows reusing an
-  /// existing subject as the list head, useful for integrating lists into larger
-  /// RDF structures.
-  ///
-  /// Example usage:
-  /// ```dart
-  /// final names = ['Alice', 'Bob', 'Charlie'];
-  /// final (head, triples) = context.buildRdfList(names);
-  /// // Creates: head rdf:first "Alice" ; rdf:rest [ rdf:first "Bob" ; rdf:rest [ ... ] ]
-  ///
-  /// // With custom serializer
-  /// final persons = [person1, person2];
-  /// final (head, triples) = context.buildRdfList(persons, serializer: PersonSerializer());
-  /// ```
-  ///
-  /// [values] The iterable of values to convert into an RDF list.
-  /// [headNode] Optional existing subject to use as the list head. If null, creates a new blank node.
-  /// [serializer] Optional custom serializer for list elements. If null, uses registry-based lookup.
-  ///
-  /// Returns a tuple containing:
-  /// - The RDF subject representing the head of the list (`rdf:nil` for empty lists)
-  /// - An iterable of triples that form the complete list structure
-  ///
-  /// Throws [SerializationException] if element serialization fails.
-  (RdfSubject, Iterable<Triple>) buildRdfList<V>(Iterable<V> values,
-      {RdfSubject? headNode, Serializer<V>? serializer});
 }

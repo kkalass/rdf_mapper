@@ -37,6 +37,7 @@ void main() {
   // Print the resulting Turtle representation
   final expectedTurtle = '''
 @base <http://example.org/book/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix schema: <https://schema.org/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
@@ -44,14 +45,18 @@ void main() {
     schema:aggregateRating 5;
     schema:author "J.R.R. Tolkien";
     schema:datePublished "1937-09-20T23:00:00.000Z"^^xsd:dateTime;
-    schema:hasPart [ a schema:Chapter ; schema:name "An Unexpected Party" ; schema:position 1 ], [ a schema:Chapter ; schema:name "Roast Mutton" ; schema:position 2 ], [ a schema:Chapter ; schema:name "A Short Rest" ; schema:position 3 ];
+    schema:hasPart ([ a schema:Chapter ; schema:name "An Unexpected Party" ; schema:position 1 ] [ a schema:Chapter ; schema:name "Roast Mutton" ; schema:position 2 ] [ a schema:Chapter ; schema:name "A Short Rest" ; schema:position 3 ]);
     schema:isbn <urn:isbn:9780618260300>;
     schema:name "The Hobbit" .
 ''';
 
   print('Book as RDF Turtle:');
   print(turtle);
-  assert(turtle.trim() == expectedTurtle.trim());
+  if (turtle.trim() != expectedTurtle.trim()) {
+    throw Exception('Turtle representation does not match expected output!');
+  } else {
+    print('Turtle representation matches expected output.');
+  }
 
   // Deserialize back to a Book object
   final deserializedBook = rdf.decodeObject<Book>(turtle);
@@ -141,8 +146,8 @@ class Book {
   final DateTime published;
   final ISBN isbn;
   final Rating rating;
-  // TODO: once we properly support rdf:List, we can use List<Chapter>
-  final Iterable<Chapter> chapters;
+  // Note: since order of chapters matters, we map to rdf:List in the mapper below
+  final List<Chapter> chapters;
 
   Book({
     required this.id,
@@ -226,7 +231,7 @@ class BookMapper implements GlobalResourceMapper<Book> {
       published: reader.require<DateTime>(publishedPredicate),
       isbn: reader.require<ISBN>(isbnPredicate),
       rating: reader.require<Rating>(ratingPredicate),
-      chapters: reader.getValues<Chapter>(chapterPredicate),
+      chapters: reader.optionalRdfList<Chapter>(chapterPredicate) ?? const [],
     );
   }
 
@@ -243,7 +248,12 @@ class BookMapper implements GlobalResourceMapper<Book> {
         .addValue<DateTime>(publishedPredicate, book.published)
         .addValue<ISBN>(isbnPredicate, book.isbn)
         .addValue<Rating>(ratingPredicate, book.rating)
-        .addValues(chapterPredicate, book.chapters)
+        .when(
+            book.chapters.isNotEmpty,
+            (builder) => builder.addRdfList<Chapter>(
+                  chapterPredicate,
+                  book.chapters,
+                ))
         .build();
   }
 }

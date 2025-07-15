@@ -3,6 +3,8 @@ import 'package:rdf_mapper/src/api/deserialization_context.dart';
 import 'package:rdf_mapper/src/api/deserializer.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
 import 'package:rdf_mapper/src/context/deserialization_context_impl.dart';
+import 'package:rdf_mapper/src/exceptions/invalid_rdf_list_structure_exception.dart';
+import 'package:rdf_mapper/src/mappers/resource/rdf_list_deserializer.dart';
 import 'package:rdf_vocabularies/rdf.dart';
 import 'package:rdf_vocabularies/xsd.dart';
 import 'package:test/test.dart';
@@ -143,18 +145,19 @@ void main() {
     registry = RdfMapperRegistry();
   });
 
-  group('readRdfList', () {
-    test('reads empty list (rdf:nil)', () {
+  group('RdfListDeserializer', () {
+    test('deserializes empty list (rdf:nil)', () {
       graph = RdfGraph(triples: []);
       context = DeserializationContextImpl(graph: graph, registry: registry);
 
-      final result = context.readRdfList<String>(Rdf.nil);
+      final deserializer = RdfListDeserializer<String>();
+      final result = deserializer.fromRdfResource(Rdf.nil, context);
 
       expect(result, isEmpty);
-      expect(result.toList(), equals([]));
+      expect(result, equals([]));
     });
 
-    test('reads single element list', () {
+    test('deserializes single element list', () {
       final listHead = BlankNodeTerm();
 
       graph = RdfGraph(triples: [
@@ -163,12 +166,13 @@ void main() {
       ]);
       context = DeserializationContextImpl(graph: graph, registry: registry);
 
-      final result = context.readRdfList<String>(listHead);
+      final deserializer = RdfListDeserializer<String>();
+      final result = deserializer.fromRdfResource(listHead, context);
 
-      expect(result.toList(), equals(['hello']));
+      expect(result, equals(['hello']));
     });
 
-    test('reads multi-element string list', () {
+    test('deserializes multi-element string list', () {
       final node1 = BlankNodeTerm();
       final node2 = BlankNodeTerm();
       final node3 = BlankNodeTerm();
@@ -188,12 +192,13 @@ void main() {
       ]);
       context = DeserializationContextImpl(graph: graph, registry: registry);
 
-      final result = context.readRdfList<String>(node1);
+      final deserializer = RdfListDeserializer<String>();
+      final result = deserializer.fromRdfResource(node1, context);
 
-      expect(result.toList(), equals(['apple', 'banana', 'cherry']));
+      expect(result, equals(['apple', 'banana', 'cherry']));
     });
 
-    test('reads integer list', () {
+    test('deserializes integer list', () {
       final node1 = BlankNodeTerm();
       final node2 = BlankNodeTerm();
 
@@ -205,12 +210,13 @@ void main() {
       ]);
       context = DeserializationContextImpl(graph: graph, registry: registry);
 
-      final result = context.readRdfList<int>(node1);
+      final deserializer = RdfListDeserializer<int>();
+      final result = deserializer.fromRdfResource(node1, context);
 
-      expect(result.toList(), equals([42, 99]));
+      expect(result, equals([42, 99]));
     });
 
-    test('reads list with custom deserializer', () {
+    test('deserializes list with custom deserializer', () {
       final node1 = BlankNodeTerm();
       final node2 = BlankNodeTerm();
 
@@ -222,13 +228,14 @@ void main() {
       ]);
       context = DeserializationContextImpl(graph: graph, registry: registry);
 
-      final result = context.readRdfList<String>(node1,
-          deserializer: UpperCaseStringDeserializer());
+      final deserializer =
+          RdfListDeserializer<String>(UpperCaseStringDeserializer());
+      final result = deserializer.fromRdfResource(node1, context);
 
-      expect(result.toList(), equals(['HELLO', 'WORLD']));
+      expect(result, equals(['HELLO', 'WORLD']));
     });
 
-    test('processes list lazily', () {
+    test('processes list lazily (internal readRdfList method)', () {
       final node1 = BlankNodeTerm();
       final node2 = BlankNodeTerm();
       final node3 = BlankNodeTerm();
@@ -243,14 +250,16 @@ void main() {
       ]);
       context = DeserializationContextImpl(graph: graph, registry: registry);
 
-      final result = context.readRdfList<String>(node1);
+      final deserializer = RdfListDeserializer<String>();
+      // Get the lazy iterable through the readRdfList method
+      final lazyIterable = deserializer.readRdfList(node1, context);
 
       // Test lazy evaluation by taking only first element
-      final firstElement = result.take(1).single;
+      final firstElement = lazyIterable.take(1).single;
       expect(firstElement, equals('first'));
 
       // Test that we can still get all elements
-      final allElements = result.toList();
+      final allElements = lazyIterable.toList();
       expect(allElements, equals(['first', 'second', 'third']));
     });
 
@@ -263,9 +272,10 @@ void main() {
       ]);
       context = DeserializationContextImpl(graph: graph, registry: registry);
 
+      final deserializer = RdfListDeserializer<String>();
       expect(
-        () => context.readRdfList<String>(listHead).toList(),
-        throwsA(isA<StateError>()),
+        () => deserializer.fromRdfResource(listHead, context),
+        throwsA(isA<InvalidRdfListStructureException>()),
       );
     });
 
@@ -278,9 +288,10 @@ void main() {
       ]);
       context = DeserializationContextImpl(graph: graph, registry: registry);
 
+      final deserializer = RdfListDeserializer<String>();
       expect(
-        () => context.readRdfList<String>(listHead).toList(),
-        throwsA(isA<StateError>()),
+        () => deserializer.fromRdfResource(listHead, context),
+        throwsA(isA<InvalidRdfListStructureException>()),
       );
     });
 
@@ -296,12 +307,13 @@ void main() {
       ]);
       context = DeserializationContextImpl(graph: graph, registry: registry);
 
-      final result = context.readRdfList<bool>(node1);
+      final deserializer = RdfListDeserializer<bool>();
+      final result = deserializer.fromRdfResource(node1, context);
 
-      expect(result.toList(), equals([true, false]));
+      expect(result, equals([true, false]));
     });
 
-    test('reads list of global resources (IRIs)', () {
+    test('deserializes list of global resources (IRIs)', () {
       final node1 = BlankNodeTerm();
       final node2 = BlankNodeTerm();
       final node3 = BlankNodeTerm();
@@ -341,16 +353,16 @@ void main() {
           registry: registry.clone()
             ..registerDeserializer(TestPersonDeserializer()));
 
-      final result = context.readRdfList<TestPerson>(node1);
-      final list = result.toList();
+      final deserializer = RdfListDeserializer<TestPerson>();
+      final result = deserializer.fromRdfResource(node1, context);
 
-      expect(list.length, equals(3));
-      expect(list[0], equals(TestPerson('http://example.org/person1')));
-      expect(list[1], equals(TestPerson('http://example.org/person2')));
-      expect(list[2], equals(TestPerson('http://example.org/person3')));
+      expect(result.length, equals(3));
+      expect(result[0], equals(TestPerson('http://example.org/person1')));
+      expect(result[1], equals(TestPerson('http://example.org/person2')));
+      expect(result[2], equals(TestPerson('http://example.org/person3')));
     });
 
-    test('reads list of local resources (blank nodes)', () {
+    test('deserializes list of local resources (blank nodes)', () {
       final listNode1 = BlankNodeTerm();
       final listNode2 = BlankNodeTerm();
 
@@ -387,15 +399,15 @@ void main() {
           registry: registry.clone()
             ..registerDeserializer(TestAddressDeserializer()));
 
-      final result = context.readRdfList<TestAddress>(listNode1);
-      final list = result.toList();
+      final deserializer = RdfListDeserializer<TestAddress>();
+      final result = deserializer.fromRdfResource(listNode1, context);
 
-      expect(list.length, equals(2));
-      expect(list[0], equals(TestAddress(city: 'Hamburg')));
-      expect(list[1], equals(TestAddress(city: 'Berlin')));
+      expect(result.length, equals(2));
+      expect(result[0], equals(TestAddress(city: 'Hamburg')));
+      expect(result[1], equals(TestAddress(city: 'Berlin')));
     });
 
-    test('reads list using specific custom deserializers', () {
+    test('deserializes list using specific custom deserializers', () {
       final listNode1 = BlankNodeTerm();
       final listNode2 = BlankNodeTerm();
 
@@ -428,14 +440,14 @@ void main() {
           registry: registry.clone()
             ..registerDeserializer(TestPersonDeserializer()));
 
-      // Read with specific deserializer
-      final result = context.readRdfList<TestPerson>(listNode1,
-          deserializer: TestPersonDeserializer());
-      final list = result.toList();
+      // Use specific custom deserializer directly with the list deserializer
+      final deserializer =
+          RdfListDeserializer<TestPerson>(TestPersonDeserializer());
+      final result = deserializer.fromRdfResource(listNode1, context);
 
-      expect(list.length, equals(2));
-      expect(list[0], equals(TestPerson('http://example.org/person1')));
-      expect(list[1], equals(TestPerson('http://example.org/person2')));
+      expect(result.length, equals(2));
+      expect(result[0], equals(TestPerson('http://example.org/person1')));
+      expect(result[1], equals(TestPerson('http://example.org/person2')));
     });
 
     test('reads list with automatic deserializer resolution from registry', () {
@@ -476,12 +488,12 @@ void main() {
             ..registerDeserializer(TestAddressDeserializer()));
 
       // Read without specifying deserializer - should use registry to find appropriate one
-      final result = context.readRdfList<TestAddress>(listNode1);
-      final list = result.toList();
+      final deserializer = RdfListDeserializer<TestAddress>();
+      final result = deserializer.fromRdfResource(listNode1, context);
 
-      expect(list.length, equals(2));
-      expect(list[0], equals(TestAddress(city: 'Vienna')));
-      expect(list[1], equals(TestAddress(city: 'Prague')));
+      expect(result.length, equals(2));
+      expect(result[0], equals(TestAddress(city: 'Vienna')));
+      expect(result[1], equals(TestAddress(city: 'Prague')));
     });
 
     test('reads list of IRIs as strings using IriTermDeserializer', () {
@@ -506,14 +518,14 @@ void main() {
       // Register the IRI-to-string deserializer
       context = DeserializationContextImpl(graph: graph, registry: registry);
 
-      final result = context.readRdfList<String>(listNode1,
-          deserializer: IriToStringDeserializer());
-      final list = result.toList();
+      final deserializer =
+          RdfListDeserializer<String>(IriToStringDeserializer());
+      final result = deserializer.fromRdfResource(listNode1, context);
 
-      expect(list.length, equals(3));
-      expect(list[0], equals('active'));
-      expect(list[1], equals('pending'));
-      expect(list[2], equals('inactive'));
+      expect(result.length, equals(3));
+      expect(result[0], equals('active'));
+      expect(result[1], equals('pending'));
+      expect(result[2], equals('inactive'));
     });
 
     test('reads list of IRIs as custom objects using IriTermDeserializer', () {
@@ -541,14 +553,14 @@ void main() {
           registry: registry.clone()
             ..registerDeserializer(CountryIriDeserializer()));
 
-      final result = context.readRdfList<Country>(listNode1,
-          deserializer: CountryIriDeserializer());
-      final list = result.toList();
+      final deserializer =
+          RdfListDeserializer<Country>(CountryIriDeserializer());
+      final result = deserializer.fromRdfResource(listNode1, context);
 
-      expect(list.length, equals(3));
-      expect(list[0], equals(Country('DE', 'Germany')));
-      expect(list[1], equals(Country('FR', 'France')));
-      expect(list[2], equals(Country('IT', 'Italy')));
+      expect(result.length, equals(3));
+      expect(result[0], equals(Country('DE', 'Germany')));
+      expect(result[1], equals(Country('FR', 'France')));
+      expect(result[2], equals(Country('IT', 'Italy')));
     });
 
     test('reads list with automatic IRI deserializer resolution from registry',
@@ -574,12 +586,12 @@ void main() {
             ..registerDeserializer(CountryIriDeserializer()));
 
       // Read without explicit deserializer - registry should find the IriTermDeserializer
-      final result = context.readRdfList<Country>(listNode1);
-      final list = result.toList();
+      final deserializer = RdfListDeserializer<Country>();
+      final result = deserializer.fromRdfResource(listNode1, context);
 
-      expect(list.length, equals(2));
-      expect(list[0], equals(Country('ES', 'Spain')));
-      expect(list[1], equals(Country('AT', 'Austria')));
+      expect(result.length, equals(2));
+      expect(result[0], equals(Country('ES', 'Spain')));
+      expect(result[1], equals(Country('AT', 'Austria')));
     });
 
     test('reads mixed list with IRIs as values and literals', () {
@@ -606,13 +618,13 @@ void main() {
             ..registerDeserializer(IriToStringDeserializer()));
 
       // Read as strings - should handle both literals and IRIs
-      final result = context.readRdfList<String>(listNode1);
-      final list = result.toList();
+      final deserializer = RdfListDeserializer<String>();
+      final result = deserializer.fromRdfResource(listNode1, context);
 
-      expect(list.length, equals(3));
-      expect(list[0], equals('product'));
-      expect(list[1], equals('electronics')); // IRI fragment extracted
-      expect(list[2], equals('description'));
+      expect(result.length, equals(3));
+      expect(result[0], equals('product'));
+      expect(result[1], equals('electronics')); // IRI fragment extracted
+      expect(result[2], equals('description'));
     });
   });
 
@@ -632,10 +644,11 @@ void main() {
       );
 
       // This should detect the cycle and not hang
+      final deserializer = RdfListDeserializer<String>();
       expect(
-          () => cyclicContext.readRdfList<String>(selfRefNode).take(5).toList(),
-          throwsA(isA<StateError>()) // Should detect cycle and throw
-          );
+        () => deserializer.fromRdfResource(selfRefNode, cyclicContext),
+        throwsA(isA<CircularRdfListException>()),
+      );
     });
 
     test('handles two-node cycle in list', () {
@@ -657,8 +670,9 @@ void main() {
       );
 
       // Should detect the cycle
-      expect(() => cyclicContext.readRdfList<String>(node1).take(5).toList(),
-          throwsA(isA<StateError>()));
+      final deserializer = RdfListDeserializer<String>();
+      expect(() => deserializer.fromRdfResource(node1, cyclicContext),
+          throwsA(isA<CircularRdfListException>()));
     });
 
     test('handles complex multi-node cycle', () {
@@ -682,8 +696,9 @@ void main() {
       );
 
       // Should detect the cycle
-      expect(() => cyclicContext.readRdfList<String>(node1).take(10).toList(),
-          throwsA(isA<StateError>()));
+      final deserializer = RdfListDeserializer<String>();
+      expect(() => deserializer.fromRdfResource(node1, cyclicContext),
+          throwsA(isA<CircularRdfListException>()));
     });
 
     test('handles cycle that includes rdf:nil incorrectly', () {
@@ -706,7 +721,8 @@ void main() {
       );
 
       // Should handle the malformed structure gracefully
-      final result = cyclicContext.readRdfList<String>(node1).toList();
+      final deserializer = RdfListDeserializer<String>();
+      final result = deserializer.fromRdfResource(node1, cyclicContext);
       expect(result, equals(['first'])); // Should stop at rdf:nil
     });
 
@@ -738,7 +754,8 @@ void main() {
       );
 
       // Should be able to deserialize the list even with circular refs in values
-      final result = cyclicContext.readRdfList<TestPerson>(listNode1).toList();
+      final deserializer = RdfListDeserializer<TestPerson>();
+      final result = deserializer.fromRdfResource(listNode1, cyclicContext);
       expect(result.length, equals(2));
       expect(result[0].iri, equals('http://example.org/person1'));
       expect(result[1].iri, equals('http://example.org/person2'));
@@ -760,7 +777,8 @@ void main() {
         registry: registry,
       );
 
-      final iterable = cyclicContext.readRdfList<String>(node1);
+      final deserializer = RdfListDeserializer<String>();
+      final iterable = deserializer.readRdfList(node1, cyclicContext);
 
       // Should be able to get first few elements before cycle is detected
       final iterator = iterable.iterator;
@@ -770,7 +788,8 @@ void main() {
       expect(iterator.current, equals('second'));
 
       // The cycle should be detected when trying to continue
-      expect(() => iterator.moveNext(), throwsA(isA<StateError>()));
+      expect(
+          () => iterator.moveNext(), throwsA(isA<CircularRdfListException>()));
     });
 
     test('handles valid list that resembles but is not a cycle', () {
@@ -798,7 +817,8 @@ void main() {
       );
 
       // Should work fine - not a cycle in the list structure
-      final result = validContext.readRdfList<String>(node1).toList();
+      final deserializer = RdfListDeserializer<String>();
+      final result = deserializer.fromRdfResource(node1, validContext);
       expect(result, equals(['first', 'second', 'third']));
     });
   });
@@ -808,7 +828,8 @@ void main() {
       graph = RdfGraph(triples: []);
       context = DeserializationContextImpl(graph: graph, registry: registry);
 
-      final result = context.readRdfList<String>(Rdf.nil).toList();
+      final deserializer = RdfListDeserializer<String>();
+      final result = deserializer.fromRdfResource(Rdf.nil, context);
 
       expect(result, equals([]));
     });
@@ -822,7 +843,8 @@ void main() {
       ]);
       context = DeserializationContextImpl(graph: graph, registry: registry);
 
-      final result = context.readRdfList<Uri>(listNode).toList();
+      final deserializer = RdfListDeserializer<Uri>();
+      final result = deserializer.fromRdfResource(listNode, context);
 
       expect(
           result,
@@ -844,7 +866,8 @@ void main() {
       ]);
       context = DeserializationContextImpl(graph: graph, registry: registry);
 
-      final result = context.readRdfList<String>(listNode).toList();
+      final deserializer = RdfListDeserializer<String>();
+      final result = deserializer.fromRdfResource(listNode, context);
 
       expect(result, equals(['value'])); // Stops at rdf:nil
       final processed = context.getAllProcessedTriples();
@@ -864,7 +887,8 @@ void main() {
       ]);
       context = DeserializationContextImpl(graph: graph, registry: registry);
 
-      final result = context.readRdfList<Object>(listNode1).toList();
+      final deserializer = RdfListDeserializer<Object>();
+      final result = deserializer.fromRdfResource(listNode1, context);
 
       expect(
           result,
@@ -889,7 +913,8 @@ void main() {
       ]);
       context = DeserializationContextImpl(graph: graph, registry: registry);
 
-      final result = context.readRdfList<Object>(listNode1).toList();
+      final deserializer = RdfListDeserializer<Object>();
+      final result = deserializer.fromRdfResource(listNode1, context);
 
       expect(
           result,
@@ -909,7 +934,8 @@ void main() {
       ]);
       context = DeserializationContextImpl(graph: graph, registry: registry);
 
-      final result = context.readRdfList<Object>(listNode).toList();
+      final deserializer = RdfListDeserializer<Object>();
+      final result = deserializer.fromRdfResource(listNode, context);
 
       expect(
           result,
@@ -929,7 +955,8 @@ void main() {
       ]);
       context = DeserializationContextImpl(graph: graph, registry: registry);
 
-      final result = context.readRdfList<Object>(listNode1).toList();
+      final deserializer = RdfListDeserializer<Object>();
+      final result = deserializer.fromRdfResource(listNode1, context);
 
       expect(
           result,
@@ -954,7 +981,8 @@ void main() {
       ]);
       context = DeserializationContextImpl(graph: graph, registry: registry);
 
-      final result = context.readRdfList<Object>(listNode1).toList();
+      final deserializer = RdfListDeserializer<Object>();
+      final result = deserializer.fromRdfResource(listNode1, context);
 
       expect(
           result,
@@ -980,7 +1008,8 @@ void main() {
       ]);
       context = DeserializationContextImpl(graph: graph, registry: registry);
 
-      final result = context.readRdfList<Object>(listNode1).toList();
+      final deserializer = RdfListDeserializer<Object>();
+      final result = deserializer.fromRdfResource(listNode1, context);
 
       expect(
           result,
@@ -1008,9 +1037,11 @@ void main() {
       );
 
       // Should detect the cycle and not hang
-      expect(() => cyclicContext.readRdfList<Object>(node1).take(5).toList(),
-          throwsA(isA<StateError>()) // Should detect cycle and throw
-          );
+      final deserializer = RdfListDeserializer<Object>();
+      expect(
+        () => deserializer.fromRdfResource(node1, cyclicContext),
+        throwsA(isA<CircularRdfListException>()),
+      );
     });
   });
 }

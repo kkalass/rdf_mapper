@@ -62,7 +62,7 @@ class MockDeserializationContext extends _i1.Mock
   @override
   T deserialize<T>(
     _i4.RdfTerm? term, {
-    _i5.Deserializer<T>? deserializer,
+    _i5.BaseDeserializer<T>? deserializer,
   }) =>
       (super.noSuchMethod(
         Invocation.method(

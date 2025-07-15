@@ -43,7 +43,7 @@ class ParentClassMapper implements GlobalResourceMapper<ParentClass> {
       childPredicate,
       // Dynamically register a mapper for ChildClass that needs parent context
       // This simulates a scenario where the child mapper needs properties from the parent
-      globalResourceDeserializer: ChildClassMapper(parentId: subject.iri),
+      deserializer: ChildClassMapper(parentId: subject.iri),
     );
 
     return ParentClass(id: subject.iri, name: name, child: child);
@@ -62,7 +62,7 @@ class ParentClassMapper implements GlobalResourceMapper<ParentClass> {
           childPredicate,
           value.child,
           // Dynamically register the child mapper for serialization
-          resourceSerializer: ChildClassMapper(parentId: value.id),
+          serializer: ChildClassMapper(parentId: value.id),
         )
         .build();
   }

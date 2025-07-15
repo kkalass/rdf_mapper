@@ -74,7 +74,7 @@ void main() {
                 predicate, (c) => c.relatedIds, container,
                 // String values would default to Literal, so we need to specify
                 // the IriTermSerializer to ensure it is serialized as an Iri
-                iriTermSerializer: const IriFullSerializer())
+                serializer: const IriFullSerializer())
             .build();
 
         expect(triples.length, equals(3));
@@ -192,7 +192,7 @@ void main() {
               container,
               // String values would default to Literal, so we need to specify
               // the IriTermSerializer to ensure it is serialized as an Iri
-              iriTermSerializer: const IriFullSerializer())
+              serializer: const IriFullSerializer())
           .addValuesFromSource(
             IriTerm('http://example.org/hasMember'),
             (c) => c.people,

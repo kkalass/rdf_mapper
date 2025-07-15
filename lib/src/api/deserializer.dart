@@ -13,10 +13,12 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 ///
 /// This serves as a semantic marker to group all deserializers in the system.
 /// It doesn't define any methods itself but acts as a common ancestor.
-sealed class Deserializer<T> {}
+sealed class BaseDeserializer<T> {}
+
+sealed class Deserializer<T> extends BaseDeserializer<T> {}
 
 abstract interface class UnmappedTriplesDeserializer<T>
-    implements Deserializer<T> {
+    implements BaseDeserializer<T> {
   /// Indicates whether this deserializer requires deep triple collection for blank nodes.
   ///
   /// When `true`, the caller should recursively collect all triples
@@ -194,4 +196,21 @@ abstract interface class GlobalResourceDeserializer<T>
   ///
   /// Returns the resulting Dart object
   T fromRdfResource(IriTerm term, DeserializationContext context);
+}
+
+typedef CollectionDeserializerFactory<C, T> = CollectionDeserializer<C>
+    Function(Deserializer<T>? itemDeserializer);
+
+/// Interface for deserializing an RDF collection structure into a Dart collection [C] of items [T].
+///
+/// Implementations are responsible for traversing the RDF triples that define
+/// the collection's (or container's) structure and reconstructing the Dart collection.
+/// They should use the provided [context] to deserialize the individual [T] items
+/// and must accept a Deserializer&lt;T&gt; in the constructor for allowing the user to control type-specific deserialization.
+abstract interface class CollectionDeserializer<C>
+    extends ResourceDeserializer<C> {
+  /// Deserializes an RDF collection identified by [collectionHead] into a Dart collection [C].
+  ///
+  /// The [context] should be used to deserialize individual items within the collection.
+  C fromRdfResource(RdfSubject collectionHead, DeserializationContext context);
 }

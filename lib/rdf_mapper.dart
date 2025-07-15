@@ -116,6 +116,7 @@ export 'src/exceptions/deserialization_exception.dart';
 export 'src/exceptions/deserializer_datatype_mismatch_exception.dart';
 export 'src/exceptions/deserializer_not_found_exception.dart';
 export 'src/exceptions/incomplete_deserialization_exception.dart';
+export 'src/exceptions/invalid_rdf_list_structure_exception.dart';
 export 'src/exceptions/property_value_not_found_exception.dart';
 export 'src/exceptions/rdf_mapping_exception.dart';
 export 'src/exceptions/serialization_exception.dart';

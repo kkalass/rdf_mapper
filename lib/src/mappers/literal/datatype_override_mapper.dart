@@ -61,11 +61,11 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 /// final temperatureMapper = DatatypeOverrideMapper<double>(celsiusType);
 ///
 /// // Use with ResourceBuilder (manual serialization)
-/// builder.addValue(Schema.temperature, 23.5, literalTermSerializer: temperatureMapper);
+/// builder.addValue(Schema.temperature, 23.5, serializer: temperatureMapper);
 /// // Results in: "23.5"^^<http://qudt.org/vocab/unit/CEL>
 ///
 /// // Use with ResourceReader (manual deserialization)
-/// final celsius = reader.require<double>(Schema.temperature, literalTermDeserializer: temperatureMapper);
+/// final celsius = reader.require<double>(Schema.temperature, deserializer: temperatureMapper);
 /// // Validates datatype and returns: 23.5 (as double)
 /// ```
 ///
@@ -96,11 +96,11 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 /// ```dart
 /// // With ResourceBuilder for serialization
 /// final builder = context.resourceBuilder(subject);
-/// builder.addValue(predicate, value, literalTermSerializer: customMapper);
+/// builder.addValue(predicate, value, serializer: customMapper);
 ///
 /// // With ResourceReader for deserialization
 /// final reader = context.reader(subject);
-/// final value = reader.require<String>(predicate, literalTermDeserializer: customMapper);
+/// final value = reader.require<String>(predicate, deserializer: customMapper);
 ///
 /// // Direct context usage (less common)
 /// context.fromLiteralTerm<String>(term, deserializer: customMapper);

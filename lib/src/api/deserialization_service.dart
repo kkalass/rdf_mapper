@@ -22,10 +22,7 @@ abstract class DeserializationService {
   /// * [subject] The subject IRI of the object we are working with
   /// * [predicate] The predicate IRI of the property
   /// * [enforceSingleValue] If true, throws an exception when multiple values exist
-  /// * [globalResourceDeserializer] Optional custom deserializer for global resources
-  /// * [iriTermDeserializer] Optional custom deserializer for IRI terms
-  /// * [literalTermDeserializer] Optional custom deserializer for literal terms
-  /// * [localResourceDeserializer] Optional custom deserializer for local resources
+  /// * [deserializer] Optional custom deserializer
   ///
   /// Returns the property value converted to the requested type.
   ///
@@ -35,10 +32,7 @@ abstract class DeserializationService {
     RdfSubject subject,
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
-    GlobalResourceDeserializer<T>? globalResourceDeserializer,
-    IriTermDeserializer<T>? iriTermDeserializer,
-    LiteralTermDeserializer<T>? literalTermDeserializer,
-    LocalResourceDeserializer<T>? localResourceDeserializer,
+    Deserializer<T>? deserializer,
   });
 
   /// Gets an optional property value from the RDF graph
@@ -49,10 +43,7 @@ abstract class DeserializationService {
   /// * [subject] The subject IRI of the object we are working with
   /// * [predicate] The predicate IRI of the property
   /// * [enforceSingleValue] If true, throws an exception when multiple values exist
-  /// * [globalResourceDeserializer] Optional custom deserializer for global resources
-  /// * [iriTermDeserializer] Optional custom deserializer for IRI terms
-  /// * [literalTermDeserializer] Optional custom deserializer for literal terms
-  /// * [localResourceDeserializer] Optional custom deserializer for local resources
+  /// * [deserializer] Optional custom deserializer
   ///
   /// Returns the property value converted to the requested type, or null if not found.
   ///
@@ -61,10 +52,7 @@ abstract class DeserializationService {
     RdfSubject subject,
     RdfPredicate predicate, {
     bool enforceSingleValue = true,
-    IriTermDeserializer<T>? iriTermDeserializer,
-    GlobalResourceDeserializer<T>? globalResourceDeserializer,
-    LiteralTermDeserializer<T>? literalTermDeserializer,
-    LocalResourceDeserializer<T>? localResourceDeserializer,
+    Deserializer<T>? deserializer,
   });
 
   /// Gets multiple property values and collects them with a custom collector function
@@ -72,20 +60,14 @@ abstract class DeserializationService {
   /// * [subject] The subject IRI of the object we are working with
   /// * [predicate] The predicate IRI of the property
   /// * [collector] A function to process the collected values
-  /// * [globalResourceDeserializer] Optional custom deserializer for global resources
-  /// * [iriTermDeserializer] Optional custom deserializer for IRI terms
-  /// * [literalTermDeserializer] Optional custom deserializer for literal terms
-  /// * [localResourceDeserializer] Optional custom deserializer for local resources
+  /// * [deserializer] Optional custom deserializer
   ///
   /// Returns the result of the collector function.
   R collect<T, R>(
     RdfSubject subject,
     RdfPredicate predicate,
     R Function(Iterable<T>) collector, {
-    IriTermDeserializer<T>? iriTermDeserializer,
-    GlobalResourceDeserializer<T>? globalResourceDeserializer,
-    LiteralTermDeserializer<T>? literalTermDeserializer,
-    LocalResourceDeserializer<T>? localResourceDeserializer,
+    Deserializer<T>? deserializer,
   });
 
   /// Gets a list of property values
@@ -94,19 +76,13 @@ abstract class DeserializationService {
   ///
   /// * [subject] The subject IRI of the object we are working with
   /// * [predicate] The predicate IRI for the properties to read
-  /// * [globalResourceDeserializer] Optional custom deserializer for global resources
-  /// * [iriTermDeserializer] Optional custom deserializer for IRI terms
-  /// * [literalTermDeserializer] Optional custom deserializer for literal terms
-  /// * [localResourceDeserializer] Optional custom deserializer for local resources
+  /// * [deserializer] Optional custom deserializer
   ///
   /// Returns a list of property values converted to the requested type.
   Iterable<T> getValues<T>(
     RdfSubject subject,
     RdfPredicate predicate, {
-    IriTermDeserializer<T>? iriTermDeserializer,
-    GlobalResourceDeserializer<T>? globalResourceDeserializer,
-    LiteralTermDeserializer<T>? literalTermDeserializer,
-    LocalResourceDeserializer<T>? localResourceDeserializer,
+    Deserializer<T>? deserializer,
   });
 
   /// Gets a map of property values
@@ -115,21 +91,29 @@ abstract class DeserializationService {
   ///
   /// * [subject] The subject IRI of the object we are working with
   /// * [predicate] The predicate IRI of the property
-  /// * [globalResourceDeserializer] Optional custom deserializer for global resources containing MapEntry values
-  /// * [iriTermDeserializer] Optional custom deserializer for IRI terms containing MapEntry values
-  /// * [literalTermDeserializer] Optional custom deserializer for literal terms containing MapEntry values
-  /// * [localResourceDeserializer] Optional custom deserializer for global resources containing MapEntry values
+  /// * [deserializer] Optional custom deserializer for MapEntry values
   ///
   /// Returns a map constructed from the property values.
   Map<K, V> getMap<K, V>(
     RdfSubject subject,
     RdfPredicate predicate, {
-    IriTermDeserializer<MapEntry<K, V>>? iriTermDeserializer,
-    GlobalResourceDeserializer<MapEntry<K, V>>? globalResourceDeserializer,
-    LiteralTermDeserializer<MapEntry<K, V>>? literalTermDeserializer,
-    LocalResourceDeserializer<MapEntry<K, V>>? localResourceDeserializer,
+    Deserializer<MapEntry<K, V>>? deserializer,
   });
 
   T getUnmapped<T>(RdfSubject subject,
       {UnmappedTriplesDeserializer? unmappedTriplesDeserializer});
+
+  /// Retrieves values from an RDF collection, using a provided collection deserializer.
+  ///
+  /// [collectionDeserializerFactory] is a factory function that provides an
+  /// instance of [CollectionDeserializer] for the specific collection type [C] and item type [T].
+  ///
+  /// For example, to deserialize an `rdf:List` into a `List<Chapter>`:
+  /// `reader.requireCollection<List<Chapter>, Chapter>(SchemaBook.hasPart, RdfListCollectionDeserializer.new)`
+  C requireCollection<C, T>(RdfSubject subject, RdfPredicate predicate,
+      CollectionDeserializerFactory<C, T> collectionDeserializerFactory,
+      {Deserializer<T>? itemDeserializer});
+  C? optionalCollection<C, T>(RdfSubject subject, RdfPredicate predicate,
+      CollectionDeserializerFactory<C, T> collectionDeserializerFactory,
+      {Deserializer<T>? itemDeserializer});
 }

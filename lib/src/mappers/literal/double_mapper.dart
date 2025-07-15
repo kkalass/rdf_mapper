@@ -28,7 +28,7 @@ import 'package:rdf_vocabularies/xsd.dart';
 ///
 /// // Or use locally for specific predicates
 /// reader.require(temperaturePredicate,
-///   literalTermDeserializer: DoubleMapper(Xsd.double));
+///   deserializer: DoubleMapper(Xsd.double));
 /// ```
 ///
 /// ## Datatype Strictness

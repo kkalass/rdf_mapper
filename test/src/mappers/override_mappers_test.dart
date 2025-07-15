@@ -560,8 +560,8 @@ void main() {
       expect(languageMapper, isA<LiteralTermMapper<String>>());
 
       // CORRECT usage: Explicit serializer/deserializer parameters only
-      // - builder.addValue(predicate, value, literalTermSerializer: mapper)
-      // - reader.require<T>(predicate, literalTermDeserializer: mapper)
+      // - builder.addValue(predicate, value, serializer: mapper)
+      // - reader.require<T>(predicate, deserializer: mapper)
       //
       // NEVER register in any RdfMapperRegistry instance!
     });
