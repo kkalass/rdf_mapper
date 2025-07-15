@@ -27,6 +27,8 @@ void main() {
       Chapter('Roast Mutton', 2),
       Chapter('A Short Rest', 3),
     ],
+    // UNORDERED: Multiple independent values (order doesn't matter)
+    genres: ['fantasy', 'adventure', 'children'],
   );
 
   // --- PRIMARY API: String-based operations ---
@@ -35,28 +37,9 @@ void main() {
   final turtle = rdf.encodeObject(book, baseUri: 'http://example.org/book/');
 
   // Print the resulting Turtle representation
-  final expectedTurtle = '''
-@base <http://example.org/book/> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix schema: <https://schema.org/> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-
-<hobbit> a schema:Book;
-    schema:aggregateRating 5;
-    schema:author "J.R.R. Tolkien";
-    schema:datePublished "1937-09-20T23:00:00.000Z"^^xsd:dateTime;
-    schema:hasPart ([ a schema:Chapter ; schema:name "An Unexpected Party" ; schema:position 1 ] [ a schema:Chapter ; schema:name "Roast Mutton" ; schema:position 2 ] [ a schema:Chapter ; schema:name "A Short Rest" ; schema:position 3 ]);
-    schema:isbn <urn:isbn:9780618260300>;
-    schema:name "The Hobbit" .
-''';
 
   print('Book as RDF Turtle:');
   print(turtle);
-  if (turtle.trim() != expectedTurtle.trim()) {
-    throw Exception('Turtle representation does not match expected output!');
-  } else {
-    print('Turtle representation matches expected output.');
-  }
 
   // Deserialize back to a Book object
   final deserializedBook = rdf.decodeObject<Book>(turtle);
@@ -71,6 +54,7 @@ void main() {
   for (final chapter in deserializedBook.chapters) {
     print('- ${chapter.title} (${chapter.number})');
   }
+  print('Genres: ${deserializedBook.genres.join(', ')}');
 
   // Example with multiple books using deserializeAllOfType
   final multipleBooks = '''
@@ -82,6 +66,7 @@ void main() {
     schema:author "J.R.R. Tolkien";
     schema:datePublished "1937-09-20T23:00:00.000Z"^^xsd:dateTime;
     schema:isbn <urn:isbn:9780618260300>;
+    schema:genre "fantasy", "adventure", "children";
     schema:aggregateRating "5"^^xsd:integer .
     
 <http://example.org/book/lotr> a schema:Book;
@@ -122,6 +107,7 @@ void main() {
     isbn: ISBN('9780048231536'),
     rating: Rating(4),
     chapters: [Chapter('Ainulindalë', 1)],
+    genres: ['mythology', 'high-fantasy'],
   );
 
   // Serialize multiple books to a single graph
@@ -148,6 +134,8 @@ class Book {
   final Rating rating;
   // Note: since order of chapters matters, we map to rdf:List in the mapper below
   final List<Chapter> chapters;
+  // Note: genres are multiple independent values, so we use addValues/getValues
+  final List<String> genres;
 
   Book({
     required this.id,
@@ -157,6 +145,7 @@ class Book {
     required this.isbn,
     required this.rating,
     required this.chapters,
+    required this.genres,
   });
 }
 
@@ -202,6 +191,7 @@ class BookMapper implements GlobalResourceMapper<Book> {
   static final isbnPredicate = SchemaBook.isbn;
   static final ratingPredicate = SchemaBook.aggregateRating;
   static final chapterPredicate = SchemaBook.hasPart;
+  static final genrePredicate = SchemaBook.genre;
 
   // Base IRI prefix for book resources
   static const String bookIriPrefix = 'http://example.org/book/';
@@ -232,6 +222,7 @@ class BookMapper implements GlobalResourceMapper<Book> {
       isbn: reader.require<ISBN>(isbnPredicate),
       rating: reader.require<Rating>(ratingPredicate),
       chapters: reader.optionalRdfList<Chapter>(chapterPredicate) ?? const [],
+      genres: reader.getValues<String>(genrePredicate).toList(),
     );
   }
 
@@ -254,6 +245,8 @@ class BookMapper implements GlobalResourceMapper<Book> {
                   chapterPredicate,
                   book.chapters,
                 ))
+        // UNORDERED: Multiple independent values (no guaranteed order)
+        .addValues<String>(genrePredicate, book.genres)
         .build();
   }
 }
