@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added `requireRdfSeq<T>()`, `requireRdfBag<T>()`, and `requireRdfAlt<T>()` methods to ResourceReader
   - Added `optionalRdfSeq<T>()`, `optionalRdfBag<T>()`, and `optionalRdfAlt<T>()` methods to ResourceReader
   - Added `addRdfSeq<T>()`, `addRdfBag<T>()`, and `addRdfAlt<T>()` methods to ResourceBuilder
+- Added multi-objects collection support as alternative to RDF lists:
+  - Added `MultiObjectsSerializer<T>`, `MultiObjectsDeserializer<T>`, and `MultiObjectsMapper<T>` interfaces
+  - Added `UnorderedItemsMapper<T>` and related classes for unordered collections using multiple RDF triples with same predicate
+  - Enables choice between RDF list structures (ordered, structured) and multi-objects approach (unordered, flat)
 - Added `InvalidRdfListStructureException` with detailed error analysis and suggestions for alternative approaches
 - Added `CircularRdfListException` for detecting circular references in RDF list structures
 - Added `UriIriMapper` for mapping Dart `Uri` objects to IRI terms
@@ -29,6 +33,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Breaking Change**: Modified `SerializationContext.serialize()` return type from `(RdfTerm, Iterable<Triple>)` to `(Iterable<RdfTerm>, Iterable<Triple>)` to support multi-objects serialization
+- **Breaking Change**: Modified `CollectionDeserializerFactory<C, T>` and `CollectionSerializerFactory<C, T>` type definitions to return `Deserializer<C>` and `Serializer<C>` respectively (instead of `UnifiedResourceDeserializer<C>` and `UnifiedResourceSerializer<C>`)
+- **Breaking Change**: Modified `CollectionMapperFactory<C, T>` type definition to return `Mapper<C>` (instead of `UnifiedResourceMapper<C>`)
 - **Breaking Change**: Simplified API by consolidating deserializer parameters - replaced multiple specific deserializer parameters with single `deserializer` parameter across:
   - `DeserializationService.require()`, `optional()`, `collect()`, `getValues()`, `getMap()` methods
   - `ResourceReader.require()`, `optional()`, `getValues()`, `getMap()` methods  
@@ -37,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Breaking Change**: Removed `readRdfList()` method from `DeserializationContext` (moved to collection infrastructure)
 - **Breaking Change**: All `LiteralTermDeserializer` implementations now require `datatype` property
 - Enhanced serialization context with unified `serialize()` method supporting all value types
+- Enhanced collection deserialization to automatically detect and use multi-objects deserializers when available
 - Updated main example to demonstrate RDF list usage with proper order preservation for book chapters
 
 ## [0.8.8] - 2025-07-10
