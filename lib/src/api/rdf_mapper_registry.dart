@@ -1,18 +1,6 @@
 import 'package:logging/logging.dart';
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/src/api/deserializer.dart';
-import 'package:rdf_mapper/src/api/mapper.dart';
-import 'package:rdf_mapper/src/api/serializer.dart';
-import 'package:rdf_mapper/src/exceptions/deserializer_not_found_exception.dart';
-import 'package:rdf_mapper/src/exceptions/serializer_not_found_exception.dart';
-import 'package:rdf_mapper/src/mappers/iri/iri_full_mapper.dart';
-import 'package:rdf_mapper/src/mappers/literal/bool_mapper.dart';
-import 'package:rdf_mapper/src/mappers/literal/date_time_mapper.dart';
-import 'package:rdf_mapper/src/mappers/literal/double_mapper.dart';
-import 'package:rdf_mapper/src/mappers/literal/int_mapper.dart';
-import 'package:rdf_mapper/src/mappers/literal/string_mapper.dart';
-import 'package:rdf_mapper/src/mappers/unmapped/predicates_map_mapper.dart';
-import 'package:rdf_mapper/src/mappers/resource/rdf_graph_mapper.dart';
+import 'package:rdf_mapper/rdf_mapper.dart';
 
 final _log = Logger("rdf_orm.registry");
 
@@ -188,13 +176,13 @@ final class RdfMapperRegistry {
       case GlobalResourceDeserializer<T>():
         _registerGlobalResourceDeserializer(deserializer);
         break;
-      case CollectionDeserializer<T>():
-        throw ArgumentError(
-            'CollectionDeserializer is not supported in RdfMapperRegistry. '
-            'Use the reader.requireCollection or reader.optionalCollection methods instead and provide a factory function that instantiates your deserializer.');
+      case UnifiedResourceDeserializer<T>():
+        _registerGlobalResourceDeserializer(
+            _GlobalResourceDeserializer(deserializer));
+        _registerLocalResourceDeserializer(
+            _LocalResourceDeserializer(deserializer));
       case UnmappedTriplesDeserializer<T>():
         _registerUnmappedTriplesDeserializer(deserializer);
-        break;
     }
   }
 
@@ -219,7 +207,7 @@ final class RdfMapperRegistry {
   /// serialization to work correctly.
   ///
   /// [mapper] The mapper to register
-  void registerMapper<T>(Mapper<T> mapper) {
+  void registerMapper<T>(BaseMapper<T> mapper) {
     switch (mapper) {
       case GlobalResourceMapper<T>():
         _registerGlobalResourceDeserializer(mapper);
@@ -240,10 +228,11 @@ final class RdfMapperRegistry {
       case UnmappedTriplesMapper<T>():
         _registerUnmappedTriplesDeserializer<T>(mapper);
         _registerUnmappedTriplesSerializer<T>(mapper);
-      case CommonResourceMapper<T>():
-        _registerGlobalResourceDeserializer(mapper.asGlobalDeserializer());
-        _registerLocalResourceDeserializer(mapper.asLocalDeserializer());
-        _registerResourceSerializer(mapper.asSerializer());
+      case UnifiedResourceMapper<T>():
+        _registerGlobalResourceDeserializer(
+            _GlobalResourceDeserializer(mapper));
+        _registerLocalResourceDeserializer(_LocalResourceDeserializer(mapper));
+        _registerResourceSerializer(mapper);
         break;
     }
   }
@@ -550,4 +539,39 @@ final class RdfMapperRegistry {
       _unmappedTriplesDeserializers.containsKey(T);
   bool hasUnmappedTriplesSerializerFor<T>() =>
       _unmappedTriplesSerializers.containsKey(T);
+}
+
+// These are internal adapter classes, typically used only by CommonResourceMapper.
+class _GlobalResourceDeserializer<T> implements GlobalResourceDeserializer<T> {
+  final UnifiedResourceDeserializer<T> _mapper;
+
+  _GlobalResourceDeserializer(UnifiedResourceDeserializer<T> mapper)
+      : _mapper = mapper;
+
+  @override
+  T fromRdfResource(IriTerm subject, DeserializationContext context) =>
+      _mapper.fromRdfResource(subject, context);
+
+  @override
+  IriTerm? get typeIri => _mapper.typeIri;
+
+  @override
+  String toString() => 'GlobalDeserializer: ${_mapper.toString()}';
+}
+
+class _LocalResourceDeserializer<T> implements LocalResourceDeserializer<T> {
+  final UnifiedResourceDeserializer<T> _mapper;
+
+  _LocalResourceDeserializer(UnifiedResourceDeserializer<T> mapper)
+      : _mapper = mapper;
+
+  @override
+  T fromRdfResource(BlankNodeTerm subject, DeserializationContext context) =>
+      _mapper.fromRdfResource(subject, context);
+
+  @override
+  IriTerm? get typeIri => _mapper.typeIri;
+
+  @override
+  String toString() => 'LocalDeserializer: ${_mapper.toString()}';
 }

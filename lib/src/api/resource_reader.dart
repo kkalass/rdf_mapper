@@ -1,6 +1,6 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserialization_service.dart';
-import 'package:rdf_mapper/src/api/deserializer.dart';
+import 'package:rdf_mapper/src/api/rdf_mapper_interfaces.dart';
 import 'package:rdf_mapper/src/exceptions/property_value_not_found_exception.dart';
 import 'package:rdf_mapper/src/exceptions/too_many_property_values_exception.dart';
 import 'package:rdf_mapper/src/mappers/resource/rdf_container_deserializer.dart';

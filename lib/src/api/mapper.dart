@@ -1,5 +1,8 @@
-import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/rdf_mapper.dart';
+part of 'rdf_mapper_interfaces.dart';
+
+sealed class BaseMapper<T> implements BaseSerializer<T>, BaseDeserializer<T> {
+  const BaseMapper();
+}
 
 /// Base marker interface for bidirectional RDF mappers.
 ///
@@ -14,7 +17,8 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 /// and deserialization operations.
 ///
 /// This is a marker interface that specific mapper interfaces extend.
-sealed class Mapper<T> {
+sealed class Mapper<T> extends BaseMapper<T>
+    implements Serializer<T>, Deserializer<T> {
   const Mapper();
 }
 
@@ -78,7 +82,7 @@ abstract interface class LocalResourceMapper<T>
 /// - The type [T] has a registered [UnmappedTriplesMapper]
 abstract interface class UnmappedTriplesMapper<T>
     implements
-        Mapper<T>,
+        BaseMapper<T>,
         UnmappedTriplesDeserializer<T>,
         UnmappedTriplesSerializer<T> {}
 
@@ -121,6 +125,44 @@ abstract interface class LiteralTermMapper<T>
         LiteralTermSerializer<T>,
         LiteralTermDeserializer<T> {}
 
+abstract interface class UnifiedResourceMapper<T>
+    implements
+        Mapper<T>,
+        UnifiedResourceSerializer<T>,
+        UnifiedResourceDeserializer<T> {}
+
+typedef CollectionMapperFactory<C, T> = UnifiedResourceMapper<C> Function(
+    [Mapper<T>? mapper]);
+
+class DelegatingCollectionMapper<T, I> implements UnifiedResourceMapper<T> {
+  final UnifiedResourceSerializer<T> _serializer;
+  final UnifiedResourceDeserializer<T> _deserializer;
+
+  DelegatingCollectionMapper(
+      {required CollectionSerializerFactory<T, I> serializerFactory,
+      required CollectionDeserializerFactory<T, I> deserializerFactory,
+      required Mapper<I>? itemMapper})
+      : _serializer = serializerFactory(itemMapper),
+        _deserializer = deserializerFactory(itemMapper) {
+    if (_serializer.typeIri != _deserializer.typeIri) {
+      throw ArgumentError('Serializer and deserializer type IRIs do not match: '
+          '${_serializer.typeIri} != ${_deserializer.typeIri}');
+    }
+  }
+
+  @override
+  (RdfSubject, List<Triple>) toRdfResource(
+          T value, SerializationContext context,
+          {RdfSubject? parentSubject}) =>
+      _serializer.toRdfResource(value, context, parentSubject: parentSubject);
+
+  @override
+  T fromRdfResource(RdfSubject subject, DeserializationContext context) =>
+      _deserializer.fromRdfResource(subject, context);
+  @override
+  IriTerm? get typeIri => _deserializer.typeIri;
+}
+
 /// Bidirectional mapper between Dart objects and RDF subjects with associated triples.
 ///
 /// Combines the functionality of both [ResourceSerializer] and [GlobalResourceDeserializer]
@@ -140,96 +182,3 @@ abstract interface class GlobalResourceMapper<T>
         Mapper<T>,
         GlobalResourceSerializer<T>,
         GlobalResourceDeserializer<T> {}
-
-/// A common base for resource mappers that can handle both global (IRI)
-/// and local (Blank Node) RDF subjects.
-///
-/// This class provides the core logic for mapping between Dart objects and
-/// RDF subjects (IRIs or Blank Nodes) and their associated triples.
-/// It uses adapter classes (_GlobalResourceMapper and _LocalResourceMapper)
-/// to conform to the specific GlobalResourceMapper and LocalResourceMapper interfaces.
-///
-/// During registration with [RdfMapperRegistry], the [asGlobalDeserializer],
-/// [asLocalDeserializer] and [asSerializer] methods are automatically called to register the mapper
-/// as both a [GlobalResourceMapper] and [LocalResourceMapper] internally.
-/// This allows the same implementation to handle both IRI-based and blank
-/// node-based RDF subjects seamlessly.
-///
-abstract class CommonResourceMapper<T> extends Mapper<T> {
-  const CommonResourceMapper();
-
-  /// Converts an RDF subject (IRI or Blank Node) to a Dart object of type [T].
-  T fromRdfResource<S extends RdfSubject>(
-      S subject, DeserializationContext context);
-
-  /// Converts a Dart object of type [T] to an RDF subject (IRI or Blank Node)
-  /// and its associated triples.
-  (RdfSubject, List<Triple>) toRdfResource(
-      T value, SerializationContext context,
-      {RdfSubject? parentSubject});
-
-  IriTerm? get typeIri;
-
-  /// Returns a [GlobalResourceDeserializer] view of this common mapper.
-  GlobalResourceDeserializer<T> asGlobalDeserializer() =>
-      _GlobalResourceDeserializer<T>(this);
-
-  /// Returns a [LocalResourceDeserializer] view of this common mapper.
-  LocalResourceDeserializer<T> asLocalDeserializer() =>
-      _LocalResourceDeserializer<T>(this);
-
-  /// Returns a [LocalResourceDeserializer] view of this common mapper.
-  ResourceSerializer<T> asSerializer() => _CommonResourceSerializer<T>(this);
-}
-
-// These are internal adapter classes, typically used only by CommonResourceMapper.
-class _GlobalResourceDeserializer<T> implements GlobalResourceDeserializer<T> {
-  final CommonResourceMapper<T> _mapper;
-
-  _GlobalResourceDeserializer(CommonResourceMapper<T> mapper)
-      : _mapper = mapper;
-
-  @override
-  T fromRdfResource(IriTerm subject, DeserializationContext context) =>
-      _mapper.fromRdfResource(subject, context);
-
-  @override
-  IriTerm? get typeIri => _mapper.typeIri;
-
-  @override
-  String toString() => 'GlobalDeserializer: ${_mapper.toString()}';
-}
-
-class _LocalResourceDeserializer<T> implements LocalResourceDeserializer<T> {
-  final CommonResourceMapper<T> _mapper;
-
-  _LocalResourceDeserializer(CommonResourceMapper<T> mapper) : _mapper = mapper;
-
-  @override
-  T fromRdfResource(BlankNodeTerm subject, DeserializationContext context) =>
-      _mapper.fromRdfResource(subject, context);
-
-  @override
-  IriTerm? get typeIri => _mapper.typeIri;
-
-  @override
-  String toString() => 'LocalDeserializer: ${_mapper.toString()}';
-}
-
-class _CommonResourceSerializer<T> implements CommonResourceSerializer<T> {
-  final CommonResourceMapper<T> _mapper;
-
-  _CommonResourceSerializer(CommonResourceMapper<T> mapper) : _mapper = mapper;
-
-  @override
-  (RdfSubject, List<Triple>) toRdfResource(
-          T value, SerializationContext context,
-          {RdfSubject? parentSubject}) =>
-      _mapper.toRdfResource(value, context, parentSubject: parentSubject);
-
-  @override
-  IriTerm? get typeIri => _mapper.typeIri;
-
-  @override
-  String toString() => 'Serializer: ${_mapper.toString()}';
-}

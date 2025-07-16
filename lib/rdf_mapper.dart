@@ -88,7 +88,7 @@ library rdf_mapper;
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/completeness_mode.dart';
 import 'package:rdf_mapper/src/api/graph_operations.dart';
-import 'package:rdf_mapper/src/api/mapper.dart';
+import 'package:rdf_mapper/src/api/rdf_mapper_interfaces.dart';
 import 'package:rdf_mapper/src/codec/rdf_mapper_string_codec.dart';
 
 import 'src/api/rdf_mapper_registry.dart';
@@ -98,16 +98,14 @@ import 'src/api/rdf_mapper_service.dart';
 export 'src/api/completeness_mode.dart';
 export 'src/api/deserialization_context.dart';
 export 'src/api/deserialization_service.dart';
-export 'src/api/deserializer.dart';
 export 'src/api/graph_operations.dart';
-export 'src/api/mapper.dart';
 export 'src/api/resource_builder.dart';
 export 'src/api/resource_reader.dart';
 export 'src/api/rdf_mapper_registry.dart';
 export 'src/api/rdf_mapper_service.dart';
 export 'src/api/serialization_context.dart';
 export 'src/api/serialization_service.dart';
-export 'src/api/serializer.dart';
+export 'src/api/rdf_mapper_interfaces.dart';
 export 'src/codec/rdf_mapper_codec.dart';
 export 'src/codec/rdf_mapper_string_codec.dart';
 // Exception exports - essential for error handling
@@ -956,7 +954,7 @@ final class RdfMapper {
   /// // 3. As a regular property type in other mappers:
   /// //    reader.require<MyCustomGraph>(someProperty)
   /// ```
-  void registerMapper<T>(Mapper<T> mapper) {
+  void registerMapper<T>(BaseMapper<T> mapper) {
     registry.registerMapper(mapper);
   }
 }

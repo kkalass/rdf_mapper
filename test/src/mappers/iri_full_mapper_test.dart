@@ -1,6 +1,6 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
-import 'package:rdf_mapper/src/api/mapper.dart';
+import 'package:rdf_mapper/src/api/rdf_mapper_interfaces.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
 import 'package:rdf_mapper/src/mappers/iri/iri_full_mapper.dart';
 import 'package:test/test.dart';

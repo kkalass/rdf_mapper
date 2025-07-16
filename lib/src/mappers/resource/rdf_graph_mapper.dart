@@ -39,12 +39,11 @@ class RdfGraphUnmappedTriplesMapper implements UnmappedTriplesMapper<RdfGraph> {
   }
 }
 
-class RDFGraphResourceMapper extends CommonResourceMapper<RdfGraph> {
+class RDFGraphResourceMapper implements UnifiedResourceMapper<RdfGraph> {
   final bool deep;
   const RDFGraphResourceMapper({this.deep = true});
 
-  RdfGraph fromRdfResource<S extends RdfSubject>(
-      S subject, DeserializationContext context) {
+  RdfGraph fromRdfResource(RdfSubject subject, DeserializationContext context) {
     final triples =
         context.getTriplesForSubject(subject, includeBlankNodes: deep);
     final rootSubject = _getSingleRootSubject(triples);

@@ -1,5 +1,4 @@
-import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/rdf_mapper.dart';
+part of 'rdf_mapper_interfaces.dart';
 
 /// Base marker interface for all RDF deserializers.
 ///
@@ -198,7 +197,7 @@ abstract interface class GlobalResourceDeserializer<T>
   T fromRdfResource(IriTerm term, DeserializationContext context);
 }
 
-typedef CollectionDeserializerFactory<C, T> = CollectionDeserializer<C>
+typedef CollectionDeserializerFactory<C, T> = UnifiedResourceDeserializer<C>
     Function(Deserializer<T>? itemDeserializer);
 
 /// Interface for deserializing an RDF collection structure into a Dart collection [C] of items [T].
@@ -207,7 +206,7 @@ typedef CollectionDeserializerFactory<C, T> = CollectionDeserializer<C>
 /// the collection's (or container's) structure and reconstructing the Dart collection.
 /// They should use the provided [context] to deserialize the individual [T] items
 /// and must accept a Deserializer&lt;T&gt; in the constructor for allowing the user to control type-specific deserialization.
-abstract interface class CollectionDeserializer<C>
+abstract interface class UnifiedResourceDeserializer<C>
     extends ResourceDeserializer<C> {
   /// Deserializes an RDF collection identified by [collectionHead] into a Dart collection [C].
   ///

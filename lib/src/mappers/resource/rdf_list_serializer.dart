@@ -76,7 +76,8 @@ class RdfListSerializer<T> extends BaseRdfListSerializer<List<T>, T> {
 ///
 /// Subclasses must implement `toRdfResource()` to handle the specific collection
 /// type and call `buildRdfList()` with the appropriate iterable.
-abstract class BaseRdfListSerializer<C, T> implements CollectionSerializer<C> {
+abstract class BaseRdfListSerializer<C, T>
+    implements UnifiedResourceSerializer<C> {
   final Serializer<T>? _serializer;
 
   /// Creates a base RDF list serializer with an optional item serializer.

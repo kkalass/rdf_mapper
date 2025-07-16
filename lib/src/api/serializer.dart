@@ -1,5 +1,4 @@
-import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/src/api/serialization_context.dart';
+part of 'rdf_mapper_interfaces.dart';
 
 sealed class BaseSerializer<T> {}
 
@@ -206,18 +205,8 @@ abstract interface class GlobalResourceSerializer<T>
   });
 }
 
-abstract interface class CommonResourceSerializer<T>
-    implements ResourceSerializer<T> {
-  @override
-  (RdfSubject, List<Triple>) toRdfResource(
-    T value,
-    SerializationContext context, {
-    RdfSubject? parentSubject,
-  });
-}
-
-typedef CollectionSerializerFactory<C, T> = CollectionSerializer<C> Function(
-    Serializer<T>? itemSerializer);
+typedef CollectionSerializerFactory<C, T> = UnifiedResourceSerializer<C>
+    Function(Serializer<T>? itemSerializer);
 
 /// Interface for serializing a Dart collection or container [C] of items [T] into an RDF collection structure.
 ///
@@ -225,5 +214,5 @@ typedef CollectionSerializerFactory<C, T> = CollectionSerializer<C> Function(
 /// the collection's structure (e.g., rdf:first/rdf:rest for rdf:List, or rdf:_1, rdf:_2 etc. for rdf:Seq etc.).
 /// They should use the provided [context] to serialize the individual [T] items,
 /// and must accept a Serializer&lt;T&gt; in the constructor for allowing the user to control type-specific serialization.
-abstract interface class CollectionSerializer<C>
-    extends CommonResourceSerializer<C> {}
+abstract interface class UnifiedResourceSerializer<C>
+    extends ResourceSerializer<C> {}

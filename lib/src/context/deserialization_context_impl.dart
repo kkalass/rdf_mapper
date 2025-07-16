@@ -86,8 +86,9 @@ class DeserializationContextImpl extends DeserializationContext
     var context = this;
     switch (term) {
       case IriTerm _:
-        if (deserializer is CollectionDeserializer<T>) {
+        if (deserializer is UnifiedResourceDeserializer<T>) {
           _registerTypeRead(deserializer, term);
+          _onDeserializeChildResource(term);
           return deserializer.fromRdfResource(term, context);
         }
         if (deserializer is GlobalResourceDeserializer<T> ||
@@ -108,8 +109,9 @@ class DeserializationContextImpl extends DeserializationContext
                 ? deserializer
                 : null);
       case BlankNodeTerm _:
-        if (deserializer is CollectionDeserializer<T>) {
+        if (deserializer is UnifiedResourceDeserializer<T>) {
           _registerTypeRead(deserializer, term);
+          _onDeserializeChildResource(term);
           return deserializer.fromRdfResource(term, context);
         }
         var deser = deserializer is LocalResourceDeserializer<T>

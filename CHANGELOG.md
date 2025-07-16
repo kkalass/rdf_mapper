@@ -9,51 +9,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added `CommonResourceMapper` abstract base class for unified handling of both IRI and blank node subjects
-- Added `CommonResourceSerializer` interface for generic resource serialization
-- Added `datatype` property to `LiteralTermDeserializer` interface for enhanced type resolution
-- Added enhanced deserialization fallback to find deserializers by RDF datatype when type-based lookup fails
-- Added comprehensive RDF list support with dedicated collection deserializer infrastructure:
-  - Added `CollectionDeserializer<C>` interface for deserializing RDF collections into Dart collections
-  - Added `RdfListDeserializer<T>` and `BaseRdfListDeserializer<C, T>` for RDF list deserialization
-  - Added `RdfListSerializer<T>` and `BaseRdfListSerializer<C, T>` for RDF list serialization  
-  - Added `requireCollection<C, T>()` and `optionalCollection<C, T>()` methods to DeserializationService
+- Added unified resource mapping interfaces that work with both IRI and BlankNode subjects:
+  - Added `UnifiedResourceMapper<T>` for mappers that handle both global (IRI) and local (BlankNode) resources
+  - Added `UnifiedResourceSerializer<T>` and `UnifiedResourceDeserializer<T>` for flexible resource handling
+  - Enables creation of mappers that work seamlessly with any RDF subject type (used by collection mappers and RdfGraph mapping)
+- Added comprehensive RDF list support:
   - Added `requireRdfList<T>()` and `optionalRdfList<T>()` convenience methods to ResourceReader
   - Added `addRdfList<T>()` method to ResourceBuilder for serializing lists as RDF list structures
+  - Added `requireCollection<C, T>()` and `optionalCollection<C, T>()` methods to DeserializationService
+- Added comprehensive RDF container support:
+  - Added `requireRdfSeq<T>()`, `requireRdfBag<T>()`, and `requireRdfAlt<T>()` methods to ResourceReader
+  - Added `optionalRdfSeq<T>()`, `optionalRdfBag<T>()`, and `optionalRdfAlt<T>()` methods to ResourceReader
+  - Added `addRdfSeq<T>()`, `addRdfBag<T>()`, and `addRdfAlt<T>()` methods to ResourceBuilder
 - Added `InvalidRdfListStructureException` with detailed error analysis and suggestions for alternative approaches
 - Added `CircularRdfListException` for detecting circular references in RDF list structures
-- Added `UriIriMapper` for mapping Dart `Uri` objects to IRI terms (replaces `IriFullMapper` )
-- Added `serialize()` and `deserialize()` core methods to contexts for unified value processing
+- Added `UriIriMapper` for mapping Dart `Uri` objects to IRI terms
 - Added cycle detection in RDF list processing to prevent infinite loops
-- Added tracking functionality with `trackTriplesRead()` method for completeness monitoring
-- Added comprehensive RDF container support with dedicated infrastructure:
-  - Added `RdfSeqDeserializer<T>`, `RdfBagDeserializer<T>`, and `RdfAltDeserializer<T>` for deserializing RDF containers (rdf:Seq, rdf:Bag, rdf:Alt)
-  - Added `RdfSeqSerializer<T>`, `RdfBagSerializer<T>`, and `RdfAltSerializer<T>` for serializing collections as RDF containers
-  - Added `requireRdfSeq<T>()`, `requireRdfBag<T>()`, and `requireRdfAlt<T>()` methods to ResourceReader for required container access
-  - Added `optionalRdfSeq<T>()`, `optionalRdfBag<T>()`, and `optionalRdfAlt<T>()` methods to ResourceReader for optional container access
-  - Added `addRdfSeq<T>()`, `addRdfBag<T>()`, and `addRdfAlt<T>()` methods to ResourceBuilder for container serialization
+- Added enhanced deserialization fallback to find deserializers by RDF datatype when type-based lookup fails
 
 ### Changed
 
-- **Breaking Change**: Renamed `GenericResourceSerializer` to `CommonResourceSerializer`
-- **Breaking Change**: Unified `RdfGraphGlobalResourceMapper` and `RdfGraphLocalResourceMapper` into `RDFGraphResourceMapper`
-- **Breaking Change**: Enhanced `DeserializationContext.getTriplesForSubject()` with `trackRead` parameter (defaults to true)
-- **Breaking Change**: Simplified API by consolidating deserializer parameters - replaced multiple specific deserializer parameters (`globalResourceDeserializer`, `iriTermDeserializer`, `literalTermDeserializer`, `localResourceDeserializer`) with single `deserializer` parameter across:
+- **Breaking Change**: Simplified API by consolidating deserializer parameters - replaced multiple specific deserializer parameters with single `deserializer` parameter across:
   - `DeserializationService.require()`, `optional()`, `collect()`, `getValues()`, `getMap()` methods
   - `ResourceReader.require()`, `optional()`, `getValues()`, `getMap()` methods  
   - `ResourceBuilder.addValue()`, `addValueIfNotNull()` methods (consolidated serializer parameters similarly)
-- **Breaking Change**: Modified `DeserializationContext.deserialize()` method signature to use `BaseDeserializer<T>` parameter
-- **Breaking Change**: Split `Deserializer<T>` hierarchy - introduced `BaseDeserializer<T>` as parent class with `Deserializer<T>` as sealed subclass
-- **Breaking Change**: Removed `readRdfList()` method from `DeserializationContext` (moved to collection deserializer infrastructure)
+- **Breaking Change**: Enhanced `DeserializationContext.getTriplesForSubject()` with `trackRead` parameter (defaults to true)
+- **Breaking Change**: Removed `readRdfList()` method from `DeserializationContext` (moved to collection infrastructure)
 - **Breaking Change**: All `LiteralTermDeserializer` implementations now require `datatype` property
-- **Breaking Change**: Updated test deserializers throughout codebase to include required `datatype` field
-- **Breaking Change**: Modified `RdfMapperRegistry.registerDeserializer()` and `registerSerializer()` to accept `BaseDeserializer<T>` and `BaseSerializer<T>` respectively
-- Updated `RdfMapperRegistry.registerMapper()` to automatically handle `CommonResourceMapper` registration via adapter pattern
-- Updated registry to support deserializer lookup by RDF datatype for improved type resolution
 - Enhanced serialization context with unified `serialize()` method supporting all value types
-- Improved error handling in registry with proper exception propagation for missing serializers
 - Updated main example to demonstrate RDF list usage with proper order preservation for book chapters
-- Updated documentation and examples to reflect simplified API with unified deserializer/serializer parameters
 
 ## [0.8.8] - 2025-07-10
 

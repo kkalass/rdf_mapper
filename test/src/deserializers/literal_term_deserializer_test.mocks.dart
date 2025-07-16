@@ -7,7 +7,7 @@ import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i6;
 import 'package:rdf_core/rdf_core.dart' as _i4;
 import 'package:rdf_mapper/src/api/deserialization_context.dart' as _i3;
-import 'package:rdf_mapper/src/api/deserializer.dart' as _i5;
+import 'package:rdf_mapper/src/api/rdf_mapper_interfaces.dart' as _i5;
 import 'package:rdf_mapper/src/api/resource_reader.dart' as _i2;
 
 // ignore_for_file: type=lint
@@ -62,7 +62,7 @@ class MockDeserializationContext extends _i1.Mock
   @override
   T deserialize<T>(
     _i4.RdfTerm? term, {
-    _i5.BaseDeserializer<T>? deserializer,
+    _i5.Deserializer<T>? deserializer,
   }) =>
       (super.noSuchMethod(
         Invocation.method(

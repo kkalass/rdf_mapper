@@ -1,7 +1,6 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/src/api/mapper.dart';
+import 'package:rdf_mapper/src/api/rdf_mapper_interfaces.dart';
 import 'package:rdf_mapper/src/api/resource_builder.dart';
-import 'package:rdf_mapper/src/api/serializer.dart';
 
 /// Core interface for serializing Dart objects to RDF.
 ///

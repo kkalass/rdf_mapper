@@ -2,7 +2,7 @@ import 'package:logging/logging.dart';
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/resource_builder.dart';
 import 'package:rdf_mapper/src/api/serialization_service.dart';
-import 'package:rdf_mapper/src/api/serializer.dart';
+import 'package:rdf_mapper/src/api/rdf_mapper_interfaces.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
 import 'package:rdf_mapper/src/exceptions/serializer_not_found_exception.dart';

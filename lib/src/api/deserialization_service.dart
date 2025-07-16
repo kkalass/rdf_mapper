@@ -1,5 +1,5 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/src/api/deserializer.dart';
+import 'package:rdf_mapper/src/api/rdf_mapper_interfaces.dart';
 
 /// Core service for RDF deserialization operations.
 ///
@@ -106,7 +106,7 @@ abstract class DeserializationService {
   /// Retrieves values from an RDF collection, using a provided collection deserializer.
   ///
   /// [collectionDeserializerFactory] is a factory function that provides an
-  /// instance of [CollectionDeserializer] for the specific collection type [C] and item type [T].
+  /// instance of [UnifiedResourceDeserializer] for the specific collection type [C] and item type [T].
   ///
   /// For example, to deserialize an `rdf:List` into a `List<Chapter>`:
   /// `reader.requireCollection<List<Chapter>, Chapter>(SchemaBook.hasPart, RdfListCollectionDeserializer.new)`

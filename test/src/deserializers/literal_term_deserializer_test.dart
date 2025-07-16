@@ -1,7 +1,7 @@
 import 'package:mockito/annotations.dart';
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
-import 'package:rdf_mapper/src/api/deserializer.dart';
+import 'package:rdf_mapper/src/api/rdf_mapper_interfaces.dart';
 import 'package:rdf_vocabularies/xsd.dart';
 import 'package:test/test.dart';
 

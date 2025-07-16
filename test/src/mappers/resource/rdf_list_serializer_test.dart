@@ -1,7 +1,7 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
-import 'package:rdf_mapper/src/api/serializer.dart';
+import 'package:rdf_mapper/src/api/rdf_mapper_interfaces.dart';
 import 'package:rdf_mapper/src/context/serialization_context_impl.dart';
 import 'package:rdf_mapper/src/mappers/resource/rdf_list_serializer.dart';
 import 'package:rdf_vocabularies/rdf.dart';

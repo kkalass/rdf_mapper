@@ -131,7 +131,7 @@ class BaseRdfContainerListDeserializer<T>
 /// Subclasses must implement `fromRdfResource()` to convert the lazy iterable
 /// into the specific collection type required.
 abstract class BaseRdfContainerDeserializer<C, T>
-    implements CollectionDeserializer<C> {
+    implements UnifiedResourceDeserializer<C> {
   final Deserializer<T>? _deserializer;
   final IriTerm? typeIri;
 

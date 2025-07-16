@@ -166,7 +166,7 @@ class BaseRdfContainerListSerializer<T>
 /// Subclasses must implement `toRdfResource()` to handle the specific collection
 /// type and call `buildRdfContainer()` with the appropriate iterable.
 abstract class BaseRdfContainerSerializer<C, T>
-    implements CollectionSerializer<C> {
+    implements UnifiedResourceSerializer<C> {
   final Serializer<T>? _serializer;
   final IriTerm typeIri;
 

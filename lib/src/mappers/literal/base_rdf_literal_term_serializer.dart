@@ -1,5 +1,5 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/src/api/serializer.dart';
+import 'package:rdf_mapper/src/api/rdf_mapper_interfaces.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
 
 /// Base implementation for literal term serializers that simplifies the creation of custom serializers.

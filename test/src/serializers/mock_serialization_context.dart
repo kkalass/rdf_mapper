@@ -1,7 +1,7 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/resource_builder.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
-import 'package:rdf_mapper/src/api/serializer.dart';
+import 'package:rdf_mapper/src/api/rdf_mapper_interfaces.dart';
 
 // Mock implementation of SerializationContext for testing
 class MockSerializationContext extends SerializationContext {

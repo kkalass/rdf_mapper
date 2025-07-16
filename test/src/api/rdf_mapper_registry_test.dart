@@ -1,10 +1,8 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
-import 'package:rdf_mapper/src/api/deserializer.dart';
-import 'package:rdf_mapper/src/api/mapper.dart';
+import 'package:rdf_mapper/src/api/rdf_mapper_interfaces.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
-import 'package:rdf_mapper/src/api/serializer.dart';
 import 'package:rdf_mapper/src/exceptions/deserializer_not_found_exception.dart';
 import 'package:rdf_mapper/src/exceptions/serializer_not_found_exception.dart';
 import 'package:test/test.dart';
