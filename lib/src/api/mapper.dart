@@ -134,16 +134,11 @@ abstract interface class UnifiedResourceMapper<T>
 typedef CollectionMapperFactory<C, T> = UnifiedResourceMapper<C> Function(
     [Mapper<T>? mapper]);
 
-class DelegatingCollectionMapper<T, I> implements UnifiedResourceMapper<T> {
+class UnifiedResourceMapperBase<T, I> implements UnifiedResourceMapper<T> {
   final UnifiedResourceSerializer<T> _serializer;
   final UnifiedResourceDeserializer<T> _deserializer;
 
-  DelegatingCollectionMapper(
-      {required CollectionSerializerFactory<T, I> serializerFactory,
-      required CollectionDeserializerFactory<T, I> deserializerFactory,
-      required Mapper<I>? itemMapper})
-      : _serializer = serializerFactory(itemMapper),
-        _deserializer = deserializerFactory(itemMapper) {
+  UnifiedResourceMapperBase(this._serializer, this._deserializer) {
     if (_serializer.typeIri != _deserializer.typeIri) {
       throw ArgumentError('Serializer and deserializer type IRIs do not match: '
           '${_serializer.typeIri} != ${_deserializer.typeIri}');
