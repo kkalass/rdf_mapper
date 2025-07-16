@@ -252,9 +252,10 @@ The library is built around several core concepts:
 - `optionalRdfList<T>(predicate)` - Get an optional ordered list from RDF list structure  
 - `getValues<T>(predicate)` - Get multiple values for the same predicate (no guaranteed order)
 
-> **When to use RDF lists vs multiple values:**
+> **When to use different collection approaches:**
 > - Use `addRdfList()` / `optionalRdfList()` when **order matters** (e.g., book chapters, steps in a process)
-> - Use `addValues()` / `getValues()` when you have **multiple independent values** (e.g., tags, categories)
+> - Use `addValues()` / `getValues()` when you have **multiple independent values** (e.g., tags, categories, unordered lists)
+> - Use custom multi-objects serializers when you need **maximum control** over flat collection representation
 
 ## Advanced Usage
 
@@ -562,11 +563,17 @@ class RatingMapper implements LiteralTermMapper<Rating> {
 }
 ```
 
-### RDF Collections (Lists)
+### RDF Collections
 
-The library provides full support for RDF Collections using the standard `rdf:first`/`rdf:rest`/`rdf:nil` pattern, allowing you to map Dart `List<T>` objects to RDF list structures while preserving element order.
+The library provides multiple approaches for handling collections in RDF, each suited for different use cases:
 
-#### Basic RDF List Usage
+1. **RDF Lists**: Structured collections using `rdf:first`/`rdf:rest`/`rdf:nil` pattern (ordered, preserves sequence)
+2. **Multi-Objects**: Flat collections using multiple triples with the same predicate (unordered, more efficient)
+3. **RDF Containers**: Structured collections using numbered properties `rdf:_1`, `rdf:_2`, etc. (Seq/Bag/Alt - see [below](#rdf-containers-seq-bag-alt))
+
+#### RDF Lists (Ordered Collections)
+
+RDF Lists use the standard `rdf:first`/`rdf:rest`/`rdf:nil` pattern, perfect for ordered collections where sequence matters:
 
 ```dart
 class Book {
@@ -579,7 +586,7 @@ class BookMapper implements GlobalResourceMapper<Book> {
   Book fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return Book(
-      // Deserialize RDF list to Dart List
+      // Deserialize RDF list to Dart List (preserves order)
       chapters: reader.optionalRdfList<Chapter>(Schema.hasPart) ?? const [],
       // Use requireRdfList<T>() if the list is mandatory
       // chapters: reader.requireRdfList<Chapter>(Schema.hasPart),
@@ -590,33 +597,115 @@ class BookMapper implements GlobalResourceMapper<Book> {
   (IriTerm, List<Triple>) toRdfResource(Book book, SerializationContext context, {RdfSubject? parentSubject}) {
     return context
         .resourceBuilder(subject)
-        // Serialize Dart List to RDF list structure
+        // Serialize Dart List to RDF list structure (preserves order)
         .addRdfList<Chapter>(Schema.hasPart, book.chapters)
         .build();
   }
 }
 ```
 
-> 💡 **Performance tip**: For optional lists, you can use `.when(list.isNotEmpty, (builder) => builder.addRdfList(...))` to avoid creating empty RDF list structures when the list is empty. However, this is optional - `addRdfList([])` works fine and is simpler.
+**RDF Output (Structured):**
+```turtle
+ex:book1 ex:chapters _:list1 .
+_:list1 rdf:first ex:chapter1 ;
+        rdf:rest _:list2 .
+_:list2 rdf:first ex:chapter2 ;
+        rdf:rest rdf:nil .
+```
+
+#### Multi-Objects (Flat Collections)
+
+Multi-Objects use multiple triples with the same predicate, perfect for unordered collections or when you want a flatter RDF structure:
+
+```dart
+class Library {
+  final List<Book> featuredBooks;
+  // ... other properties
+}
+
+class LibraryMapper implements GlobalResourceMapper<Library> {
+  @override
+  Library fromRdfResource(IriTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
+    return Library(
+      // Multi-objects approach: automatically detects multiple triples
+      featuredBooks: reader.getValues<Book>(Schema.featuredBooks).toList(),
+    );
+  }
+
+  @override
+  (IriTerm, List<Triple>) toRdfResource(Library library, SerializationContext context, {RdfSubject? parentSubject}) {
+    return context
+        .resourceBuilder(subject)
+        // Multi-objects approach: creates one triple per book
+        .addValues<Book>(Schema.featuredBooks, library.featuredBooks)
+        .build();
+  }
+}
+```
+
+**RDF Output (Flat):**
+```turtle
+ex:library1 ex:featuredBooks ex:book1 .
+ex:library1 ex:featuredBooks ex:book2 .
+ex:library1 ex:featuredBooks ex:book3 .
+```
+
+#### Choosing the Right Approach
+
+| Use RDF Lists when: | Use Multi-Objects when: |
+|---------------------|-------------------------|
+| Order/sequence matters | Order doesn't matter |
+| Need to preserve exact sequence | Want flatter RDF structure |
+| Working with existing RDF list data | Better query performance needed |
+| Complex nested structures | Simple collections |
+
+> 💡 **Performance tip**: Multi-objects approach is generally more efficient for SPARQL queries and triple store operations, while RDF lists are better for preserving exact sequence relationships.
 
 #### Advanced Collection Support
 
-For custom collection types or more control, use the general collection infrastructure:
+The collection infrastructure is completely flexible - you're not limited to `UnifiedResourceMapper` factories. You can use **any serializer/deserializer type**, including multi-objects serializers:
 
 ```dart
-// Custom collection type (e.g., immutable list, set, etc.)
-final customCollection = reader.requireCollection<ImmutableList<String>, String>(
+// Using UnifiedResource approach (for structured rdf like rdf:List, rdf:Seq etc, works with both IRI and BlankNode)
+final traditionalCollection = reader.requireCollection<ImmutableList<String>, String>(
   Schema.keywords,
-  (itemDeserializer) => CustomListDeserializer<String>(itemDeserializer),
+  (itemDeserializer) => ImmutableListRdfDeserializer<String>(itemDeserializer),
 );
 
-// Custom collection serialization
-builder.addCollection<MyCustomList<String>, String>(
-  Schema.keywords,
-  myCustomList,
-  (itemSerializer) => CustomListSerializer<String>(itemSerializer),
+// Using Multi-Objects approach (flat, efficient)
+final multiObjectsCollection = reader.requireCollection<Set<Tag>, Tag>(
+  Schema.tags,
+  (itemDeserializer) => UnorderedItemsSetDeserializer<Tag>(itemDeserializer),
 );
+
+// Mixed approaches in same mapper
+class ArticleMapper implements GlobalResourceMapper<Article> {
+  @override
+  Article fromRdfResource(IriTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
+    return Article(
+      // Ordered: Use RDF list for chapters (sequence matters)
+      chapters: reader.optionalRdfList<Chapter>(Schema.hasPart) ?? [],
+      
+      // Unordered: Use multi-objects for tags (flat, efficient)  
+      tags: reader.getValues<Tag>(Schema.subject).toSet(),
+      
+      // Custom collection with custom serializer
+      references: reader.requireCollection<ImmutableList<Reference>, Reference>(
+        Schema.references,
+        (itemDeserializer) => MyCustomDeserializer<Reference>(itemDeserializer),
+      ),
+    );
+  }
+}
 ```
+
+**Key Benefits of Flexibility:**
+- **Mix and match**: Use RDF lists for ordered data, multi-objects for unordered data in the same model
+- **Custom implementations**: Create your own serializers for specialized needs
+- **Performance optimization**: Choose the most efficient approach for each use case
+- **Legacy compatibility**: Support existing RDF data regardless of structure
 
 #### Creating Custom Collection Extension Methods
 

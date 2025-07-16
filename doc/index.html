@@ -180,7 +180,7 @@ class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
                     <div class="feature-card">
                         <div class="feature-icon"><i class="fas fa-list-ol"></i></div>
                         <h3>RDF Collections</h3>
-                        <p>Full support for RDF Lists with <code>addRdfList</code>/<code>optionalRdfList</code> to preserve element order</p>
+                        <p>Multiple approaches: RDF Lists (ordered), Multi-Objects (flat), and RDF Containers (Seq/Bag/Alt) for every collection need</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon"><i class="fas fa-boxes"></i></div>
@@ -222,7 +222,7 @@ class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
 
         <section class="collections-explanation">
             <div class="container">
-                <h2 class="section-title">RDF Collections: Ordered vs Unordered</h2>
+                <h2 class="section-title">RDF Collections: Two Main Approaches for Different Needs</h2>
                 <div class="collections-grid">
                     <div class="collection-type">
                         <h3><i class="fas fa-list-ol"></i> RDF Lists (Ordered)</h3>
@@ -234,29 +234,33 @@ class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
                             <li>Recipe instructions</li>
                         </ul>
                         <div class="code-snippet">
-                            <pre><code class="language-turtle"># RDF List (ordered)
-&lt;book&gt; schema:hasPart (
-  [ schema:name "Chapter 1" ; schema:position 1 ]
-  [ schema:name "Chapter 2" ; schema:position 2 ]
-  [ schema:name "Chapter 3" ; schema:position 3 ]
-) .</code></pre>
+                            <pre><code class="language-turtle"># RDF List (ordered, structured)
+&lt;book&gt; schema:hasPart _:list1 .
+_:list1 rdf:first &lt;chapter1&gt; ; rdf:rest _:list2 .
+_:list2 rdf:first &lt;chapter2&gt; ; rdf:rest rdf:nil .</code></pre>
                         </div>
                     </div>
                     <div class="collection-type">
-                        <h3><i class="fas fa-tags"></i> Multiple Values (Unordered)</h3>
-                        <p>Use <code>addValues()</code> and <code>getValues()</code> when you have <strong>multiple independent values</strong>:</p>
+                        <h3><i class="fas fa-tags"></i> Multi-Objects (Unordered)</h3>
+                        <p>Use <code>addValues()</code>/<code>getValues()</code> or custom <code>MultiObjectsSerializer</code> for <strong>flat multiple values</strong>:</p>
                         <ul>
                             <li>Tags and categories</li>
                             <li>Multiple authors</li>
                             <li>Contact emails</li>
                             <li>Supported formats</li>
+                            <li>Custom collection types</li>
                         </ul>
                         <div class="code-snippet">
-                            <pre><code class="language-turtle"># Multiple Values (unordered)
+                            <pre><code class="language-turtle"># Multi-Objects (flat, unordered)
 &lt;book&gt; schema:genre "fantasy", "adventure", "children" ;
-      schema:author &lt;author1&gt;, &lt;author2&gt; .</code></pre>
+      schema:author &lt;author1&gt;, &lt;author2&gt; .
+# Same result with MultiObjectsSerializer:
+&lt;library&gt; lib:featuredBooks &lt;book1&gt;, &lt;book2&gt;, &lt;book3&gt; .</code></pre>
                         </div>
                     </div>
+                </div>
+                <div class="api-note">
+                    <p><strong>Note:</strong> Both <code>addValues()</code>/<code>getValues()</code> and custom <code>MultiObjectsSerializer</code>/<code>MultiObjectsDeserializer</code> produce the same RDF structure - multiple triples with the same predicate. The choice depends on whether you need custom collection types or can use the built-in convenience methods.</p>
                 </div>
             </div>
         </section>

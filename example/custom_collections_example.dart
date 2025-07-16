@@ -1,13 +1,14 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
 
-/// Example demonstrating custom collection types with extension methods.
+/// Example demonstrating custom collection types with different RDF approaches.
 ///
 /// This example shows how to:
 /// - Create custom collection types (ImmutableList)
-/// - Implement collection serializers/deserializers for them
+/// - Use RDF Lists for ordered collections (rdf:first/rdf:rest structure)
+/// - Use Multi-Objects for unordered collections (multiple triples with same predicate)
 /// - Add convenient extension methods to ResourceBuilder and ResourceReader
-/// - Use the custom collections as easily as built-in RDF lists
+/// - Choose the right approach based on your needs
 void main() {
   final rdf = RdfMapper.withDefaultRegistry()
     ..registerMapper<Library>(LibraryMapper())
@@ -19,7 +20,7 @@ void main() {
     id: 'https://example.org/libraries/main',
     name: 'Main Library',
 
-    // ImmutableList: Ordered, immutable collection of featured books
+    // ImmutableList: Ordered, immutable collection using RDF Lists
     featuredBooks: ImmutableList([
       Book('The Art of Computer Programming'),
       Book('Design Patterns'),
@@ -33,9 +34,9 @@ void main() {
       'Featured Books (ImmutableList): ${library.featuredBooks.map((b) => b.title).join(', ')}');
   print('');
 
-  // Serialize to RDF
+  // Serialize to RDF using RDF Lists (ordered, structured)
   final turtle = rdf.encodeObject(library);
-  print('=== Serialized Library ===');
+  print('=== Serialized Library (RDF Lists Approach) ===');
   print(turtle);
   print('');
 
@@ -53,18 +54,52 @@ void main() {
   assert(
       deserializedLibrary.featuredBooks.length == library.featuredBooks.length);
 
-  // Verify ImmutableList order is preserved
+  // Verify ImmutableList order is preserved with RDF Lists
   for (int i = 0; i < library.featuredBooks.length; i++) {
     assert(deserializedLibrary.featuredBooks[i].title ==
         library.featuredBooks[i].title);
   }
 
-  print('✅ All assertions passed - custom collection types work perfectly!');
+  print('✅ RDF Lists approach: Order preserved, assertions passed!');
+
+  // Now demonstrate Multi-Objects approach
+  print('');
+  print('=== Multi-Objects Approach Comparison ===');
+
+  // Create mapper with multi-objects approach for comparison
+  final rdfMultiObjects = RdfMapper.withDefaultRegistry()
+    ..registerMapper<Library>(LibraryMultiObjectsMapper())
+    ..registerMapper<Book>(BookMapper())
+    ..registerMapper<Tag>(TagMapper());
+
+  final libraryMultiObjects = Library(
+    id: 'https://example.org/libraries/multi',
+    name: 'Multi-Objects Library',
+    featuredBooks: library.featuredBooks, // Same data
+  );
+
+  final turtleMultiObjects = rdfMultiObjects.encodeObject(libraryMultiObjects);
+  print('=== Serialized Library (Multi-Objects Approach) ===');
+  print(turtleMultiObjects);
+  print('');
+
+  final deserializedMultiObjects =
+      rdfMultiObjects.decodeObject<Library>(turtleMultiObjects);
+  print('=== Deserialized Multi-Objects Library ===');
+  print('Name: ${deserializedMultiObjects.name}');
+  print(
+      'Featured Books: ${deserializedMultiObjects.featuredBooks.map((b) => b.title).join(', ')}');
+  print('');
+
+  print('✅ Multi-Objects approach: Flat structure, efficient queries!');
+  print('');
 
   // Demonstrate type safety
-  print('');
-  print('=== Type Safety Demonstration ===');
-  print('ImmutableList is immutable: ${library.featuredBooks.runtimeType}');
+  print('=== Type Safety & Flexibility ===');
+  print(
+      'Both approaches use the same ImmutableList type: ${library.featuredBooks.runtimeType}');
+  print(
+      'You can choose RDF representation independently of Dart collection type!');
 }
 
 // Custom Collection Types
@@ -80,6 +115,9 @@ class ImmutableList<T> {
   T operator [](int index) => _items[index];
 
   Iterable<R> map<R>(R Function(T) transform) => _items.map(transform);
+
+  // Make it iterable for easier use with addValues
+  Iterable<T> get items => _items;
 
   @override
   String toString() => 'ImmutableList($_items)';
@@ -268,6 +306,42 @@ class TagMapper implements LocalResourceMapper<Tag> {
     return context
         .resourceBuilder(BlankNodeTerm())
         .addValue(LibraryVocab.name, tag.name)
+        .build();
+  }
+}
+
+// Alternative mapper using Multi-Objects approach (flat structure)
+class LibraryMultiObjectsMapper implements GlobalResourceMapper<Library> {
+  @override
+  IriTerm? get typeIri => LibraryVocab.library;
+
+  @override
+  Library fromRdfResource(IriTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
+
+    return Library(
+      id: subject.iri,
+      name: reader.require<String>(LibraryVocab.name),
+
+      // Multi-objects approach: uses getValues for multiple triples
+      featuredBooks:
+          ImmutableList(reader.getValues<Book>(LibraryVocab.featuredBooks)),
+    );
+  }
+
+  @override
+  (IriTerm, List<Triple>) toRdfResource(
+    Library library,
+    SerializationContext context, {
+    RdfSubject? parentSubject,
+  }) {
+    return context
+        .resourceBuilder(IriTerm(library.id))
+        .addValue(LibraryVocab.name, library.name)
+
+        // Multi-objects approach: creates one triple per book
+        .addValues<Book>(
+            LibraryVocab.featuredBooks, library.featuredBooks.items)
         .build();
   }
 }
