@@ -86,7 +86,7 @@ class PersonWithGraphMapper implements GlobalResourceMapper<PersonWithGraph> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
       PersonWithGraph value, SerializationContext context,
       {RdfSubject? parentSubject}) {
     final foafName = IriTerm('http://xmlns.com/foaf/0.1/name');
@@ -129,7 +129,7 @@ class PersonWithMapMapper implements GlobalResourceMapper<PersonWithMap> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
       PersonWithMap value, SerializationContext context,
       {RdfSubject? parentSubject}) {
     final foafName = IriTerm('http://xmlns.com/foaf/0.1/name');

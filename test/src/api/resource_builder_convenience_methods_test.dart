@@ -295,7 +295,7 @@ class TestPersonSerializer implements GlobalResourceSerializer<TestPerson> {
   final IriTerm typeIri = IriTerm('http://example.org/Person');
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     TestPerson value,
     SerializationContext context, {
     RdfSubject? parentSubject,

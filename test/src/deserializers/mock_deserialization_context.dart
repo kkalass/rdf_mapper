@@ -26,7 +26,7 @@ class MockDeserializationContext extends DeserializationContext {
   void trackTriplesRead(RdfSubject subject, Iterable<Triple> triples) {}
 
   @override
-  List<Triple> getTriplesForSubject(RdfSubject subject,
+  Iterable<Triple> getTriplesForSubject(RdfSubject subject,
       {bool includeBlankNodes = true, bool trackRead = true}) {
     throw UnimplementedError();
   }

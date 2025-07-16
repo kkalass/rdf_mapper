@@ -293,7 +293,7 @@ class TestSubjectSerializer implements GlobalResourceSerializer<CustomType> {
   final IriTerm typeIri = IriTerm('http://example.org/CustomType');
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     CustomType value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -320,7 +320,7 @@ class TestSubjectMapper implements GlobalResourceMapper<CustomType> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     CustomType value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -349,7 +349,7 @@ class AnotherTestSubjectMapper
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     AnotherCustomType value,
     SerializationContext context, {
     RdfSubject? parentSubject,

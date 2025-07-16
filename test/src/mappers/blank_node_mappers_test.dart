@@ -38,7 +38,7 @@ class ChapterMapper implements LocalResourceMapper<Chapter> {
   }
 
   @override
-  (BlankNodeTerm, List<Triple>) toRdfResource(
+  (BlankNodeTerm, Iterable<Triple>) toRdfResource(
     Chapter chapter,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -254,7 +254,7 @@ class AnonymousMapper implements LocalResourceMapper<AnonymousData> {
   }
 
   @override
-  (BlankNodeTerm, List<Triple>) toRdfResource(
+  (BlankNodeTerm, Iterable<Triple>) toRdfResource(
     AnonymousData data,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -290,7 +290,7 @@ class DocumentMapper implements GlobalResourceMapper<Document> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     Document document,
     SerializationContext context, {
     RdfSubject? parentSubject,

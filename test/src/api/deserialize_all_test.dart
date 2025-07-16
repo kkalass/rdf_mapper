@@ -98,7 +98,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     Person value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -130,7 +130,7 @@ class AddressMapper implements LocalResourceMapper<Address> {
   }
 
   @override
-  (BlankNodeTerm, List<Triple>) toRdfResource(
+  (BlankNodeTerm, Iterable<Triple>) toRdfResource(
     Address value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -160,7 +160,7 @@ class ContactMapper implements GlobalResourceMapper<Contact> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     Contact value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -191,7 +191,7 @@ class StandaloneAddressMapper implements GlobalResourceMapper<Address> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     Address value,
     SerializationContext context, {
     RdfSubject? parentSubject,

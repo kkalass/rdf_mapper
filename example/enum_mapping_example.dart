@@ -285,7 +285,7 @@ class DocumentMapper implements GlobalResourceMapper<Document> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     Document document,
     SerializationContext context, {
     RdfSubject? parentSubject,

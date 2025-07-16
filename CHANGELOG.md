@@ -33,6 +33,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Breaking Change**: Modified serialization API return types from `List<Triple>` to `Iterable<Triple>` for improved performance and memory efficiency:
+  - `ResourceSerializer.toRdfResource()` methods now return `(RdfSubject, Iterable<Triple>)`
+  - `SerializationService` methods (`value()`, `values()`, `resource()`, etc.) now return `Iterable<Triple>`
+  - `SerializationContext.resource()` now returns `Iterable<Triple>`
+  - `ResourceBuilder.build()` now returns `(S, Iterable<Triple>)`
+  - Internal ResourceBuilder implementation optimized to avoid creating intermediate lists
+- **Breaking Change**: Modified deserialization API return types from `List<Triple>` to `Iterable<Triple>`:
+  - `DeserializationContext.getTriplesForSubject()` now returns `Iterable<Triple>`
+  - Internal helper methods updated to work with iterables instead of lists
+- **Breaking Change**: Updated RDF core dependency to `^0.9.5` (from `^0.9.4`) with corresponding API changes:
+  - `RdfGraph.fromTriples()` constructor now used instead of `RdfGraph(triples: ...)`
 - **Breaking Change**: Modified `SerializationContext.serialize()` return type from `(RdfTerm, Iterable<Triple>)` to `(Iterable<RdfTerm>, Iterable<Triple>)` to support multi-objects serialization
 - **Breaking Change**: Modified `CollectionDeserializerFactory<C, T>` and `CollectionSerializerFactory<C, T>` type definitions to return `Deserializer<C>` and `Serializer<C>` respectively (instead of `UnifiedResourceDeserializer<C>` and `UnifiedResourceSerializer<C>`)
 - **Breaking Change**: Modified `CollectionMapperFactory<C, T>` type definition to return `Mapper<C>` (instead of `UnifiedResourceMapper<C>`)

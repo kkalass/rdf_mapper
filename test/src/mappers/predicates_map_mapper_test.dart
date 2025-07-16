@@ -549,7 +549,8 @@ class FooMapper implements GlobalResourceMapper<Foo> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(Foo value, SerializationContext context,
+  (IriTerm, Iterable<Triple>) toRdfResource(
+      Foo value, SerializationContext context,
       {RdfSubject? parentSubject}) {
     final subject = IriTerm(value.id);
     final builder = context.resourceBuilder(subject);
@@ -601,7 +602,7 @@ class FooPredicateMapper implements GlobalResourceMapper<FooPredicate> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
       FooPredicate value, SerializationContext context,
       {RdfSubject? parentSubject}) {
     final subject = IriTerm(value.id);

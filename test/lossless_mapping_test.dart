@@ -68,7 +68,7 @@ class PersonWithUnmappedMapper
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     PersonWithUnmapped value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -120,7 +120,7 @@ class SimplePersonMapper implements GlobalResourceMapper<SimplePerson> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     SimplePerson value,
     SerializationContext context, {
     RdfSubject? parentSubject,

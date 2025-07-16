@@ -68,7 +68,7 @@ class TestAuthorSerializer implements GlobalResourceSerializer<TestAuthor> {
   IriTerm get typeIri => IriTerm('http://test.org/Author');
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
       TestAuthor instance, SerializationContext context,
       {RdfSubject? parentSubject}) {
     final subject =
@@ -785,7 +785,7 @@ void main() {
         final (_, triples) = builder.build();
 
         // Create a new graph and context for reading
-        graph = RdfGraph(triples: triples);
+        graph = RdfGraph.fromTriples(triples);
         deserializationContext =
             DeserializationContextImpl(graph: graph, registry: registry);
 
@@ -817,7 +817,7 @@ void main() {
         final (_, triples) = builder.build();
 
         // Read back
-        graph = RdfGraph(triples: triples);
+        graph = RdfGraph.fromTriples(triples);
         deserializationContext =
             DeserializationContextImpl(graph: graph, registry: registry);
 

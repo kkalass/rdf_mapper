@@ -1046,7 +1046,7 @@ class CompanyMapper implements GlobalResourceMapper<Company> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     Company company,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -1088,7 +1088,7 @@ class EmployeeMapper implements GlobalResourceMapper<Employee> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     Employee person,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -1135,7 +1135,7 @@ class EmployeeWithCompanyReferenceMapper
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     EmployeeWithCompanyReference person,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -1188,13 +1188,13 @@ class _PredefinedResultsCodec extends RdfGraphCodec {
   final bool _canParse;
 
   _PredefinedResultsCodec({
-    required List<Triple> parsed,
+    required Iterable<Triple> parsed,
     required this.serialized,
     bool canParse = true,
     String contentType = 'application/predefined-results',
   })  : _canParse = canParse,
         _contentType = contentType,
-        _parsedGraph = RdfGraph(triples: parsed);
+        _parsedGraph = RdfGraph.fromTriples(parsed);
 
   @override
   bool canParse(String content) {
@@ -1284,7 +1284,7 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     TestPerson person,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -1327,7 +1327,7 @@ class AddressMapper implements LocalResourceMapper<Address> {
   }
 
   @override
-  (BlankNodeTerm, List<Triple>) toRdfResource(
+  (BlankNodeTerm, Iterable<Triple>) toRdfResource(
     Address value,
     SerializationContext context, {
     RdfSubject? parentSubject,

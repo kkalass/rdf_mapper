@@ -50,7 +50,7 @@ class ParentClassMapper implements GlobalResourceMapper<ParentClass> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     ParentClass value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -91,7 +91,7 @@ class ChildClassMapper implements GlobalResourceMapper<ChildClass> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     ChildClass value,
     SerializationContext context, {
     RdfSubject? parentSubject,

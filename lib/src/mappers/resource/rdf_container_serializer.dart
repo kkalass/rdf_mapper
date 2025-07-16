@@ -129,7 +129,7 @@ class BaseRdfContainerListSerializer<T>
       : super(typeIri, itemSerializer);
 
   @override
-  (RdfSubject, List<Triple>) toRdfResource(
+  (RdfSubject, Iterable<Triple>) toRdfResource(
       List<T> values, SerializationContext context,
       {RdfSubject? parentSubject}) {
     final (subject, triples) = buildRdfContainer(
@@ -201,7 +201,7 @@ abstract class BaseRdfContainerSerializer<C, T>
   /// Example implementation:
   /// ```dart
   /// @override
-  /// (RdfSubject, List<Triple>) toRdfResource(List<T> values, SerializationContext context,
+  /// (RdfSubject, Iterable<Triple>) toRdfResource(List<T> values, SerializationContext context,
   ///     {RdfSubject? parentSubject}) {
   ///   final (subject, triples) = buildRdfContainer(
   ///       BlankNodeTerm(), values, context, parentSubject: parentSubject);

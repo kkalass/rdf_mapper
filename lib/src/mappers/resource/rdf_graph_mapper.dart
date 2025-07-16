@@ -29,8 +29,7 @@ class RdfGraphUnmappedTriplesMapper implements UnmappedTriplesMapper<RdfGraph> {
 
   @override
   RdfGraph fromUnmappedTriples(Iterable<Triple> triples) {
-    return RdfGraph(
-        triples: triples is List<Triple> ? triples : triples.toList());
+    return RdfGraph.fromTriples(triples);
   }
 
   @override
@@ -56,10 +55,10 @@ class RDFGraphResourceMapper implements UnifiedResourceMapper<RdfGraph> {
     // This is a design choice to ensure that RdfGraph always has a clear root.
     // If you need to deserialize a graph with multiple root subjects, consider
     // using a different approach or structure.
-    return RdfGraph(triples: triples);
+    return RdfGraph.fromTriples(triples);
   }
 
-  (RdfSubject, List<Triple>) toRdfResource(
+  (RdfSubject, Iterable<Triple>) toRdfResource(
       RdfGraph value, SerializationContext context,
       {RdfSubject? parentSubject}) {
     final triples = value.triples;

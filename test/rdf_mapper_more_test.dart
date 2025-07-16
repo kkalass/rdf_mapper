@@ -168,7 +168,7 @@ final class TestItemRdfMapper implements GlobalResourceMapper<TestItem> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     TestItem instance,
     SerializationContext context, {
     RdfSubject? parentSubject,

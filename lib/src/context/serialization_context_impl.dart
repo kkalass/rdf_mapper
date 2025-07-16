@@ -120,7 +120,8 @@ class SerializationContextImpl extends SerializationContext
   ///
   /// Returns a list of triples connecting the subject to the serialized value.
   @override
-  List<Triple> value<T>(RdfSubject subject, RdfPredicate predicate, T instance,
+  Iterable<Triple> value<T>(
+      RdfSubject subject, RdfPredicate predicate, T instance,
       {Serializer<T>? serializer}) {
     final (valueTerms, triples) = serialize(
       instance,
@@ -227,7 +228,7 @@ class SerializationContextImpl extends SerializationContext
       return _createChildResource(instance, resourceSer,
           parentSubject: parentSubject);
     }
-    
+
     // 4. Finally try multi-object serialization
     final multiObjectsSer = _getSerializerFallbackToRuntimeType(
       null,
@@ -254,7 +255,7 @@ class SerializationContextImpl extends SerializationContext
   ///
   /// Returns a list of triples connecting the subject to the values.
   @override
-  List<Triple> values<T>(
+  Iterable<Triple> values<T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> instance, {
@@ -282,7 +283,7 @@ class SerializationContextImpl extends SerializationContext
   ///
   /// Returns a list of triples connecting the subject to all extracted values.
   @override
-  List<Triple> valuesFromSource<A, T>(
+  Iterable<Triple> valuesFromSource<A, T>(
     RdfSubject subject,
     RdfPredicate predicate,
     Iterable<T> Function(A) toIterable,
@@ -376,7 +377,8 @@ class SerializationContextImpl extends SerializationContext
   /// Throws [ArgumentError] if the instance is null.
   /// Throws [SerializerNotFoundException] if no suitable serializer is found.
   @override
-  List<Triple> resource<T>(T instance, {ResourceSerializer<T>? serializer}) {
+  Iterable<Triple> resource<T>(T instance,
+      {ResourceSerializer<T>? serializer}) {
     if (instance == null) {
       throw ArgumentError('Cannot serialize null instance');
     }
@@ -439,7 +441,7 @@ class SerializationContextImpl extends SerializationContext
   ///
   /// Returns a list of triples representing the map entries.
   @override
-  List<Triple> valueMap<K, V>(
+  Iterable<Triple> valueMap<K, V>(
     RdfSubject subject,
     RdfPredicate predicate,
     Map<K, V> instance, {

@@ -1,6 +1,5 @@
 import 'package:rdf_core/rdf_core.dart';
-import 'package:rdf_mapper/src/api/rdf_mapper_interfaces.dart';
-import 'package:rdf_mapper/src/api/resource_builder.dart';
+import 'package:rdf_mapper/rdf_mapper.dart';
 
 /// Core interface for serializing Dart objects to RDF.
 ///
@@ -64,10 +63,10 @@ abstract class SerializationContext {
   /// [instance] The Dart object to serialize as an RDF resource.
   /// [serializer] Optional custom serializer. If null, uses registry-based lookup.
   ///
-  /// Returns a list of triples representing the object's properties.
+  /// Returns an iterable of triples representing the object's properties.
   ///
   /// Throws [SerializerNotFoundException] if no suitable serializer is found or serialization fails.
-  List<Triple> resource<T>(T instance, {ResourceSerializer<T>? serializer});
+  Iterable<Triple> resource<T>(T instance, {ResourceSerializer<T>? serializer});
 
   /// Serializes any Dart value to its RDF representation.
   ///

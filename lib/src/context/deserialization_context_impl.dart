@@ -187,7 +187,7 @@ class DeserializationContextImpl extends DeserializationContext
     );
   }
 
-  List<Triple> _findTriplesForReading(
+  Iterable<Triple> _findTriplesForReading(
       RdfSubject subject, RdfPredicate predicate,
       {bool trackRead = true}) {
     final readTriples =
@@ -200,7 +200,7 @@ class DeserializationContextImpl extends DeserializationContext
     return readTriples;
   }
 
-  List<Triple> _getRemainingTriplesForSubject(RdfSubject subject,
+  Iterable<Triple> _getRemainingTriplesForSubject(RdfSubject subject,
       {bool includeBlankNodes = true}) {
     final readTriples = (_readTriplesBySubject[subject] ?? const []).toSet();
     final result = [
@@ -319,7 +319,7 @@ class DeserializationContextImpl extends DeserializationContext
   /// Recursively collects blank nodes from triples, maintaining a visited set to prevent cycles
   @visibleForTesting
   static Set<BlankNodeTerm> getBlankNodeObjectsDeep(
-      RdfGraph graph, List<Triple> triples, Set<BlankNodeTerm> visited) {
+      RdfGraph graph, Iterable<Triple> triples, Set<BlankNodeTerm> visited) {
     final blankNodes = triples
         .map((t) => t.object)
         .whereType<BlankNodeTerm>()
@@ -343,7 +343,7 @@ class DeserializationContextImpl extends DeserializationContext
   }
 
   @override
-  List<Triple> getTriplesForSubject(RdfSubject subject,
+  Iterable<Triple> getTriplesForSubject(RdfSubject subject,
       {bool includeBlankNodes = true, bool trackRead = true}) {
     final triples = _graph.findTriples(subject: subject);
     if (!includeBlankNodes) {

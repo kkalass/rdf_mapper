@@ -40,7 +40,7 @@ class TestPersonSerializer implements GlobalResourceSerializer<TestPerson> {
   IriTerm get typeIri => IriTerm('http://test.org/Person');
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
       TestPerson instance, SerializationContext context,
       {RdfSubject? parentSubject}) {
     final subject =
@@ -62,7 +62,7 @@ void main() {
   });
 
   /// Helper to find triples by predicate
-  List<Triple> findTriplesByPredicate(
+  Iterable<Triple> findTriplesByPredicate(
       Iterable<Triple> triples, RdfObject predicate) {
     return triples.where((t) => t.predicate == predicate).toList();
   }

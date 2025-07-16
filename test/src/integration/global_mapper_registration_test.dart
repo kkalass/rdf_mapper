@@ -139,7 +139,7 @@ class TestEntityWithDoubleMapper
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     TestEntityWithDouble entity,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -171,7 +171,7 @@ class TypedEntityMapper implements GlobalResourceMapper<TypedEntity> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     TypedEntity entity,
     SerializationContext context, {
     RdfSubject? parentSubject,

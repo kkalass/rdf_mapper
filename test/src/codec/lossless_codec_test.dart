@@ -354,7 +354,7 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     TestPerson instance,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -408,7 +408,7 @@ class TestCompanyMapper implements GlobalResourceMapper<TestCompany> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     TestCompany instance,
     SerializationContext context, {
     RdfSubject? parentSubject,

@@ -42,7 +42,7 @@ class TestAuthorMapper implements GlobalResourceMapper<TestAuthor> {
   final IriTerm typeIri = IriTerm('http://test.org/Author');
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
       TestAuthor value, SerializationContext context,
       {RdfSubject? parentSubject}) {
     final subject =
@@ -104,7 +104,7 @@ void main() {
       IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#_$number');
 
   /// Helper to find triples by predicate
-  List<Triple> findTriplesByPredicate(
+  Iterable<Triple> findTriplesByPredicate(
       Iterable<Triple> triples, RdfPredicate predicate) {
     return triples.where((t) => t.predicate == predicate).toList();
   }
@@ -345,7 +345,7 @@ void main() {
             mapper.toRdfResource(original, serializationContext);
 
         // Add to graph
-        final testGraph = RdfGraph(triples: triples);
+        final testGraph = RdfGraph.fromTriples(triples);
         final testContext = DeserializationContextImpl(
           graph: testGraph,
           registry: registry,
@@ -370,7 +370,7 @@ void main() {
             mapper.toRdfResource(original, serializationContext);
 
         // Add to graph
-        final testGraph = RdfGraph(triples: triples);
+        final testGraph = RdfGraph.fromTriples(triples);
         final testContext = DeserializationContextImpl(
           graph: testGraph,
           registry: registry,
@@ -455,7 +455,7 @@ void main() {
         final (subject, triples) =
             mapper.toRdfResource(original, serializationContext);
 
-        final testGraph = RdfGraph(triples: triples);
+        final testGraph = RdfGraph.fromTriples(triples);
         final testContext = DeserializationContextImpl(
           graph: testGraph,
           registry: registry,
@@ -558,7 +558,7 @@ void main() {
         final (subject, triples) =
             mapper.toRdfResource(original, serializationContext);
 
-        final testGraph = RdfGraph(triples: triples);
+        final testGraph = RdfGraph.fromTriples(triples);
         final testContext = DeserializationContextImpl(
           graph: testGraph,
           registry: registry,

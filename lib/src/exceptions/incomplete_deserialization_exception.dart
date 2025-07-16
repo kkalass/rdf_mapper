@@ -78,7 +78,7 @@ Alternative Solutions:
        }
        
        @override
-       (subject, List<Triple>) toRdfResource(value, SerializationContext context, {...}) =>
+       (subject, Iterable<Triple>) toRdfResource(value, SerializationContext context, {...}) =>
          context.resourceBuilder(subject)
            // ... add your properties ...
            .addUnmapped(value.unmappedTriples)  // Restore unmapped triples

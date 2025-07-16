@@ -192,7 +192,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
   IriTerm? get typeIri => SchemaPerson.classIri;
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(Person value, SerializationContext context, {RdfSubject? parentSubject}) {
+  (IriTerm, Iterable<Triple>) toRdfResource(Person value, SerializationContext context, {RdfSubject? parentSubject}) {
     final builder = context.resourceBuilder(IriTerm(value.id))
       .addValue(SchemaPerson.foafName, value.name)
       .addValue(SchemaPerson.foafAge, value.age)
@@ -374,7 +374,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
   IriTerm? get typeIri => SchemaPerson.classIri;
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(Person value, SerializationContext context, {RdfSubject? parentSubject}) {
+  (IriTerm, Iterable<Triple>) toRdfResource(Person value, SerializationContext context, {RdfSubject? parentSubject}) {
     final builder = context.resourceBuilder(IriTerm(value.id))
       .addValue(SchemaPerson.foafName, value.name)
       .addValue(SchemaPerson.foafAge, value.age)
@@ -530,7 +530,7 @@ class PersonWithMapMapper implements GlobalResourceMapper<PersonWithMapUnmapped>
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(PersonWithMapUnmapped value, SerializationContext context, {RdfSubject? parentSubject}) {
+  (IriTerm, Iterable<Triple>) toRdfResource(PersonWithMapUnmapped value, SerializationContext context, {RdfSubject? parentSubject}) {
     return context.resourceBuilder(IriTerm(value.id))
       .addValue(foafName, value.name)
       .addUnmapped(value.unmappedData)

@@ -281,7 +281,7 @@ abstract class BaseRdfListDeserializer<C, T>
   }
 
   /// Checks if any predicate appears multiple times in the triples.
-  bool _hasMultipleValuesForSamePredicate(List<Triple> triples) {
+  bool _hasMultipleValuesForSamePredicate(Iterable<Triple> triples) {
     final predicateCounts = <RdfPredicate, int>{};
     for (final triple in triples) {
       predicateCounts[triple.predicate] =

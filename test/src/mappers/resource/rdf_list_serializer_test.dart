@@ -58,7 +58,7 @@ class TestPersonSerializer implements LocalResourceSerializer<TestPerson> {
   IriTerm? get typeIri => IriTerm('http://example.org/Person');
 
   @override
-  (BlankNodeTerm, List<Triple>) toRdfResource(
+  (BlankNodeTerm, Iterable<Triple>) toRdfResource(
       TestPerson instance, SerializationContext context,
       {RdfSubject? parentSubject}) {
     final subject = BlankNodeTerm();
@@ -77,7 +77,7 @@ class TestProductSerializer implements GlobalResourceSerializer<TestProduct> {
   IriTerm get typeIri => IriTerm('http://example.org/Product');
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
       TestProduct instance, SerializationContext context,
       {RdfSubject? parentSubject}) {
     final subject = IriTerm('http://example.org/product/${instance.id}');
@@ -107,7 +107,7 @@ class CycleDetectingPersonSerializer
   IriTerm? get typeIri => IriTerm('http://example.org/Person');
 
   @override
-  (BlankNodeTerm, List<Triple>) toRdfResource(
+  (BlankNodeTerm, Iterable<Triple>) toRdfResource(
       TestPerson instance, SerializationContext context,
       {RdfSubject? parentSubject}) {
     serializationCount++;
@@ -139,7 +139,7 @@ class SafePersonSerializer implements LocalResourceSerializer<TestPerson> {
   IriTerm? get typeIri => IriTerm('http://example.org/Person');
 
   @override
-  (BlankNodeTerm, List<Triple>) toRdfResource(
+  (BlankNodeTerm, Iterable<Triple>) toRdfResource(
       TestPerson instance, SerializationContext context,
       {RdfSubject? parentSubject}) {
     // Reuse the same subject for the same object instance (proper sharing)
@@ -164,7 +164,7 @@ class FailingPersonSerializer implements LocalResourceSerializer<TestPerson> {
   IriTerm? get typeIri => IriTerm('http://example.org/Person');
 
   @override
-  (BlankNodeTerm, List<Triple>) toRdfResource(
+  (BlankNodeTerm, Iterable<Triple>) toRdfResource(
       TestPerson instance, SerializationContext context,
       {RdfSubject? parentSubject}) {
     callCount++;
@@ -194,7 +194,7 @@ class CountingPersonSerializer implements LocalResourceSerializer<TestPerson> {
   IriTerm? get typeIri => IriTerm('http://example.org/Person');
 
   @override
-  (BlankNodeTerm, List<Triple>) toRdfResource(
+  (BlankNodeTerm, Iterable<Triple>) toRdfResource(
       TestPerson instance, SerializationContext context,
       {RdfSubject? parentSubject}) {
     depth++;

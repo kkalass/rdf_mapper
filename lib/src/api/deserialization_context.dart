@@ -117,7 +117,7 @@ abstract class DeserializationContext {
   /// [trackRead] Whether to mark retrieved triples as read in the tracking system (default: true).
   ///
   /// Returns a list of triples where the subject matches the given parameter.
-  List<Triple> getTriplesForSubject(RdfSubject subject,
+  Iterable<Triple> getTriplesForSubject(RdfSubject subject,
       {bool includeBlankNodes = true, bool trackRead = true});
 
   /// Manually tracks triples as being read/processed for a given subject.

@@ -74,7 +74,7 @@ class TestItemSerializer implements GlobalResourceSerializer<TestItem> {
   final IriTerm typeIri = IriTerm('http://example.org/TestItem');
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     TestItem value,
     SerializationContext context, {
     RdfSubject? parentSubject,

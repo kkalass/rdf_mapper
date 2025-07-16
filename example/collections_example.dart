@@ -166,7 +166,7 @@ class ArticleMapper implements GlobalResourceMapper<Article> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     Article article,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -212,7 +212,7 @@ class SectionMapper implements LocalResourceMapper<Section> {
   }
 
   @override
-  (BlankNodeTerm, List<Triple>) toRdfResource(
+  (BlankNodeTerm, Iterable<Triple>) toRdfResource(
     Section section,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -240,7 +240,7 @@ class AuthorMapper implements LocalResourceMapper<Author> {
   }
 
   @override
-  (BlankNodeTerm, List<Triple>) toRdfResource(
+  (BlankNodeTerm, Iterable<Triple>) toRdfResource(
     Author author,
     SerializationContext context, {
     RdfSubject? parentSubject,

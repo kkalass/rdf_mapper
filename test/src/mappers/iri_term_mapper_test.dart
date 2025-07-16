@@ -344,7 +344,7 @@ class ResourceContainerMapper
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     ResourceContainer value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -383,7 +383,7 @@ class MultiReferenceContainerMapper
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     MultiReferenceContainer value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -424,7 +424,7 @@ class TransformedResourceMapper
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     TransformedResource value,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -459,7 +459,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     Person value,
     SerializationContext context, {
     RdfSubject? parentSubject,

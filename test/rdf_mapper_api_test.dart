@@ -154,7 +154,7 @@ class TestEntityMapper implements GlobalResourceMapper<TestEntity> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     TestEntity entity,
     SerializationContext context, {
     RdfSubject? parentSubject,

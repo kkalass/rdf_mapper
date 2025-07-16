@@ -41,7 +41,7 @@ import 'package:rdf_mapper/src/mappers/resource/rdf_list_serializer.dart';
 /// ```
 class ResourceBuilder<S extends RdfSubject> {
   final S _subject;
-  final List<Triple> _triples;
+  final List<Iterable<Triple>> _triples;
   final SerializationService _service;
 
   /// Creates a new ResourceBuilder for the fluent API.
@@ -52,8 +52,9 @@ class ResourceBuilder<S extends RdfSubject> {
   /// The [_subject] is the RDF subject to build properties for.
   /// The [_service] is the serialization service for converting objects to RDF.
   /// The optional [initialTriples] can provide a list of initial triples to include.
-  ResourceBuilder(this._subject, this._service, {List<Triple>? initialTriples})
-      : _triples = initialTriples ?? [];
+  ResourceBuilder(this._subject, this._service,
+      {Iterable<Triple>? initialTriples})
+      : _triples = <Iterable<Triple>>[initialTriples ?? []];
 
   /// Adds a single property value to the resource being built.
   ///
@@ -81,7 +82,7 @@ class ResourceBuilder<S extends RdfSubject> {
   /// Returns this builder for method chaining.
   ResourceBuilder<S> addValue<V>(RdfPredicate predicate, V value,
       {Serializer<V>? serializer}) {
-    _triples.addAll(
+    _triples.add(
       _service.value(
         _subject,
         predicate,
@@ -121,7 +122,7 @@ class ResourceBuilder<S extends RdfSubject> {
     V value, {
     UnmappedTriplesSerializer<V>? unmappedTriplesSerializer,
   }) {
-    _triples.addAll(
+    _triples.add(
       _service.unmappedTriples(_subject, value,
           unmappedTriplesSerializer: unmappedTriplesSerializer),
     );
@@ -202,7 +203,7 @@ class ResourceBuilder<S extends RdfSubject> {
     A instance, {
     Serializer<T>? serializer,
   }) {
-    _triples.addAll(
+    _triples.add(
       _service.valuesFromSource(_subject, predicate, toIterable, instance,
           serializer: serializer),
     );
@@ -243,7 +244,7 @@ class ResourceBuilder<S extends RdfSubject> {
     Iterable<V> values, {
     Serializer<V>? serializer,
   }) {
-    _triples.addAll(
+    _triples.add(
       _service.values(
         _subject,
         predicate,
@@ -292,7 +293,7 @@ class ResourceBuilder<S extends RdfSubject> {
   /// Returns this builder for method chaining.
   ResourceBuilder<S> addMap<K, V>(RdfPredicate predicate, Map<K, V> instance,
       {Serializer<MapEntry<K, V>>? serializer}) {
-    _triples.addAll(
+    _triples.add(
       _service.valueMap(
         _subject,
         predicate,
@@ -374,7 +375,7 @@ class ResourceBuilder<S extends RdfSubject> {
     CollectionSerializerFactory<C, T> collectionSerializerFactory, {
     Serializer<T>? itemSerializer,
   }) {
-    _triples.addAll(
+    _triples.add(
       _service.collection(
           _subject, predicate, collection, collectionSerializerFactory,
           itemSerializer: itemSerializer),
@@ -592,7 +593,7 @@ class ResourceBuilder<S extends RdfSubject> {
   /// ```
   ///
   /// Returns a tuple containing the subject and all generated triples.
-  (S, List<Triple>) build() {
-    return (_subject, List.unmodifiable(_triples));
+  (S, Iterable<Triple>) build() {
+    return (_subject, _triples.expand((x) => x));
   }
 }

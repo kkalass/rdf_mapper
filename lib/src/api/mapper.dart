@@ -151,7 +151,7 @@ class UnifiedResourceMapperBase<T, I> implements UnifiedResourceMapper<T> {
   }
 
   @override
-  (RdfSubject, List<Triple>) toRdfResource(
+  (RdfSubject, Iterable<Triple>) toRdfResource(
           T value, SerializationContext context,
           {RdfSubject? parentSubject}) =>
       _serializer.toRdfResource(value, context, parentSubject: parentSubject);

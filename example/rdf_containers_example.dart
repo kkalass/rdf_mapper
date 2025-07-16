@@ -180,7 +180,7 @@ class MediaResourceMapper implements GlobalResourceMapper<MediaResource> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
       MediaResource resource, SerializationContext context,
       {RdfSubject? parentSubject}) {
     final subject = IriTerm(resource.id);
@@ -237,7 +237,7 @@ class TutorialCourseMapper implements GlobalResourceMapper<TutorialCourse> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
       TutorialCourse course, SerializationContext context,
       {RdfSubject? parentSubject}) {
     final subject = IriTerm(course.id);
@@ -292,7 +292,7 @@ class MultilingualDocumentMapper
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
       MultilingualDocument doc, SerializationContext context,
       {RdfSubject? parentSubject}) {
     final subject = IriTerm(doc.id);

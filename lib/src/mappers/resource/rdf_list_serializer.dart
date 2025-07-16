@@ -46,7 +46,7 @@ class RdfListSerializer<T> extends BaseRdfListSerializer<List<T>, T> {
   const RdfListSerializer([super.itemSerializer]);
 
   @override
-  (RdfSubject, List<Triple>) toRdfResource(
+  (RdfSubject, Iterable<Triple>) toRdfResource(
       List<T> values, SerializationContext context,
       {RdfSubject? parentSubject}) {
     final (subject, triples) =
@@ -99,7 +99,7 @@ abstract class BaseRdfListSerializer<C, T>
   /// Example implementation:
   /// ```dart
   /// @override
-  /// (RdfSubject, List<Triple>) toRdfResource(List<T> values, SerializationContext context,
+  /// (RdfSubject, Iterable<Triple>) toRdfResource(List<T> values, SerializationContext context,
   ///     {RdfSubject? parentSubject}) {
   ///   final (subject, triples) = buildRdfList(values, context, parentSubject: parentSubject);
   ///   return (subject, triples.toList());

@@ -128,7 +128,7 @@ class ImmutableListSerializer<T>
   const ImmutableListSerializer(super.itemSerializer);
 
   @override
-  (RdfSubject, List<Triple>) toRdfResource(
+  (RdfSubject, Iterable<Triple>) toRdfResource(
       ImmutableList<T> collection, SerializationContext context,
       {RdfSubject? parentSubject}) {
     final (subject, triples) =
@@ -312,7 +312,7 @@ class LibraryMapper implements GlobalResourceMapper<Library> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     Library library,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -352,7 +352,7 @@ class LibraryMultiObjectsMapper implements GlobalResourceMapper<Library> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     Library library,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -380,7 +380,7 @@ class BookMapper implements LocalResourceMapper<Book> {
   }
 
   @override
-  (BlankNodeTerm, List<Triple>) toRdfResource(
+  (BlankNodeTerm, Iterable<Triple>) toRdfResource(
     Book book,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -403,7 +403,7 @@ class TagMapper implements LocalResourceMapper<Tag> {
   }
 
   @override
-  (BlankNodeTerm, List<Triple>) toRdfResource(
+  (BlankNodeTerm, Iterable<Triple>) toRdfResource(
     Tag tag,
     SerializationContext context, {
     RdfSubject? parentSubject,

@@ -23,7 +23,7 @@ class InvalidRdfListStructureException extends DeserializationException {
   final RdfSubject subject;
 
   /// The actual triples found for the subject.
-  final List<Triple> foundTriples;
+  final Iterable<Triple> foundTriples;
 
   /// Analysis of what collection pattern was detected instead.
   final String foundPattern;

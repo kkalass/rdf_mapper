@@ -131,7 +131,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
   IriTerm? get typeIri => SchemaPerson.classIri;
   
   @override
-  (IriTerm, List<Triple>) toRdfResource(Person value, SerializationContext context, {RdfSubject? parentSubject}) {
+  (IriTerm, Iterable<Triple>) toRdfResource(Person value, SerializationContext context, {RdfSubject? parentSubject}) {
 
     // convert dart objects to triples using the fluent builder API
     return context.resourceBuilder(IriTerm(value.id))
@@ -479,7 +479,7 @@ class BookMapper implements GlobalResourceMapper<Book> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     Book book,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -517,7 +517,7 @@ class ChapterMapper implements LocalResourceMapper<Chapter> {
   }
 
   @override
-  (BlankNodeTerm, List<Triple>) toRdfResource(
+  (BlankNodeTerm, Iterable<Triple>) toRdfResource(
     Chapter chapter,
     SerializationContext ctxt, {
     RdfSubject? parentSubject,
@@ -594,7 +594,7 @@ class BookMapper implements GlobalResourceMapper<Book> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(Book book, SerializationContext context, {RdfSubject? parentSubject}) {
+  (IriTerm, Iterable<Triple>) toRdfResource(Book book, SerializationContext context, {RdfSubject? parentSubject}) {
     return context
         .resourceBuilder(subject)
         // Serialize Dart List to RDF list structure (preserves order)
@@ -634,7 +634,7 @@ class LibraryMapper implements GlobalResourceMapper<Library> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(Library library, SerializationContext context, {RdfSubject? parentSubject}) {
+  (IriTerm, Iterable<Triple>) toRdfResource(Library library, SerializationContext context, {RdfSubject? parentSubject}) {
     return context
         .resourceBuilder(subject)
         // Multi-objects approach: creates one triple per book
@@ -749,7 +749,7 @@ class MyMapper implements GlobalResourceMapper<MyClass> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(MyClass obj, SerializationContext context, {RdfSubject? parentSubject}) {
+  (IriTerm, Iterable<Triple>) toRdfResource(MyClass obj, SerializationContext context, {RdfSubject? parentSubject}) {
     return context.resourceBuilder(subject)
         .addImmutableList<String>(Schema.keywords, obj.items)
         .addImmutableList<Tag>(Schema.tags, obj.optionalItems)
@@ -848,7 +848,7 @@ class MediaResourceMapper implements GlobalResourceMapper<MediaResource> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(MediaResource resource, SerializationContext context, {RdfSubject? parentSubject}) {
+  (IriTerm, Iterable<Triple>) toRdfResource(MediaResource resource, SerializationContext context, {RdfSubject? parentSubject}) {
     return context
         .resourceBuilder(subject)
         // Serialize to RDF containers with numbered properties
@@ -982,7 +982,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(Person person, SerializationContext context, {RdfSubject? parentSubject}) {
+  (IriTerm, Iterable<Triple>) toRdfResource(Person person, SerializationContext context, {RdfSubject? parentSubject}) {
     return context.resourceBuilder(IriTerm(person.id))
       .addValue(foafName, person.name)
       .addUnmapped(person.unmappedGraph) // Restores unmapped data

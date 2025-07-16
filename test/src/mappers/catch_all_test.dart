@@ -34,7 +34,7 @@ class ParentMapper implements GlobalResourceMapper<Parent> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(value, SerializationContext context,
+  (IriTerm, Iterable<Triple>) toRdfResource(value, SerializationContext context,
       {RdfSubject? parentSubject}) {
     return context
         .resourceBuilder(IriTerm(value.iri))

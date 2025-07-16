@@ -914,7 +914,7 @@ final class RdfMapper {
   /// class PersonMapper implements GlobalResourceMapper<Person> {
   ///
   ///   @override
-  ///   (IriTerm, List<Triple>) toRdfResource(Person instance, SerializationContext context, {RdfSubject? parentSubject}) {
+  ///   (IriTerm, Iterable<Triple>) toRdfResource(Person instance, SerializationContext context, {RdfSubject? parentSubject}) {
   ///     return context.resourceBuilder(IriTerm(instance.id))
   ///       .addValue(FoafPerson.name, instance.name)
   ///       .build();

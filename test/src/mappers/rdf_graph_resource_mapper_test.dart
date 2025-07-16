@@ -548,17 +548,17 @@ SerializationContext _createSerializationContext() {
 }
 
 // Helper function to create a mock DeserializationContext
-DeserializationContext _createDeserializationContext(List<Triple> triples) {
+DeserializationContext _createDeserializationContext(Iterable<Triple> triples) {
   final registry = RdfMapperRegistry();
-  final graph = RdfGraph(triples: triples);
+  final graph = RdfGraph.fromTriples(triples);
   return DeserializationContextImpl(graph, registry);
 }
 
 // Helper function to create a mock DeserializationContext that returns all triples for any subject
 DeserializationContext _createDeserializationContextWithAllTriples(
-    List<Triple> triples) {
+    Iterable<Triple> triples) {
   final registry = RdfMapperRegistry();
-  final graph = RdfGraph(triples: triples);
+  final graph = RdfGraph.fromTriples(triples);
   return DeserializationContextAllTriplesImpl(graph, registry);
 }
 
@@ -571,7 +571,7 @@ class DeserializationContextImpl extends MockDeserializationContext {
   DeserializationContextImpl(this.graph, this.registry);
 
   @override
-  List<Triple> getTriplesForSubject(RdfSubject subject,
+  Iterable<Triple> getTriplesForSubject(RdfSubject subject,
       {bool includeBlankNodes = true, bool trackRead = true}) {
     return graph.triples.where((t) => t.subject == subject).toList();
   }
@@ -584,7 +584,7 @@ class DeserializationContextAllTriplesImpl extends MockDeserializationContext {
   DeserializationContextAllTriplesImpl(this.graph, this.registry);
 
   @override
-  List<Triple> getTriplesForSubject(RdfSubject subject,
+  Iterable<Triple> getTriplesForSubject(RdfSubject subject,
       {bool includeBlankNodes = true, bool trackRead = true}) {
     // Return all triples to simulate the scenario where we get all triples for root detection
     return graph.triples.toList();

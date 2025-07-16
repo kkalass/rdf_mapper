@@ -227,7 +227,7 @@ class BookMapper implements GlobalResourceMapper<Book> {
   }
 
   @override
-  (IriTerm, List<Triple>) toRdfResource(
+  (IriTerm, Iterable<Triple>) toRdfResource(
     Book book,
     SerializationContext context, {
     RdfSubject? parentSubject,
@@ -269,7 +269,7 @@ class ChapterMapper implements LocalResourceMapper<Chapter> {
   }
 
   @override
-  (BlankNodeTerm, List<Triple>) toRdfResource(
+  (BlankNodeTerm, Iterable<Triple>) toRdfResource(
     Chapter chapter,
     SerializationContext ctxt, {
     RdfSubject? parentSubject,
