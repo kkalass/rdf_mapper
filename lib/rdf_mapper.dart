@@ -148,6 +148,7 @@ export 'src/mappers/resource/rdf_list_mapper.dart';
 export 'src/mappers/resource/rdf_list_deserializer.dart';
 export 'src/mappers/resource/rdf_list_serializer.dart';
 export 'src/mappers/unmapped/predicates_map_mapper.dart';
+export 'src/mappers/multi/unordered_items_mapper.dart';
 export 'src/util/namespace.dart';
 
 /// Central facade for the RDF Mapper library, providing access to object mapping and registry operations.

@@ -106,7 +106,7 @@ abstract class SerializationContext {
   /// - An iterable of triples needed to fully represent the value
   ///
   /// Throws [SerializerNotFoundException] if no suitable serializer is found or serialization fails.
-  (RdfTerm, Iterable<Triple>) serialize<T>(
+  (Iterable<RdfTerm>, Iterable<Triple>) serialize<T>(
     T value, {
     Serializer<T>? serializer,
     RdfSubject? parentSubject,

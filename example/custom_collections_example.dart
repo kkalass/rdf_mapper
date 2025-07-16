@@ -1,7 +1,5 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
-import 'package:rdf_mapper/src/mappers/resource/rdf_list_deserializer.dart';
-import 'package:rdf_mapper/src/mappers/resource/rdf_list_serializer.dart';
 
 /// Example demonstrating custom collection types with extension methods.
 ///

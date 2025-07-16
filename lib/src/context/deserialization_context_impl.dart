@@ -156,7 +156,18 @@ class DeserializationContextImpl extends DeserializationContext
     bool enforceSingleValue = true,
     Deserializer<T>? deserializer,
   }) {
-    final triples = _findTriplesForReading(subject, predicate);
+    final triples =
+        _findTriplesForReading(subject, predicate, trackRead: false);
+    //  if we have a matching multi-deserializer, use that one
+    MultiObjectsDeserializer<T>? multiDeser = findMultiObjectsDeserializer<T>(
+      deserializer,
+    );
+    if (multiDeser != null) {
+      trackTriplesRead(subject, triples);
+      return multiDeser.fromRdfObjects(
+          triples.map((t) => t.object).toList(), this);
+    }
+
     if (triples.isEmpty) {
       return null;
     }
@@ -169,6 +180,7 @@ class DeserializationContextImpl extends DeserializationContext
     }
 
     final rdfObject = triples.first.object;
+    trackTriplesRead(subject, [triples.first]);
     return deserialize<T>(
       rdfObject,
       deserializer: deserializer,
@@ -176,11 +188,14 @@ class DeserializationContextImpl extends DeserializationContext
   }
 
   List<Triple> _findTriplesForReading(
-      RdfSubject subject, RdfPredicate predicate) {
+      RdfSubject subject, RdfPredicate predicate,
+      {bool trackRead = true}) {
     final readTriples =
         _graph.findTriples(subject: subject, predicate: predicate);
 
-    trackTriplesRead(subject, readTriples);
+    if (trackRead) {
+      trackTriplesRead(subject, readTriples);
+    }
     // Hook for tracking deserialization
     return readTriples;
   }
@@ -226,14 +241,12 @@ class DeserializationContextImpl extends DeserializationContext
     R Function(Iterable<T>) collector, {
     Deserializer<T>? deserializer,
   }) {
-    final triples = _findTriplesForReading(subject, predicate);
-    final convertedTriples = triples.map(
-      (triple) => deserialize<T>(
-        triple.object,
-        deserializer: deserializer,
-      ),
-    );
-    return collector(convertedTriples);
+    return requireCollection(
+        subject,
+        predicate,
+        (itemDeserializer) =>
+            UnorderedItemsCollectorDeserializer(collector, itemDeserializer),
+        itemDeserializer: deserializer);
   }
 
   @override
@@ -284,12 +297,9 @@ class DeserializationContextImpl extends DeserializationContext
     RdfPredicate predicate, {
     Deserializer<T>? deserializer,
   }) =>
-      collect<T, Iterable<T>>(
-        subject,
-        predicate,
-        (it) => it.toList(),
-        deserializer: deserializer,
-      );
+      requireCollection<Iterable<T>, T>(
+          subject, predicate, UnorderedItemsListDeserializer<T>.new,
+          itemDeserializer: deserializer);
 
   /// Gets a map of property values
   ///
@@ -353,6 +363,17 @@ class DeserializationContextImpl extends DeserializationContext
 
   Set<Triple> getAllProcessedTriples() {
     return _readTriplesBySubject.values.expand((triples) => triples).toSet();
+  }
+
+  MultiObjectsDeserializer<T>? findMultiObjectsDeserializer<T>(
+      Deserializer<T>? deserializer) {
+    if (deserializer is MultiObjectsDeserializer<T>) {
+      return deserializer;
+    }
+    if (_registry.hasMultiObjectsDeserializerFor<T>()) {
+      return _registry.getMultiObjectsDeserializer<T>();
+    }
+    return null;
   }
 }
 

@@ -24,7 +24,7 @@ class MockSerializationContext extends SerializationContext {
   }
 
   @override
-  (RdfTerm, Iterable<Triple>) serialize<T>(T value,
+  (Iterable<RdfTerm>, Iterable<Triple>) serialize<T>(T value,
       {Serializer<T>? serializer, RdfSubject? parentSubject}) {
     throw UnimplementedError();
   }

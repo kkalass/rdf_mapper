@@ -22,6 +22,12 @@ sealed class Mapper<T> extends BaseMapper<T>
   const Mapper();
 }
 
+abstract interface class MultiObjectsMapper<T>
+    implements
+        Mapper<T>,
+        MultiObjectsDeserializer<T>,
+        MultiObjectsSerializer<T> {}
+
 /// Bidirectional mapper between Dart objects and RDF local resources.
 ///
 /// Combines the functionality of blank node deserialization and serialization
@@ -131,8 +137,7 @@ abstract interface class UnifiedResourceMapper<T>
         UnifiedResourceSerializer<T>,
         UnifiedResourceDeserializer<T> {}
 
-typedef CollectionMapperFactory<C, T> = UnifiedResourceMapper<C> Function(
-    [Mapper<T>? mapper]);
+typedef CollectionMapperFactory<C, T> = Mapper<C> Function([Mapper<T>? mapper]);
 
 class UnifiedResourceMapperBase<T, I> implements UnifiedResourceMapper<T> {
   final UnifiedResourceSerializer<T> _serializer;

@@ -31,6 +31,11 @@ abstract interface class UnmappedTriplesSerializer<T>
   Iterable<Triple> toUnmappedTriples(RdfSubject subject, T value);
 }
 
+abstract interface class MultiObjectsSerializer<T> extends Serializer<T> {
+  (Iterable<RdfObject>, Iterable<Triple>) toRdfObjects(
+      T value, SerializationContext context);
+}
+
 /// Groups those serializers that serialize a Dart object to an RDF term
 /// (i.e. IriTerm or LiteralTerm) and not to a list of Triples.
 ///
@@ -205,8 +210,8 @@ abstract interface class GlobalResourceSerializer<T>
   });
 }
 
-typedef CollectionSerializerFactory<C, T> = UnifiedResourceSerializer<C>
-    Function(Serializer<T>? itemSerializer);
+typedef CollectionSerializerFactory<C, T> = Serializer<C> Function(
+    Serializer<T>? itemSerializer);
 
 /// Interface for serializing a Dart collection or container [C] of items [T] into an RDF collection structure.
 ///

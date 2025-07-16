@@ -249,15 +249,18 @@ abstract class BaseRdfContainerSerializer<C, T>
       if (value == null) {
         throw ArgumentError('Cannot serialize null value in collection');
       }
-      final (itemObject, extraTriples) = context.serialize(value,
+      final (itemObjects, extraTriples) = context.serialize(value,
           parentSubject: parentSubject, serializer: _serializer);
 
       // Yield all triples from the serialized value first
       yield* extraTriples;
 
-      // Then yield the container membership triple
-      yield Triple(containerSubject, IriTerm('${Rdf.namespace}_$counter'),
-          itemObject as RdfObject);
+      // Then yield the container membership triples
+      for (final itemObject in itemObjects) {
+        yield Triple(containerSubject, IriTerm('${Rdf.namespace}_$counter'),
+            itemObject as RdfObject);
+      }
+
       counter++;
     }
   }

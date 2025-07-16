@@ -140,14 +140,16 @@ abstract class BaseRdfListSerializer<C, T>
       final value = iterator.current;
 
       // Serialize the current value
-      final (valueTerm, valueTriples) = context.serialize<T>(value,
+      final (valueTerms, valueTriples) = context.serialize<T>(value,
           parentSubject: parentSubject, serializer: serializer);
 
       // Yield all triples from the serialized value
       yield* valueTriples;
 
       // Add rdf:first triple
-      yield Triple(currentNode, Rdf.first, valueTerm as RdfObject);
+      for (final valueTerm in valueTerms) {
+        yield Triple(currentNode, Rdf.first, valueTerm as RdfObject);
+      }
 
       // Check if there are more elements
       final hasNext = iterator.moveNext();

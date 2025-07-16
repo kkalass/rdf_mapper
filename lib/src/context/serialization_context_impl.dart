@@ -122,12 +122,16 @@ class SerializationContextImpl extends SerializationContext
   @override
   List<Triple> value<T>(RdfSubject subject, RdfPredicate predicate, T instance,
       {Serializer<T>? serializer}) {
-    final (valueTerm, triples) = serialize(
+    final (valueTerms, triples) = serialize(
       instance,
       parentSubject: subject,
       serializer: serializer,
     );
-    return [Triple(subject, predicate, valueTerm as RdfObject), ...triples];
+    return [
+      for (var valueTerm in valueTerms)
+        Triple(subject, predicate, valueTerm as RdfObject),
+      ...triples
+    ];
   }
 
   /// Serializes a Dart object to an RDF term and associated triples.
@@ -144,7 +148,7 @@ class SerializationContextImpl extends SerializationContext
   /// Throws [ArgumentError] if the instance is null.
   /// Throws [SerializerNotFoundException] if no suitable serializer is found.
   @override
-  (RdfTerm, Iterable<Triple>) serialize<T>(
+  (Iterable<RdfTerm>, Iterable<Triple>) serialize<T>(
     T instance, {
     Serializer<T>? serializer,
     RdfSubject? parentSubject,
@@ -157,30 +161,27 @@ class SerializationContextImpl extends SerializationContext
 
     // Check if the instance is already an RDF term
     if (instance is RdfObject) {
-      return (instance as RdfObject, const []);
+      return ([instance as RdfObject], const []);
     }
 
     // Try serializers in priority order if explicitly provided
-
-    // 1. Try IRI serializer if provided
-    if (serializer is IriTermSerializer<T>) {
-      var term = serializer.toRdfTerm(instance, this);
-      return (term, const []);
-    }
-
-    // 2. Try literal serializer if provided
-    if (serializer is LiteralTermSerializer<T>) {
-      var term = serializer.toRdfTerm(instance, this);
-      return (term, const []);
-    }
-
-    // 3. Try resource serializer if provided
-    if (serializer is ResourceSerializer<T>) {
-      return _createChildResource(
-        instance,
-        serializer,
-        parentSubject: parentSubject,
-      );
+    switch (serializer) {
+      case null:
+        break;
+      case IriTermSerializer<T>():
+        var term = serializer.toRdfTerm(instance, this);
+        return ([term], const []);
+      case LiteralTermSerializer<T>():
+        var term = serializer.toRdfTerm(instance, this);
+        return ([term], const []);
+      case ResourceSerializer<T>():
+        return _createChildResource(
+          instance,
+          serializer,
+          parentSubject: parentSubject,
+        );
+      case MultiObjectsSerializer<T>():
+        return serializer.toRdfObjects(instance, this);
     }
 
     // If no explicit serializers were provided, try to find registered ones
@@ -198,7 +199,7 @@ class SerializationContextImpl extends SerializationContext
       // This is the case for String, int, double, etc.
       // We can also use it for other types if we have a custom serializer
       var term = literalSer.toRdfTerm(instance, this);
-      return (term, const []);
+      return ([term], const []);
     }
 
     // 2. try IRI serialization
@@ -211,10 +212,10 @@ class SerializationContextImpl extends SerializationContext
 
     if (iriSer != null) {
       var term = iriSer.toRdfTerm(instance, this);
-      return (term, const []);
+      return ([term], const []);
     }
 
-    // 3. Finally try resource serialization
+    // 3. Try resource serialization
     final resourceSer = _getSerializerFallbackToRuntimeType(
       null,
       instance,
@@ -225,6 +226,18 @@ class SerializationContextImpl extends SerializationContext
     if (resourceSer != null) {
       return _createChildResource(instance, resourceSer,
           parentSubject: parentSubject);
+    }
+    
+    // 4. Finally try multi-object serialization
+    final multiObjectsSer = _getSerializerFallbackToRuntimeType(
+      null,
+      instance,
+      _registry.getMultiObjectsSerializer,
+      _registry.getMultiObjectsSerializerByType,
+    );
+
+    if (multiObjectsSer != null) {
+      return multiObjectsSer.toRdfObjects(instance, this);
     }
 
     throw SerializerNotFoundException('', T);
@@ -317,7 +330,7 @@ class SerializationContextImpl extends SerializationContext
   /// The optional [parentSubject] is the parent subject for context.
   ///
   /// Returns a tuple containing the child RDF term and associated triples.
-  (RdfTerm, Iterable<Triple>) _createChildResource<T>(
+  (Iterable<RdfTerm>, Iterable<Triple>) _createChildResource<T>(
       T instance, ResourceSerializer<T> serializer,
       {RdfSubject? parentSubject}) {
     // Check if we have a custom serializer or should use registry
@@ -343,7 +356,7 @@ class SerializationContextImpl extends SerializationContext
 
     final typeIri = ser.typeIri;
     return (
-      childIri,
+      [childIri],
       [
         // Add rdf:type for the child only if not already present
         if (!hasTypeTriple && typeIri != null)

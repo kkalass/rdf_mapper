@@ -585,8 +585,8 @@ void main() {
         expect(mapper, isA<UnifiedResourceMapper<List<String>>>());
 
         // Test basic serialization works
-        final (_, triples) =
-            mapper.toRdfResource(['test'], serializationContext);
+        final (_, triples) = (mapper as UnifiedResourceMapper<List<String>>)
+            .toRdfResource(['test'], serializationContext);
         expect(triples, isNotEmpty);
       }
     });

@@ -43,6 +43,20 @@ abstract interface class UnmappedTriplesDeserializer<T>
   T fromUnmappedTriples(Iterable<Triple> triples);
 }
 
+abstract interface class MultiObjectsDeserializer<T>
+    implements Deserializer<T> {
+  /// Converts a collection of RDF objeccts into a Dart collection of objects.
+  ///
+  /// This method processes the given objects and their associated triples,
+  /// deserializing them into a Dart object of type T.
+  ///
+  /// [objects] The iterable of RDF objects to convert
+  /// [context] The current deserialization context
+  ///
+  /// Returns the resulting Dart object
+  T fromRdfObjects(Iterable<RdfObject> objects, DeserializationContext context);
+}
+
 /// Base class for deserializers that convert RDF terms to Dart objects.
 ///
 /// Term deserializers handle the conversion of individual RDF terms to Dart objects.
@@ -197,8 +211,8 @@ abstract interface class GlobalResourceDeserializer<T>
   T fromRdfResource(IriTerm term, DeserializationContext context);
 }
 
-typedef CollectionDeserializerFactory<C, T> = UnifiedResourceDeserializer<C>
-    Function(Deserializer<T>? itemDeserializer);
+typedef CollectionDeserializerFactory<C, T> = Deserializer<C> Function(
+    Deserializer<T>? itemDeserializer);
 
 /// Interface for deserializing an RDF collection structure into a Dart collection [C] of items [T].
 ///

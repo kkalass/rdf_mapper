@@ -53,6 +53,7 @@ final class RdfMapperRegistry {
     copy._localResourceDeserializers.addAll(_localResourceDeserializers);
     copy._iriTermSerializers.addAll(_iriTermSerializers);
     copy._iriTermDeserializers.addAll(_iriTermDeserializers);
+    copy._allIriTermDeserializers.addAll(_allIriTermDeserializers);
     copy._literalTermSerializers.addAll(_literalTermSerializers);
     copy._literalTermDeserializers.addAll(_literalTermDeserializers);
     copy._unmappedTriplesDeserializers.addAll(_unmappedTriplesDeserializers);
@@ -83,6 +84,10 @@ final class RdfMapperRegistry {
       _unmappedTriplesDeserializers = {};
   final Map<Type, UnmappedTriplesSerializer<dynamic>>
       _unmappedTriplesSerializers = {};
+  final Map<Type, MultiObjectsDeserializer<dynamic>>
+      _multiObjectsDeserializers = {};
+  final Map<Type, MultiObjectsSerializer<dynamic>> _multiObjectsSerializers =
+      {};
 
   // RDF type IRI-based registries (for dynamic type resolution during deserialization)
   final Map<IriTerm, GlobalResourceDeserializer<dynamic>>
@@ -147,6 +152,9 @@ final class RdfMapperRegistry {
       case UnmappedTriplesSerializer<T>():
         _registerUnmappedTriplesSerializer(serializer);
         break;
+      case MultiObjectsSerializer<T>():
+        _registerMultiObjectsSerializer(serializer);
+        break;
     }
   }
 
@@ -181,8 +189,13 @@ final class RdfMapperRegistry {
             _GlobalResourceDeserializer(deserializer));
         _registerLocalResourceDeserializer(
             _LocalResourceDeserializer(deserializer));
+        break;
       case UnmappedTriplesDeserializer<T>():
         _registerUnmappedTriplesDeserializer(deserializer);
+        break;
+      case MultiObjectsDeserializer<T>():
+        _registerMultiObjectsDeserializer(deserializer);
+        break;
     }
   }
 
@@ -234,6 +247,9 @@ final class RdfMapperRegistry {
         _registerLocalResourceDeserializer(_LocalResourceDeserializer(mapper));
         _registerResourceSerializer(mapper);
         break;
+      case MultiObjectsMapper<T>():
+        _registerMultiObjectsDeserializer<T>(mapper);
+        _registerMultiObjectsSerializer<T>(mapper);
     }
   }
 
@@ -251,6 +267,20 @@ final class RdfMapperRegistry {
     _log.fine(
         'Registering UnmappedTriples serializer for type ${T.toString()}');
     _unmappedTriplesSerializers[T] = serializer;
+  }
+
+  void _registerMultiObjectsDeserializer<T>(
+    MultiObjectsDeserializer<T> deserializer,
+  ) {
+    _log.fine('Registering MultiObjects deserializer for type ${T.toString()}');
+    _multiObjectsDeserializers[T] = deserializer;
+  }
+
+  void _registerMultiObjectsSerializer<T>(
+    MultiObjectsSerializer<T> serializer,
+  ) {
+    _log.fine('Registering MultiObjects serializer for type ${T.toString()}');
+    _multiObjectsSerializers[T] = serializer;
   }
 
   void _registerIriTermDeserializer<T>(IriTermDeserializer<T> deserializer) {
@@ -361,6 +391,30 @@ final class RdfMapperRegistry {
       throw SerializerNotFoundException('IriTermSerializer', T);
     }
     return serializer as IriTermSerializer<T>;
+  }
+
+  MultiObjectsDeserializer<T> getMultiObjectsDeserializer<T>() {
+    final deserializer = _multiObjectsDeserializers[T];
+    if (deserializer == null) {
+      throw DeserializerNotFoundException('MultiObjectsDeserializer', T);
+    }
+    return deserializer as MultiObjectsDeserializer<T>;
+  }
+
+  MultiObjectsSerializer<T> getMultiObjectsSerializer<T>() {
+    final serializer = _multiObjectsSerializers[T];
+    if (serializer == null) {
+      throw SerializerNotFoundException('MultiObjectsSerializer', T);
+    }
+    return serializer as MultiObjectsSerializer<T>;
+  }
+
+  MultiObjectsSerializer<T> getMultiObjectsSerializerByType<T>(Type type) {
+    final serializer = _multiObjectsSerializers[type];
+    if (serializer == null) {
+      throw SerializerNotFoundException('MultiObjectsSerializer', type);
+    }
+    return serializer as MultiObjectsSerializer<T>;
   }
 
   UnmappedTriplesDeserializer<T> getUnmappedTriplesDeserializer<T>() {
@@ -539,6 +593,10 @@ final class RdfMapperRegistry {
       _unmappedTriplesDeserializers.containsKey(T);
   bool hasUnmappedTriplesSerializerFor<T>() =>
       _unmappedTriplesSerializers.containsKey(T);
+  bool hasMultiObjectsDeserializerFor<T>() =>
+      _multiObjectsDeserializers.containsKey(T);
+  bool hasMultiObjectsSerializerFor<T>() =>
+      _multiObjectsSerializers.containsKey(T);
 }
 
 // These are internal adapter classes, typically used only by CommonResourceMapper.
