@@ -141,6 +141,12 @@ export 'src/mappers/literal/double_mapper.dart';
 export 'src/mappers/literal/int_mapper.dart';
 export 'src/mappers/literal/string_mapper.dart';
 export 'src/mappers/resource/rdf_graph_mapper.dart';
+export 'src/mappers/resource/rdf_container_mapper.dart';
+export 'src/mappers/resource/rdf_container_deserializer.dart';
+export 'src/mappers/resource/rdf_container_serializer.dart';
+export 'src/mappers/resource/rdf_list_mapper.dart';
+export 'src/mappers/resource/rdf_list_deserializer.dart';
+export 'src/mappers/resource/rdf_list_serializer.dart';
 export 'src/mappers/unmapped/predicates_map_mapper.dart';
 export 'src/util/namespace.dart';
 
