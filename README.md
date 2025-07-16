@@ -37,6 +37,7 @@ If you are looking for more rdf-related functionality, have a look at our compan
 - **Code Generation**: Zero-boilerplate mapping with [`rdf_mapper_generator`](https://pub.dev/packages/rdf_mapper_generator) - annotate your classes and get optimized mappers automatically
 - **Extensible**: Easy creation of custom mappers for domain-specific types
 - **Flexible**: Support for all core RDF concepts: IRI nodes, blank nodes, and literals
+- **RDF Collections**: Full support for RDF Lists and Containers (Seq, Bag, Alt) with order preservation
 - **Dual API**: Work with RDF strings or directly with graph structures
 
 ## What is RDF?
@@ -719,6 +720,114 @@ authors: reader.getValues<Author>(vocab.authors).toList(),
 ```
 
 > 💡 **See the complete example**: [`example/collections_example.dart`](example/collections_example.dart) demonstrates both approaches with a practical article/blog post scenario.
+
+### RDF Containers (Seq, Bag, Alt)
+
+Beyond RDF Lists, the library provides full support for the three standard RDF container types using numbered properties (`rdf:_1`, `rdf:_2`, etc.):
+
+- **rdf:Seq** - Ordered sequences where position matters
+- **rdf:Bag** - Unordered collections allowing duplicates  
+- **rdf:Alt** - Alternative values with preference ordering
+
+#### Basic RDF Container Usage
+
+```dart
+class MediaResource {
+  final List<String> chapters;      // Ordered sequence
+  final List<String> keywords;      // Unordered collection
+  final List<String> formats;       // Alternative formats with preference
+  // ... other properties
+}
+
+class MediaResourceMapper implements GlobalResourceMapper<MediaResource> {
+  @override
+  MediaResource fromRdfResource(IriTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
+    return MediaResource(
+      // Ordered sequence (rdf:Seq) - preserves element order
+      chapters: reader.optionalRdfSeq<String>(Schema.hasPart) ?? const [],
+      
+      // Unordered bag (rdf:Bag) - no semantic ordering
+      keywords: reader.optionalRdfBag<String>(Schema.keywords) ?? const [],
+      
+      // Alternatives (rdf:Alt) - preference order (first = most preferred)
+      formats: reader.optionalRdfAlt<String>(Schema.encodingFormat) ?? const [],
+      
+      // Use require* variants if the container is mandatory
+      // chapters: reader.requireRdfSeq<String>(Schema.hasPart),
+    );
+  }
+
+  @override
+  (IriTerm, List<Triple>) toRdfResource(MediaResource resource, SerializationContext context, {RdfSubject? parentSubject}) {
+    return context
+        .resourceBuilder(subject)
+        // Serialize to RDF containers with numbered properties
+        .addRdfSeq<String>(Schema.hasPart, resource.chapters)
+        .addRdfBag<String>(Schema.keywords, resource.keywords)  
+        .addRdfAlt<String>(Schema.encodingFormat, resource.formats)
+        .build();
+  }
+}
+```
+
+#### When to Use Each Container Type
+
+**Use RDF Sequences (`addRdfSeq` / `optionalRdfSeq`)** when:
+- **Order is semantically meaningful**: Chapter sequence, process steps, rankings
+- **Numerical position matters**: Table of contents, procedure steps, priority lists
+- **Sequential processing required**: Workflow stages, installation steps
+
+**Use RDF Bags (`addRdfBag` / `optionalRdfBag`)** when:
+- **Order doesn't matter semantically**: Keywords, tags, categories
+- **Duplicates are allowed**: Multiple instances of the same tag
+- **Container semantics needed**: Explicit grouping vs simple multi-value properties
+
+**Use RDF Alternatives (`addRdfAlt` / `optionalRdfAlt`)** when:
+- **Multiple options with preference**: Image formats (WebP preferred, PNG fallback, JPEG last resort)
+- **Language alternatives**: Multilingual content with preference order
+- **Fallback scenarios**: Primary/secondary/tertiary options
+
+#### RDF Container Output
+
+RDF containers use numbered properties to reference elements:
+
+```turtle
+# rdf:Seq (ordered sequence)
+<media1> schema:hasPart _:seq1 .
+_:seq1 a rdf:Seq ;
+  rdf:_1 "Chapter 1: Introduction" ;
+  rdf:_2 "Chapter 2: Getting Started" ;
+  rdf:_3 "Chapter 3: Advanced Topics" .
+
+# rdf:Bag (unordered collection)  
+<media1> schema:keywords _:bag1 .
+_:bag1 a rdf:Bag ;
+  rdf:_1 "tutorial" ;
+  rdf:_2 "programming" ;
+  rdf:_3 "semantic-web" .
+
+# rdf:Alt (alternatives with preference)
+<media1> schema:encodingFormat _:alt1 .
+_:alt1 a rdf:Alt ;
+  rdf:_1 "video/webm" ;      # Most preferred
+  rdf:_2 "video/mp4" ;       # Fallback option
+  rdf:_3 "video/avi" .       # Last resort
+```
+
+#### Choosing Between RDF Lists and RDF Containers
+
+| Feature | RDF Lists | RDF Containers |
+|---------|-----------|----------------|
+| **Structure** | Linked list (`rdf:first`/`rdf:rest`) | Numbered properties (`rdf:_1`, `rdf:_2`) |
+| **Standards** | RDF 1.1 Lists | RDF 1.0 Containers |
+| **Order Preservation** | Yes (always) | Yes (Seq), No (Bag), Preference (Alt) |
+| **Container Types** | One type (ordered) | Three types (Seq/Bag/Alt) |
+| **Use Cases** | Sequential data | Typed collections with specific semantics |
+
+**Recommendation**: Use RDF Lists for simple ordered collections. Use RDF Containers when you need explicit container semantics or the distinction between Seq/Bag/Alt is important to your domain model.
+
+> 💡 **See the complete example**: [`example/rdf_containers_example.dart`](example/rdf_containers_example.dart) demonstrates all three container types with practical use cases.
 
 ### Lossless Mapping - Preserve All Your Data
 

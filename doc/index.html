@@ -183,6 +183,11 @@ class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
                         <p>Full support for RDF Lists with <code>addRdfList</code>/<code>optionalRdfList</code> to preserve element order</p>
                     </div>
                     <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-boxes"></i></div>
+                        <h3>RDF Containers</h3>
+                        <p>Complete support for RDF containers: Seq (ordered), Bag (unordered), Alt (alternatives with preference)</p>
+                    </div>
+                    <div class="feature-card">
                         <div class="feature-icon"><i class="fas fa-save"></i></div>
                         <h3>Lossless Mapping</h3>
                         <p>Preserve unmapped RDF data with <code>getUnmapped</code>/<code>addUnmapped</code> APIs</p>
@@ -251,6 +256,109 @@ class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
 &lt;book&gt; schema:genre "fantasy", "adventure", "children" ;
       schema:author &lt;author1&gt;, &lt;author2&gt; .</code></pre>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="containers-explanation">
+            <div class="container">
+                <h2 class="section-title">RDF Containers: Seq, Bag, Alt</h2>
+                <p class="section-intro">Beyond RDF Lists, the library provides full support for the three standard RDF container types using numbered properties (<code>rdf:_1</code>, <code>rdf:_2</code>, etc.):</p>
+                
+                <div class="containers-grid-layout">
+                    <div class="container-type-card">
+                        <h3><i class="fas fa-sort-numeric-down"></i> rdf:Seq (Sequence)</h3>
+                        <p>Use <code>addRdfSeq()</code> and <code>optionalRdfSeq()</code> for <strong>ordered sequences</strong> where position has semantic meaning:</p>
+                        <ul>
+                            <li>Tutorial chapters and lessons</li>
+                            <li>Process steps and workflows</li>
+                            <li>Rankings and priority lists</li>
+                            <li>Sequential data processing</li>
+                        </ul>
+                        <div class="code-snippet">
+                            <pre><code class="language-turtle"># rdf:Seq (ordered sequence)
+&lt;tutorial&gt; ex:hasChapter _:seq1 .
+_:seq1 a rdf:Seq ;
+  rdf:_1 "Introduction" ;
+  rdf:_2 "Getting Started" ;
+  rdf:_3 "Advanced Topics" .</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="container-type-card">
+                        <h3><i class="fas fa-shopping-bag"></i> rdf:Bag (Unordered Collection)</h3>
+                        <p>Use <code>addRdfBag()</code> and <code>optionalRdfBag()</code> for <strong>unordered collections</strong> where order doesn't matter semantically:</p>
+                        <ul>
+                            <li>Keywords and tags</li>
+                            <li>Categories and classifications</li>
+                            <li>Learning objectives</li>
+                            <li>Document attributes</li>
+                        </ul>
+                        <div class="code-snippet">
+                            <pre><code class="language-turtle"># rdf:Bag (unordered collection)
+&lt;tutorial&gt; ex:hasKeyword _:bag1 .
+_:bag1 a rdf:Bag ;
+  rdf:_1 "semantic-web" ;
+  rdf:_2 "tutorial" ;
+  rdf:_3 "programming" .</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="container-type-card">
+                        <h3><i class="fas fa-random"></i> rdf:Alt (Alternatives)</h3>
+                        <p>Use <code>addRdfAlt()</code> and <code>optionalRdfAlt()</code> for <strong>alternative values</strong> with preference ordering:</p>
+                        <ul>
+                            <li>Media formats (preferred → fallback)</li>
+                            <li>Language versions</li>
+                            <li>Alternative representations</li>
+                            <li>Backup options</li>
+                        </ul>
+                        <div class="code-snippet">
+                            <pre><code class="language-turtle"># rdf:Alt (alternatives with preference)
+&lt;video&gt; ex:hasFormat _:alt1 .
+_:alt1 a rdf:Alt ;
+  rdf:_1 "video/webm" ;    # Most preferred
+  rdf:_2 "video/mp4" ;     # Fallback
+  rdf:_3 "video/avi" .     # Last resort</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="container-comparison">
+                    <h3>Container vs List Comparison</h3>
+                    <div class="comparison-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Feature</th>
+                                    <th>RDF Lists</th>
+                                    <th>RDF Containers</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Structure</strong></td>
+                                    <td>Linked list (rdf:first/rdf:rest)</td>
+                                    <td>Numbered properties (rdf:_1, rdf:_2)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Standards</strong></td>
+                                    <td>RDF 1.1 Lists</td>
+                                    <td>RDF 1.0 Containers</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Container Types</strong></td>
+                                    <td>One type (ordered)</td>
+                                    <td>Three types (Seq/Bag/Alt)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Use Cases</strong></td>
+                                    <td>Simple ordered collections</td>
+                                    <td>Typed collections with specific semantics</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -579,6 +687,17 @@ class RatingMapper implements LiteralTermMapper&lt;Rating&gt; {
 }</code></pre>
                         </div>
                     </div>
+                </div>
+                
+                <div class="additional-examples">
+                    <h3>Additional Examples</h3>
+                    <p>Explore more comprehensive examples in the <a href="https://github.com/kkalass/rdf_mapper/tree/main/example" target="_blank">GitHub repository</a>:</p>
+                    <ul>
+                        <li><strong>RDF Containers</strong> - <a href="https://github.com/kkalass/rdf_mapper/blob/main/example/rdf_containers_example.dart" target="_blank">rdf_containers_example.dart</a>: Complete demonstration of rdf:Seq, rdf:Bag, and rdf:Alt containers</li>
+                        <li><strong>RDF Collections</strong> - <a href="https://github.com/kkalass/rdf_mapper/blob/main/example/collections_example.dart" target="_blank">collections_example.dart</a>: Ordered vs unordered collections with practical scenarios</li>
+                        <li><strong>Enum Mapping</strong> - <a href="https://github.com/kkalass/rdf_mapper/blob/main/example/enum_mapping_example.dart" target="_blank">enum_mapping_example.dart</a>: Both literal and IRI-based enum mapping approaches</li>
+                        <li><strong>Custom Collections</strong> - <a href="https://github.com/kkalass/rdf_mapper/blob/main/example/custom_collections_example.dart" target="_blank">custom_collections_example.dart</a>: Advanced collection types and custom deserializers</li>
+                    </ul>
                 </div>
             </div>
         </section>
