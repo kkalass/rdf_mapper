@@ -26,6 +26,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `serialize()` and `deserialize()` core methods to contexts for unified value processing
 - Added cycle detection in RDF list processing to prevent infinite loops
 - Added tracking functionality with `trackTriplesRead()` method for completeness monitoring
+- Added comprehensive RDF container support with dedicated infrastructure:
+  - Added `RdfSeqDeserializer<T>`, `RdfBagDeserializer<T>`, and `RdfAltDeserializer<T>` for deserializing RDF containers (rdf:Seq, rdf:Bag, rdf:Alt)
+  - Added `RdfSeqSerializer<T>`, `RdfBagSerializer<T>`, and `RdfAltSerializer<T>` for serializing collections as RDF containers
+  - Added `requireRdfSeq<T>()`, `requireRdfBag<T>()`, and `requireRdfAlt<T>()` methods to ResourceReader for required container access
+  - Added `optionalRdfSeq<T>()`, `optionalRdfBag<T>()`, and `optionalRdfAlt<T>()` methods to ResourceReader for optional container access
+  - Added `addRdfSeq<T>()`, `addRdfBag<T>()`, and `addRdfAlt<T>()` methods to ResourceBuilder for container serialization
 
 ### Changed
 

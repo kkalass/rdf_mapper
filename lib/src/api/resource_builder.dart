@@ -1,6 +1,7 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/serialization_service.dart';
 import 'package:rdf_mapper/src/api/serializer.dart';
+import 'package:rdf_mapper/src/mappers/resource/rdf_container_serializer.dart';
 import 'package:rdf_mapper/src/mappers/resource/rdf_list_serializer.dart';
 
 /// Builder for fluent RDF resource serialization.
@@ -428,6 +429,124 @@ class ResourceBuilder<S extends RdfSubject> {
         predicate,
         values,
         RdfListSerializer<T>.new,
+        itemSerializer: itemSerializer,
+      );
+
+  /// Adds an RDF Sequence (rdf:Seq) to the current resource.
+  ///
+  /// Creates an ordered RDF container using numbered properties (rdf:_1, rdf:_2, etc.).
+  /// RDF Sequences preserve element order and are ideal for collections where
+  /// sequence matters, such as chapters, steps, or ranked items.
+  ///
+  /// The RDF output structure:
+  /// ```turtle
+  /// :subject :predicate _:seq .
+  /// _:seq a rdf:Seq ;
+  ///       rdf:_1 :item1 ;
+  ///       rdf:_2 :item2 ;
+  ///       rdf:_3 :item3 .
+  /// ```
+  ///
+  /// Example usage:
+  /// ```dart
+  /// // Create an ordered sequence of chapters
+  /// builder.addRdfSeq(Schema.hasPart, [
+  ///   Chapter(title: 'Chapter 1', number: 1),
+  ///   Chapter(title: 'Chapter 2', number: 2),
+  ///   Chapter(title: 'Chapter 3', number: 3)
+  /// ]);
+  /// ```
+  ///
+  /// The [predicate] is the RDF predicate that links to the sequence.
+  /// The [values] is the ordered list of items to be serialized.
+  /// The optional [itemSerializer] can be provided for custom serialization of sequence items.
+  ///
+  /// Returns this builder for method chaining.
+  ResourceBuilder<S> addRdfSeq<T>(RdfPredicate predicate, List<T> values,
+          {Serializer<T>? itemSerializer}) =>
+      addCollection<List<T>, T>(
+        predicate,
+        values,
+        RdfSeqSerializer<T>.new,
+        itemSerializer: itemSerializer,
+      );
+
+  /// Adds an RDF Alternative (rdf:Alt) to the current resource.
+  ///
+  /// Creates an RDF container for alternative values using numbered properties.
+  /// RDF Alternatives represent a set of alternative values where typically only
+  /// one should be chosen, and the order may indicate preference.
+  ///
+  /// The RDF output structure:
+  /// ```turtle
+  /// :subject :predicate _:alt .
+  /// _:alt a rdf:Alt ;
+  ///       rdf:_1 :preferred ;
+  ///       rdf:_2 :alternative1 ;
+  ///       rdf:_3 :alternative2 .
+  /// ```
+  ///
+  /// Example usage:
+  /// ```dart
+  /// // Create alternatives for a book title in different languages
+  /// builder.addRdfAlt(Schema.name, [
+  ///   'The Hobbit',        // Preferred (English)
+  ///   'Der Hobbit',        // German alternative
+  ///   'Le Hobbit'          // French alternative
+  /// ]);
+  /// ```
+  ///
+  /// The [predicate] is the RDF predicate that links to the alternatives.
+  /// The [values] is the list of alternative items, with the first being preferred.
+  /// The optional [itemSerializer] can be provided for custom serialization of alternative items.
+  ///
+  /// Returns this builder for method chaining.
+  ResourceBuilder<S> addRdfAlt<T>(RdfPredicate predicate, List<T> values,
+          {Serializer<T>? itemSerializer}) =>
+      addCollection<List<T>, T>(
+        predicate,
+        values,
+        RdfAltSerializer<T>.new,
+        itemSerializer: itemSerializer,
+      );
+
+  /// Adds an RDF Bag (rdf:Bag) to the current resource.
+  ///
+  /// Creates an unordered RDF container using numbered properties.
+  /// RDF Bags represent unordered collections where duplicates are allowed
+  /// and the numbered properties don't imply any ordering semantics.
+  ///
+  /// The RDF output structure:
+  /// ```turtle
+  /// :subject :predicate _:bag .
+  /// _:bag a rdf:Bag ;
+  ///       rdf:_1 :item1 ;
+  ///       rdf:_2 :item2 ;
+  ///       rdf:_3 :item3 .
+  /// ```
+  ///
+  /// Example usage:
+  /// ```dart
+  /// // Create an unordered bag of keywords/tags
+  /// builder.addRdfBag(Schema.keywords, [
+  ///   'fantasy',
+  ///   'adventure',
+  ///   'fiction',
+  ///   'tolkien'
+  /// ]);
+  /// ```
+  ///
+  /// The [predicate] is the RDF predicate that links to the bag.
+  /// The [values] is the list of items to be included in the unordered bag.
+  /// The optional [itemSerializer] can be provided for custom serialization of bag items.
+  ///
+  /// Returns this builder for method chaining.
+  ResourceBuilder<S> addRdfBag<T>(RdfPredicate predicate, List<T> values,
+          {Serializer<T>? itemSerializer}) =>
+      addCollection<List<T>, T>(
+        predicate,
+        values,
+        RdfBagSerializer<T>.new,
         itemSerializer: itemSerializer,
       );
 

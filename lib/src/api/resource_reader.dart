@@ -3,6 +3,7 @@ import 'package:rdf_mapper/src/api/deserialization_service.dart';
 import 'package:rdf_mapper/src/api/deserializer.dart';
 import 'package:rdf_mapper/src/exceptions/property_value_not_found_exception.dart';
 import 'package:rdf_mapper/src/exceptions/too_many_property_values_exception.dart';
+import 'package:rdf_mapper/src/mappers/resource/rdf_container_deserializer.dart';
 import 'package:rdf_mapper/src/mappers/resource/rdf_list_deserializer.dart';
 
 /// Reader for fluent RDF resource deserialization.
@@ -432,6 +433,380 @@ class ResourceReader {
     return optionalCollection<List<T>, T>(
       predicate,
       RdfListDeserializer<T>.new,
+      itemDeserializer: itemDeserializer,
+    );
+  }
+
+  /// Retrieves an optional sequence from an RDF Sequence (rdf:Seq) container.
+  ///
+  /// This convenience method deserializes an RDF Sequence container using numbered
+  /// properties (`rdf:_1`, `rdf:_2`, etc.) with the container typed as `rdf:Seq`.
+  /// RDF Sequences represent ordered collections where the numbered properties
+  /// indicate the position of elements.
+  ///
+  /// **Optional Semantics**: This method allows the RDF Sequence to be missing from the graph.
+  /// If the predicate is not found, null is returned. If the container exists but has an invalid
+  /// structure, an exception will be thrown. Use [requireRdfSeq] if the sequence must exist.
+  ///
+  /// **Container Structure**: RDF Sequences use numbered properties to reference elements:
+  /// ```turtle
+  /// :subject :predicate _:seq .
+  /// _:seq a rdf:Seq ;
+  ///   rdf:_1 "first element" ;
+  ///   rdf:_2 "second element" ;
+  ///   rdf:_3 "third element" .
+  /// ```
+  ///
+  /// **Ordering**: Elements are returned in numerical order of their properties
+  /// (rdf:_1, rdf:_2, etc.), preserving the intended sequence.
+  ///
+  /// **Pattern for Default Values**: Commonly used with null-coalescing operator for empty list defaults:
+  /// ```dart
+  /// // Provide empty list as default
+  /// final chapters = reader.optionalRdfSeq<String>(Schema.hasPart) ?? const <String>[];
+  ///
+  /// // Provide custom default list
+  /// final steps = reader.optionalRdfSeq<Step>(Schema.step) ?? [Step.defaultStep];
+  /// ```
+  ///
+  /// Example usage:
+  /// ```dart
+  /// // Optional ordered sequence of chapters (returns null if missing)
+  /// final chapters = reader.optionalRdfSeq<Chapter>(Schema.hasPart);
+  ///
+  /// // Optional sequence with default empty list
+  /// final priorities = reader.optionalRdfSeq<String>(Schema.priority) ?? const [];
+  ///
+  /// // Optional sequence with conditional processing
+  /// final steps = reader.optionalRdfSeq<ProcessStep>(Schema.hasStep);
+  /// if (steps != null && steps.isNotEmpty) {
+  ///   // Process steps in order...
+  /// }
+  /// ```
+  ///
+  /// The [predicate] is the RDF predicate that links to the sequence container.
+  /// The optional [itemDeserializer] can be provided for custom deserialization of sequence items.
+  ///
+  /// Returns a [List] containing the deserialized items in numerical order, or null if not found.
+  ///
+  /// Throws an exception if the sequence exists but has an invalid structure or wrong container type.
+  List<T>? optionalRdfSeq<T>(
+    RdfPredicate predicate, {
+    Deserializer<T>? itemDeserializer,
+  }) {
+    return optionalCollection<List<T>, T>(
+      predicate,
+      RdfSeqDeserializer<T>.new,
+      itemDeserializer: itemDeserializer,
+    );
+  }
+
+  /// Retrieves an optional bag from an RDF Bag (rdf:Bag) container.
+  ///
+  /// This convenience method deserializes an RDF Bag container using numbered
+  /// properties (`rdf:_1`, `rdf:_2`, etc.) with the container typed as `rdf:Bag`.
+  /// RDF Bags represent unordered collections where the numbered properties don't
+  /// imply any ordering semantics, but elements are returned in numerical order
+  /// for consistency.
+  ///
+  /// **Optional Semantics**: This method allows the RDF Bag to be missing from the graph.
+  /// If the predicate is not found, null is returned. If the container exists but has an invalid
+  /// structure, an exception will be thrown. Use [requireRdfBag] if the bag must exist.
+  ///
+  /// **Container Structure**: RDF Bags use numbered properties to reference elements:
+  /// ```turtle
+  /// :subject :predicate _:bag .
+  /// _:bag a rdf:Bag ;
+  ///   rdf:_1 "first element" ;
+  ///   rdf:_2 "second element" ;
+  ///   rdf:_3 "third element" .
+  /// ```
+  ///
+  /// **Semantic Note**: While RDF Bags semantically represent unordered collections,
+  /// the implementation returns elements in numerical order of their properties for
+  /// deterministic behavior. The ordering should not be relied upon for semantic meaning.
+  ///
+  /// **Use Cases**: RDF Bags are suitable for collections where:
+  /// - Order doesn't matter semantically
+  /// - Duplicates are allowed
+  /// - You need container semantics (vs. simple multi-value properties)
+  ///
+  /// Example usage:
+  /// ```dart
+  /// // Optional unordered collection of tags (returns null if missing)
+  /// final tags = reader.optionalRdfBag<String>(Schema.keywords);
+  ///
+  /// // Optional bag with default empty list
+  /// final categories = reader.optionalRdfBag<String>(Schema.category) ?? const [];
+  ///
+  /// // Optional bag with conditional processing
+  /// final contributors = reader.optionalRdfBag<Person>(Schema.contributor);
+  /// if (contributors != null && contributors.isNotEmpty) {
+  ///   // Process contributors (order not semantically meaningful)...
+  /// }
+  /// ```
+  ///
+  /// The [predicate] is the RDF predicate that links to the bag container.
+  /// The optional [itemDeserializer] can be provided for custom deserialization of bag items.
+  ///
+  /// Returns a [List] containing the deserialized items in numerical order, or null if not found.
+  ///
+  /// Throws an exception if the bag exists but has an invalid structure or wrong container type.
+  List<T>? optionalRdfBag<T>(
+    RdfPredicate predicate, {
+    Deserializer<T>? itemDeserializer,
+  }) {
+    return optionalCollection<List<T>, T>(
+      predicate,
+      RdfBagDeserializer<T>.new,
+      itemDeserializer: itemDeserializer,
+    );
+  }
+
+  /// Retrieves an optional alternative from an RDF Alternative (rdf:Alt) container.
+  ///
+  /// This convenience method deserializes an RDF Alternative container using numbered
+  /// properties (`rdf:_1`, `rdf:_2`, etc.) with the container typed as `rdf:Alt`.
+  /// RDF Alternatives represent a set of alternative values where typically only
+  /// one should be chosen, and the numbered properties may indicate preference order.
+  ///
+  /// **Optional Semantics**: This method allows the RDF Alternative to be missing from the graph.
+  /// If the predicate is not found, null is returned. If the container exists but has an invalid
+  /// structure, an exception will be thrown. Use [requireRdfAlt] if the alternative must exist.
+  ///
+  /// **Container Structure**: RDF Alternatives use numbered properties to reference elements:
+  /// ```turtle
+  /// :subject :predicate _:alt .
+  /// _:alt a rdf:Alt ;
+  ///   rdf:_1 "preferred option" ;
+  ///   rdf:_2 "fallback option" ;
+  ///   rdf:_3 "last resort option" .
+  /// ```
+  ///
+  /// **Preference Ordering**: Elements are returned in numerical order of their properties,
+  /// where lower numbers typically indicate higher preference (rdf:_1 is most preferred).
+  ///
+  /// **Use Cases**: RDF Alternatives are suitable for:
+  /// - Multiple language versions of text (with preference order)
+  /// - Alternative image formats or resolutions
+  /// - Fallback options with preference ranking
+  /// - Choice lists where one should be selected
+  ///
+  /// Example usage:
+  /// ```dart
+  /// // Optional alternative image formats (returns null if missing)
+  /// final imageFormats = reader.optionalRdfAlt<String>(Schema.image);
+  ///
+  /// // Optional alternatives with default empty list
+  /// final titles = reader.optionalRdfAlt<String>(Schema.name) ?? const [];
+  ///
+  /// // Optional alternatives with preference handling
+  /// final languages = reader.optionalRdfAlt<String>(Schema.inLanguage);
+  /// if (languages != null && languages.isNotEmpty) {
+  ///   final preferred = languages.first; // Most preferred option
+  ///   // Process alternatives in preference order...
+  /// }
+  /// ```
+  ///
+  /// The [predicate] is the RDF predicate that links to the alternative container.
+  /// The optional [itemDeserializer] can be provided for custom deserialization of alternative items.
+  ///
+  /// Returns a [List] containing the deserialized items in preference order, or null if not found.
+  ///
+  /// Throws an exception if the alternative exists but has an invalid structure or wrong container type.
+  List<T>? optionalRdfAlt<T>(
+    RdfPredicate predicate, {
+    Deserializer<T>? itemDeserializer,
+  }) {
+    return optionalCollection<List<T>, T>(
+      predicate,
+      RdfAltDeserializer<T>.new,
+      itemDeserializer: itemDeserializer,
+    );
+  }
+
+  /// Retrieves a required sequence from an RDF Sequence (rdf:Seq) container.
+  ///
+  /// This convenience method deserializes an RDF Sequence container using numbered
+  /// properties (`rdf:_1`, `rdf:_2`, etc.) with the container typed as `rdf:Seq`.
+  /// RDF Sequences represent ordered collections where the numbered properties
+  /// indicate the position of elements.
+  ///
+  /// **Required Semantics**: This method enforces that the RDF Sequence must exist in the graph.
+  /// If the predicate is not found or the container structure is invalid, an exception will be thrown.
+  /// Use [optionalRdfSeq] if the sequence might not exist.
+  ///
+  /// **Container Structure**: RDF Sequences use numbered properties to reference elements:
+  /// ```turtle
+  /// :subject :predicate _:seq .
+  /// _:seq a rdf:Seq ;
+  ///   rdf:_1 "first element" ;
+  ///   rdf:_2 "second element" ;
+  ///   rdf:_3 "third element" .
+  /// ```
+  ///
+  /// **Ordering**: Elements are returned in numerical order of their properties
+  /// (rdf:_1, rdf:_2, etc.), preserving the intended sequence.
+  ///
+  /// **Use Cases**: RDF Sequences are ideal for:
+  /// - Ordered lists where position matters (chapters, steps, rankings)
+  /// - Sequences that need to be processed in specific order
+  /// - Collections where numerical order has semantic meaning
+  ///
+  /// Example usage:
+  /// ```dart
+  /// // Required ordered sequence of chapters (throws if missing)
+  /// final chapters = reader.requireRdfSeq<Chapter>(Schema.hasPart);
+  ///
+  /// // Required sequence of process steps (throws if missing)
+  /// final steps = reader.requireRdfSeq<String>(Schema.hasStep);
+  ///
+  /// // Required sequence with custom item deserializer
+  /// final priorities = reader.requireRdfSeq<Priority>(
+  ///   Schema.priority,
+  ///   itemDeserializer: PriorityDeserializer(),
+  /// );
+  /// ```
+  ///
+  /// The [predicate] is the RDF predicate that links to the sequence container.
+  /// The optional [itemDeserializer] can be provided for custom deserialization of sequence items.
+  ///
+  /// Returns a [List] containing the deserialized items in numerical order.
+  ///
+  /// Throws an exception if the sequence is not found, has an invalid structure, or wrong container type.
+  List<T> requireRdfSeq<T>(
+    RdfPredicate predicate, {
+    Deserializer<T>? itemDeserializer,
+  }) {
+    return requireCollection<List<T>, T>(
+      predicate,
+      RdfSeqDeserializer<T>.new,
+      itemDeserializer: itemDeserializer,
+    );
+  }
+
+  /// Retrieves a required bag from an RDF Bag (rdf:Bag) container.
+  ///
+  /// This convenience method deserializes an RDF Bag container using numbered
+  /// properties (`rdf:_1`, `rdf:_2`, etc.) with the container typed as `rdf:Bag`.
+  /// RDF Bags represent unordered collections where the numbered properties don't
+  /// imply any ordering semantics, but elements are returned in numerical order
+  /// for consistency.
+  ///
+  /// **Required Semantics**: This method enforces that the RDF Bag must exist in the graph.
+  /// If the predicate is not found or the container structure is invalid, an exception will be thrown.
+  /// Use [optionalRdfBag] if the bag might not exist.
+  ///
+  /// **Container Structure**: RDF Bags use numbered properties to reference elements:
+  /// ```turtle
+  /// :subject :predicate _:bag .
+  /// _:bag a rdf:Bag ;
+  ///   rdf:_1 "first element" ;
+  ///   rdf:_2 "second element" ;
+  ///   rdf:_3 "third element" .
+  /// ```
+  ///
+  /// **Semantic Note**: While RDF Bags semantically represent unordered collections,
+  /// the implementation returns elements in numerical order of their properties for
+  /// deterministic behavior. The ordering should not be relied upon for semantic meaning.
+  ///
+  /// **Use Cases**: RDF Bags are suitable for collections where:
+  /// - Order doesn't matter semantically
+  /// - Duplicates are allowed
+  /// - You need container semantics (vs. simple multi-value properties)
+  /// - The collection is essential to the resource (required)
+  ///
+  /// Example usage:
+  /// ```dart
+  /// // Required unordered collection of tags (throws if missing)
+  /// final tags = reader.requireRdfBag<String>(Schema.keywords);
+  ///
+  /// // Required bag of contributors (throws if missing)
+  /// final contributors = reader.requireRdfBag<Person>(Schema.contributor);
+  ///
+  /// // Required bag with custom item deserializer
+  /// final categories = reader.requireRdfBag<Category>(
+  ///   Schema.category,
+  ///   itemDeserializer: CategoryDeserializer(),
+  /// );
+  /// ```
+  ///
+  /// The [predicate] is the RDF predicate that links to the bag container.
+  /// The optional [itemDeserializer] can be provided for custom deserialization of bag items.
+  ///
+  /// Returns a [List] containing the deserialized items in numerical order.
+  ///
+  /// Throws an exception if the bag is not found, has an invalid structure, or wrong container type.
+  List<T> requireRdfBag<T>(
+    RdfPredicate predicate, {
+    Deserializer<T>? itemDeserializer,
+  }) {
+    return requireCollection<List<T>, T>(
+      predicate,
+      RdfBagDeserializer<T>.new,
+      itemDeserializer: itemDeserializer,
+    );
+  }
+
+  /// Retrieves a required alternative from an RDF Alternative (rdf:Alt) container.
+  ///
+  /// This convenience method deserializes an RDF Alternative container using numbered
+  /// properties (`rdf:_1`, `rdf:_2`, etc.) with the container typed as `rdf:Alt`.
+  /// RDF Alternatives represent a set of alternative values where typically only
+  /// one should be chosen, and the numbered properties may indicate preference order.
+  ///
+  /// **Required Semantics**: This method enforces that the RDF Alternative must exist in the graph.
+  /// If the predicate is not found or the container structure is invalid, an exception will be thrown.
+  /// Use [optionalRdfAlt] if the alternative might not exist.
+  ///
+  /// **Container Structure**: RDF Alternatives use numbered properties to reference elements:
+  /// ```turtle
+  /// :subject :predicate _:alt .
+  /// _:alt a rdf:Alt ;
+  ///   rdf:_1 "preferred option" ;
+  ///   rdf:_2 "fallback option" ;
+  ///   rdf:_3 "last resort option" .
+  /// ```
+  ///
+  /// **Preference Ordering**: Elements are returned in numerical order of their properties,
+  /// where lower numbers typically indicate higher preference (rdf:_1 is most preferred).
+  ///
+  /// **Use Cases**: RDF Alternatives are suitable for:
+  /// - Multiple language versions of text (with preference order)
+  /// - Alternative image formats or resolutions
+  /// - Fallback options with preference ranking
+  /// - Choice lists where one should be selected
+  /// - Essential alternatives that must exist for the resource to be valid
+  ///
+  /// Example usage:
+  /// ```dart
+  /// // Required alternative image formats (throws if missing)
+  /// final imageFormats = reader.requireRdfAlt<String>(Schema.image);
+  /// final preferredFormat = imageFormats.first; // Most preferred
+  ///
+  /// // Required alternatives for multilingual content (throws if missing)
+  /// final titles = reader.requireRdfAlt<String>(Schema.name);
+  ///
+  /// // Required alternatives with custom item deserializer
+  /// final languages = reader.requireRdfAlt<Language>(
+  ///   Schema.inLanguage,
+  ///   itemDeserializer: LanguageDeserializer(),
+  /// );
+  /// ```
+  ///
+  /// The [predicate] is the RDF predicate that links to the alternative container.
+  /// The optional [itemDeserializer] can be provided for custom deserialization of alternative items.
+  ///
+  /// Returns a [List] containing the deserialized items in preference order.
+  ///
+  /// Throws an exception if the alternative is not found, has an invalid structure, or wrong container type.
+  List<T> requireRdfAlt<T>(
+    RdfPredicate predicate, {
+    Deserializer<T>? itemDeserializer,
+  }) {
+    return requireCollection<List<T>, T>(
+      predicate,
+      RdfAltDeserializer<T>.new,
       itemDeserializer: itemDeserializer,
     );
   }
