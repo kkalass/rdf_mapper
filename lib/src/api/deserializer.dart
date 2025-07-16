@@ -118,8 +118,12 @@ abstract interface class LiteralTermDeserializer<T>
   ///
   /// When deserializing a literal term and we do not find a deserializer for
   /// the dart type, we will take a deserializer that matches the
-  /// datatype of the literal term.
-  IriTerm get datatype;
+  /// datatype of the literal term. If you do not specify a datatype,
+  /// the deserializer will only be used if the target dart type is known and matches exactly.
+  ///
+  /// This means that we cannot use a deserializer without datatype for deserializing into
+  /// a basic dart type like `Object`.
+  IriTerm? get datatype;
 
   /// Converts a literal term to a value.
   ///

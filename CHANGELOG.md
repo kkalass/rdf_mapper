@@ -53,7 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `ResourceBuilder.addValue()`, `addValueIfNotNull()` methods (consolidated serializer parameters similarly)
 - **Breaking Change**: Enhanced `DeserializationContext.getTriplesForSubject()` with `trackRead` parameter (defaults to true)
 - **Breaking Change**: Removed `readRdfList()` method from `DeserializationContext` (moved to collection infrastructure)
-- **Breaking Change**: All `LiteralTermDeserializer` implementations now require `datatype` property
+- **Breaking Change**: `LiteralTermDeserializer.datatype` property is now nullable (`IriTerm?` instead of `IriTerm`) - deserializers can specify a datatype to be used as fallback when exact Dart type mapping fails or target type is too broad (e.g., `Object`), or return `null` to only handle exact type matches
 - Enhanced serialization context with unified `serialize()` method supporting all value types
 - Enhanced collection deserialization to automatically detect and use multi-objects deserializers when available
 - Updated main example to demonstrate RDF list usage with proper order preservation for book chapters

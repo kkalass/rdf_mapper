@@ -299,9 +299,12 @@ final class RdfMapperRegistry {
   ) {
     _log.fine('Registering LiteralTerm deserializer for type ${T.toString()}');
     _literalTermDeserializers[T] = deserializer;
-    _literalTermDeserializersByType.putIfAbsent(
-        deserializer.datatype, () => <LiteralTermDeserializer<dynamic>>[])
-      ..add(deserializer);
+    final datatype = deserializer.datatype;
+    if (datatype != null) {
+      _literalTermDeserializersByType.putIfAbsent(
+          datatype, () => <LiteralTermDeserializer<dynamic>>[])
+        ..add(deserializer);
+    }
   }
 
   void _registerLiteralTermSerializer<T>(LiteralTermSerializer<T> serializer) {
