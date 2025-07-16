@@ -116,9 +116,6 @@ class ImmutableList<T> {
 
   Iterable<R> map<R>(R Function(T) transform) => _items.map(transform);
 
-  // Make it iterable for easier use with addValues
-  Iterable<T> get items => _items;
-
   @override
   String toString() => 'ImmutableList($_items)';
 }
@@ -152,6 +149,46 @@ class ImmutableListDeserializer<T>
     return ImmutableList(items);
   }
 }
+
+/// Serializer for ImmutableList using multi-objects approach (flat structure)
+class ImmutableListMultiObjectsSerializer<T>
+    implements MultiObjectsSerializer<ImmutableList<T>> {
+  final Serializer<T>? itemSerializer;
+  const ImmutableListMultiObjectsSerializer(this.itemSerializer);
+
+  @override
+  (Iterable<RdfObject>, Iterable<Triple>) toRdfObjects(
+      ImmutableList<T> values, SerializationContext context) {
+    final triples = <Triple>[];
+    final objects = <RdfObject>[];
+    for (var i = 0; i < values.length; i++) {
+      final item = values[i];
+      final (terms, itemTriples) =
+          context.serialize<T>(item, serializer: itemSerializer);
+      triples.addAll(itemTriples);
+      objects.addAll(terms.cast<RdfObject>());
+    }
+    return (objects, triples);
+  }
+}
+
+/// Deserializer for ImmutableList from RDF list structure (preserves order)
+class ImmutableListMultiObjectsDeserializer<T>
+    implements MultiObjectsDeserializer<ImmutableList<T>> {
+  final Deserializer<T>? itemDeserializer;
+
+  const ImmutableListMultiObjectsDeserializer(this.itemDeserializer);
+
+  @override
+  ImmutableList<T> fromRdfObjects(
+      Iterable<RdfObject> objects, DeserializationContext context) {
+    final items = objects
+        .map((o) => context.deserialize<T>(o, deserializer: itemDeserializer))
+        .toList();
+    return ImmutableList(items);
+  }
+}
+
 // Extension Methods for Convenient APIs
 
 /// Extension methods for ResourceReader to add custom collection support
@@ -169,6 +206,22 @@ extension CustomCollectionReaderExtensions on ResourceReader {
         predicate,
         ImmutableListDeserializer.new,
       );
+
+  /// Read a required ImmutableList (flat, immutable)
+  ImmutableList<T> requireImmutableListMultiObjects<T>(
+          RdfPredicate predicate) =>
+      requireCollection<ImmutableList<T>, T>(
+        predicate,
+        ImmutableListMultiObjectsDeserializer.new,
+      );
+
+  /// Read an optional ImmutableList (flat, immutable)
+  ImmutableList<T>? optionalImmutableListMultiObjects<T>(
+          RdfPredicate predicate) =>
+      optionalCollection<ImmutableList<T>, T>(
+        predicate,
+        ImmutableListMultiObjectsDeserializer.new,
+      );
 }
 
 /// Extension methods for ResourceBuilder to add custom collection support
@@ -181,6 +234,16 @@ extension CustomCollectionBuilderExtensions<S extends RdfSubject>
         predicate,
         collection,
         (itemSerializer) => ImmutableListSerializer<T>(itemSerializer),
+      );
+
+  /// Add an ImmutableList (flat, unordered)
+  ResourceBuilder<S> addImmutableListMultiObjects<T>(
+          RdfPredicate predicate, ImmutableList<T> collection) =>
+      addCollection<ImmutableList<T>, T>(
+        predicate,
+        collection,
+        (itemSerializer) =>
+            ImmutableListMultiObjectsSerializer<T>(itemSerializer),
       );
 }
 
@@ -241,6 +304,7 @@ class LibraryMapper implements GlobalResourceMapper<Library> {
       name: reader.require<String>(LibraryVocab.name),
 
       // Use our custom extension methods - as convenient as built-in methods!
+      // ImmutableList: uses rdf:first/rdf:rest structure
       featuredBooks:
           reader.optionalImmutableList<Book>(LibraryVocab.featuredBooks) ??
               ImmutableList([]),
@@ -258,7 +322,48 @@ class LibraryMapper implements GlobalResourceMapper<Library> {
         .addValue(LibraryVocab.name, library.name)
 
         // Use our custom extension methods - as convenient as built-in methods!
+        // ImmutableList: uses rdf:first/rdf:rest structure
         .addImmutableList<Book>(
+            LibraryVocab.featuredBooks, library.featuredBooks)
+        .build();
+  }
+}
+
+// Alternative mapper using Multi-Objects approach (flat structure)
+class LibraryMultiObjectsMapper implements GlobalResourceMapper<Library> {
+  @override
+  IriTerm? get typeIri => LibraryVocab.library;
+
+  @override
+  Library fromRdfResource(IriTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
+
+    return Library(
+      id: subject.iri,
+      name: reader.require<String>(LibraryVocab.name),
+
+      // Use our custom extension methods - as convenient as built-in methods!
+      // Multi-objects approach: one triple per book
+      // This reads a flat structure with multiple triples for the same predicate
+      featuredBooks: reader.optionalImmutableListMultiObjects<Book>(
+              LibraryVocab.featuredBooks) ??
+          ImmutableList([]),
+    );
+  }
+
+  @override
+  (IriTerm, List<Triple>) toRdfResource(
+    Library library,
+    SerializationContext context, {
+    RdfSubject? parentSubject,
+  }) {
+    return context
+        .resourceBuilder(IriTerm(library.id))
+        .addValue(LibraryVocab.name, library.name)
+
+        // Use our custom extension methods - as convenient as built-in methods!
+        // Multi-objects approach: creates one triple per book (plus of course the triples that define the book resources)
+        .addImmutableListMultiObjects<Book>(
             LibraryVocab.featuredBooks, library.featuredBooks)
         .build();
   }
@@ -306,42 +411,6 @@ class TagMapper implements LocalResourceMapper<Tag> {
     return context
         .resourceBuilder(BlankNodeTerm())
         .addValue(LibraryVocab.name, tag.name)
-        .build();
-  }
-}
-
-// Alternative mapper using Multi-Objects approach (flat structure)
-class LibraryMultiObjectsMapper implements GlobalResourceMapper<Library> {
-  @override
-  IriTerm? get typeIri => LibraryVocab.library;
-
-  @override
-  Library fromRdfResource(IriTerm subject, DeserializationContext context) {
-    final reader = context.reader(subject);
-
-    return Library(
-      id: subject.iri,
-      name: reader.require<String>(LibraryVocab.name),
-
-      // Multi-objects approach: uses getValues for multiple triples
-      featuredBooks:
-          ImmutableList(reader.getValues<Book>(LibraryVocab.featuredBooks)),
-    );
-  }
-
-  @override
-  (IriTerm, List<Triple>) toRdfResource(
-    Library library,
-    SerializationContext context, {
-    RdfSubject? parentSubject,
-  }) {
-    return context
-        .resourceBuilder(IriTerm(library.id))
-        .addValue(LibraryVocab.name, library.name)
-
-        // Multi-objects approach: creates one triple per book
-        .addValues<Book>(
-            LibraryVocab.featuredBooks, library.featuredBooks.items)
         .build();
   }
 }
