@@ -372,7 +372,7 @@ final class RdfMapperService {
       register(registry);
     }
     final context = SerializationContextImpl(registry: registry);
-    final (_, triples) = context.serialize(instance);
+    final triples = context.resource(instance);
     return RdfGraph.fromTriples(triples);
   }
 
