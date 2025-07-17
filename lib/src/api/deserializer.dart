@@ -216,7 +216,7 @@ abstract interface class GlobalResourceDeserializer<T>
 }
 
 typedef CollectionDeserializerFactory<C, T> = Deserializer<C> Function(
-    Deserializer<T>? itemDeserializer);
+    {Deserializer<T>? itemDeserializer});
 
 /// Interface for deserializing an RDF collection structure into a Dart collection [C] of items [T].
 ///

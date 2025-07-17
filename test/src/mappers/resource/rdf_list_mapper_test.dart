@@ -24,7 +24,7 @@ void main() {
       });
 
       test('RdfListMapper.new creates mapper with custom serializers', () {
-        final mapper = RdfListMapper<String>(null);
+        final mapper = RdfListMapper<String>();
 
         expect(mapper, isA<RdfListMapper<String>>());
         expect(mapper, isA<UnifiedResourceMapper<List<String>>>());
@@ -88,7 +88,8 @@ void main() {
 
         // Create mappers with different configurations
         final mapperDefault = factory();
-        final mapperWithNulls = factory(null);
+        final mapperWithNulls =
+            factory(itemDeserializer: null, itemSerializer: null);
 
         expect(mapperDefault, isA<RdfListMapper<String>>());
         expect(mapperWithNulls, isA<RdfListMapper<String>>());

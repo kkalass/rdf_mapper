@@ -499,7 +499,8 @@ class SerializationContextImpl extends SerializationContext
       C collection,
       CollectionSerializerFactory<C, T> collectionSerializerFactory,
       {Serializer<T>? itemSerializer}) {
-    final serializer = collectionSerializerFactory(itemSerializer);
+    final serializer =
+        collectionSerializerFactory(itemSerializer: itemSerializer);
     return value(subject, predicate, collection, serializer: serializer);
   }
 }

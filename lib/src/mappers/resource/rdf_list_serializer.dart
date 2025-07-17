@@ -38,24 +38,28 @@ import 'package:rdf_vocabularies/rdf.dart';
 /// **Integration**: This serializer is not typically registered in the registry
 /// or used directly, but rather instantiated on-demand by the collection
 /// serialization infrastructure.
-class RdfListSerializer<T> extends BaseRdfListSerializer<List<T>, T> {
+class RdfListSerializer<T>
+    with RdfListSerializerMixin<T>
+    implements UnifiedResourceSerializer<List<T>> {
+  final Serializer<T>? itemSerializer;
+
   /// Creates an RDF list serializer for `List<T>`.
   ///
   /// [itemSerializer] Optional serializer for list elements. If not provided,
   /// element serialization will be resolved through the registry.
-  const RdfListSerializer([super.itemSerializer]);
+  const RdfListSerializer({this.itemSerializer});
 
   @override
   (RdfSubject, Iterable<Triple>) toRdfResource(
       List<T> values, SerializationContext context,
       {RdfSubject? parentSubject}) {
-    final (subject, triples) =
-        buildRdfList(values, context, parentSubject: parentSubject);
+    final (subject, triples) = buildRdfList(values, context, itemSerializer,
+        parentSubject: parentSubject);
     return (subject, triples.toList());
   }
 }
 
-/// Abstract base class for serializing collection types to RDF list structures.
+/// Mixin class for serializing collection types to RDF list structures.
 ///
 /// This class provides common functionality for converting Dart collections into
 /// RDF list representations using the standard `rdf:first` and `rdf:rest` linked
@@ -76,16 +80,8 @@ class RdfListSerializer<T> extends BaseRdfListSerializer<List<T>, T> {
 ///
 /// Subclasses must implement `toRdfResource()` to handle the specific collection
 /// type and call `buildRdfList()` with the appropriate iterable.
-abstract class BaseRdfListSerializer<C, T>
-    implements UnifiedResourceSerializer<C> {
-  final Serializer<T>? _serializer;
-
-  /// Creates a base RDF list serializer with an optional item serializer.
-  ///
-  /// [itemSerializer] Optional serializer for individual elements. If not provided,
-  /// the registry will be used to find appropriate serializers for each element.
-  const BaseRdfListSerializer(Serializer<T>? itemSerializer)
-      : _serializer = itemSerializer;
+abstract mixin class RdfListSerializerMixin<T> {
+  IriTerm? get typeIri => Rdf.List;
 
   /// Builds an RDF list structure from a Dart iterable.
   ///
@@ -113,8 +109,11 @@ abstract class BaseRdfListSerializer<C, T>
   ///
   /// Returns a tuple containing the list head subject and the complete triple iterable.
   (RdfSubject headNode, Iterable<Triple> triples) buildRdfList(
-      Iterable<T> values, SerializationContext context,
-      {RdfSubject? headNode, RdfSubject? parentSubject}) {
+      Iterable<T> values,
+      SerializationContext context,
+      Serializer<T>? serializer,
+      {RdfSubject? headNode,
+      RdfSubject? parentSubject}) {
     if (values.isEmpty) {
       return (Rdf.nil, const []);
     }
@@ -123,7 +122,7 @@ abstract class BaseRdfListSerializer<C, T>
     return (
       headNode,
       _buildRdfListTriples(context, values.iterator, headNode,
-          serializer: _serializer, parentSubject: parentSubject)
+          serializer: serializer, parentSubject: parentSubject)
     );
   }
 
@@ -166,7 +165,4 @@ abstract class BaseRdfListSerializer<C, T>
       }
     } while (true);
   }
-
-  @override
-  IriTerm? get typeIri => Rdf.List;
 }

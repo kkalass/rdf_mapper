@@ -54,7 +54,7 @@ class RdfSeqSerializer<T> extends BaseRdfContainerListSerializer<T> {
   ///
   /// [itemSerializer] Optional serializer for list elements. If not provided,
   /// element serialization will be resolved through the registry.
-  const RdfSeqSerializer([Serializer<T>? itemSerializer])
+  const RdfSeqSerializer({Serializer<T>? itemSerializer})
       : super(Rdf.Seq, itemSerializer);
 }
 
@@ -81,7 +81,7 @@ class RdfAltSerializer<T> extends BaseRdfContainerListSerializer<T> {
   ///
   /// [itemSerializer] Optional serializer for list elements. If not provided,
   /// element serialization will be resolved through the registry.
-  const RdfAltSerializer([Serializer<T>? itemSerializer])
+  const RdfAltSerializer({Serializer<T>? itemSerializer})
       : super(Rdf.Alt, itemSerializer);
 }
 
@@ -108,7 +108,7 @@ class RdfBagSerializer<T> extends BaseRdfContainerListSerializer<T> {
   ///
   /// [itemSerializer] Optional serializer for list elements. If not provided,
   /// element serialization will be resolved through the registry.
-  const RdfBagSerializer([Serializer<T>? itemSerializer])
+  const RdfBagSerializer({Serializer<T>? itemSerializer})
       : super(Rdf.Bag, itemSerializer);
 }
 
@@ -118,28 +118,30 @@ class RdfBagSerializer<T> extends BaseRdfContainerListSerializer<T> {
 /// (Seq, Bag, Alt) that serialize Dart lists to RDF containers with numbered
 /// properties.
 class BaseRdfContainerListSerializer<T>
-    extends BaseRdfContainerSerializer<List<T>, T> {
+    with RdfContainerSerializerMixin<T>
+    implements UnifiedResourceSerializer<List<T>> {
+  final IriTerm typeIri;
+  final Serializer<T>? itemSerializer;
+
   /// Creates an RDF container serializer for `List<T>`.
   ///
   /// [typeIri] The RDF container type (rdf:Seq, rdf:Bag, or rdf:Alt)
   /// [itemSerializer] Optional serializer for list elements. If not provided,
   /// element serialization will be resolved through the registry.
-  const BaseRdfContainerListSerializer(IriTerm typeIri,
-      [Serializer<T>? itemSerializer])
-      : super(typeIri, itemSerializer);
+  const BaseRdfContainerListSerializer(this.typeIri, [this.itemSerializer]);
 
   @override
   (RdfSubject, Iterable<Triple>) toRdfResource(
       List<T> values, SerializationContext context,
       {RdfSubject? parentSubject}) {
     final (subject, triples) = buildRdfContainer(
-        BlankNodeTerm(), values, context,
+        BlankNodeTerm(), values, context, typeIri, itemSerializer,
         parentSubject: parentSubject);
     return (subject, triples.toList());
   }
 }
 
-/// Abstract base class for serializing collection types to RDF container structures.
+/// Mixin for serializing collection types to RDF container structures.
 ///
 /// This class provides common functionality for converting Dart collections into
 /// RDF container representations using numbered properties (rdf:_1, rdf:_2, etc.).
@@ -165,19 +167,7 @@ class BaseRdfContainerListSerializer<T>
 ///
 /// Subclasses must implement `toRdfResource()` to handle the specific collection
 /// type and call `buildRdfContainer()` with the appropriate iterable.
-abstract class BaseRdfContainerSerializer<C, T>
-    implements UnifiedResourceSerializer<C> {
-  final Serializer<T>? _serializer;
-  final IriTerm typeIri;
-
-  /// Creates a base RDF container serializer with an optional item serializer.
-  ///
-  /// [typeIri] The RDF container type IRI (rdf:Seq, rdf:Bag, or rdf:Alt)
-  /// [itemSerializer] Optional serializer for individual elements. If not provided,
-  /// the registry will be used to find appropriate serializers for each element.
-  const BaseRdfContainerSerializer(this.typeIri, Serializer<T>? itemSerializer)
-      : _serializer = itemSerializer;
-
+abstract mixin class RdfContainerSerializerMixin<T> {
   /// Builds an RDF container structure from a Dart iterable.
   ///
   /// This method creates RDF container representations using numbered properties
@@ -219,10 +209,13 @@ abstract class BaseRdfContainerSerializer<C, T>
       RdfSubject containerSubject,
       Iterable<T> values,
       SerializationContext context,
+      IriTerm typeIri,
+      Serializer<T>? serializer,
       {RdfSubject? parentSubject}) {
     return (
       containerSubject,
-      _buildRdfContainerTriples(containerSubject, values, context,
+      _buildRdfContainerTriples(
+          containerSubject, values, context, typeIri, serializer,
           parentSubject: parentSubject)
     );
   }
@@ -234,8 +227,12 @@ abstract class BaseRdfContainerSerializer<C, T>
   ///
   /// **Performance**: Processes elements lazily, making it suitable for large
   /// collections without requiring all triples to be stored in memory simultaneously.
-  Iterable<Triple> _buildRdfContainerTriples(RdfSubject containerSubject,
-      Iterable<T> values, SerializationContext context,
+  Iterable<Triple> _buildRdfContainerTriples(
+      RdfSubject containerSubject,
+      Iterable<T> values,
+      SerializationContext context,
+      IriTerm typeIri,
+      Serializer<T>? serializer,
       {RdfSubject? parentSubject}) sync* {
     // Add the container type triple (rdf:Seq, rdf:Bag, or rdf:Alt)
     yield Triple(containerSubject, Rdf.type, typeIri);
@@ -250,7 +247,7 @@ abstract class BaseRdfContainerSerializer<C, T>
         throw ArgumentError('Cannot serialize null value in collection');
       }
       final (itemObjects, extraTriples) = context.serialize(value,
-          parentSubject: parentSubject, serializer: _serializer);
+          parentSubject: parentSubject, serializer: serializer);
 
       // Yield all triples from the serialized value first
       yield* extraTriples;

@@ -313,7 +313,8 @@ void main() {
     });
 
     test('serializes list with custom string serializer', () {
-      final serializer = RdfListSerializer<String>(UpperCaseStringSerializer());
+      final serializer = RdfListSerializer<String>(
+          itemSerializer: UpperCaseStringSerializer());
       final (head, triples) =
           serializer.toRdfResource(['hello', 'world'], context);
 

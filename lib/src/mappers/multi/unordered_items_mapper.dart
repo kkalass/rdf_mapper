@@ -3,13 +3,10 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 
 /// Mixin providing serialization functionality for unordered collections.
 /// Encapsulates the common logic for converting collections to RDF objects.
-mixin UnorderedItemsSerializationMixin<T> {
-  /// Item mapper used for serializing individual collection elements
-  Serializer<T>? get itemSerializer;
-
+abstract mixin class UnorderedItemsSerializerMixin<T> {
   /// Serializes a collection of items to RDF objects and triples
-  (Iterable<RdfObject>, Iterable<Triple>) toRdfObjects(
-      Iterable<T> values, SerializationContext context) {
+  (Iterable<RdfObject>, Iterable<Triple>) buildRdfObjects(Iterable<T> values,
+      SerializationContext context, Serializer<T>? itemSerializer) {
     final rdfObjects = values
         .map((v) => context.serialize(v, serializer: itemSerializer))
         .toList();
@@ -22,33 +19,38 @@ mixin UnorderedItemsSerializationMixin<T> {
 
 /// Mixin providing deserialization functionality for unordered collections.
 /// Encapsulates the common logic for converting RDF objects to collections.
-mixin UnorderedItemsDeserializationMixin<T> {
-  /// Item mapper used for deserializing individual collection elements
-  Deserializer<T>? get itemDeserializer;
-
+abstract mixin class UnorderedItemsDeserializerMixin<T> {
   /// Deserializes RDF objects to a collection of items
-  Iterable<T> fromRdfObjects(
-          Iterable<RdfObject> objects, DeserializationContext context) =>
+  Iterable<T> readRdfObjects(Iterable<RdfObject> objects,
+          DeserializationContext context, Deserializer<T>? itemDeserializer) =>
       objects.map(
           (obj) => context.deserialize<T>(obj, deserializer: itemDeserializer));
 }
 
 class UnorderedItemsSerializer<T>
-    with UnorderedItemsSerializationMixin<T>
+    with UnorderedItemsSerializerMixin<T>
     implements MultiObjectsSerializer<Iterable<T>> {
-  @override
-  final Serializer<T>? itemSerializer;
+  final Serializer<T>? _itemSerializer;
 
-  UnorderedItemsSerializer([this.itemSerializer]);
+  UnorderedItemsSerializer([this._itemSerializer]);
+
+  @override
+  (Iterable<RdfObject>, Iterable<Triple>) toRdfObjects(
+          Iterable<T> value, SerializationContext context) =>
+      buildRdfObjects(value, context, _itemSerializer);
 }
 
 class UnorderedItemsDeserializer<T>
-    with UnorderedItemsDeserializationMixin<T>
+    with UnorderedItemsDeserializerMixin<T>
     implements MultiObjectsDeserializer<Iterable<T>> {
-  @override
-  final Deserializer<T>? itemDeserializer;
+  final Deserializer<T>? _itemDeserializer;
 
-  UnorderedItemsDeserializer([this.itemDeserializer]);
+  UnorderedItemsDeserializer([this._itemDeserializer]);
+
+  @override
+  Iterable<T> fromRdfObjects(
+          Iterable<RdfObject> objects, DeserializationContext context) =>
+      readRdfObjects(objects, context, _itemDeserializer);
 }
 
 class UnorderedItemsCollectorDeserializer<T, R>
@@ -68,100 +70,106 @@ class UnorderedItemsCollectorDeserializer<T, R>
 }
 
 class UnorderedItemsMapper<T>
-    with
-        UnorderedItemsSerializationMixin<T>,
-        UnorderedItemsDeserializationMixin<T>
+    with UnorderedItemsSerializerMixin<T>, UnorderedItemsDeserializerMixin<T>
     implements MultiObjectsMapper<Iterable<T>> {
-  @override
-  final Serializer<T>? itemSerializer;
-  final Deserializer<T>? itemDeserializer;
+  final Mapper<T>? _itemMapper;
 
-  UnorderedItemsMapper([Mapper<T>? itemMapper])
-      : itemDeserializer = itemMapper,
-        itemSerializer = itemMapper;
+  UnorderedItemsMapper([this._itemMapper]);
+
+  @override
+  (Iterable<RdfObject>, Iterable<Triple>) toRdfObjects(
+          Iterable<T> value, SerializationContext context) =>
+      buildRdfObjects(value, context, _itemMapper);
+
+  @override
+  Iterable<T> fromRdfObjects(
+          Iterable<RdfObject> objects, DeserializationContext context) =>
+      readRdfObjects(objects, context, _itemMapper);
 }
 
 class UnorderedItemsListSerializer<T>
-    with UnorderedItemsSerializationMixin<T>
+    with UnorderedItemsSerializerMixin<T>
     implements MultiObjectsSerializer<List<T>> {
-  @override
-  final Serializer<T>? itemSerializer;
+  final Serializer<T>? _itemSerializer;
 
-  UnorderedItemsListSerializer([this.itemSerializer]);
+  UnorderedItemsListSerializer([this._itemSerializer]);
+
+  @override
+  (Iterable<RdfObject>, Iterable<Triple>) toRdfObjects(
+          List<T> value, SerializationContext context) =>
+      buildRdfObjects(value, context, _itemSerializer);
 }
 
 class UnorderedItemsSetSerializer<T>
-    with UnorderedItemsSerializationMixin<T>
+    with UnorderedItemsSerializerMixin<T>
     implements MultiObjectsSerializer<Set<T>> {
-  @override
-  final Serializer<T>? itemSerializer;
+  final Serializer<T>? _itemSerializer;
 
-  UnorderedItemsSetSerializer([this.itemSerializer]);
+  UnorderedItemsSetSerializer([this._itemSerializer]);
+
+  @override
+  (Iterable<RdfObject>, Iterable<Triple>) toRdfObjects(
+          Set<T> value, SerializationContext context) =>
+      buildRdfObjects(value, context, _itemSerializer);
 }
 
 class UnorderedItemsListDeserializer<T>
-    with UnorderedItemsDeserializationMixin<T>
+    with UnorderedItemsDeserializerMixin<T>
     implements MultiObjectsDeserializer<List<T>> {
-  @override
   final Deserializer<T>? itemDeserializer;
 
-  UnorderedItemsListDeserializer([this.itemDeserializer]);
+  UnorderedItemsListDeserializer({this.itemDeserializer});
   @override
   List<T> fromRdfObjects(
           Iterable<RdfObject> objects, DeserializationContext context) =>
-      super.fromRdfObjects(objects, context).toList();
+      readRdfObjects(objects, context, itemDeserializer).toList();
 }
 
 class UnorderedItemsSetDeserializer<T>
-    with UnorderedItemsDeserializationMixin<T>
+    with UnorderedItemsDeserializerMixin<T>
     implements MultiObjectsDeserializer<Set<T>> {
-  @override
-  final Deserializer<T>? itemDeserializer;
+  final Deserializer<T>? _itemDeserializer;
 
-  UnorderedItemsSetDeserializer([this.itemDeserializer]);
+  UnorderedItemsSetDeserializer([this._itemDeserializer]);
 
   @override
   Set<T> fromRdfObjects(
           Iterable<RdfObject> objects, DeserializationContext context) =>
-      super.fromRdfObjects(objects, context).toSet();
+      readRdfObjects(objects, context, _itemDeserializer).toSet();
 }
 
 class UnorderedItemsListMapper<T>
-    with
-        UnorderedItemsSerializationMixin<T>,
-        UnorderedItemsDeserializationMixin<T>
+    with UnorderedItemsSerializerMixin<T>, UnorderedItemsDeserializerMixin<T>
     implements MultiObjectsMapper<List<T>> {
-  @override
-  final Serializer<T>? itemSerializer;
-  @override
-  final Deserializer<T>? itemDeserializer;
+  final Mapper<T>? _itemMapper;
 
-  UnorderedItemsListMapper([Mapper<T>? itemMapper])
-      : itemSerializer = itemMapper,
-        itemDeserializer = itemMapper;
+  UnorderedItemsListMapper([this._itemMapper]);
+
+  @override
+  (Iterable<RdfObject>, Iterable<Triple>) toRdfObjects(
+          List<T> value, SerializationContext context) =>
+      buildRdfObjects(value, context, _itemMapper);
 
   @override
   List<T> fromRdfObjects(
           Iterable<RdfObject> objects, DeserializationContext context) =>
-      super.fromRdfObjects(objects, context).toList();
+      readRdfObjects(objects, context, _itemMapper).toList();
 }
 
 class UnorderedItemsSetMapper<T>
-    with
-        UnorderedItemsSerializationMixin<T>,
-        UnorderedItemsDeserializationMixin<T>
+    with UnorderedItemsSerializerMixin<T>, UnorderedItemsDeserializerMixin<T>
     implements MultiObjectsMapper<Set<T>> {
-  @override
-  final Serializer<T>? itemSerializer;
-  @override
-  final Deserializer<T>? itemDeserializer;
+  final Mapper<T>? _itemMapper;
 
-  UnorderedItemsSetMapper([Mapper<T>? itemMapper])
-      : itemSerializer = itemMapper,
-        itemDeserializer = itemMapper;
+  UnorderedItemsSetMapper([this._itemMapper]);
+
+  @override
+  (Iterable<RdfObject>, Iterable<Triple>) toRdfObjects(
+          Set<T> value, SerializationContext context) =>
+      buildRdfObjects(value, context, _itemMapper);
 
   @override
   Set<T> fromRdfObjects(
           Iterable<RdfObject> objects, DeserializationContext context) =>
-      super.fromRdfObjects(objects, context).toSet();
+      readRdfObjects(objects, context, _itemMapper).toSet();
 }

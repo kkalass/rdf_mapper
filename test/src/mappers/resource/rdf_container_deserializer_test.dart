@@ -112,8 +112,8 @@ void main() {
         ]);
         context = DeserializationContextImpl(graph: graph, registry: registry);
 
-        final deserializer =
-            RdfSeqDeserializer<String>(UpperCaseStringDeserializer());
+        final deserializer = RdfSeqDeserializer<String>(
+            itemDeserializer: UpperCaseStringDeserializer());
         final result = deserializer.fromRdfResource(container, context);
 
         expect(result, equals(['HELLO', 'WORLD']));

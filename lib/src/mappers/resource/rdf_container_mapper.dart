@@ -51,10 +51,13 @@ class RdfSeqMapper<T> extends UnifiedResourceMapperBase<List<T>, T> {
   /// // Mapper with custom element handling
   /// final personListMapper = RdfSeqMapper<Person>(PersonMapper());
   /// ```
-  RdfSeqMapper([Mapper<T>? itemMapper])
+  RdfSeqMapper(
+      {Deserializer<T>? itemDeserializer,
+      Serializer<T>? itemSerializer,
+      Mapper<T>? itemMapper})
       : super(
-          RdfSeqSerializer(itemMapper),
-          RdfSeqDeserializer(itemMapper),
+          RdfSeqSerializer(itemSerializer: itemSerializer ?? itemMapper),
+          RdfSeqDeserializer(itemDeserializer: itemDeserializer ?? itemMapper),
         );
 }
 
@@ -108,10 +111,11 @@ class RdfAltMapper<T> extends UnifiedResourceMapperBase<List<T>, T> {
   /// // Mapper for complex alternative objects
   /// final imageAltMapper = RdfAltMapper<ImageResource>(ImageResourceMapper());
   /// ```
-  RdfAltMapper([Mapper<T>? itemMapper])
+  RdfAltMapper(
+      {Deserializer<T>? itemDeserializer, Serializer<T>? itemSerializer})
       : super(
-          RdfAltSerializer(itemMapper),
-          RdfAltDeserializer(itemMapper),
+          RdfAltSerializer(itemSerializer: itemSerializer),
+          RdfAltDeserializer(itemDeserializer: itemDeserializer),
         );
 }
 
@@ -166,9 +170,10 @@ class RdfBagMapper<T> extends UnifiedResourceMapperBase<List<T>, T> {
   /// // Mapper for complex unordered objects
   /// final tagBagMapper = RdfBagMapper<Tag>(TagMapper());
   /// ```
-  RdfBagMapper([Mapper<T>? itemMapper])
+  RdfBagMapper(
+      {Deserializer<T>? itemDeserializer, Serializer<T>? itemSerializer})
       : super(
-          RdfBagSerializer(itemMapper),
-          RdfBagDeserializer(itemMapper),
+          RdfBagSerializer(itemSerializer: itemSerializer),
+          RdfBagDeserializer(itemDeserializer: itemDeserializer),
         );
 }

@@ -128,8 +128,8 @@ void main() {
       test('serializes with custom item serializer', () {
         final items = ['hello', 'world'];
 
-        final serializer =
-            RdfSeqSerializer<String>(UpperCaseStringSerializer());
+        final serializer = RdfSeqSerializer<String>(
+            itemSerializer: UpperCaseStringSerializer());
         final (subject, triples) = serializer.toRdfResource(items, context);
 
         final numberedTriples = findNumberedTriples(triples);
@@ -233,8 +233,8 @@ void main() {
       test('serializes with custom item serializer', () {
         final items = ['test', 'data'];
 
-        final serializer =
-            RdfBagSerializer<String>(UpperCaseStringSerializer());
+        final serializer = RdfBagSerializer<String>(
+            itemSerializer: UpperCaseStringSerializer());
         final (subject, triples) = serializer.toRdfResource(items, context);
 
         final numberedTriples = findNumberedTriples(triples);

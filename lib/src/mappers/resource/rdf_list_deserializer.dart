@@ -47,12 +47,16 @@ import 'package:rdf_vocabularies/rdf.dart';
 /// complex nested structures and track processed triples for completeness validation.
 /// This class is not typically instantiated directly or registered in the registry,
 /// but rather used by the collection deserialization infrastructure.
-class RdfListDeserializer<T> extends BaseRdfListDeserializer<List<T>, T> {
+class RdfListDeserializer<T>
+    with RdfListDeserializerMixin<T>
+    implements UnifiedResourceDeserializer<List<T>> {
+  final Deserializer<T>? itemDeserializer;
+
   /// Creates an RDF list deserializer for `List<T>`.
   ///
   /// [itemDeserializer] Optional deserializer for list elements. If not provided,
   /// element deserialization will be resolved through the registry.
-  const RdfListDeserializer([super.itemDeserializer]);
+  const RdfListDeserializer({this.itemDeserializer});
 
   @override
   List<T> fromRdfResource(RdfSubject subject, DeserializationContext context) {
@@ -66,7 +70,7 @@ class RdfListDeserializer<T> extends BaseRdfListDeserializer<List<T>, T> {
           You can certainly use the same base class for that to help you 
           with the rdf:List details: BaseRdfListDeserializer and BaseRdfListSerializer.""");
     }
-    return readRdfList(subject, context).toList();
+    return readRdfList(subject, context, itemDeserializer).toList();
   }
 }
 
@@ -94,17 +98,8 @@ class RdfListDeserializer<T> extends BaseRdfListDeserializer<List<T>, T> {
 ///
 /// Subclasses must implement `fromRdfResource()` to convert the lazy iterable
 /// into the specific collection type required.
-abstract class BaseRdfListDeserializer<C, T>
-    implements UnifiedResourceDeserializer<C> {
-  final Deserializer<T>? _deserializer;
-
-  /// Creates a base RDF list deserializer with an optional item deserializer.
-  ///
-  /// [itemDeserializer] Optional deserializer for individual elements. If not
-  /// provided, the registry will be used to find appropriate deserializers for
-  /// each element type.
-  const BaseRdfListDeserializer(Deserializer<T>? itemDeserializer)
-      : _deserializer = itemDeserializer;
+abstract mixin class RdfListDeserializerMixin<T> {
+  IriTerm? get typeIri => Rdf.List;
 
   /// Reads an RDF list structure and converts it to a typed Dart iterable.
   ///
@@ -145,6 +140,7 @@ abstract class BaseRdfListDeserializer<C, T>
   Iterable<T> readRdfList(
     RdfSubject subject,
     DeserializationContext context,
+    Deserializer<T>? _deserializer,
   ) sync* {
     if (subject == Rdf.nil) {
       return; // rdf:nil represents an empty list
@@ -306,7 +302,4 @@ abstract class BaseRdfListDeserializer<C, T>
     }
     return predicate.toString();
   }
-
-  @override
-  IriTerm? get typeIri => Rdf.List;
 }

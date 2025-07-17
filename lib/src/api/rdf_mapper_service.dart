@@ -372,8 +372,8 @@ final class RdfMapperService {
       register(registry);
     }
     final context = SerializationContextImpl(registry: registry);
-
-    return RdfGraph.fromTriples(context.resource<T>(instance));
+    final (_, triples) = context.serialize(instance);
+    return RdfGraph.fromTriples(triples);
   }
 
   RdfGraph serializeLossless<T>(

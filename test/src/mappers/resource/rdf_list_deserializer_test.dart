@@ -228,8 +228,8 @@ void main() {
       ]);
       context = DeserializationContextImpl(graph: graph, registry: registry);
 
-      final deserializer =
-          RdfListDeserializer<String>(UpperCaseStringDeserializer());
+      final deserializer = RdfListDeserializer<String>(
+          itemDeserializer: UpperCaseStringDeserializer());
       final result = deserializer.fromRdfResource(node1, context);
 
       expect(result, equals(['HELLO', 'WORLD']));
@@ -252,7 +252,7 @@ void main() {
 
       final deserializer = RdfListDeserializer<String>();
       // Get the lazy iterable through the readRdfList method
-      final lazyIterable = deserializer.readRdfList(node1, context);
+      final lazyIterable = deserializer.readRdfList(node1, context, null);
 
       // Test lazy evaluation by taking only first element
       final firstElement = lazyIterable.take(1).single;
@@ -441,8 +441,8 @@ void main() {
             ..registerDeserializer(TestPersonDeserializer()));
 
       // Use specific custom deserializer directly with the list deserializer
-      final deserializer =
-          RdfListDeserializer<TestPerson>(TestPersonDeserializer());
+      final deserializer = RdfListDeserializer<TestPerson>(
+          itemDeserializer: TestPersonDeserializer());
       final result = deserializer.fromRdfResource(listNode1, context);
 
       expect(result.length, equals(2));
@@ -518,8 +518,8 @@ void main() {
       // Register the IRI-to-string deserializer
       context = DeserializationContextImpl(graph: graph, registry: registry);
 
-      final deserializer =
-          RdfListDeserializer<String>(IriToStringDeserializer());
+      final deserializer = RdfListDeserializer<String>(
+          itemDeserializer: IriToStringDeserializer());
       final result = deserializer.fromRdfResource(listNode1, context);
 
       expect(result.length, equals(3));
@@ -553,8 +553,8 @@ void main() {
           registry: registry.clone()
             ..registerDeserializer(CountryIriDeserializer()));
 
-      final deserializer =
-          RdfListDeserializer<Country>(CountryIriDeserializer());
+      final deserializer = RdfListDeserializer<Country>(
+          itemDeserializer: CountryIriDeserializer());
       final result = deserializer.fromRdfResource(listNode1, context);
 
       expect(result.length, equals(3));
@@ -778,7 +778,7 @@ void main() {
       );
 
       final deserializer = RdfListDeserializer<String>();
-      final iterable = deserializer.readRdfList(node1, cyclicContext);
+      final iterable = deserializer.readRdfList(node1, cyclicContext, null);
 
       // Should be able to get first few elements before cycle is detected
       final iterator = iterable.iterator;

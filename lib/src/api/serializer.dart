@@ -211,7 +211,7 @@ abstract interface class GlobalResourceSerializer<T>
 }
 
 typedef CollectionSerializerFactory<C, T> = Serializer<C> Function(
-    Serializer<T>? itemSerializer);
+    {Serializer<T>? itemSerializer});
 
 /// Interface for serializing a Dart collection or container [C] of items [T] into an RDF collection structure.
 ///

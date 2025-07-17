@@ -690,7 +690,7 @@ final class RdfMapper {
   ///
   /// Parameters:
   /// * [instance] - The object to serialize.
-  /// * [contentType] - MIME type for output format (e.g., 'text/turtle', 'application/ld+json').
+  /// * [contentType] - MIME type for output format (e.g., 'text/turtle', 'application/ld+json', 'application/n-triples').
   ///   If omitted, defaults to 'text/turtle'.
   /// * [baseUri] - Optional base URI for the RDF document, used for relative IRI resolution.
   /// * [stringEncoderOptions] - Additional options for string encoding.

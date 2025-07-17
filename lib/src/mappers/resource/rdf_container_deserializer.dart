@@ -49,7 +49,7 @@ import 'package:rdf_vocabularies/rdf.dart';
 /// This class is not typically instantiated directly or registered in the registry,
 /// but rather used by the collection deserialization infrastructure.
 class RdfSeqDeserializer<T> extends BaseRdfContainerListDeserializer<T> {
-  const RdfSeqDeserializer([Deserializer<T>? itemDeserializer])
+  const RdfSeqDeserializer({Deserializer<T>? itemDeserializer})
       : super(Rdf.Seq, itemDeserializer);
 }
 
@@ -58,7 +58,7 @@ class RdfSeqDeserializer<T> extends BaseRdfContainerListDeserializer<T> {
 /// RDF Alternatives represent a set of alternative values where typically only
 /// one should be chosen. The numbered properties may indicate preference order.
 class RdfAltDeserializer<T> extends BaseRdfContainerListDeserializer<T> {
-  const RdfAltDeserializer([Deserializer<T>? itemDeserializer])
+  const RdfAltDeserializer({Deserializer<T>? itemDeserializer})
       : super(Rdf.Alt, itemDeserializer);
 }
 
@@ -68,18 +68,24 @@ class RdfAltDeserializer<T> extends BaseRdfContainerListDeserializer<T> {
 /// The numbered properties don't imply any ordering semantics, but we preserve
 /// the order found in the RDF graph for consistency.
 class RdfBagDeserializer<T> extends BaseRdfContainerListDeserializer<T> {
-  const RdfBagDeserializer([Deserializer<T>? itemDeserializer])
+  const RdfBagDeserializer({Deserializer<T>? itemDeserializer})
       : super(Rdf.Bag, itemDeserializer);
 }
 
 class BaseRdfContainerListDeserializer<T>
-    extends BaseRdfContainerDeserializer<List<T>, T> {
+    with RdfContainerDeserializerMixin<T>
+    implements UnifiedResourceDeserializer<List<T>> {
+  final Deserializer<T>? _deserializer;
+
+  @override
+  final IriTerm? typeIri;
+
   /// Creates an RDF container deserializer for `List<T>`.
   ///
   /// [typeIri] The RDF container type (rdf:Seq, rdf:Bag, or rdf:Alt)
   /// [itemDeserializer] Optional deserializer for container elements. If not provided,
   /// element deserialization will be resolved through the registry.
-  const BaseRdfContainerListDeserializer(super.typeIri, super.itemDeserializer);
+  const BaseRdfContainerListDeserializer(this.typeIri, [this._deserializer]);
 
   @override
   List<T> fromRdfResource(RdfSubject subject, DeserializationContext context) {
@@ -93,7 +99,7 @@ class BaseRdfContainerListDeserializer<T>
           You can use the BaseRdfContainerDeserializer base class to help with 
           the implementation details.""");
     }
-    return readRdfContainer(subject, context).toList();
+    return readRdfContainer(subject, context, typeIri, _deserializer).toList();
   }
 }
 
@@ -130,22 +136,7 @@ class BaseRdfContainerListDeserializer<T>
 ///
 /// Subclasses must implement `fromRdfResource()` to convert the lazy iterable
 /// into the specific collection type required.
-abstract class BaseRdfContainerDeserializer<C, T>
-    implements UnifiedResourceDeserializer<C> {
-  final Deserializer<T>? _deserializer;
-  final IriTerm? typeIri;
-
-  /// Creates a base RDF container deserializer with an optional item deserializer.
-  ///
-  /// [typeIri] The expected RDF container type (rdf:Seq, rdf:Bag, or rdf:Alt).
-  /// If provided, the deserializer will validate that the container has the correct type.
-  /// [itemDeserializer] Optional deserializer for individual elements. If not
-  /// provided, the registry will be used to find appropriate deserializers for
-  /// each element type.
-  const BaseRdfContainerDeserializer(
-      this.typeIri, Deserializer<T>? itemDeserializer)
-      : _deserializer = itemDeserializer;
-
+abstract mixin class RdfContainerDeserializerMixin<T> {
   /// Reads an RDF container structure and converts it to a typed Dart iterable.
   ///
   /// This method processes an RDF container (using numbered properties like `rdf:_1`,
@@ -188,6 +179,8 @@ abstract class BaseRdfContainerDeserializer<C, T>
   Iterable<T> readRdfContainer(
     RdfSubject subject,
     DeserializationContext context,
+    IriTerm? typeIri,
+    Deserializer<T>? deserializer,
   ) sync* {
     // Get all triples for this subject
     final allTriples = context.getTriplesForSubject(subject,
@@ -208,7 +201,7 @@ abstract class BaseRdfContainerDeserializer<C, T>
             .toList();
 
         throw ArgumentError(
-            'Expected container of type ${_formatIri(typeIri!)} but found types: '
+            'Expected container of type ${_formatIri(typeIri)} but found types: '
             '${foundTypes.map(_formatObject).join(', ')}. '
             'Make sure the container has the correct rdf:type declaration.');
       }
@@ -245,7 +238,7 @@ abstract class BaseRdfContainerDeserializer<C, T>
       final triple = numberedTriples[number]!;
       final object = triple.object;
       final deserialized =
-          context.deserialize<T>(object, deserializer: _deserializer);
+          context.deserialize<T>(object, deserializer: deserializer);
       yield deserialized;
     }
   }

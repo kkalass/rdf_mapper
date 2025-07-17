@@ -137,7 +137,99 @@ abstract interface class UnifiedResourceMapper<T>
         UnifiedResourceSerializer<T>,
         UnifiedResourceDeserializer<T> {}
 
-typedef CollectionMapperFactory<C, T> = Mapper<C> Function([Mapper<T>? mapper]);
+typedef CollectionMapperFactory<C, T> = Mapper<C> Function(
+    {Deserializer<T>? itemDeserializer, Serializer<T>? itemSerializer});
+
+/// Adapter that enables type transformation while delegating RDF mapping operations.
+///
+/// This class allows reusing an existing mapper for type [V] to handle type [T] by providing
+/// conversion functions between the two types. It implements the adapter pattern to bridge
+/// between related but different types in the mapping process.
+///
+/// Useful when:
+/// - You have an existing mapper for type [V] and need to support a related type [T]
+/// - Type [T] can be converted to/from type [V] without semantic loss
+/// - You want to avoid duplicating mapping logic for similar types
+///
+/// Example:
+/// ```dart
+/// // Adapt a String mapper to handle a custom wrapper type
+/// class UserId {
+///   final String value;
+///   UserId(this.value);
+/// }
+///
+/// final userIdMapper = AdaptingUnifiedResourceMapper<UserId, String>(
+///   stringMapper,
+///   (userId) => userId.value,        // toWrappedType: UserId → String
+///   (value) => UserId(value),        // fromWrappedType: String → UserId
+/// );
+/// ```
+class AdaptingUnifiedResourceMapper<T, V> implements UnifiedResourceMapper<T> {
+  final UnifiedResourceMapper<V> _wrappedMapper;
+  final V Function(T) _toWrappedType;
+  final T Function(V) _fromWrappedType;
+
+  AdaptingUnifiedResourceMapper(
+      this._wrappedMapper, this._toWrappedType, this._fromWrappedType);
+
+  @override
+  (RdfSubject, Iterable<Triple>) toRdfResource(
+          T value, SerializationContext context, {RdfSubject? parentSubject}) =>
+      _wrappedMapper.toRdfResource(_toWrappedType(value), context,
+          parentSubject: parentSubject);
+
+  @override
+  T fromRdfResource(RdfSubject subject, DeserializationContext context) =>
+      _fromWrappedType(_wrappedMapper.fromRdfResource(subject, context));
+
+  @override
+  IriTerm? get typeIri => _wrappedMapper.typeIri;
+}
+
+/// Adapter that enables type transformation for multi-object mapping operations.
+///
+/// This class allows reusing an existing multi-objects mapper for type [V] to handle type [T]
+/// by providing conversion functions between the two types. It implements the adapter pattern
+/// to bridge between related but different collection types in the mapping process.
+///
+/// Useful when:
+/// - You have an existing mapper for collections of type [V] and need to support collections of type [T]
+/// - Type [T] can be converted to/from type [V] without semantic loss
+/// - You want to avoid duplicating mapping logic for similar collection types
+///
+/// Example:
+/// ```dart
+/// // Adapt a List<String> mapper to handle a List<UserId>
+/// class UserId {
+///   final String value;
+///   UserId(this.value);
+/// }
+///
+/// final userIdListMapper = AdaptingMultiObjectsMapper<List<UserId>, List<String>>(
+///   stringListMapper,
+///   (userIds) => userIds.map((uid) => uid.value).toList(),    // toWrappedType: List<UserId> → List<String>
+///   (values) => values.map((v) => UserId(v)).toList(),        // fromWrappedType: List<String> → List<UserId>
+/// );
+/// ```
+class AdaptingMultiObjectsMapper<T, V> implements MultiObjectsMapper<T> {
+  final MultiObjectsMapper<V> _wrappedMapper;
+  final V Function(T) _toWrappedType;
+  final T Function(V) _fromWrappedType;
+
+  AdaptingMultiObjectsMapper(
+      this._wrappedMapper, this._toWrappedType, this._fromWrappedType);
+
+  @override
+  (Iterable<RdfObject>, Iterable<Triple>) toRdfObjects(
+          T value, SerializationContext context) =>
+      _wrappedMapper.toRdfObjects(_toWrappedType(value), context);
+
+  @override
+  T fromRdfObjects(
+          Iterable<RdfObject> objects, DeserializationContext context) =>
+      _fromWrappedType(_wrappedMapper.fromRdfObjects(objects, context));
+}
 
 class UnifiedResourceMapperBase<T, I> implements UnifiedResourceMapper<T> {
   final UnifiedResourceSerializer<T> _serializer;

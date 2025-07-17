@@ -144,7 +144,8 @@ void main() {
 
       test('creates mapper with correct type constraints', () {
         final stringMapper = RdfSeqMapper<String>();
-        final authorMapper = RdfSeqMapper<TestAuthor>(TestAuthorMapper());
+        final authorMapper =
+            RdfSeqMapper<TestAuthor>(itemMapper: TestAuthorMapper());
 
         expect(stringMapper, isA<RdfSeqMapper<String>>());
         expect(stringMapper, isA<UnifiedResourceMapper<List<String>>>());
@@ -202,7 +203,7 @@ void main() {
           TestAuthor('Alice Smith', 'alice@example.com'),
           TestAuthor('Bob Jones', 'bob@example.com'),
         ];
-        final mapper = RdfSeqMapper<TestAuthor>(TestAuthorMapper());
+        final mapper = RdfSeqMapper<TestAuthor>(itemMapper: TestAuthorMapper());
 
         final (subject, triples) = mapper.toRdfResource(
           authors,
@@ -227,7 +228,8 @@ void main() {
 
       test('uses custom item serializer when provided', () {
         final values = ['test', 'example'];
-        final mapper = RdfSeqMapper<String>(UpperCaseStringMapper());
+        final mapper =
+            RdfSeqMapper<String>(itemMapper: UpperCaseStringMapper());
 
         final (subject, triples) = mapper.toRdfResource(
           values,
@@ -303,7 +305,7 @@ void main() {
           registry: registry,
         );
 
-        final mapper = RdfSeqMapper<TestAuthor>(TestAuthorMapper());
+        final mapper = RdfSeqMapper<TestAuthor>(itemMapper: TestAuthorMapper());
         final result =
             mapper.fromRdfResource(seqSubject, deserializationContext);
 
@@ -363,7 +365,7 @@ void main() {
           TestAuthor('Bob Jones', 'bob@example.com'),
           TestAuthor('Carol Davis', 'carol@example.com'),
         ];
-        final mapper = RdfSeqMapper<TestAuthor>(TestAuthorMapper());
+        final mapper = RdfSeqMapper<TestAuthor>(itemMapper: TestAuthorMapper());
 
         // Serialize
         final (subject, triples) =
@@ -592,8 +594,8 @@ void main() {
     });
 
     test('factory functions support custom item mappers', () {
-      final authorFactory =
-          (Mapper<TestAuthor>? mapper) => RdfSeqMapper<TestAuthor>(mapper);
+      final authorFactory = (Mapper<TestAuthor>? mapper) =>
+          RdfSeqMapper<TestAuthor>(itemMapper: mapper);
 
       final defaultMapper = authorFactory(null);
       final customMapper = authorFactory(TestAuthorMapper());

@@ -745,28 +745,35 @@ class ImmutableList<T> {
 
 /// Serializer for ImmutableList using RDF list structure (preserves order)
 class ImmutableListSerializer<T>
-    extends BaseRdfListSerializer<ImmutableList<T>, T> {
-  const ImmutableListSerializer(super.itemSerializer);
+    with RdfListSerializerMixin<T>
+    implements UnifiedResourceSerializer<ImmutableList<T>> {
+  final Serializer<T>? _itemSerializer;
+
+  const ImmutableListSerializer(this._itemSerializer);
 
   @override
   (RdfSubject, Iterable<Triple>) toRdfResource(
       ImmutableList<T> collection, SerializationContext context,
       {RdfSubject? parentSubject}) {
-    final (subject, triples) =
-        buildRdfList(collection._items, context, parentSubject: parentSubject);
+    final (subject, triples) = buildRdfList(
+        collection._items, context, _itemSerializer,
+        parentSubject: parentSubject);
     return (subject, triples.toList());
   }
 }
 
 /// Deserializer for ImmutableList from RDF list structure (preserves order)
 class ImmutableListDeserializer<T>
-    extends BaseRdfListDeserializer<ImmutableList<T>, T> {
-  const ImmutableListDeserializer(super.itemDeserializer);
+    with RdfListDeserializerMixin<T>
+    implements UnifiedResourceDeserializer<ImmutableList<T>> {
+  final Deserializer<T>? itemDeserializer;
+
+  const ImmutableListDeserializer({this.itemDeserializer});
 
   @override
   ImmutableList<T> fromRdfResource(
       RdfSubject subject, DeserializationContext context) {
-    final items = readRdfList(subject, context);
+    final items = readRdfList(subject, context, itemDeserializer);
     return ImmutableList(items);
   }
 }
@@ -799,7 +806,7 @@ extension CustomCollectionBuilderExtensions<S extends RdfSubject>
       addCollection<ImmutableList<T>, T>(
         predicate,
         collection,
-        (itemSerializer) => ImmutableListSerializer<T>(itemSerializer),
+        ({itemSerializer}) => ImmutableListSerializer<T>(itemSerializer),
       );
 }
 
@@ -967,7 +974,7 @@ class ImmutableListMultiObjectsSerializer<T>
     implements MultiObjectsSerializer<ImmutableList<T>> {
   final Serializer<T>? itemSerializer;
 
-  const ImmutableListMultiObjectsSerializer([this.itemSerializer]);
+  const ImmutableListMultiObjectsSerializer({this.itemSerializer});
 
   @override
   (Iterable<RdfObject>, Iterable<Triple>) toRdfObjects(
@@ -987,7 +994,7 @@ class ImmutableListMultiObjectsDeserializer<T>
     implements MultiObjectsDeserializer<ImmutableList<T>> {
   final Deserializer<T>? itemDeserializer;
 
-  const ImmutableListMultiObjectsDeserializer([this.itemDeserializer]);
+  const ImmutableListMultiObjectsDeserializer({this.itemDeserializer});
 
   @override
   ImmutableList<T> fromRdfObjects(

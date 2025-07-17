@@ -25,11 +25,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added `MultiObjectsSerializer<T>`, `MultiObjectsDeserializer<T>`, and `MultiObjectsMapper<T>` interfaces
   - Added `UnorderedItemsMapper<T>` and related classes for unordered collections using multiple RDF triples with same predicate
   - Enables choice between RDF list structures (ordered, structured) and multi-objects approach (unordered, flat)
+- Added adapter classes for type transformation in mapping operations:
+  - Added `AdaptingUnifiedResourceMapper<T, V>` for transforming between related types in unified resource mapping
+  - Added `AdaptingMultiObjectsMapper<T, V>` for transforming between related types in multi-objects mapping
+  - Enables reuse of existing mappers for similar types without duplicating mapping logic
 - Added `InvalidRdfListStructureException` with detailed error analysis and suggestions for alternative approaches
 - Added `CircularRdfListException` for detecting circular references in RDF list structures
 - Added `UriIriMapper` for mapping Dart `Uri` objects to IRI terms
 - Added cycle detection in RDF list processing to prevent infinite loops
 - Added enhanced deserialization fallback to find deserializers by RDF datatype when type-based lookup fails
+- Added support for 'application/n-triples' content type in serialization documentation
 
 ### Changed
 
@@ -45,8 +50,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Breaking Change**: Updated RDF core dependency to `^0.9.5` (from `^0.9.4`) with corresponding API changes:
   - `RdfGraph.fromTriples()` constructor now used instead of `RdfGraph(triples: ...)`
 - **Breaking Change**: Modified `SerializationContext.serialize()` return type from `(RdfTerm, Iterable<Triple>)` to `(Iterable<RdfTerm>, Iterable<Triple>)` to support multi-objects serialization
-- **Breaking Change**: Modified `CollectionDeserializerFactory<C, T>` and `CollectionSerializerFactory<C, T>` type definitions to return `Deserializer<C>` and `Serializer<C>` respectively (instead of `UnifiedResourceDeserializer<C>` and `UnifiedResourceSerializer<C>`)
-- **Breaking Change**: Modified `CollectionMapperFactory<C, T>` type definition to return `Mapper<C>` (instead of `UnifiedResourceMapper<C>`)
 - **Breaking Change**: Simplified API by consolidating deserializer parameters - replaced multiple specific deserializer parameters with single `deserializer` parameter across:
   - `DeserializationService.require()`, `optional()`, `collect()`, `getValues()`, `getMap()` methods
   - `ResourceReader.require()`, `optional()`, `getValues()`, `getMap()` methods  
@@ -57,6 +60,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced serialization context with unified `serialize()` method supporting all value types
 - Enhanced collection deserialization to automatically detect and use multi-objects deserializers when available
 - Updated main example to demonstrate RDF list usage with proper order preservation for book chapters
+- Added `custom_collection_type_example.dart` demonstrating multiple RDF mapping strategies for the same custom collection type:
+  - Strategy 1: RDF List (rdf:first/rdf:rest structure) for preserving order
+  - Strategy 2: RDF Sequence (rdf:_1, rdf:_2, etc.) for numbered ordering
+  - Strategy 3: Multiple triples for efficient unordered collections
 
 ## [0.8.8] - 2025-07-10
 
