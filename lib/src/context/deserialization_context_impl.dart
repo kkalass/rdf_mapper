@@ -253,8 +253,9 @@ class DeserializationContextImpl extends DeserializationContext
   C requireCollection<C, T>(RdfSubject subject, RdfPredicate predicate,
       CollectionDeserializerFactory<C, T> collectionDeserializerFactory,
       {Deserializer<T>? itemDeserializer}) {
-    final deserializer =
-        collectionDeserializerFactory(itemDeserializer: itemDeserializer);
+    final deserializer = itemDeserializer == null
+        ? collectionDeserializerFactory()
+        : collectionDeserializerFactory(itemDeserializer: itemDeserializer);
 
     return require<C>(subject, predicate, deserializer: deserializer);
   }
@@ -263,8 +264,9 @@ class DeserializationContextImpl extends DeserializationContext
   C? optionalCollection<C, T>(RdfSubject subject, RdfPredicate predicate,
       CollectionDeserializerFactory<C, T> collectionDeserializerFactory,
       {Deserializer<T>? itemDeserializer}) {
-    final deserializer =
-        collectionDeserializerFactory(itemDeserializer: itemDeserializer);
+    final deserializer = itemDeserializer == null
+        ? collectionDeserializerFactory()
+        : collectionDeserializerFactory(itemDeserializer: itemDeserializer);
 
     return optional<C>(subject, predicate, deserializer: deserializer);
   }
