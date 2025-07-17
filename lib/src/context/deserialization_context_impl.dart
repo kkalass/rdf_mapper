@@ -1,5 +1,4 @@
 import 'package:logging/logging.dart';
-import 'package:meta/meta.dart';
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
 import 'package:rdf_vocabularies/rdf.dart';
@@ -321,7 +320,7 @@ class DeserializationContextImpl extends DeserializationContext
       );
 
   /// Recursively collects blank nodes from triples, maintaining a visited set to prevent cycles
-  @visibleForTesting
+  // @visibleForTesting
   static Set<BlankNodeTerm> getBlankNodeObjectsDeep(
       RdfGraph graph, Iterable<Triple> triples, Set<BlankNodeTerm> visited) {
     final blankNodes = triples
