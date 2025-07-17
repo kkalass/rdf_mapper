@@ -55,7 +55,7 @@
     <section class="multi-line-signature">
       
 <span class="returntype">void</span>
-<span class="name ">registerMapper</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="registerMapper-param-mapper"><span class="type-annotation"><a href="../../rdf_mapper/Mapper-class.html">Mapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">mapper</span></span></li>
+<span class="name ">registerMapper</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="registerMapper-param-mapper"><span class="type-annotation"><a href="../../rdf_mapper/BaseMapper-class.html">BaseMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">mapper</span></span></li>
 </ol>)
 
       
@@ -102,7 +102,7 @@ for serialization to work correctly.</p>
 <pre class="language-dart"><code class="language-dart">class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
 
   @override
-  (IriTerm, List&lt;Triple&gt;) toRdfResource(Person instance, SerializationContext context, {RdfSubject? parentSubject}) {
+  (IriTerm, Iterable&lt;Triple&gt;) toRdfResource(Person instance, SerializationContext context, {RdfSubject? parentSubject}) {
     return context.resourceBuilder(IriTerm(instance.id))
       .addValue(FoafPerson.name, instance.name)
       .build();
@@ -153,7 +153,7 @@ rdfMapper.registerMapper&lt;MyCustomGraph&gt;(MyCustomGraphMapper());
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void registerMapper&lt;T&gt;(Mapper&lt;T&gt; mapper) {
+  <pre class="language-dart"><code class="language-dart">void registerMapper&lt;T&gt;(BaseMapper&lt;T&gt; mapper) {
   registry.registerMapper(mapper);
 }</code></pre>
 </section>
@@ -183,7 +183,7 @@ rdfMapper.registerMapper&lt;MyCustomGraph&gt;(MyCustomGraphMapper());
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

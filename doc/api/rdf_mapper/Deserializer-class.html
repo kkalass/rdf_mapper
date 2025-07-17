@@ -54,33 +54,29 @@
 </h1></div>
 
     
-<section class="desc markdown">
-  <p>Base marker interface for all RDF deserializers.</p>
-<p>Deserializers convert RDF representations into Dart objects, enabling the transformation
-of semantic web data into domain models. This interface serves as the root of the
-deserializer hierarchy, providing a common type for all deserializers.</p>
-<p>The deserializer system is divided into two main branches:</p>
-<ul>
-<li><a href="../rdf_mapper/TermDeserializer-class.html">TermDeserializer</a>: For converting single RDF terms to objects</li>
-<li><a href="../rdf_mapper/ResourceDeserializer-class.html">ResourceDeserializer</a>: For converting subjects with associated triples to objects</li>
-</ul>
-<p>This serves as a semantic marker to group all deserializers in the system.
-It doesn't define any methods itself but acts as a common ancestor.</p>
-</section>
 
 
     <section>
       <dl class="dl-horizontal">
         
+  <dt>Inheritance</dt>
+  <dd>
+    <ul class="gt-separated dark clazz-relationships">
+      <li><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></li>
+        <li><a href="../rdf_mapper/BaseDeserializer-class.html">BaseDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></li>
+      <li>Deserializer</li>
+    </ul>
+  </dd>
 
         
         
 
           <dt>Implementers</dt>
           <dd><ul class="comma-separated clazz-relationships">
+              <li><a href="../rdf_mapper/Mapper-class.html">Mapper</a></li>
+              <li><a href="../rdf_mapper/MultiObjectsDeserializer-class.html">MultiObjectsDeserializer</a></li>
               <li><a href="../rdf_mapper/ResourceDeserializer-class.html">ResourceDeserializer</a></li>
               <li><a href="../rdf_mapper/TermDeserializer-class.html">TermDeserializer</a></li>
-              <li><a href="../rdf_mapper/UnmappedTriplesDeserializer-class.html">UnmappedTriplesDeserializer</a></li>
           </ul></dd>
 
         
@@ -206,7 +202,7 @@ It doesn't define any methods itself but acts as a common ancestor.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

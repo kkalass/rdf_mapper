@@ -70,7 +70,7 @@ that were captured using <a href="../../rdf_mapper/ResourceReader/getUnmapped.ht
 deserialization operation. This ensures complete round-trip fidelity when
 serializing objects that contain unmapped data.</p>
 <p>The <code>value</code> parameter should be a data structure containing RDF triples,
-typically an <a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfGraph-class.html">RdfGraph</a> or a custom type that implements <a href="../../rdf_mapper/UnmappedTriplesMapper-class.html">UnmappedTriplesMapper</a>.
+typically an <a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfGraph-class.html">RdfGraph</a> or a custom type that implements <a href="../../rdf_mapper/UnmappedTriplesMapper-class.html">UnmappedTriplesMapper</a>.
 If no <code>unmappedTriplesSerializer</code> is provided, the system will attempt to
 find a registered mapper for the type of <code>value</code>.</p>
 <p>Usage example:</p>
@@ -80,11 +80,8 @@ find a registered mapper for the type of <code>value</code>.</p>
   .addUnmapped(person.unmappedGraph)  // Restore previously captured data
   .build();
 </code></pre>
-<p>Parameters:</p>
-<ul>
-<li><code>value</code> - The unmapped data structure containing RDF triples to add</li>
-<li><code>unmappedTriplesSerializer</code> - Optional custom serializer for the unmapped data type</li>
-</ul>
+<p>The <code>value</code> is the unmapped data structure containing RDF triples to add.
+The optional <code>unmappedTriplesSerializer</code> can be provided for custom serialization of the unmapped data type.</p>
 <p>Returns this builder for method chaining.</p>
 </section>
 
@@ -96,7 +93,7 @@ find a registered mapper for the type of <code>value</code>.</p>
   V value, {
   UnmappedTriplesSerializer&lt;V&gt;? unmappedTriplesSerializer,
 }) {
-  _triples.addAll(
+  _triples.add(
     _service.unmappedTriples(_subject, value,
         unmappedTriplesSerializer: unmappedTriplesSerializer),
   );
@@ -129,7 +126,7 @@ find a registered mapper for the type of <code>value</code>.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

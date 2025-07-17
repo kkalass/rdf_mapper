@@ -55,13 +55,10 @@
     <section class="multi-line-signature">
       
 <span class="returntype">T</span>
-<span class="name ">require</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="require-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span></li>
-<li><span class="parameter" id="require-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, {</span></li>
+<span class="name ">require</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="require-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span></li>
+<li><span class="parameter" id="require-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, {</span></li>
 <li><span class="parameter" id="require-param-enforceSingleValue"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">enforceSingleValue</span> = <span class="default-value">true</span>, </span></li>
-<li><span class="parameter" id="require-param-globalResourceDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/GlobalResourceDeserializer-class.html">GlobalResourceDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">globalResourceDeserializer</span>, </span></li>
-<li><span class="parameter" id="require-param-iriTermDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/IriTermDeserializer-class.html">IriTermDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">iriTermDeserializer</span>, </span></li>
-<li><span class="parameter" id="require-param-literalTermDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/LiteralTermDeserializer-class.html">LiteralTermDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">literalTermDeserializer</span>, </span></li>
-<li><span class="parameter" id="require-param-localResourceDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/LocalResourceDeserializer-class.html">LocalResourceDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">localResourceDeserializer</span>, </span></li>
+<li><span class="parameter" id="require-param-deserializer"><span class="type-annotation"><a href="../../rdf_mapper/Deserializer-class.html">Deserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">deserializer</span>, </span></li>
 </ol>})
 
       
@@ -77,10 +74,7 @@ and throws an exception if the value cannot be found.</p>
 <li><code>subject</code> The subject IRI of the object we are working with</li>
 <li><code>predicate</code> The predicate IRI of the property</li>
 <li><code>enforceSingleValue</code> If true, throws an exception when multiple values exist</li>
-<li><code>globalResourceDeserializer</code> Optional custom deserializer for global resources</li>
-<li><code>iriTermDeserializer</code> Optional custom deserializer for IRI terms</li>
-<li><code>literalTermDeserializer</code> Optional custom deserializer for literal terms</li>
-<li><code>localResourceDeserializer</code> Optional custom deserializer for local resources</li>
+<li><code>deserializer</code> Optional custom deserializer</li>
 </ul>
 <p>Returns the property value converted to the requested type.</p>
 <p>Throws <a href="../../rdf_mapper/PropertyValueNotFoundException-class.html">PropertyValueNotFoundException</a> if the property doesn't exist.
@@ -95,10 +89,7 @@ Throws <a href="../../rdf_mapper/TooManyPropertyValuesException-class.html">TooM
   RdfSubject subject,
   RdfPredicate predicate, {
   bool enforceSingleValue = true,
-  GlobalResourceDeserializer&lt;T&gt;? globalResourceDeserializer,
-  IriTermDeserializer&lt;T&gt;? iriTermDeserializer,
-  LiteralTermDeserializer&lt;T&gt;? literalTermDeserializer,
-  LocalResourceDeserializer&lt;T&gt;? localResourceDeserializer,
+  Deserializer&lt;T&gt;? deserializer,
 });</code></pre>
 </section>
 
@@ -127,7 +118,7 @@ Throws <a href="../../rdf_mapper/TooManyPropertyValuesException-class.html">TooM
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

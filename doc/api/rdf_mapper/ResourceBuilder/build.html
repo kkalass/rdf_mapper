@@ -54,7 +54,7 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype">(<span class="field"><span class="type-annotation">S</span>, </span><span class="field"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/Triple-class.html">Triple</a></span>&gt;</span></span></span>)</span>
+<span class="returntype">(<span class="field"><span class="type-annotation">S</span>, </span><span class="field"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/Triple-class.html">Triple</a></span>&gt;</span></span></span>)</span>
 <span class="name ">build</span>(<wbr>)
 
       
@@ -77,8 +77,8 @@ and an unmodifiable list of all the triples that have been created.</p>
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">(S, List&lt;Triple&gt;) build() {
-  return (_subject, List.unmodifiable(_triples));
+  <pre class="language-dart"><code class="language-dart">(S, Iterable&lt;Triple&gt;) build() {
+  return (_subject, _triples.expand((x) =&gt; x));
 }</code></pre>
 </section>
 
@@ -107,7 +107,7 @@ and an unmodifiable list of all the triples that have been created.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

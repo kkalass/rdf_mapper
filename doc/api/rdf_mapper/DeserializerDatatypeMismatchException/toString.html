@@ -147,8 +147,8 @@ Other Solutions:
 
  • Manual (Custom resource mapper):
 
-   reader.require(myPredicate, literalTermDeserializer: ${mapperRuntimeType}(${dartActual}))
-   builder.addValue(myPredicate, myValue, literalTermSerializer: ${mapperRuntimeType}(${dartActual}))
+   reader.require(myPredicate, deserializer: ${mapperRuntimeType}(${dartActual}))
+   builder.addValue(myPredicate, myValue, serializer: ${mapperRuntimeType}(${dartActual}))
 
 3. Custom mapper bypass:
  Use bypassDatatypeCheck: true when calling context.fromLiteralTerm
@@ -185,7 +185,7 @@ to the same RDF datatype (${shortExpected}), preserving semantic meaning and pre
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

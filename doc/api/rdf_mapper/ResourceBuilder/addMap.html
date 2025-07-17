@@ -55,11 +55,9 @@
     <section class="multi-line-signature">
       
 <span class="returntype"><a href="../../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
-<span class="name ">addMap</span>&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="addMap-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span></li>
+<span class="name ">addMap</span>&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="addMap-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span></li>
 <li><span class="parameter" id="addMap-param-instance"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span> <span class="parameter-name">instance</span>, {</span></li>
-<li><span class="parameter" id="addMap-param-literalTermSerializer"><span class="type-annotation"><a href="../../rdf_mapper/LiteralTermSerializer-class.html">LiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">literalTermSerializer</span>, </span></li>
-<li><span class="parameter" id="addMap-param-iriTermSerializer"><span class="type-annotation"><a href="../../rdf_mapper/IriTermSerializer-class.html">IriTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">iriTermSerializer</span>, </span></li>
-<li><span class="parameter" id="addMap-param-resourceSerializer"><span class="type-annotation"><a href="../../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">resourceSerializer</span>, </span></li>
+<li><span class="parameter" id="addMap-param-serializer"><span class="type-annotation"><a href="../../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">serializer</span>, </span></li>
 </ol>})
 
       
@@ -77,31 +75,26 @@ the serializer provided.</p>
 builder.addMap(
   Schema.additionalProperty,
   metadata,
-  resourceSerializer: MetadataEntrySerializer(),
+  serializer: MetadataEntrySerializer(),
 );
 
 // Serializes map entries as IRI terms
 builder.addMap(
   Schema.sameAs,
   uriMappings,
-  iriTermSerializer: UriMappingSerializer(),
+  serializer: UriMappingSerializer(),
 );
 
 // Serializes map entries as literal terms
 builder.addMap(
   Schema.propertyValue,
   keyValuePairs,
-  literalTermSerializer: KeyValueSerializer(),
+  serializer: KeyValueSerializer(),
 );
 </code></pre>
-<p>Parameters:</p>
-<ul>
-<li><code>predicate</code>: The predicate for the relationships.</li>
-<li><code>instance</code>: The map to serialize.</li>
-<li><code>literalTermSerializer</code>: Optional serializer for map entries as literals.</li>
-<li><code>iriTermSerializer</code>: Optional serializer for map entries as IRIs.</li>
-<li><code>resourceSerializer</code>: Optional serializer for map entries as resources.</li>
-</ul>
+<p>The <code>predicate</code> is the predicate for the relationships.
+The <code>instance</code> is the map to serialize.
+The optional <code>serializer</code> can be provided for custom serialization of map entries.</p>
 <p>Returns this builder for method chaining.</p>
 </section>
 
@@ -109,18 +102,15 @@ builder.addMap(
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">ResourceBuilder&lt;S&gt; addMap&lt;K, V&gt;(
-  RdfPredicate predicate,
-  Map&lt;K, V&gt; instance, {
-  LiteralTermSerializer&lt;MapEntry&lt;K, V&gt;&gt;? literalTermSerializer,
-  IriTermSerializer&lt;MapEntry&lt;K, V&gt;&gt;? iriTermSerializer,
-  ResourceSerializer&lt;MapEntry&lt;K, V&gt;&gt;? resourceSerializer,
-}) {
-  _triples.addAll(
-    _service.valueMap(_subject, predicate, instance,
-        resourceSerializer: resourceSerializer,
-        iriTermSerializer: iriTermSerializer,
-        literalTermSerializer: literalTermSerializer),
+  <pre class="language-dart"><code class="language-dart">ResourceBuilder&lt;S&gt; addMap&lt;K, V&gt;(RdfPredicate predicate, Map&lt;K, V&gt; instance,
+    {Serializer&lt;MapEntry&lt;K, V&gt;&gt;? serializer}) {
+  _triples.add(
+    _service.valueMap(
+      _subject,
+      predicate,
+      instance,
+      serializer: serializer,
+    ),
   );
   return this;
 }</code></pre>
@@ -151,7 +141,7 @@ builder.addMap(
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

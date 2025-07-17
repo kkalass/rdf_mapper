@@ -74,7 +74,7 @@ basic data types without requiring custom mappers.</p>
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">RdfMapperRegistry() {
   &#47;&#47; Register standard mappers
-  registerMapper(const IriFullMapper());
+  registerMapper(const UriIriMapper());
 
   &#47;&#47; Register mappers for common literal types
   registerMapper(const StringMapper());
@@ -89,8 +89,7 @@ basic data types without requiring custom mappers.</p>
   registerMapper(const IriTermMapMapper());
 
   &#47;&#47; Register generic mappers for resources
-  registerMapper(const RdfGraphGlobalResourceMapper());
-  registerMapper(const RdfGraphLocalResourceMapper());
+  registerMapper(const RDFGraphResourceMapper());
 }</code></pre>
 </section>
 
@@ -119,7 +118,7 @@ basic data types without requiring custom mappers.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

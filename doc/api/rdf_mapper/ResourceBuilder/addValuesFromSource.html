@@ -55,19 +55,52 @@
     <section class="multi-line-signature">
       
 <span class="returntype"><a href="../../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
-<span class="name ">addValuesFromSource</span>&lt;<wbr><span class="type-parameter">A</span>, <span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="addValuesFromSource-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span></li>
+<span class="name ">addValuesFromSource</span>&lt;<wbr><span class="type-parameter">A</span>, <span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="addValuesFromSource-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span></li>
 <li><span class="parameter" id="addValuesFromSource-param-toIterable"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">toIterable</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-"><span class="type-annotation">A</span></span></li>
 </ol>), </span></li>
 <li><span class="parameter" id="addValuesFromSource-param-instance"><span class="type-annotation">A</span> <span class="parameter-name">instance</span>, {</span></li>
-<li><span class="parameter" id="addValuesFromSource-param-literalTermSerializer"><span class="type-annotation"><a href="../../rdf_mapper/LiteralTermSerializer-class.html">LiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">literalTermSerializer</span>, </span></li>
-<li><span class="parameter" id="addValuesFromSource-param-iriTermSerializer"><span class="type-annotation"><a href="../../rdf_mapper/IriTermSerializer-class.html">IriTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">iriTermSerializer</span>, </span></li>
-<li><span class="parameter" id="addValuesFromSource-param-resourceSerializer"><span class="type-annotation"><a href="../../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">resourceSerializer</span>, </span></li>
+<li><span class="parameter" id="addValuesFromSource-param-serializer"><span class="type-annotation"><a href="../../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">serializer</span>, </span></li>
 </ol>})
 
       
 
     </section>
     
+<section class="desc markdown">
+  <p>Adds multiple property values extracted from a source object using a transformation function.</p>
+<p>This advanced method allows for indirect value extraction, where values are obtained
+by applying a transformation function to a source object. This is particularly useful
+when the source object contains the values in a different structure than needed for RDF.</p>
+<p>The transformation function receives the source instance and must return an iterable
+of values that will be individually serialized and added as separate triples with
+the same predicate.</p>
+<p>Common use cases:</p>
+<ul>
+<li>Extracting values from nested collections</li>
+<li>Transforming or filtering data during serialization</li>
+<li>Adapting data structures that don't directly match RDF patterns</li>
+</ul>
+<p>Example usage:</p>
+<pre class="language-dart"><code class="language-dart">// Extract email addresses from a person's contact info
+builder.addValuesFromSource(
+  Schema.email,
+  (person) =&gt; person.contactInfo.emailAddresses,
+  person
+);
+
+// Transform and filter a list of roles
+builder.addValuesFromSource(
+  Schema.jobTitle,
+  (employee) =&gt; employee.roles.where((r) =&gt; r.isActive).map((r) =&gt; r.title),
+  employee
+);
+</code></pre>
+<p>The <code>predicate</code> is the RDF predicate that defines the relationship.
+The <code>toIterable</code> is a function that extracts values from the source instance.
+The <code>instance</code> is the source object to extract values from.
+The optional <code>serializer</code> can be provided for custom serialization of each extracted value.</p>
+<p>Returns this builder for method chaining.</p>
+</section>
 
 
     
@@ -77,15 +110,11 @@
   RdfPredicate predicate,
   Iterable&lt;T&gt; Function(A) toIterable,
   A instance, {
-  LiteralTermSerializer&lt;T&gt;? literalTermSerializer,
-  IriTermSerializer&lt;T&gt;? iriTermSerializer,
-  ResourceSerializer&lt;T&gt;? resourceSerializer,
+  Serializer&lt;T&gt;? serializer,
 }) {
-  _triples.addAll(
+  _triples.add(
     _service.valuesFromSource(_subject, predicate, toIterable, instance,
-        literalTermSerializer: literalTermSerializer,
-        iriTermSerializer: iriTermSerializer,
-        resourceSerializer: resourceSerializer),
+        serializer: serializer),
   );
   return this;
 }</code></pre>
@@ -116,7 +145,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

@@ -54,15 +54,13 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
-<span class="name ">valuesFromSource</span>&lt;<wbr><span class="type-parameter">A</span>, <span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="valuesFromSource-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span></li>
-<li><span class="parameter" id="valuesFromSource-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span></li>
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
+<span class="name ">valuesFromSource</span>&lt;<wbr><span class="type-parameter">A</span>, <span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="valuesFromSource-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span></li>
+<li><span class="parameter" id="valuesFromSource-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span></li>
 <li><span class="parameter" id="valuesFromSource-param-toIterable"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">toIterable</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-"><span class="type-annotation">A</span></span></li>
 </ol>), </span></li>
 <li><span class="parameter" id="valuesFromSource-param-instance"><span class="type-annotation">A</span> <span class="parameter-name">instance</span>, {</span></li>
-<li><span class="parameter" id="valuesFromSource-param-literalTermSerializer"><span class="type-annotation"><a href="../../rdf_mapper/LiteralTermSerializer-class.html">LiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">literalTermSerializer</span>, </span></li>
-<li><span class="parameter" id="valuesFromSource-param-iriTermSerializer"><span class="type-annotation"><a href="../../rdf_mapper/IriTermSerializer-class.html">IriTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">iriTermSerializer</span>, </span></li>
-<li><span class="parameter" id="valuesFromSource-param-resourceSerializer"><span class="type-annotation"><a href="../../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">resourceSerializer</span>, </span></li>
+<li><span class="parameter" id="valuesFromSource-param-serializer"><span class="type-annotation"><a href="../../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">serializer</span>, </span></li>
 </ol>})
 
       
@@ -74,14 +72,12 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">List&lt;Triple&gt; valuesFromSource&lt;A, T&gt;(
+  <pre class="language-dart"><code class="language-dart">Iterable&lt;Triple&gt; valuesFromSource&lt;A, T&gt;(
   RdfSubject subject,
   RdfPredicate predicate,
   Iterable&lt;T&gt; Function(A) toIterable,
   A instance, {
-  LiteralTermSerializer&lt;T&gt;? literalTermSerializer,
-  IriTermSerializer&lt;T&gt;? iriTermSerializer,
-  ResourceSerializer&lt;T&gt;? resourceSerializer,
+  Serializer&lt;T&gt;? serializer,
 });</code></pre>
 </section>
 
@@ -110,7 +106,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

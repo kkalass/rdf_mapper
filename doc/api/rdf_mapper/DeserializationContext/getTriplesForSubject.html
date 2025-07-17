@@ -54,22 +54,57 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
-<span class="name ">getTriplesForSubject</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="getTriplesForSubject-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, {</span></li>
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
+<span class="name ">getTriplesForSubject</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="getTriplesForSubject-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, {</span></li>
 <li><span class="parameter" id="getTriplesForSubject-param-includeBlankNodes"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">includeBlankNodes</span> = <span class="default-value">true</span>, </span></li>
+<li><span class="parameter" id="getTriplesForSubject-param-trackRead"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">trackRead</span> = <span class="default-value">true</span>, </span></li>
 </ol>})
 
       
 
     </section>
     
+<section class="desc markdown">
+  <p>Retrieves all RDF triples where the given subject is the subject of the triple.</p>
+<p>This method provides direct access to the raw RDF graph data for a specific subject,
+enabling fine-grained control over the deserialization process. It's particularly
+useful when implementing custom deserializers that need to examine all properties
+of a resource or when performing complex graph traversals.</p>
+<p>The method supports filtering and tracking options to control the scope of
+retrieved triples and their impact on the completeness tracking system.</p>
+<p><strong>Blank Node Handling</strong>: When <code>includeBlankNodes</code> is true, the method will also
+return triples where blank nodes that appear as objects in the original subject's
+triples are themselves used as subjects. This process continues recursively,
+following the entire chain of blank node references to enable complete traversal
+of deeply nested anonymous structures.</p>
+<p><strong>Tracking Integration</strong>: The <code>trackRead</code> parameter controls whether the retrieved
+triples are automatically marked as processed in the completeness tracking system.
+Set to false when you need to examine triples without affecting tracking state.
+When <code>trackRead</code> is false, the caller is responsible for manually calling
+<code>trackTriplesRead</code> with the appropriate selection of triples to maintain
+completeness tracking accuracy.</p>
+<p>Example usage:</p>
+<pre class="language-dart"><code class="language-dart">// Get all triples for a person, including nested blank nodes
+final triples = context.getTriplesForSubject(personIri);
+
+// Examine triples without marking them as read
+final untracked = context.getTriplesForSubject(
+  personIri,
+  trackRead: false
+);
+</code></pre>
+<p><code>subject</code> The RDF subject (IRI or blank node) to retrieve triples for.
+<code>includeBlankNodes</code> Whether to include triples from referenced blank nodes (default: true).
+<code>trackRead</code> Whether to mark retrieved triples as read in the tracking system (default: true).</p>
+<p>Returns a list of triples where the subject matches the given parameter.</p>
+</section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">List&lt;Triple&gt; getTriplesForSubject(RdfSubject subject,
-    {bool includeBlankNodes = true});</code></pre>
+  <pre class="language-dart"><code class="language-dart">Iterable&lt;Triple&gt; getTriplesForSubject(RdfSubject subject,
+    {bool includeBlankNodes = true, bool trackRead = true});</code></pre>
 </section>
 
 
@@ -97,7 +132,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

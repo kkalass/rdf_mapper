@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the buildRdfContainer method from the RdfContainerSerializerMixin class, for the Dart programming language.">
+  <title>buildRdfContainer method - RdfContainerSerializerMixin class - rdf_mapper library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper.dart</a></li>
+    <li><a href="../../rdf_mapper/RdfContainerSerializerMixin-class.html">RdfContainerSerializerMixin<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
+    <li class="self-crumb">buildRdfContainer method</li>
+  </ol>
+  <div class="self-name">buildRdfContainer</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="rdf_mapper&#47;RdfContainerSerializerMixin-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">buildRdfContainer</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype">(<span class="field"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfSubject-class.html">RdfSubject</a></span>, </span><span class="field"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/Triple-class.html">Triple</a></span>&gt;</span></span></span>)</span>
+<span class="name ">buildRdfContainer</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="buildRdfContainer-param-containerSubject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">containerSubject</span>, </span></li>
+<li><span class="parameter" id="buildRdfContainer-param-values"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">values</span>, </span></li>
+<li><span class="parameter" id="buildRdfContainer-param-context"><span class="type-annotation"><a href="../../rdf_mapper/SerializationContext-class.html">SerializationContext</a></span> <span class="parameter-name">context</span>, </span></li>
+<li><span class="parameter" id="buildRdfContainer-param-typeIri"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">typeIri</span>, </span></li>
+<li><span class="parameter" id="buildRdfContainer-param-serializer"><span class="type-annotation"><a href="../../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">serializer</span>, {</span></li>
+<li><span class="parameter" id="buildRdfContainer-param-parentSubject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfSubject-class.html">RdfSubject</a>?</span> <span class="parameter-name">parentSubject</span>, </span></li>
+</ol>})
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Builds an RDF container structure from a Dart iterable.</p>
+<p>This method creates RDF container representations using numbered properties
+(rdf:_1, rdf:_2, etc.) to reference collection elements. The container is
+typed with the appropriate RDF container type (Seq, Bag, or Alt).</p>
+<p><strong>Container Structure Created</strong>:</p>
+<pre class="language-turtle"><code class="language-turtle">_:container a rdf:Seq ;  # or rdf:Bag, rdf:Alt
+  rdf:_1 &lt;first-element&gt; ;
+  rdf:_2 &lt;second-element&gt; ;
+  rdf:_3 &lt;third-element&gt; .
+</code></pre>
+<p><strong>Lazy Evaluation</strong>: The method returns an iterable that generates triples
+on-demand, making it memory-efficient for large collections.</p>
+<p><strong>Usage by Subclasses</strong>: Concrete serializers should call this method from
+their <code>toRdfResource()</code> implementation, passing the collection as an iterable.</p>
+<p>Example implementation:</p>
+<pre class="language-dart"><code class="language-dart">@override
+(RdfSubject, Iterable&lt;Triple&gt;) toRdfResource(List&lt;T&gt; values, SerializationContext context,
+    {RdfSubject? parentSubject}) {
+  final (subject, triples) = buildRdfContainer(
+      BlankNodeTerm(), values, context, parentSubject: parentSubject);
+  return (subject, triples.toList());
+}
+</code></pre>
+<p><code>containerSubject</code> The RDF subject to use as the container (typically a blank node)
+<code>values</code> The iterable of values to convert into an RDF container
+<code>context</code> The serialization context for element serialization
+<code>parentSubject</code> Optional parent subject for nested serialization context</p>
+<p>Returns a tuple containing the container subject and the complete triple iterable.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">(RdfSubject headNode, Iterable&lt;Triple&gt; triples) buildRdfContainer(
+    RdfSubject containerSubject,
+    Iterable&lt;T&gt; values,
+    SerializationContext context,
+    IriTerm typeIri,
+    Serializer&lt;T&gt;? serializer,
+    {RdfSubject? parentSubject}) {
+  return (
+    containerSubject,
+    _buildRdfContainerTriples(
+        containerSubject, values, context, typeIri, serializer,
+        parentSubject: parentSubject)
+  );
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/RdfContainerSerializerMixin-class.html">RdfContainerSerializerMixin<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></a></li>
+    <li class="self-crumb">buildRdfContainer method</li>
+</ol>
+
+    <h5>RdfContainerSerializerMixin class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    rdf_mapper
+      0.9.0
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

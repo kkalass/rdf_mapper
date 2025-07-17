@@ -54,13 +54,11 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
-<span class="name ">valueMap</span>&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="valueMap-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span></li>
-<li><span class="parameter" id="valueMap-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span></li>
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
+<span class="name ">valueMap</span>&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="valueMap-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span></li>
+<li><span class="parameter" id="valueMap-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span></li>
 <li><span class="parameter" id="valueMap-param-instance"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span> <span class="parameter-name">instance</span>, {</span></li>
-<li><span class="parameter" id="valueMap-param-literalTermSerializer"><span class="type-annotation"><a href="../../rdf_mapper/LiteralTermSerializer-class.html">LiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">literalTermSerializer</span>, </span></li>
-<li><span class="parameter" id="valueMap-param-iriTermSerializer"><span class="type-annotation"><a href="../../rdf_mapper/IriTermSerializer-class.html">IriTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">iriTermSerializer</span>, </span></li>
-<li><span class="parameter" id="valueMap-param-resourceSerializer"><span class="type-annotation"><a href="../../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">resourceSerializer</span>, </span></li>
+<li><span class="parameter" id="valueMap-param-serializer"><span class="type-annotation"><a href="../../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">serializer</span>, </span></li>
 </ol>})
 
       
@@ -75,13 +73,11 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">List&lt;Triple&gt; valueMap&lt;K, V&gt;(
+  <pre class="language-dart"><code class="language-dart">Iterable&lt;Triple&gt; valueMap&lt;K, V&gt;(
   RdfSubject subject,
   RdfPredicate predicate,
   Map&lt;K, V&gt; instance, {
-  LiteralTermSerializer&lt;MapEntry&lt;K, V&gt;&gt;? literalTermSerializer,
-  IriTermSerializer&lt;MapEntry&lt;K, V&gt;&gt;? iriTermSerializer,
-  ResourceSerializer&lt;MapEntry&lt;K, V&gt;&gt;? resourceSerializer,
+  Serializer&lt;MapEntry&lt;K, V&gt;&gt;? serializer,
 });</code></pre>
 </section>
 
@@ -110,7 +106,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the deserialize method from the DeserializationContext class, for the Dart programming language.">
+  <title>deserialize method - DeserializationContext class - rdf_mapper library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper.dart</a></li>
+    <li><a href="../../rdf_mapper/DeserializationContext-class.html">DeserializationContext</a></li>
+    <li class="self-crumb">deserialize&lt;<wbr><span class="type-parameter">T</span>&gt; abstract method</li>
+  </ol>
+  <div class="self-name">deserialize</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="rdf_mapper&#47;DeserializationContext-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">deserialize&lt;<wbr><span class="type-parameter">T</span>&gt;</span> abstract method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype">T</span>
+<span class="name ">deserialize</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="deserialize-param-term"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfTerm-class.html">RdfTerm</a></span> <span class="parameter-name">term</span>, {</span></li>
+<li><span class="parameter" id="deserialize-param-deserializer"><span class="type-annotation"><a href="../../rdf_mapper/Deserializer-class.html">Deserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">deserializer</span>, </span></li>
+</ol>})
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Deserializes an RDF term into a typed Dart object.</p>
+<p>This method serves as the core deserialization mechanism, transforming any RDF term
+into its corresponding Dart representation. It handles both literal values and
+complex objects by leveraging the registry of deserializers or using a custom
+deserializer when provided.</p>
+<p>The method supports multiple RDF term types:</p>
+<ul>
+<li><strong>Literal terms</strong>: Converted to primitive Dart types (String, int, DateTime, etc.)</li>
+<li><strong>IRI terms</strong>: Processed as references to other resources or enum values</li>
+<li><strong>Blank nodes</strong>: Handled as anonymous objects or collection elements</li>
+</ul>
+<p>Example usage:</p>
+<pre class="language-dart"><code class="language-dart">final person = context.deserialize&lt;Person&gt;(personIri, deserializer: PersonDeserializer());
+final name = context.deserialize&lt;String&gt;(nameLiteral);
+final age = context.deserialize&lt;int&gt;(ageLiteral);
+</code></pre>
+<p><code>term</code> The RDF term to deserialize (IRI, blank node, or literal).
+<code>deserializer</code> Optional custom deserializer. If null, uses the registered deserializer for type T.</p>
+<p>Returns the deserialized object of type T.</p>
+<p>Throws <a href="../../rdf_mapper/DeserializerNotFoundException-class.html">DeserializerNotFoundException</a> if no suitable deserializer is found or deserialization fails.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">T deserialize&lt;T&gt;(
+  RdfTerm term, {
+  Deserializer&lt;T&gt;? deserializer,
+});</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/DeserializationContext-class.html">DeserializationContext</a></li>
+    <li class="self-crumb">deserialize&lt;<wbr><span class="type-parameter">T</span>&gt; abstract method</li>
+</ol>
+
+    <h5>DeserializationContext class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    rdf_mapper
+      0.9.0
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

@@ -55,7 +55,7 @@
     <section class="multi-line-signature">
       
 <span class="returntype">void</span>
-<span class="name ">registerSerializer</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="registerSerializer-param-serializer"><span class="type-annotation"><a href="../../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">serializer</span></span></li>
+<span class="name ">registerSerializer</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="registerSerializer-param-serializer"><span class="type-annotation"><a href="../../rdf_mapper/BaseSerializer-class.html">BaseSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">serializer</span></span></li>
 </ol>)
 
       
@@ -79,7 +79,7 @@ its implementation type and registers it for the appropriate Dart type.</p>
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void registerSerializer&lt;T&gt;(Serializer&lt;T&gt; serializer) {
+  <pre class="language-dart"><code class="language-dart">void registerSerializer&lt;T&gt;(BaseSerializer&lt;T&gt; serializer) {
   switch (serializer) {
     case IriTermSerializer&lt;T&gt;():
       _registerIriTermSerializer(serializer);
@@ -92,6 +92,9 @@ its implementation type and registers it for the appropriate Dart type.</p>
       break;
     case UnmappedTriplesSerializer&lt;T&gt;():
       _registerUnmappedTriplesSerializer(serializer);
+      break;
+    case MultiObjectsSerializer&lt;T&gt;():
+      _registerMultiObjectsSerializer(serializer);
       break;
   }
 }</code></pre>
@@ -122,7 +125,7 @@ its implementation type and registers it for the appropriate Dart type.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

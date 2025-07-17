@@ -143,6 +143,62 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
     <section class="summary offset-anchor" id="classes">
       <h2>Classes</h2>
       <dl>
+          <dt id="AdaptingMultiObjectsMapper">
+  <span class="name "><a href="../rdf_mapper/AdaptingMultiObjectsMapper-class.html">AdaptingMultiObjectsMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>, <span class="type-parameter">V</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Adapter that enables type transformation for multi-object mapping operations.
+</dd>
+
+          <dt id="AdaptingRdfListMapper">
+  <span class="name "><a href="../rdf_mapper/AdaptingRdfListMapper-class.html">AdaptingRdfListMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">C</span>, <span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+          <dt id="AdaptingUnifiedResourceMapper">
+  <span class="name "><a href="../rdf_mapper/AdaptingUnifiedResourceMapper-class.html">AdaptingUnifiedResourceMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>, <span class="type-parameter">V</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Adapter that enables type transformation while delegating RDF mapping operations.
+</dd>
+
+          <dt id="BaseDeserializer">
+  <span class="name "><a href="../rdf_mapper/BaseDeserializer-class.html">BaseDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Base marker interface for all RDF deserializers.
+</dd>
+
+          <dt id="BaseMapper">
+  <span class="name "><a href="../rdf_mapper/BaseMapper-class.html">BaseMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+          <dt id="BaseRdfContainerListDeserializer">
+  <span class="name "><a href="../rdf_mapper/BaseRdfContainerListDeserializer-class.html">BaseRdfContainerListDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+          <dt id="BaseRdfContainerListSerializer">
+  <span class="name "><a href="../rdf_mapper/BaseRdfContainerListSerializer-class.html">BaseRdfContainerListSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Base serializer for Dart <code>List&lt;T&gt;</code> collections to RDF container structures.
+</dd>
+
           <dt id="BaseRdfIriTermMapper">
   <span class="name "><a href="../rdf_mapper/BaseRdfIriTermMapper-class.html">BaseRdfIriTermMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
 
@@ -173,6 +229,14 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 </dt>
 <dd>
   Base implementation for literal term serializers that simplifies the creation of custom serializers.
+</dd>
+
+          <dt id="BaseSerializer">
+  <span class="name "><a href="../rdf_mapper/BaseSerializer-class.html">BaseSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
 </dd>
 
           <dt id="BoolMapper">
@@ -229,7 +293,7 @@ but use different RDF datatypes.
 
 </dt>
 <dd>
-  Base marker interface for all RDF deserializers.
+  
 </dd>
 
           <dt id="DoubleMapper">
@@ -246,14 +310,6 @@ but use different RDF datatypes.
 </dt>
 <dd>
   A flexible IRI term deserializer that uses a custom extraction function.
-</dd>
-
-          <dt id="GenericResourceSerializer">
-  <span class="name "><a href="../rdf_mapper/GenericResourceSerializer-class.html">GenericResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
-
-</dt>
-<dd>
-  
 </dd>
 
           <dt id="GlobalResourceDeserializer">
@@ -424,6 +480,30 @@ but use different RDF datatypes.
   Base marker interface for bidirectional RDF mappers.
 </dd>
 
+          <dt id="MultiObjectsDeserializer">
+  <span class="name "><a href="../rdf_mapper/MultiObjectsDeserializer-class.html">MultiObjectsDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+          <dt id="MultiObjectsMapper">
+  <span class="name "><a href="../rdf_mapper/MultiObjectsMapper-class.html">MultiObjectsMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+          <dt id="MultiObjectsSerializer">
+  <span class="name "><a href="../rdf_mapper/MultiObjectsSerializer-class.html">MultiObjectsSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
           <dt id="Namespace">
   <span class="name "><a href="../rdf_mapper/Namespace-class.html">Namespace</a></span> 
 
@@ -440,16 +520,80 @@ but use different RDF datatypes.
   
 </dd>
 
-          <dt id="RdfGraphGlobalResourceMapper">
-  <span class="name "><a href="../rdf_mapper/RdfGraphGlobalResourceMapper-class.html">RdfGraphGlobalResourceMapper</a></span> 
+          <dt id="RdfAltDeserializer">
+  <span class="name "><a href="../rdf_mapper/RdfAltDeserializer-class.html">RdfAltDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Deserializer for RDF Alternative (rdf:Alt) containers to Dart <code>List&lt;T&gt;</code> collections.
+</dd>
+
+          <dt id="RdfAltMapper">
+  <span class="name "><a href="../rdf_mapper/RdfAltMapper-class.html">RdfAltMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Bidirectional mapper for RDF Alternative (rdf:Alt) containers and Dart <code>List&lt;T&gt;</code> collections.
+</dd>
+
+          <dt id="RdfAltSerializer">
+  <span class="name "><a href="../rdf_mapper/RdfAltSerializer-class.html">RdfAltSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Serializer for Dart <code>List&lt;T&gt;</code> collections to RDF Alternative (rdf:Alt) containers.
+</dd>
+
+          <dt id="RdfBagDeserializer">
+  <span class="name "><a href="../rdf_mapper/RdfBagDeserializer-class.html">RdfBagDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Deserializer for RDF Bag (rdf:Bag) containers to Dart <code>List&lt;T&gt;</code> collections.
+</dd>
+
+          <dt id="RdfBagMapper">
+  <span class="name "><a href="../rdf_mapper/RdfBagMapper-class.html">RdfBagMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Bidirectional mapper for RDF Bag (rdf:Bag) containers and Dart <code>List&lt;T&gt;</code> collections.
+</dd>
+
+          <dt id="RdfBagSerializer">
+  <span class="name "><a href="../rdf_mapper/RdfBagSerializer-class.html">RdfBagSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Serializer for Dart <code>List&lt;T&gt;</code> collections to RDF Bag (rdf:Bag) containers.
+</dd>
+
+          <dt id="RdfContainerDeserializerMixin">
+  <span class="name "><a href="../rdf_mapper/RdfContainerDeserializerMixin-class.html">RdfContainerDeserializerMixin</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Abstract base class for deserializing RDF container structures to Dart collections.
+</dd>
+
+          <dt id="RdfContainerSerializerMixin">
+  <span class="name "><a href="../rdf_mapper/RdfContainerSerializerMixin-class.html">RdfContainerSerializerMixin</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Mixin for serializing collection types to RDF container structures.
+</dd>
+
+          <dt id="RdfFooMapper">
+  <span class="name "><a href="../rdf_mapper/RdfFooMapper-class.html">RdfFooMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
 
 </dt>
 <dd>
   
 </dd>
 
-          <dt id="RdfGraphLocalResourceMapper">
-  <span class="name "><a href="../rdf_mapper/RdfGraphLocalResourceMapper-class.html">RdfGraphLocalResourceMapper</a></span> 
+          <dt id="RDFGraphResourceMapper">
+  <span class="name "><a href="../rdf_mapper/RDFGraphResourceMapper-class.html">RDFGraphResourceMapper</a></span> 
 
 </dt>
 <dd>
@@ -461,7 +605,47 @@ but use different RDF datatypes.
 
 </dt>
 <dd>
-  Default implementation of <a href="../rdf_mapper/UnmappedTriplesMapper-class.html">UnmappedTriplesMapper</a> for <a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfGraph-class.html">RdfGraph</a>.
+  Default implementation of <a href="../rdf_mapper/UnmappedTriplesMapper-class.html">UnmappedTriplesMapper</a> for <a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfGraph-class.html">RdfGraph</a>.
+</dd>
+
+          <dt id="RdfListDeserializer">
+  <span class="name "><a href="../rdf_mapper/RdfListDeserializer-class.html">RdfListDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Deserializer for RDF list structures to Dart <code>List&lt;T&gt;</code> collections.
+</dd>
+
+          <dt id="RdfListDeserializerMixin">
+  <span class="name "><a href="../rdf_mapper/RdfListDeserializerMixin-class.html">RdfListDeserializerMixin</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Abstract base class for deserializing RDF list structures to Dart collections.
+</dd>
+
+          <dt id="RdfListMapper">
+  <span class="name "><a href="../rdf_mapper/RdfListMapper-class.html">RdfListMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+          <dt id="RdfListSerializer">
+  <span class="name "><a href="../rdf_mapper/RdfListSerializer-class.html">RdfListSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Serializer for Dart <code>List&lt;T&gt;</code> collections to RDF list structures.
+</dd>
+
+          <dt id="RdfListSerializerMixin">
+  <span class="name "><a href="../rdf_mapper/RdfListSerializerMixin-class.html">RdfListSerializerMixin</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Mixin class for serializing collection types to RDF list structures.
 </dd>
 
           <dt id="RdfMapper">
@@ -704,8 +888,32 @@ but use different RDF datatypes.
   
 </dd>
 
+          <dt id="RdfSeqDeserializer">
+  <span class="name "><a href="../rdf_mapper/RdfSeqDeserializer-class.html">RdfSeqDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Deserializer for RDF Sequence (rdf:Seq) containers to Dart <code>List&lt;T&gt;</code> collections.
+</dd>
+
+          <dt id="RdfSeqMapper">
+  <span class="name "><a href="../rdf_mapper/RdfSeqMapper-class.html">RdfSeqMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Bidirectional mapper for RDF Sequence (rdf:Seq) containers and Dart <code>List&lt;T&gt;</code> collections.
+</dd>
+
+          <dt id="RdfSeqSerializer">
+  <span class="name "><a href="../rdf_mapper/RdfSeqSerializer-class.html">RdfSeqSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Serializer for Dart <code>List&lt;T&gt;</code> collections to RDF Sequence (rdf:Seq) containers.
+</dd>
+
           <dt id="ResourceBuilder">
-  <span class="name "><a href="../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S extends <a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfSubject-class.html">RdfSubject</a></span>&gt;</span></span> 
+  <span class="name "><a href="../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S extends <a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfSubject-class.html">RdfSubject</a></span>&gt;</span></span> 
 
 </dt>
 <dd>
@@ -785,6 +993,38 @@ but use different RDF datatypes.
 (i.e. IriTerm or LiteralTerm) and not to a list of Triples.
 </dd>
 
+          <dt id="UnifiedResourceDeserializer">
+  <span class="name "><a href="../rdf_mapper/UnifiedResourceDeserializer-class.html">UnifiedResourceDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">C</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Interface for deserializing an RDF collection structure into a Dart collection <code>C</code> of items <code>T</code>.
+</dd>
+
+          <dt id="UnifiedResourceMapper">
+  <span class="name "><a href="../rdf_mapper/UnifiedResourceMapper-class.html">UnifiedResourceMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+          <dt id="UnifiedResourceMapperBase">
+  <span class="name "><a href="../rdf_mapper/UnifiedResourceMapperBase-class.html">UnifiedResourceMapperBase</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>, <span class="type-parameter">I</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+          <dt id="UnifiedResourceSerializer">
+  <span class="name "><a href="../rdf_mapper/UnifiedResourceSerializer-class.html">UnifiedResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">C</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Interface for serializing a Dart collection or container <code>C</code> of items <code>T</code> into an RDF collection structure.
+</dd>
+
           <dt id="UnmappedTriplesDeserializer">
   <span class="name "><a href="../rdf_mapper/UnmappedTriplesDeserializer-class.html">UnmappedTriplesDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
 
@@ -803,6 +1043,112 @@ but use different RDF datatypes.
 
           <dt id="UnmappedTriplesSerializer">
   <span class="name "><a href="../rdf_mapper/UnmappedTriplesSerializer-class.html">UnmappedTriplesSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+          <dt id="UnorderedItemsCollectorDeserializer">
+  <span class="name "><a href="../rdf_mapper/UnorderedItemsCollectorDeserializer-class.html">UnorderedItemsCollectorDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>, <span class="type-parameter">R</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+          <dt id="UnorderedItemsDeserializer">
+  <span class="name "><a href="../rdf_mapper/UnorderedItemsDeserializer-class.html">UnorderedItemsDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+          <dt id="UnorderedItemsDeserializerMixin">
+  <span class="name "><a href="../rdf_mapper/UnorderedItemsDeserializerMixin-class.html">UnorderedItemsDeserializerMixin</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Mixin providing deserialization functionality for unordered collections.
+Encapsulates the common logic for converting RDF objects to collections.
+</dd>
+
+          <dt id="UnorderedItemsListDeserializer">
+  <span class="name "><a href="../rdf_mapper/UnorderedItemsListDeserializer-class.html">UnorderedItemsListDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+          <dt id="UnorderedItemsListMapper">
+  <span class="name "><a href="../rdf_mapper/UnorderedItemsListMapper-class.html">UnorderedItemsListMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+          <dt id="UnorderedItemsListSerializer">
+  <span class="name "><a href="../rdf_mapper/UnorderedItemsListSerializer-class.html">UnorderedItemsListSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+          <dt id="UnorderedItemsMapper">
+  <span class="name "><a href="../rdf_mapper/UnorderedItemsMapper-class.html">UnorderedItemsMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+          <dt id="UnorderedItemsSerializer">
+  <span class="name "><a href="../rdf_mapper/UnorderedItemsSerializer-class.html">UnorderedItemsSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+          <dt id="UnorderedItemsSerializerMixin">
+  <span class="name "><a href="../rdf_mapper/UnorderedItemsSerializerMixin-class.html">UnorderedItemsSerializerMixin</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Mixin providing serialization functionality for unordered collections.
+Encapsulates the common logic for converting collections to RDF objects.
+</dd>
+
+          <dt id="UnorderedItemsSetDeserializer">
+  <span class="name "><a href="../rdf_mapper/UnorderedItemsSetDeserializer-class.html">UnorderedItemsSetDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+          <dt id="UnorderedItemsSetMapper">
+  <span class="name "><a href="../rdf_mapper/UnorderedItemsSetMapper-class.html">UnorderedItemsSetMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+          <dt id="UnorderedItemsSetSerializer">
+  <span class="name "><a href="../rdf_mapper/UnorderedItemsSetSerializer-class.html">UnorderedItemsSetSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  
+</dd>
+
+          <dt id="UriIriMapper">
+  <span class="name "><a href="../rdf_mapper/UriIriMapper-class.html">UriIriMapper</a></span> 
 
 </dt>
 <dd>
@@ -832,10 +1178,65 @@ but use different RDF datatypes.
 
 
 
+    <section class="summary offset-anchor" id="typedefs">
+      <h2>Typedefs</h2>
+      <dl>
+          
+  <dt id="CollectionDeserializerFactory" class="callable">
+    <span class="name"><a href="../rdf_mapper/CollectionDeserializerFactory.html">CollectionDeserializerFactory</a></span>&lt;<wbr><span class="type-parameter">C</span>, <span class="type-parameter">T</span>&gt;<span class="signature">
+      <span class="returntype parameter">= <a href="../rdf_mapper/Deserializer-class.html">Deserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">C</span>&gt;</span> Function<span class="signature">({<span class="parameter" id="param-itemDeserializer"><span class="type-annotation"><a href="../rdf_mapper/Deserializer-class.html">Deserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">itemDeserializer</span></span>})</span></span>
+    </span>
+    
+
+  </dt>
+  <dd>
+    
+    
+
+  </dd>
+
+          
+  <dt id="CollectionMapperFactory" class="callable">
+    <span class="name"><a href="../rdf_mapper/CollectionMapperFactory.html">CollectionMapperFactory</a></span>&lt;<wbr><span class="type-parameter">C</span>, <span class="type-parameter">T</span>&gt;<span class="signature">
+      <span class="returntype parameter">= <a href="../rdf_mapper/Mapper-class.html">Mapper</a><span class="signature">&lt;<wbr><span class="type-parameter">C</span>&gt;</span> Function<span class="signature">({<span class="parameter" id="param-itemDeserializer"><span class="type-annotation"><a href="../rdf_mapper/Deserializer-class.html">Deserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">itemDeserializer</span>, </span><span class="parameter" id="param-itemSerializer"><span class="type-annotation"><a href="../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">itemSerializer</span></span>})</span></span>
+    </span>
+    
+
+  </dt>
+  <dd>
+    
+    
+
+  </dd>
+
+          
+  <dt id="CollectionSerializerFactory" class="callable">
+    <span class="name"><a href="../rdf_mapper/CollectionSerializerFactory.html">CollectionSerializerFactory</a></span>&lt;<wbr><span class="type-parameter">C</span>, <span class="type-parameter">T</span>&gt;<span class="signature">
+      <span class="returntype parameter">= <a href="../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">C</span>&gt;</span> Function<span class="signature">({<span class="parameter" id="param-itemSerializer"><span class="type-annotation"><a href="../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">itemSerializer</span></span>})</span></span>
+    </span>
+    
+
+  </dt>
+  <dd>
+    
+    
+
+  </dd>
+
+      </dl>
+    </section>
 
     <section class="summary offset-anchor" id="exceptions">
       <h2>Exceptions / Errors</h2>
       <dl>
+          <dt id="CircularRdfListException">
+  <span class="name "><a href="../rdf_mapper/CircularRdfListException-class.html">CircularRdfListException</a></span> 
+
+</dt>
+<dd>
+  Exception thrown when a circular reference is detected in an RDF List structure.
+</dd>
+
           <dt id="DeserializationException">
   <span class="name "><a href="../rdf_mapper/DeserializationException-class.html">DeserializationException</a></span> 
 
@@ -866,6 +1267,14 @@ but use different RDF datatypes.
 </dt>
 <dd>
   Exception thrown when RDF graph deserialization is incomplete.
+</dd>
+
+          <dt id="InvalidRdfListStructureException">
+  <span class="name "><a href="../rdf_mapper/InvalidRdfListStructureException-class.html">InvalidRdfListStructureException</a></span> 
+
+</dt>
+<dd>
+  Exception thrown when RDF data doesn't conform to valid RDF List structure.
 </dd>
 
           <dt id="NoDeserializableSubjectsException">
@@ -953,7 +1362,7 @@ but use different RDF datatypes.
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

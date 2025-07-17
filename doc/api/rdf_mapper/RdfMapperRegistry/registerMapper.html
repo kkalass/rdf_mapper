@@ -55,7 +55,7 @@
     <section class="multi-line-signature">
       
 <span class="returntype">void</span>
-<span class="name ">registerMapper</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="registerMapper-param-mapper"><span class="type-annotation"><a href="../../rdf_mapper/Mapper-class.html">Mapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">mapper</span></span></li>
+<span class="name ">registerMapper</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="registerMapper-param-mapper"><span class="type-annotation"><a href="../../rdf_mapper/BaseMapper-class.html">BaseMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">mapper</span></span></li>
 </ol>)
 
       
@@ -88,7 +88,7 @@ serialization to work correctly.</p>
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void registerMapper&lt;T&gt;(Mapper&lt;T&gt; mapper) {
+  <pre class="language-dart"><code class="language-dart">void registerMapper&lt;T&gt;(BaseMapper&lt;T&gt; mapper) {
   switch (mapper) {
     case GlobalResourceMapper&lt;T&gt;():
       _registerGlobalResourceDeserializer(mapper);
@@ -109,7 +109,15 @@ serialization to work correctly.</p>
     case UnmappedTriplesMapper&lt;T&gt;():
       _registerUnmappedTriplesDeserializer&lt;T&gt;(mapper);
       _registerUnmappedTriplesSerializer&lt;T&gt;(mapper);
+    case UnifiedResourceMapper&lt;T&gt;():
+      _registerGlobalResourceDeserializer(
+          _GlobalResourceDeserializer(mapper));
+      _registerLocalResourceDeserializer(_LocalResourceDeserializer(mapper));
+      _registerResourceSerializer(mapper);
       break;
+    case MultiObjectsMapper&lt;T&gt;():
+      _registerMultiObjectsDeserializer&lt;T&gt;(mapper);
+      _registerMultiObjectsSerializer&lt;T&gt;(mapper);
   }
 }</code></pre>
 </section>
@@ -139,7 +147,7 @@ serialization to work correctly.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

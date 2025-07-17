@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the optionalRdfSeq method from the ResourceReader class, for the Dart programming language.">
+  <title>optionalRdfSeq method - ResourceReader class - rdf_mapper library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper.dart</a></li>
+    <li><a href="../../rdf_mapper/ResourceReader-class.html">ResourceReader</a></li>
+    <li class="self-crumb">optionalRdfSeq&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
+  </ol>
+  <div class="self-name">optionalRdfSeq</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="rdf_mapper&#47;ResourceReader-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">optionalRdfSeq&lt;<wbr><span class="type-parameter">T</span>&gt;</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span>
+<span class="name ">optionalRdfSeq</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="optionalRdfSeq-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, {</span></li>
+<li><span class="parameter" id="optionalRdfSeq-param-itemDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/Deserializer-class.html">Deserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">itemDeserializer</span>, </span></li>
+</ol>})
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Retrieves an optional sequence from an RDF Sequence (rdf:Seq) container.</p>
+<p>This convenience method deserializes an RDF Sequence container using numbered
+properties (<code>rdf:_1</code>, <code>rdf:_2</code>, etc.) with the container typed as <code>rdf:Seq</code>.
+RDF Sequences represent ordered collections where the numbered properties
+indicate the position of elements.</p>
+<p><strong>Optional Semantics</strong>: This method allows the RDF Sequence to be missing from the graph.
+If the predicate is not found, null is returned. If the container exists but has an invalid
+structure, an exception will be thrown. Use <a href="../../rdf_mapper/ResourceReader/requireRdfSeq.html">requireRdfSeq</a> if the sequence must exist.</p>
+<p><strong>Container Structure</strong>: RDF Sequences use numbered properties to reference elements:</p>
+<pre class="language-turtle"><code class="language-turtle">:subject :predicate _:seq .
+_:seq a rdf:Seq ;
+  rdf:_1 "first element" ;
+  rdf:_2 "second element" ;
+  rdf:_3 "third element" .
+</code></pre>
+<p><strong>Ordering</strong>: Elements are returned in numerical order of their properties
+(rdf:_1, rdf:_2, etc.), preserving the intended sequence.</p>
+<p><strong>Pattern for Default Values</strong>: Commonly used with null-coalescing operator for empty list defaults:</p>
+<pre class="language-dart"><code class="language-dart">// Provide empty list as default
+final chapters = reader.optionalRdfSeq&lt;String&gt;(Schema.hasPart) ?? const &lt;String&gt;[];
+
+// Provide custom default list
+final steps = reader.optionalRdfSeq&lt;Step&gt;(Schema.step) ?? [Step.defaultStep];
+</code></pre>
+<p>Example usage:</p>
+<pre class="language-dart"><code class="language-dart">// Optional ordered sequence of chapters (returns null if missing)
+final chapters = reader.optionalRdfSeq&lt;Chapter&gt;(Schema.hasPart);
+
+// Optional sequence with default empty list
+final priorities = reader.optionalRdfSeq&lt;String&gt;(Schema.priority) ?? const [];
+
+// Optional sequence with conditional processing
+final steps = reader.optionalRdfSeq&lt;ProcessStep&gt;(Schema.hasStep);
+if (steps != null &amp;&amp; steps.isNotEmpty) {
+  // Process steps in order...
+}
+</code></pre>
+<p>The <code>predicate</code> is the RDF predicate that links to the sequence container.
+The optional <code>itemDeserializer</code> can be provided for custom deserialization of sequence items.</p>
+<p>Returns a <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a> containing the deserialized items in numerical order, or null if not found.</p>
+<p>Throws an exception if the sequence exists but has an invalid structure or wrong container type.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">List&lt;T&gt;? optionalRdfSeq&lt;T&gt;(
+  RdfPredicate predicate, {
+  Deserializer&lt;T&gt;? itemDeserializer,
+}) {
+  return optionalCollection&lt;List&lt;T&gt;, T&gt;(
+    predicate,
+    RdfSeqDeserializer&lt;T&gt;.new,
+    itemDeserializer: itemDeserializer,
+  );
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/ResourceReader-class.html">ResourceReader</a></li>
+    <li class="self-crumb">optionalRdfSeq&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
+</ol>
+
+    <h5>ResourceReader class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    rdf_mapper
+      0.9.0
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the optionalCollection method from the ResourceReader class, for the Dart programming language.">
+  <title>optionalCollection method - ResourceReader class - rdf_mapper library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper.dart</a></li>
+    <li><a href="../../rdf_mapper/ResourceReader-class.html">ResourceReader</a></li>
+    <li class="self-crumb">optionalCollection&lt;<wbr><span class="type-parameter">C</span>, <span class="type-parameter">T</span>&gt; method</li>
+  </ol>
+  <div class="self-name">optionalCollection</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="rdf_mapper&#47;ResourceReader-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">optionalCollection&lt;<wbr><span class="type-parameter">C</span>, <span class="type-parameter">T</span>&gt;</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype">C?</span>
+<span class="name ">optionalCollection</span>&lt;<wbr><span class="type-parameter">C</span>, <span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="optionalCollection-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span></li>
+<li><span class="parameter" id="optionalCollection-param-collectionDeserializerFactory"><span class="type-annotation"><a href="../../rdf_mapper/CollectionDeserializerFactory.html">CollectionDeserializerFactory</a><span class="signature">&lt;<wbr><span class="type-parameter">C</span>, <span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">collectionDeserializerFactory</span>, {</span></li>
+<li><span class="parameter" id="optionalCollection-param-itemDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/Deserializer-class.html">Deserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">itemDeserializer</span>, </span></li>
+</ol>})
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Retrieves an optional collection from an RDF collection using a specialized collection deserializer factory.</p>
+<p>This is an advanced method for handling complex collection types that require
+specialized deserialization logic. Unlike <a href="../../rdf_mapper/ResourceReader/getValues.html">getValues</a> which handles simple multi-value properties,
+this method can deserialize structured collections like RDF lists,
+bags, sequences, or other custom collection representations.</p>
+<p><strong>Optional Semantics</strong>: This method allows the collection to be missing from the RDF graph.
+If the predicate is not found, null is returned. If the collection exists but cannot be
+deserialized, an exception will be thrown. Use <a href="../../rdf_mapper/ResourceReader/requireCollection.html">requireCollection</a> if the collection
+must exist in the graph.</p>
+<p>The collection deserializer factory determines how to interpret the collection structure
+in RDF. For example, RDF lists use a specific linked structure with <code>rdf:first</code> and
+<code>rdf:rest</code> predicates that must be traversed to reconstruct the original sequence.</p>
+<p><strong>Convenience Methods</strong>: For common collection types, prefer the specialized convenience methods:</p>
+<ul>
+<li>Use <a href="../../rdf_mapper/ResourceReader/optionalRdfList.html">optionalRdfList</a> for ordered sequences (RDF Lists with rdf:first/rdf:rest)</li>
+<li>Use <a href="../../rdf_mapper/ResourceReader/getValues.html">getValues</a> for simple multi-value properties without collection structure</li>
+</ul>
+<p><strong>Advanced Collection Types</strong> that require this method:</p>
+<ul>
+<li><strong>RDF Structure Control</strong>: RDF Bags (rdf:Bag), RDF Sequences (rdf:Seq) with specific vocabulary</li>
+<li><strong>Custom Dart Types</strong>: Converting to/from custom collection classes (e.g., <code>ImmutableList&lt;T&gt;</code>, <code>OrderedSet&lt;T&gt;</code>)</li>
+<li><strong>Third-Party Libraries</strong>: Integration with popular collection libraries (e.g., <code>built_collection</code>, <code>dartz</code>, <code>kt_dart</code>)</li>
+<li><strong>Domain-Specific Collections</strong>: Specialized structures like trees, graphs, or business-specific containers</li>
+</ul>
+<p><strong>Extensibility Pattern</strong>: For frequently used optional collections, consider creating extension methods:</p>
+<pre class="language-dart"><code class="language-dart">extension MyOptionalCollectionExtensions on ResourceReader {
+  ImmutableList&lt;T&gt;? optionalImmutableList&lt;T&gt;(RdfPredicate predicate) =&gt;
+    optionalCollection(predicate, ImmutableListDeserializer&lt;T&gt;.new);
+
+  BuiltSet&lt;T&gt;? optionalBuiltSet&lt;T&gt;(RdfPredicate predicate) =&gt;
+    optionalCollection(predicate, BuiltSetDeserializer&lt;T&gt;.new);
+}
+</code></pre>
+<p><strong>Pattern for Default Values</strong>: Commonly used with null-coalescing operator for default values:</p>
+<pre class="language-dart"><code class="language-dart">// Provide empty collection as default
+final tags = reader.optionalCollection&lt;Set&lt;String&gt;, String&gt;(
+  Schema.keywords,
+  RdfBagDeserializer&lt;String&gt;.new,
+) ?? &lt;String&gt;{};
+
+// Provide default immutable collection
+final authors = reader.optionalCollection&lt;ImmutableList&lt;Person&gt;, Person&gt;(
+  Schema.author,
+  ImmutableListDeserializer&lt;Person&gt;.new,
+) ?? ImmutableList&lt;Person&gt;.empty();
+</code></pre>
+<p>Example usage:</p>
+<pre class="language-dart"><code class="language-dart">// Optional RDF Bag - returns null if not found
+final keywords = reader.optionalCollection&lt;Set&lt;String&gt;, String&gt;(
+  Schema.keywords,
+  RdfBagDeserializer&lt;String&gt;.new,
+);
+
+// Optional custom Dart type with default value
+final categories = reader.optionalCollection&lt;ImmutableSet&lt;String&gt;, String&gt;(
+  Schema.category,
+  ImmutableSetDeserializer&lt;String&gt;.new,
+) ?? ImmutableSet&lt;String&gt;.empty();
+
+// Optional third-party library collection
+final builtTags = reader.optionalCollection&lt;BuiltSet&lt;String&gt;, String&gt;(
+  Schema.tag,
+  BuiltSetDeserializer&lt;String&gt;.new,
+);
+
+// Prefer convenience method for standard RDF Lists:
+final standardList = reader.optionalRdfList&lt;Person&gt;(Schema.author) ?? const [];
+</code></pre>
+<p>The <code>predicate</code> is the RDF predicate that links to the collection.
+The <code>collectionDeserializerFactory</code> creates the appropriate deserializer for the collection type.
+The optional <code>itemDeserializer</code> can be provided for custom deserialization of collection items.</p>
+<p>Returns the deserialized collection of type <code>C</code> containing items of type <code>T</code>, or null if not found.</p>
+<p>Throws an exception if the collection exists but cannot be deserialized.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">C? optionalCollection&lt;C, T&gt;(RdfPredicate predicate,
+    CollectionDeserializerFactory&lt;C, T&gt; collectionDeserializerFactory,
+    {Deserializer&lt;T&gt;? itemDeserializer}) {
+  return _service.optionalCollection&lt;C, T&gt;(
+    _subject,
+    predicate,
+    collectionDeserializerFactory,
+    itemDeserializer: itemDeserializer,
+  );
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/ResourceReader-class.html">ResourceReader</a></li>
+    <li class="self-crumb">optionalCollection&lt;<wbr><span class="type-parameter">C</span>, <span class="type-parameter">T</span>&gt; method</li>
+</ol>
+
+    <h5>ResourceReader class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    rdf_mapper
+      0.9.0
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

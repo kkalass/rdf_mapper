@@ -74,6 +74,7 @@ For the ultimate developer experience, use our <strong>annotation-driven code ge
 <li><strong>Code Generation</strong>: Zero-boilerplate mapping with <a href="https://pub.dev/packages/rdf_mapper_generator"><code>rdf_mapper_generator</code></a> - annotate your classes and get optimized mappers automatically</li>
 <li><strong>Extensible</strong>: Easy creation of custom mappers for domain-specific types</li>
 <li><strong>Flexible</strong>: Support for all core RDF concepts: IRI nodes, blank nodes, and literals</li>
+<li><strong>RDF Collections</strong>: Full support for RDF Lists and Containers (Seq, Bag, Alt) with order preservation</li>
 <li><strong>Dual API</strong>: Work with RDF strings or directly with graph structures</li>
 </ul>
 <h2 id="what-is-rdf">What is RDF?</h2>
@@ -87,7 +88,7 @@ For the ultimate developer experience, use our <strong>annotation-driven code ge
 <h2 id="installation">Installation</h2>
 <p>Add the following to your <code>pubspec.yaml</code>:</p>
 <pre class="language-yaml"><code class="language-yaml">dependencies:
-  rdf_mapper: ^0.8.8
+  rdf_mapper: ^0.9.0
 </code></pre>
 <p>Or use the following command:</p>
 <pre class="language-bash"><code class="language-bash">dart pub add rdf_mapper
@@ -146,7 +147,7 @@ class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
   IriTerm? get typeIri =&gt; SchemaPerson.classIri;
   
   @override
-  (IriTerm, List&lt;Triple&gt;) toRdfResource(Person value, SerializationContext context, {RdfSubject? parentSubject}) {
+  (IriTerm, Iterable&lt;Triple&gt;) toRdfResource(Person value, SerializationContext context, {RdfSubject? parentSubject}) {
 
     // convert dart objects to triples using the fluent builder API
     return context.resourceBuilder(IriTerm(value.id))
@@ -241,10 +242,33 @@ final deserializedPerson = mapper.decodeObject&lt;Person&gt;(turtle);
 <li><code>DeserializationContext</code>: Provides access to the ResourceReader</li>
 </ul>
 <h3 id="fluent-apis">Fluent APIs</h3>
+<p><strong>ResourceBuilder</strong> provides methods for creating RDF resources:</p>
 <ul>
-<li><code>ResourceBuilder</code>: For conveniently creating RDF resources with a fluent API</li>
-<li><code>ResourceReader</code>: For easily accessing RDF resource properties</li>
+<li><code>addValue&lt;T&gt;(predicate, value)</code> - Add a single property value</li>
+<li><code>addValues&lt;T&gt;(predicate, values)</code> - Add multiple values for the same predicate (no guaranteed order)</li>
+<li><code>addRdfList&lt;T&gt;(predicate, list)</code> - Add an ordered list using RDF list structure</li>
+<li><code>addCollection&lt;C, T&gt;(predicate, collection, factory)</code> - <strong>Base method</strong> Add a collection using the specified collection mapping factory - used by e.g. addValues and addRdfList</li>
+<li><code>addValueIfNotNull&lt;T&gt;(predicate, value)</code> - Conditionally add a value if not null</li>
+<li><code>when(condition, builderFunction)</code> - Conditionally apply builder operations</li>
 </ul>
+<p><strong>ResourceReader</strong> provides methods for reading RDF resource properties:</p>
+<ul>
+<li><code>require&lt;T&gt;(predicate)</code> - Get a required single value (throws if missing)</li>
+<li><code>optional&lt;T&gt;(predicate)</code> - Get an optional single value (returns null if missing)</li>
+<li><code>getValues&lt;T&gt;(predicate)</code> - Get multiple values for the same predicate (no guaranteed order)</li>
+<li><code>requireRdfList&lt;T&gt;(predicate)</code> - Get a required ordered list from RDF list structure</li>
+<li><code>optionalRdfList&lt;T&gt;(predicate)</code> - Get an optional ordered list from RDF list structure</li>
+<li><code>requireCollection&lt;C, T&gt;(predicate, factory)</code> - <strong>Base method</strong> Get a required collection with a mapper created by the given factory - used by e.g. requireRdfList and getValues.</li>
+<li><code>optionalCollection&lt;C, T&gt;(predicate, factory)</code> - <strong>Base method</strong> Get an optional collection with a mapper created by the given factory - used by e.g. optionalRdfList.</li>
+</ul>
+<blockquote>
+<p><strong>When to use different collection approaches:</strong></p>
+<ul>
+<li>Use <code>addRdfList()</code> / <code>optionalRdfList()</code> / <code>requireRdfList()</code> when <strong>order matters</strong> (e.g., book chapters, steps in a process)</li>
+<li>Use <code>addValues()</code> / <code>getValues()</code> when you have <strong>multiple independent values</strong> (e.g., tags, categories, unordered lists)</li>
+<li>Use <code>addCollection()</code> / <code>optionalCollection()</code> / <code>requireCollection()</code> when you need <strong>maximum control</strong> over both the Dart collection type and the representation in RDF.</li>
+</ul>
+</blockquote>
 <h2 id="advanced-usage">Advanced Usage</h2>
 <h3 id="working-with-graphs">Working with Graphs</h3>
 <p>Working directly with RDF graphs (instead of strings):</p>
@@ -282,239 +306,246 @@ final example = Namespace('http://example.com/my-new-vocab/');
 builder.addValue(example('name'), 'Alice');  // Generates http://example.com/my-new-vocab/name
 </code></pre>
 <h3 id="complex-example">Complex Example</h3>
-<p>The following example demonstrates handling complex models with relationships between objects and nested structures:</p>
-<pre class="language-dart"><code class="language-dart">import 'package:rdf_core/rdf_core.dart';
-
-import 'package:rdf_mapper/rdf_mapper.dart';
+<p>Here's a complete example showing different mapper types and collection strategies:</p>
+<pre class="language-dart"><code class="language-dart">import 'package:rdf_mapper/rdf_mapper.dart';
 import 'package:rdf_vocabularies/schema.dart';
 
 void main() {
-  final rdf =
-      // Create mapper with default registry
-      RdfMapper.withDefaultRegistry()
-        // Register our custom mappers
-        ..registerMapper&lt;Book&gt;(BookMapper())
-        ..registerMapper&lt;Chapter&gt;(ChapterMapper())
-        ..registerMapper&lt;ISBN&gt;(ISBNMapper())
-        ..registerMapper&lt;Rating&gt;(RatingMapper());
+  final rdf = RdfMapper.withDefaultRegistry()
+    ..registerMapper&lt;Book&gt;(BookMapper())
+    ..registerMapper&lt;Chapter&gt;(ChapterMapper())
+    ..registerMapper&lt;ISBN&gt;(ISBNMapper());
 
-  // Create a book with chapters
   final book = Book(
-    id: 'hobbit', // Now just the identifier, not the full IRI
+    id: 'hobbit',
     title: 'The Hobbit',
     author: 'J.R.R. Tolkien',
-    published: DateTime(1937, 9, 21),
     isbn: ISBN('9780618260300'),
-    rating: Rating(5),
-    chapters: [
-      Chapter('An Unexpected Party', 1),
-      Chapter('Roast Mutton', 2),
-      Chapter('A Short Rest', 3),
-    ],
+    chapters: [Chapter('An Unexpected Party', 1), Chapter('Roast Mutton', 2)], // Ordered
+    genres: ['fantasy', 'adventure', 'children'],                              // Unordered
   );
 
-  // Convert the book to RDF Turtle codec
   final turtle = rdf.encodeObject(book);
-
-  // Print the resulting Turtle representation
-  final expectedTurtle = '''
-@prefix book: &lt;http://example.org/book/&gt; .
-@prefix schema: &lt;https://schema.org/&gt; .
-@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
-
-book:hobbit a schema:Book;
-    schema:aggregateRating 5;
-    schema:author "J.R.R. Tolkien";
-    schema:datePublished "1937-09-20T23:00:00.000Z"^^xsd:dateTime;
-    schema:hasPart [ a schema:Chapter ; schema:name "An Unexpected Party" ; schema:position 1 ], [ a schema:Chapter ; schema:name "Roast Mutton" ; schema:position 2 ], [ a schema:Chapter ; schema:name "A Short Rest" ; schema:position 3 ];
-    schema:isbn &lt;urn:isbn:9780618260300&gt;;
-    schema:name "The Hobbit" .
-  ''';
-
-  print('Book as RDF Turtle:');
   print(turtle);
-  assert(turtle.trim() == expectedTurtle.trim());
+  
+  final deserializedBook = rdf.decodeObject&lt;Book&gt;(turtle);
+  print('Title: ${deserializedBook.title}');
 }
 
-// --- Domain Model ---
-
-// Primary entity with an identifier that will be part of the IRI
+// Domain model
 class Book {
   final String id;
   final String title;
   final String author;
-  final DateTime published;
   final ISBN isbn;
-  final Rating rating;
-  final Iterable&lt;Chapter&gt; chapters;
-
-  Book({
-    required this.id,
-    required this.title,
-    required this.author,
-    required this.published,
-    required this.isbn,
-    required this.rating,
-    required this.chapters,
-  });
+  final List&lt;Chapter&gt; chapters;  // Will use RDF List (ordered)
+  final List&lt;String&gt; genres;     // Will use multiple triples (unordered)
+  
+  Book({required this.id, required this.title, required this.author, 
+        required this.isbn, required this.chapters, required this.genres});
 }
 
-// Value object using blank nodes (no identifier)
 class Chapter {
   final String title;
   final int number;
-
   Chapter(this.title, this.number);
 }
 
-// Custom identifier type using IRI mapping
 class ISBN {
   final String value;
-
   ISBN(this.value);
-
-  @override
-  String toString() =&gt; value;
 }
 
-// Custom value type using literal mapping
-class Rating {
-  final int stars;
-
-  Rating(this.stars) {
-    if (stars &lt; 0 || stars &gt; 5) {
-      throw ArgumentError('Rating must be between 0 and 5 stars');
-    }
-  }
-
-  @override
-  String toString() =&gt; '$stars stars';
-}
-
-// --- Mappers ---
-
-// IRI-based entity mapper
+// Mappers
 class BookMapper implements GlobalResourceMapper&lt;Book&gt; {
-  static final titlePredicate = SchemaBook.name;
-  static final authorPredicate = SchemaBook.author;
-  static final publishedPredicate = SchemaBook.datePublished;
-  static final isbnPredicate = SchemaBook.isbn;
-  static final ratingPredicate = SchemaBook.aggregateRating;
-  static final chapterPredicate = SchemaBook.hasPart;
-
-  // Base IRI prefix for book resources
-  static const String bookIriPrefix = 'http://example.org/book/';
-
   @override
   final IriTerm typeIri = SchemaBook.classIri;
-
-  /// Converts an ID to a full IRI
-  String _createIriFromId(String id) =&gt; '$bookIriPrefix$id';
-
-  /// Extracts the identifier from a full IRI
-  String _extractIdFromIri(String iri) {
-    if (!iri.startsWith(bookIriPrefix)) {
-      throw ArgumentError('Invalid Book IRI format: $iri');
-    }
-    return iri.substring(bookIriPrefix.length);
-  }
 
   @override
   Book fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return Book(
-      // Extract just the identifier part from the IRI
-      id: _extractIdFromIri(subject.iri),
-      title: reader.require&lt;String&gt;(titlePredicate),
-      author: reader.require&lt;String&gt;(authorPredicate),
-      published: reader.require&lt;DateTime&gt;(publishedPredicate),
-      isbn: reader.require&lt;ISBN&gt;(isbnPredicate),
-      rating: reader.require&lt;Rating&gt;(ratingPredicate),
-      chapters: reader.getValues&lt;Chapter&gt;(chapterPredicate),
+      id: subject.iri.split('/').last,
+      title: reader.require&lt;String&gt;(SchemaBook.name),
+      author: reader.require&lt;String&gt;(SchemaBook.author),
+      isbn: reader.require&lt;ISBN&gt;(SchemaBook.isbn),
+      chapters: reader.optionalRdfList&lt;Chapter&gt;(SchemaBook.hasPart) ?? const [], // RDF List
+      genres: reader.getValues&lt;String&gt;(SchemaBook.genre).toList(),               // Multiple values
     );
   }
 
   @override
-  (IriTerm, List&lt;Triple&gt;) toRdfResource(
-    Book book,
-    SerializationContext context, {
-    RdfSubject? parentSubject,
-  }) {
-    return context
-        .resourceBuilder(IriTerm(_createIriFromId(book.id)))
-        .addValue(titlePredicate, book.title)
-        .addValue(authorPredicate, book.author)
-        .addValue&lt;DateTime&gt;(publishedPredicate, book.published)
-        .addValue&lt;ISBN&gt;(isbnPredicate, book.isbn)
-        .addValue&lt;Rating&gt;(ratingPredicate, book.rating)
-        .addValues(chapterPredicate, book.chapters)
+  (IriTerm, Iterable&lt;Triple&gt;) toRdfResource(Book book, SerializationContext context, {RdfSubject? parentSubject}) {
+    return context.resourceBuilder(IriTerm('http://example.org/book/${book.id}'))
+        .addValue(SchemaBook.name, book.title)
+        .addValue(SchemaBook.author, book.author)
+        .addValue&lt;ISBN&gt;(SchemaBook.isbn, book.isbn)
+        .addRdfList&lt;Chapter&gt;(SchemaBook.hasPart, book.chapters)  // Preserves order
+        .addValues&lt;String&gt;(SchemaBook.genre, book.genres)        // Multiple triples
         .build();
   }
 }
 
-// Blank node-based entity mapper
 class ChapterMapper implements LocalResourceMapper&lt;Chapter&gt; {
-  static final titlePredicate = SchemaChapter.name;
-  static final numberPredicate = SchemaChapter.position;
-
   @override
   final IriTerm typeIri = SchemaChapter.classIri;
 
   @override
-  Chapter fromRdfResource(BlankNodeTerm term, DeserializationContext context) {
-    final reader = context.reader(term);
+  Chapter fromRdfResource(BlankNodeTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
     return Chapter(
-      reader.require&lt;String&gt;(titlePredicate),
-      reader.require&lt;int&gt;(numberPredicate),
+      reader.require&lt;String&gt;(SchemaChapter.name),
+      reader.require&lt;int&gt;(SchemaChapter.position),
     );
   }
 
   @override
-  (BlankNodeTerm, List&lt;Triple&gt;) toRdfResource(
-    Chapter chapter,
-    SerializationContext ctxt, {
-    RdfSubject? parentSubject,
-  }) {
-    return ctxt
-        .resourceBuilder(BlankNodeTerm())
-        .addValue(titlePredicate, chapter.title)
-        .addValue&lt;int&gt;(numberPredicate, chapter.number)
+  (BlankNodeTerm, Iterable&lt;Triple&gt;) toRdfResource(Chapter chapter, SerializationContext context, {RdfSubject? parentSubject}) {
+    return context.resourceBuilder(BlankNodeTerm())
+        .addValue(SchemaChapter.name, chapter.title)
+        .addValue&lt;int&gt;(SchemaChapter.position, chapter.number)
         .build();
   }
 }
 
-// Custom IRI mapper
 class ISBNMapper implements IriTermMapper&lt;ISBN&gt; {
-  static const String isbnUriPrefix = 'urn:isbn:';
+  @override
+  IriTerm toRdfTerm(ISBN isbn, SerializationContext context) =&gt; IriTerm('urn:isbn:${isbn.value}');
 
   @override
-  IriTerm toRdfTerm(ISBN isbn, SerializationContext context) {
-    return IriTerm('$isbnUriPrefix${isbn.value}');
-  }
-
-  @override
-  ISBN fromRdfTerm(IriTerm term, DeserializationContext context) {
-    final uri = term.iri;
-    if (!uri.startsWith(isbnUriPrefix)) {
-      throw ArgumentError('Invalid ISBN URI format: $uri');
-    }
-    return ISBN(uri.substring(isbnUriPrefix.length));
-  }
+  ISBN fromRdfTerm(IriTerm term, DeserializationContext context) =&gt; ISBN(term.iri.split(':').last);
 }
-
-// Custom literal mapper
-class RatingMapper implements LiteralTermMapper&lt;Rating&gt; {
+</code></pre>
+<h3 id="rdf-collections">RDF Collections</h3>
+<p>The library provides multiple strategies for handling collections in RDF:</p>
+<ol>
+<li><strong>RDF Lists</strong>: Ordered collections using <code>rdf:first</code>/<code>rdf:rest</code>/<code>rdf:nil</code> (preserves sequence)</li>
+<li><strong>Multi-Objects</strong>: Flat collections using multiple triples (unordered, efficient)</li>
+<li><strong>RDF Containers</strong>: Structured collections using numbered properties <code>rdf:_1</code>, <code>rdf:_2</code> (Seq/Bag/Alt)</li>
+</ol>
+<h4 id="quick-guide-when-to-use-each">Quick Guide: When to Use Each</h4>
+<table>
+<thead>
+<tr>
+<th><strong>Use RDF Lists</strong> (<code>addRdfList</code>/<code>optionalRdfList</code>/...)</th>
+<th><strong>Use Multi-Objects</strong> (<code>addValues</code>/<code>getValues</code>)</th>
+<th><strong>Use RDF Containers</strong> (<code>addRdfSeq</code>/<code>addRdfBag</code>/<code>addRdfAlt</code>/...)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Order matters (chapters, steps, rankings)</td>
+<td>Order doesn't matter (tags, keywords, authors)</td>
+<td>Need explicit container semantics</td>
+</tr>
+<tr>
+<td>Need to preserve exact sequence</td>
+<td>Want flatter RDF structure</td>
+<td>Seq: ordered with numbered properties</td>
+</tr>
+<tr>
+<td>Working with existing RDF list data</td>
+<td>Better query performance needed</td>
+<td>Bag: unordered, allows duplicates</td>
+</tr>
+<tr>
+<td>Linked list structure preferred</td>
+<td>Simple multiple triples</td>
+<td>Alt: alternatives with preference order</td>
+</tr>
+</tbody>
+</table>
+<h4 id="rdf-lists-ordered-collections">RDF Lists (Ordered Collections)</h4>
+<pre class="language-dart"><code class="language-dart">class BookMapper implements GlobalResourceMapper&lt;Book&gt; {
   @override
-  LiteralTerm toRdfTerm(Rating rating, SerializationContext context) {
-    return LiteralTerm.typed(rating.stars.toString(), 'integer');
+  Book fromRdfResource(IriTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
+    return Book(
+      // Preserves chapter order
+      chapters: reader.optionalRdfList&lt;Chapter&gt;(Schema.hasPart) ?? const [],
+    );
   }
 
   @override
-  Rating fromRdfTerm(LiteralTerm term, DeserializationContext context) {
-    return Rating(int.parse(term.value));
+  (IriTerm, Iterable&lt;Triple&gt;) toRdfResource(Book book, SerializationContext context, {RdfSubject? parentSubject}) {
+    return context.resourceBuilder(subject)
+        .addRdfList&lt;Chapter&gt;(Schema.hasPart, book.chapters) // Preserves order
+        .build();
   }
 }
 </code></pre>
+<h4 id="multi-objects-flat-collections">Multi-Objects (Flat Collections)</h4>
+<pre class="language-dart"><code class="language-dart">class LibraryMapper implements GlobalResourceMapper&lt;Library&gt; {
+  @override
+  Library fromRdfResource(IriTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
+    return Library(
+      // Multiple independent values (no order guarantee)
+      featuredBooks: reader.getValues&lt;Book&gt;(Schema.featuredBooks).toList(),
+    );
+  }
+
+  @override
+  (IriTerm, Iterable&lt;Triple&gt;) toRdfResource(Library library, SerializationContext context, {RdfSubject? parentSubject}) {
+    return context.resourceBuilder(subject)
+        .addValues&lt;Book&gt;(Schema.featuredBooks, library.featuredBooks) // One triple per book
+        .build();
+  }
+}
+</code></pre>
+<h4 id="custom-collection-types">Custom Collection Types</h4>
+<p>Use the base collection methods for custom collection types:</p>
+<pre class="language-dart"><code class="language-dart">// Extension methods for your custom collection type
+extension ImmutableListExtensions on ResourceReader {
+  ImmutableList&lt;T&gt; requireImmutableList&lt;T&gt;(RdfPredicate predicate) =&gt;
+      requireCollection&lt;ImmutableList&lt;T&gt;, T&gt;(
+        predicate,
+        ImmutableListDeserializer&lt;T&gt;.new, // Your custom deserializer factory
+      );
+}
+
+extension ImmutableListBuilderExtensions&lt;S extends RdfSubject&gt; on ResourceBuilder&lt;S&gt; {
+  ResourceBuilder&lt;S&gt; addImmutableList&lt;T&gt;(RdfPredicate predicate, ImmutableList&lt;T&gt; collection) =&gt;
+      addCollection&lt;ImmutableList&lt;T&gt;, T&gt;(
+        predicate,
+        collection,
+        ImmutableListSerializer&lt;T&gt;.new, // Your custom serializer factory
+      );
+}
+
+// Usage in mappers
+class MyMapper implements GlobalResourceMapper&lt;MyClass&gt; {
+  @override
+  MyClass fromRdfResource(IriTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
+    return MyClass(
+      items: reader.requireImmutableList&lt;String&gt;(Schema.keywords),
+    );
+  }
+
+  @override
+  (IriTerm, Iterable&lt;Triple&gt;) toRdfResource(MyClass obj, SerializationContext context, {RdfSubject? parentSubject}) {
+    return context.resourceBuilder(subject)
+        .addImmutableList&lt;String&gt;(Schema.keywords, obj.items)
+        .build();
+  }
+}
+</code></pre>
+<h4 id="rdf-containers-seq-bag-alt">RDF Containers (Seq, Bag, Alt)</h4>
+<p>For specialized container semantics:</p>
+<pre class="language-dart"><code class="language-dart">// Use specific container types when semantics matter
+chapters: reader.optionalRdfSeq&lt;String&gt;(Schema.hasPart) ?? const [],      // Ordered sequence
+keywords: reader.optionalRdfBag&lt;String&gt;(Schema.keywords) ?? const [],      // Unordered collection  
+formats: reader.optionalRdfAlt&lt;String&gt;(Schema.encodingFormat) ?? const [], // Alternatives with preference
+
+// In builder
+.addRdfSeq&lt;String&gt;(Schema.hasPart, resource.chapters)       // rdf:Seq
+.addRdfBag&lt;String&gt;(Schema.keywords, resource.keywords)      // rdf:Bag
+.addRdfAlt&lt;String&gt;(Schema.encodingFormat, resource.formats) // rdf:Alt
+</code></pre>
+<blockquote>
+<p>💡 <strong>See complete examples</strong>: <a href="example/collections_example.dart"><code>example/collections_example.dart</code></a> and <a href="example/custom_collection_type_example.dart"><code>example/custom_collection_type_example.dart</code></a></p>
+</blockquote>
 <h3 id="lossless-mapping---preserve-all-your-data">Lossless Mapping - Preserve All Your Data</h3>
 <p>Want to ensure no RDF data is lost during conversion? rdf_mapper provides powerful lossless mapping features:</p>
 <pre class="language-dart"><code class="language-dart">// Decode with remainder - get your object plus any unmapped data
@@ -571,7 +602,7 @@ class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
   }
 
   @override
-  (IriTerm, List&lt;Triple&gt;) toRdfResource(Person person, SerializationContext context, {RdfSubject? parentSubject}) {
+  (IriTerm, Iterable&lt;Triple&gt;) toRdfResource(Person person, SerializationContext context, {RdfSubject? parentSubject}) {
     return context.resourceBuilder(IriTerm(person.id))
       .addValue(foafName, person.name)
       .addUnmapped(person.unmappedGraph) // Restores unmapped data
@@ -749,7 +780,7 @@ class MyCustomDoubleMapper extends DelegatingRdfLiteralTermMapper&lt;MyCustomDou
 </code></pre>
 <h4 id="local-scope-for-specific-predicates">Local Scope (for specific predicates)</h4>
 <pre class="language-dart"><code class="language-dart">// In custom resource mappers
-reader.require(myPredicate, literalTermDeserializer: DoubleMapper(Xsd.double));
+reader.require(myPredicate, deserializer: DoubleMapper(Xsd.double));
 
 // With annotations - simpler option
 @RdfProperty(myPredicate, 
@@ -772,7 +803,6 @@ context.fromLiteralTerm(term, bypassDatatypeCheck: true);
 <h2 id="-roadmap--next-steps">🛣️ Roadmap / Next Steps</h2>
 <ul>
 <li>Detect cycles, optimally support them.</li>
-<li>Properly Support Collection (<code>rdf:first</code> / <code>rdf:rest</code> / <code>rdf:nil</code> pattern) for serialization and derserialization as dart List.</li>
 <li>Support mapping to / from multiple RDF classes (e.g. schema:Person and foaf:Person)</li>
 <li>Improve test coverage</li>
 </ul>
@@ -827,7 +857,7 @@ context.fromLiteralTerm(term, bypassDatatypeCheck: true);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

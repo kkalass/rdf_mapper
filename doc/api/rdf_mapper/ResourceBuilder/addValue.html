@@ -55,34 +55,51 @@
     <section class="multi-line-signature">
       
 <span class="returntype"><a href="../../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
-<span class="name ">addValue</span>&lt;<wbr><span class="type-parameter">V</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="addValue-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span></li>
+<span class="name ">addValue</span>&lt;<wbr><span class="type-parameter">V</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="addValue-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span></li>
 <li><span class="parameter" id="addValue-param-value"><span class="type-annotation">V</span> <span class="parameter-name">value</span>, {</span></li>
-<li><span class="parameter" id="addValue-param-literalTermSerializer"><span class="type-annotation"><a href="../../rdf_mapper/LiteralTermSerializer-class.html">LiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span>?</span> <span class="parameter-name">literalTermSerializer</span>, </span></li>
-<li><span class="parameter" id="addValue-param-iriTermSerializer"><span class="type-annotation"><a href="../../rdf_mapper/IriTermSerializer-class.html">IriTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span>?</span> <span class="parameter-name">iriTermSerializer</span>, </span></li>
-<li><span class="parameter" id="addValue-param-resourceSerializer"><span class="type-annotation"><a href="../../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span>?</span> <span class="parameter-name">resourceSerializer</span>, </span></li>
+<li><span class="parameter" id="addValue-param-serializer"><span class="type-annotation"><a href="../../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span>?</span> <span class="parameter-name">serializer</span>, </span></li>
 </ol>})
 
       
 
     </section>
     
+<section class="desc markdown">
+  <p>Adds a single property value to the resource being built.</p>
+<p>This is the fundamental method for adding properties to RDF resources. It converts
+the provided value to the appropriate RDF representation and creates triples linking
+the current subject to the value via the specified predicate.</p>
+<p>The method handles various value types automatically:</p>
+<ul>
+<li><strong>Primitives</strong>: Converted to literal terms (strings, numbers, booleans, dates)</li>
+<li><strong>Objects</strong>: Serialized as linked resources with their own subject IRIs</li>
+<li><strong>Collections</strong>: May be handled by specialized serializers</li>
+</ul>
+<p>Example usage:</p>
+<pre class="language-dart"><code class="language-dart">builder
+  .addValue(Dc.title, 'The Great Gatsby')
+  .addValue(Dc.creator, Person(name: 'F. Scott Fitzgerald'))
+  .addValue(Schema.datePublished, DateTime(1925, 4, 10));
+</code></pre>
+<p>The <code>predicate</code> is the RDF predicate that defines the relationship.
+The <code>value</code> is the Dart object to be serialized and linked to the subject.
+The optional <code>serializer</code> can be provided for custom serialization of the value.</p>
+<p>Returns this builder for method chaining.</p>
+</section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">ResourceBuilder&lt;S&gt; addValue&lt;V&gt;(
-  RdfPredicate predicate,
-  V value, {
-  LiteralTermSerializer&lt;V&gt;? literalTermSerializer,
-  IriTermSerializer&lt;V&gt;? iriTermSerializer,
-  ResourceSerializer&lt;V&gt;? resourceSerializer,
-}) {
-  _triples.addAll(
-    _service.value(_subject, predicate, value,
-        literalTermSerializer: literalTermSerializer,
-        iriTermSerializer: iriTermSerializer,
-        resourceSerializer: resourceSerializer),
+  <pre class="language-dart"><code class="language-dart">ResourceBuilder&lt;S&gt; addValue&lt;V&gt;(RdfPredicate predicate, V value,
+    {Serializer&lt;V&gt;? serializer}) {
+  _triples.add(
+    _service.value(
+      _subject,
+      predicate,
+      value,
+      serializer: serializer,
+    ),
   );
   return this;
 }</code></pre>
@@ -113,7 +130,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

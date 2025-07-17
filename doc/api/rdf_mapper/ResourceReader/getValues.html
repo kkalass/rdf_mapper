@@ -55,11 +55,8 @@
     <section class="multi-line-signature">
       
 <span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
-<span class="name ">getValues</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="getValues-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, {</span></li>
-<li><span class="parameter" id="getValues-param-globalResourceDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/GlobalResourceDeserializer-class.html">GlobalResourceDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">globalResourceDeserializer</span>, </span></li>
-<li><span class="parameter" id="getValues-param-iriTermDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/IriTermDeserializer-class.html">IriTermDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">iriTermDeserializer</span>, </span></li>
-<li><span class="parameter" id="getValues-param-literalTermDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/LiteralTermDeserializer-class.html">LiteralTermDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">literalTermDeserializer</span>, </span></li>
-<li><span class="parameter" id="getValues-param-localResourceDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/LocalResourceDeserializer-class.html">LocalResourceDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">localResourceDeserializer</span>, </span></li>
+<span class="name ">getValues</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="getValues-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, {</span></li>
+<li><span class="parameter" id="getValues-param-deserializer"><span class="type-annotation"><a href="../../rdf_mapper/Deserializer-class.html">Deserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">deserializer</span>, </span></li>
 </ol>})
 
       
@@ -75,14 +72,8 @@ empty iterable if no values are found.</p>
 <pre class="language-dart"><code class="language-dart">final tags = reader.getValues&lt;String&gt;(Dc.subject);
 final authors = reader.getValues&lt;Person&gt;(Dc.creator);
 </code></pre>
-<p>Parameters:</p>
-<ul>
-<li><code>predicate</code> - The predicate IRI for the properties to read</li>
-<li><code>globalResourceDeserializer</code> - Optional custom deserializer for global resources (identifiable by <a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/IriTerm-class.html">IriTerm</a>)</li>
-<li><code>iriTermDeserializer</code> - Optional custom deserializer for IRI terms</li>
-<li><code>literalTermDeserializer</code> - Optional custom deserializer for literal terms</li>
-<li><code>localResourceDeserializer</code> - Optional custom deserializer for local resources (identifiable by <a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/BlankNodeTerm-class.html">BlankNodeTerm</a> only)</li>
-</ul>
+<p>The <code>predicate</code> is the predicate IRI for the properties to read.
+The optional <code>deserializer</code> can be provided for custom deserialization.</p>
 <p>Returns an iterable of property values converted to the requested type.</p>
 </section>
 
@@ -92,18 +83,12 @@ final authors = reader.getValues&lt;Person&gt;(Dc.creator);
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">Iterable&lt;T&gt; getValues&lt;T&gt;(
   RdfPredicate predicate, {
-  GlobalResourceDeserializer&lt;T&gt;? globalResourceDeserializer,
-  IriTermDeserializer&lt;T&gt;? iriTermDeserializer,
-  LiteralTermDeserializer&lt;T&gt;? literalTermDeserializer,
-  LocalResourceDeserializer&lt;T&gt;? localResourceDeserializer,
+  Deserializer&lt;T&gt;? deserializer,
 }) {
   return _service.getValues&lt;T&gt;(
     _subject,
     predicate,
-    globalResourceDeserializer: globalResourceDeserializer,
-    iriTermDeserializer: iriTermDeserializer,
-    literalTermDeserializer: literalTermDeserializer,
-    localResourceDeserializer: localResourceDeserializer,
+    deserializer: deserializer,
   );
 }</code></pre>
 </section>
@@ -133,7 +118,7 @@ final authors = reader.getValues&lt;Person&gt;(Dc.creator);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

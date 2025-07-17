@@ -26,7 +26,7 @@
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../index.html">rdf_mapper</a></li>
     <li><a href="../rdf_mapper/">rdf_mapper.dart</a></li>
-    <li class="self-crumb">ResourceBuilder<span class="signature">&lt;<wbr><span class="type-parameter">S extends <a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfSubject-class.html">RdfSubject</a></span>&gt;</span> class</li>
+    <li class="self-crumb">ResourceBuilder<span class="signature">&lt;<wbr><span class="type-parameter">S extends <a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfSubject-class.html">RdfSubject</a></span>&gt;</span> class</li>
   </ol>
   <div class="self-name">ResourceBuilder</div>
   <form class="search navbar-right" role="search">
@@ -93,7 +93,7 @@ the code for creating RDF structures more readable and maintainable.</p>
     <h2>Constructors</h2>
     <dl class="constructor-summary-list">
         <dt id="ResourceBuilder.new" class="callable">
-          <span class="name"><a href="../rdf_mapper/ResourceBuilder/ResourceBuilder.html">ResourceBuilder.new</a></span><span class="signature">(<span class="parameter" id="-param-_subject"><span class="type-annotation">S</span> <span class="parameter-name">_subject</span>, </span><span class="parameter" id="-param-_service"><span class="type-annotation"><a href="../rdf_mapper/SerializationService-class.html">SerializationService</a></span> <span class="parameter-name">_service</span>, {</span><span class="parameter" id="-param-initialTriples"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/Triple-class.html">Triple</a></span>&gt;</span>?</span> <span class="parameter-name">initialTriples</span></span>})</span>
+          <span class="name"><a href="../rdf_mapper/ResourceBuilder/ResourceBuilder.html">ResourceBuilder.new</a></span><span class="signature">(<span class="parameter" id="-param-_subject"><span class="type-annotation">S</span> <span class="parameter-name">_subject</span>, </span><span class="parameter" id="-param-_service"><span class="type-annotation"><a href="../rdf_mapper/SerializationService-class.html">SerializationService</a></span> <span class="parameter-name">_service</span>, {</span><span class="parameter" id="-param-initialTriples"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/Triple-class.html">Triple</a></span>&gt;</span>?</span> <span class="parameter-name">initialTriples</span></span>})</span>
         </dt>
         <dd>
           Creates a new ResourceBuilder for the fluent API.
@@ -139,8 +139,21 @@ the code for creating RDF structures more readable and maintainable.</p>
       id="instance-methods">
     <h2>Methods</h2>
     <dl class="callables">
+        <dt id="addCollection" class="callable">
+  <span class="name"><a href="../rdf_mapper/ResourceBuilder/addCollection.html">addCollection</a></span><span class="signature">&lt;<wbr><span class="type-parameter">C</span>, <span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="addCollection-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="addCollection-param-collection"><span class="type-annotation">C</span> <span class="parameter-name">collection</span>, </span><span class="parameter" id="addCollection-param-collectionSerializerFactory"><span class="type-annotation"><a href="../rdf_mapper/CollectionSerializerFactory.html">CollectionSerializerFactory</a><span class="signature">&lt;<wbr><span class="type-parameter">C</span>, <span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">collectionSerializerFactory</span>, {</span><span class="parameter" id="addCollection-param-itemSerializer"><span class="type-annotation"><a href="../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">itemSerializer</span></span>})
+    <span class="returntype parameter">&#8594; <a href="../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Adds a collection using a specialized collection serializer factory.
+  
+
+</dd>
+
         <dt id="addMap" class="callable">
-  <span class="name"><a href="../rdf_mapper/ResourceBuilder/addMap.html">addMap</a></span><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="addMap-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="addMap-param-instance"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="addMap-param-literalTermSerializer"><span class="type-annotation"><a href="../rdf_mapper/LiteralTermSerializer-class.html">LiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">literalTermSerializer</span>, </span><span class="parameter" id="addMap-param-iriTermSerializer"><span class="type-annotation"><a href="../rdf_mapper/IriTermSerializer-class.html">IriTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">iriTermSerializer</span>, </span><span class="parameter" id="addMap-param-resourceSerializer"><span class="type-annotation"><a href="../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">resourceSerializer</span></span>})
+  <span class="name"><a href="../rdf_mapper/ResourceBuilder/addMap.html">addMap</a></span><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="addMap-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="addMap-param-instance"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="addMap-param-serializer"><span class="type-annotation"><a href="../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/MapEntry-class.html">MapEntry</a><span class="signature">&lt;<wbr><span class="type-parameter">K</span>, <span class="type-parameter">V</span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">serializer</span></span>})
     <span class="returntype parameter">&#8594; <a href="../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
   </span>
   
@@ -148,6 +161,58 @@ the code for creating RDF structures more readable and maintainable.</p>
 </dt>
 <dd>
   Adds a map of key-value pairs as child resources.
+  
+
+</dd>
+
+        <dt id="addRdfAlt" class="callable">
+  <span class="name"><a href="../rdf_mapper/ResourceBuilder/addRdfAlt.html">addRdfAlt</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="addRdfAlt-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="addRdfAlt-param-values"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">values</span>, {</span><span class="parameter" id="addRdfAlt-param-itemSerializer"><span class="type-annotation"><a href="../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">itemSerializer</span></span>})
+    <span class="returntype parameter">&#8594; <a href="../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Adds an RDF Alternative (rdf:Alt) to the current resource.
+  
+
+</dd>
+
+        <dt id="addRdfBag" class="callable">
+  <span class="name"><a href="../rdf_mapper/ResourceBuilder/addRdfBag.html">addRdfBag</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="addRdfBag-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="addRdfBag-param-values"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">values</span>, {</span><span class="parameter" id="addRdfBag-param-itemSerializer"><span class="type-annotation"><a href="../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">itemSerializer</span></span>})
+    <span class="returntype parameter">&#8594; <a href="../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Adds an RDF Bag (rdf:Bag) to the current resource.
+  
+
+</dd>
+
+        <dt id="addRdfList" class="callable">
+  <span class="name"><a href="../rdf_mapper/ResourceBuilder/addRdfList.html">addRdfList</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="addRdfList-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="addRdfList-param-values"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">values</span>, {</span><span class="parameter" id="addRdfList-param-itemSerializer"><span class="type-annotation"><a href="../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">itemSerializer</span></span>})
+    <span class="returntype parameter">&#8594; <a href="../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Adds a list as an RDF List structure.
+  
+
+</dd>
+
+        <dt id="addRdfSeq" class="callable">
+  <span class="name"><a href="../rdf_mapper/ResourceBuilder/addRdfSeq.html">addRdfSeq</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="addRdfSeq-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="addRdfSeq-param-values"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">values</span>, {</span><span class="parameter" id="addRdfSeq-param-itemSerializer"><span class="type-annotation"><a href="../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">itemSerializer</span></span>})
+    <span class="returntype parameter">&#8594; <a href="../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Adds an RDF Sequence (rdf:Seq) to the current resource.
   
 
 </dd>
@@ -166,60 +231,60 @@ the code for creating RDF structures more readable and maintainable.</p>
 </dd>
 
         <dt id="addValue" class="callable">
-  <span class="name"><a href="../rdf_mapper/ResourceBuilder/addValue.html">addValue</a></span><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="addValue-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="addValue-param-value"><span class="type-annotation">V</span> <span class="parameter-name">value</span>, {</span><span class="parameter" id="addValue-param-literalTermSerializer"><span class="type-annotation"><a href="../rdf_mapper/LiteralTermSerializer-class.html">LiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span>?</span> <span class="parameter-name">literalTermSerializer</span>, </span><span class="parameter" id="addValue-param-iriTermSerializer"><span class="type-annotation"><a href="../rdf_mapper/IriTermSerializer-class.html">IriTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span>?</span> <span class="parameter-name">iriTermSerializer</span>, </span><span class="parameter" id="addValue-param-resourceSerializer"><span class="type-annotation"><a href="../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span>?</span> <span class="parameter-name">resourceSerializer</span></span>})
+  <span class="name"><a href="../rdf_mapper/ResourceBuilder/addValue.html">addValue</a></span><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="addValue-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="addValue-param-value"><span class="type-annotation">V</span> <span class="parameter-name">value</span>, {</span><span class="parameter" id="addValue-param-serializer"><span class="type-annotation"><a href="../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span>?</span> <span class="parameter-name">serializer</span></span>})
     <span class="returntype parameter">&#8594; <a href="../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
   </span>
   
 
 </dt>
 <dd>
-  
+  Adds a single property value to the resource being built.
   
 
 </dd>
 
         <dt id="addValueIfNotNull" class="callable">
-  <span class="name"><a href="../rdf_mapper/ResourceBuilder/addValueIfNotNull.html">addValueIfNotNull</a></span><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="addValueIfNotNull-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="addValueIfNotNull-param-value"><span class="type-annotation">V?</span> <span class="parameter-name">value</span>, {</span><span class="parameter" id="addValueIfNotNull-param-literalTermSerializer"><span class="type-annotation"><a href="../rdf_mapper/LiteralTermSerializer-class.html">LiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span>?</span> <span class="parameter-name">literalTermSerializer</span>, </span><span class="parameter" id="addValueIfNotNull-param-iriTermSerializer"><span class="type-annotation"><a href="../rdf_mapper/IriTermSerializer-class.html">IriTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span>?</span> <span class="parameter-name">iriTermSerializer</span>, </span><span class="parameter" id="addValueIfNotNull-param-resourceSerializer"><span class="type-annotation"><a href="../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span>?</span> <span class="parameter-name">resourceSerializer</span></span>})
+  <span class="name"><a href="../rdf_mapper/ResourceBuilder/addValueIfNotNull.html">addValueIfNotNull</a></span><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="addValueIfNotNull-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="addValueIfNotNull-param-value"><span class="type-annotation">V?</span> <span class="parameter-name">value</span>, {</span><span class="parameter" id="addValueIfNotNull-param-serializer"><span class="type-annotation"><a href="../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span>?</span> <span class="parameter-name">serializer</span></span>})
     <span class="returntype parameter">&#8594; <a href="../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
   </span>
   
 
 </dt>
 <dd>
-  
+  Conditionally adds a property value only if it's not null.
   
 
 </dd>
 
         <dt id="addValues" class="callable">
-  <span class="name"><a href="../rdf_mapper/ResourceBuilder/addValues.html">addValues</a></span><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="addValues-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="addValues-param-values"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span></span> <span class="parameter-name">values</span>, {</span><span class="parameter" id="addValues-param-literalTermSerializer"><span class="type-annotation"><a href="../rdf_mapper/LiteralTermSerializer-class.html">LiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span>?</span> <span class="parameter-name">literalTermSerializer</span>, </span><span class="parameter" id="addValues-param-iriTermSerializer"><span class="type-annotation"><a href="../rdf_mapper/IriTermSerializer-class.html">IriTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span>?</span> <span class="parameter-name">iriTermSerializer</span>, </span><span class="parameter" id="addValues-param-resourceSerializer"><span class="type-annotation"><a href="../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span>?</span> <span class="parameter-name">resourceSerializer</span></span>})
+  <span class="name"><a href="../rdf_mapper/ResourceBuilder/addValues.html">addValues</a></span><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="addValues-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="addValues-param-values"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span></span> <span class="parameter-name">values</span>, {</span><span class="parameter" id="addValues-param-serializer"><span class="type-annotation"><a href="../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">V</span>&gt;</span>?</span> <span class="parameter-name">serializer</span></span>})
     <span class="returntype parameter">&#8594; <a href="../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
   </span>
   
 
 </dt>
 <dd>
-  
+  Adds multiple property values from an iterable collection.
   
 
 </dd>
 
         <dt id="addValuesFromSource" class="callable">
-  <span class="name"><a href="../rdf_mapper/ResourceBuilder/addValuesFromSource.html">addValuesFromSource</a></span><span class="signature">&lt;<wbr><span class="type-parameter">A</span>, <span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="addValuesFromSource-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="addValuesFromSource-param-toIterable"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">toIterable</span>(<span class="parameter" id="param-"><span class="type-annotation">A</span></span>), </span><span class="parameter" id="addValuesFromSource-param-instance"><span class="type-annotation">A</span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="addValuesFromSource-param-literalTermSerializer"><span class="type-annotation"><a href="../rdf_mapper/LiteralTermSerializer-class.html">LiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">literalTermSerializer</span>, </span><span class="parameter" id="addValuesFromSource-param-iriTermSerializer"><span class="type-annotation"><a href="../rdf_mapper/IriTermSerializer-class.html">IriTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">iriTermSerializer</span>, </span><span class="parameter" id="addValuesFromSource-param-resourceSerializer"><span class="type-annotation"><a href="../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">resourceSerializer</span></span>})
+  <span class="name"><a href="../rdf_mapper/ResourceBuilder/addValuesFromSource.html">addValuesFromSource</a></span><span class="signature">&lt;<wbr><span class="type-parameter">A</span>, <span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="addValuesFromSource-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, </span><span class="parameter" id="addValuesFromSource-param-toIterable"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">toIterable</span>(<span class="parameter" id="param-"><span class="type-annotation">A</span></span>), </span><span class="parameter" id="addValuesFromSource-param-instance"><span class="type-annotation">A</span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="addValuesFromSource-param-serializer"><span class="type-annotation"><a href="../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">serializer</span></span>})
     <span class="returntype parameter">&#8594; <a href="../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
   </span>
   
 
 </dt>
 <dd>
-  
+  Adds multiple property values extracted from a source object using a transformation function.
   
 
 </dd>
 
         <dt id="build" class="callable">
   <span class="name"><a href="../rdf_mapper/ResourceBuilder/build.html">build</a></span><span class="signature">(<wbr>)
-    <span class="returntype parameter">&#8594; (<span class="field"><span class="type-annotation">S</span>, </span><span class="field"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/Triple-class.html">Triple</a></span>&gt;</span></span></span>)</span>
+    <span class="returntype parameter">&#8594; (<span class="field"><span class="type-annotation">S</span>, </span><span class="field"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/Triple-class.html">Triple</a></span>&gt;</span></span></span>)</span>
   </span>
   
 
@@ -307,7 +372,7 @@ the code for creating RDF structures more readable and maintainable.</p>
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../index.html">rdf_mapper</a></li>
     <li><a href="../rdf_mapper/">rdf_mapper</a></li>
-    <li class="self-crumb">ResourceBuilder<span class="signature">&lt;<wbr><span class="type-parameter">S extends <a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/RdfSubject-class.html">RdfSubject</a></span>&gt;</span> class</li>
+    <li class="self-crumb">ResourceBuilder<span class="signature">&lt;<wbr><span class="type-parameter">S extends <a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfSubject-class.html">RdfSubject</a></span>&gt;</span> class</li>
 </ol>
 
     <h5>rdf_mapper library</h5>
@@ -319,7 +384,7 @@ the code for creating RDF structures more readable and maintainable.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

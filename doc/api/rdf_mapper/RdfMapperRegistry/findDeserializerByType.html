@@ -54,7 +54,7 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="../../rdf_mapper/Deserializer-class.html">Deserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span>
+<span class="returntype"><a href="../../rdf_mapper/BaseDeserializer-class.html">BaseDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span>
 <span class="name ">findDeserializerByType</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr>)
 
       
@@ -66,12 +66,12 @@
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Deserializer&lt;T&gt;? findDeserializerByType&lt;T&gt;() {
+  <pre class="language-dart"><code class="language-dart">BaseDeserializer&lt;T&gt;? findDeserializerByType&lt;T&gt;() {
   return (_iriTermDeserializers[T] ??
       _literalTermDeserializers[T] ??
       _localResourceDeserializers[T] ??
       _globalResourceDeserializers[T] ??
-      _unmappedTriplesDeserializers[T]) as Deserializer&lt;T&gt;?;
+      _unmappedTriplesDeserializers[T]) as BaseDeserializer&lt;T&gt;?;
 }</code></pre>
 </section>
 
@@ -100,7 +100,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

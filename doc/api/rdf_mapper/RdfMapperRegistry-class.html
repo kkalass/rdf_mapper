@@ -156,7 +156,7 @@ registry.registerDeserializer&lt;Book&gt;(BookDeserializer());
 
         <dt id="findDeserializerByType" class="callable">
   <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/findDeserializerByType.html">findDeserializerByType</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr>)
-    <span class="returntype parameter">&#8594; <a href="../rdf_mapper/Deserializer-class.html">Deserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span>
+    <span class="returntype parameter">&#8594; <a href="../rdf_mapper/BaseDeserializer-class.html">BaseDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span>
   </span>
   
 
@@ -180,8 +180,21 @@ registry.registerDeserializer&lt;Book&gt;(BookDeserializer());
 
 </dd>
 
+        <dt id="getFirstIriTermDeserializer" class="callable">
+  <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/getFirstIriTermDeserializer.html">getFirstIriTermDeserializer</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="../rdf_mapper/IriTermDeserializer-class.html">IriTermDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
         <dt id="getGlobalResourceDartTypeByIriType" class="callable">
-  <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/getGlobalResourceDartTypeByIriType.html">getGlobalResourceDartTypeByIriType</a></span><span class="signature">(<wbr><span class="parameter" id="getGlobalResourceDartTypeByIriType-param-typeIri"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">typeIri</span></span>)
+  <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/getGlobalResourceDartTypeByIriType.html">getGlobalResourceDartTypeByIriType</a></span><span class="signature">(<wbr><span class="parameter" id="getGlobalResourceDartTypeByIriType-param-typeIri"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">typeIri</span></span>)
     <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a>?</span>
   </span>
   
@@ -207,7 +220,7 @@ registry.registerDeserializer&lt;Book&gt;(BookDeserializer());
 </dd>
 
         <dt id="getGlobalResourceDeserializerByType" class="callable">
-  <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/getGlobalResourceDeserializerByType.html">getGlobalResourceDeserializerByType</a></span><span class="signature">(<wbr><span class="parameter" id="getGlobalResourceDeserializerByType-param-typeIri"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">typeIri</span></span>)
+  <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/getGlobalResourceDeserializerByType.html">getGlobalResourceDeserializerByType</a></span><span class="signature">(<wbr><span class="parameter" id="getGlobalResourceDeserializerByType-param-typeIri"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">typeIri</span></span>)
     <span class="returntype parameter">&#8594; <a href="../rdf_mapper/GlobalResourceDeserializer-class.html">GlobalResourceDeserializer</a></span>
   </span>
   
@@ -271,6 +284,19 @@ registry.registerDeserializer&lt;Book&gt;(BookDeserializer());
 
 </dd>
 
+        <dt id="getLiteralTermDeserializerByType" class="callable">
+  <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/getLiteralTermDeserializerByType.html">getLiteralTermDeserializerByType</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="getLiteralTermDeserializerByType-param-typeIri"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">typeIri</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../rdf_mapper/LiteralTermDeserializer-class.html">LiteralTermDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
         <dt id="getLiteralTermSerializer" class="callable">
   <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/getLiteralTermSerializer.html">getLiteralTermSerializer</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr>)
     <span class="returntype parameter">&#8594; <a href="../rdf_mapper/LiteralTermSerializer-class.html">LiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
@@ -298,7 +324,7 @@ registry.registerDeserializer&lt;Book&gt;(BookDeserializer());
 </dd>
 
         <dt id="getLocalResourceDartTypeByIriType" class="callable">
-  <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/getLocalResourceDartTypeByIriType.html">getLocalResourceDartTypeByIriType</a></span><span class="signature">(<wbr><span class="parameter" id="getLocalResourceDartTypeByIriType-param-typeIri"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">typeIri</span></span>)
+  <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/getLocalResourceDartTypeByIriType.html">getLocalResourceDartTypeByIriType</a></span><span class="signature">(<wbr><span class="parameter" id="getLocalResourceDartTypeByIriType-param-typeIri"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">typeIri</span></span>)
     <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a>?</span>
   </span>
   
@@ -324,8 +350,47 @@ registry.registerDeserializer&lt;Book&gt;(BookDeserializer());
 </dd>
 
         <dt id="getLocalResourceDeserializerByType" class="callable">
-  <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/getLocalResourceDeserializerByType.html">getLocalResourceDeserializerByType</a></span><span class="signature">(<wbr><span class="parameter" id="getLocalResourceDeserializerByType-param-typeIri"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">typeIri</span></span>)
+  <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/getLocalResourceDeserializerByType.html">getLocalResourceDeserializerByType</a></span><span class="signature">(<wbr><span class="parameter" id="getLocalResourceDeserializerByType-param-typeIri"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">typeIri</span></span>)
     <span class="returntype parameter">&#8594; <a href="../rdf_mapper/LocalResourceDeserializer-class.html">LocalResourceDeserializer</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="getMultiObjectsDeserializer" class="callable">
+  <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/getMultiObjectsDeserializer.html">getMultiObjectsDeserializer</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="../rdf_mapper/MultiObjectsDeserializer-class.html">MultiObjectsDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="getMultiObjectsSerializer" class="callable">
+  <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/getMultiObjectsSerializer.html">getMultiObjectsSerializer</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="../rdf_mapper/MultiObjectsSerializer-class.html">MultiObjectsSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="getMultiObjectsSerializerByType" class="callable">
+  <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/getMultiObjectsSerializerByType.html">getMultiObjectsSerializerByType</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="getMultiObjectsSerializerByType-param-type"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span> <span class="parameter-name">type</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../rdf_mapper/MultiObjectsSerializer-class.html">MultiObjectsSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
   </span>
   
 
@@ -415,7 +480,7 @@ registry.registerDeserializer&lt;Book&gt;(BookDeserializer());
 </dd>
 
         <dt id="hasGlobalResourceDeserializerForType" class="callable">
-  <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/hasGlobalResourceDeserializerForType.html">hasGlobalResourceDeserializerForType</a></span><span class="signature">(<wbr><span class="parameter" id="hasGlobalResourceDeserializerForType-param-typeIri"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">typeIri</span></span>)
+  <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/hasGlobalResourceDeserializerForType.html">hasGlobalResourceDeserializerForType</a></span><span class="signature">(<wbr><span class="parameter" id="hasGlobalResourceDeserializerForType-param-typeIri"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">typeIri</span></span>)
     <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
   </span>
   
@@ -492,6 +557,32 @@ registry.registerDeserializer&lt;Book&gt;(BookDeserializer());
 
 </dd>
 
+        <dt id="hasMultiObjectsDeserializerFor" class="callable">
+  <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/hasMultiObjectsDeserializerFor.html">hasMultiObjectsDeserializerFor</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="hasMultiObjectsSerializerFor" class="callable">
+  <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/hasMultiObjectsSerializerFor.html">hasMultiObjectsSerializerFor</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
         <dt id="hasResourceSerializerFor" class="callable">
   <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/hasResourceSerializerFor.html">hasResourceSerializerFor</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr>)
     <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
@@ -545,7 +636,7 @@ registry.registerDeserializer&lt;Book&gt;(BookDeserializer());
 </dd>
 
         <dt id="registerDeserializer" class="callable">
-  <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/registerDeserializer.html">registerDeserializer</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="registerDeserializer-param-deserializer"><span class="type-annotation"><a href="../rdf_mapper/Deserializer-class.html">Deserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">deserializer</span></span>)
+  <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/registerDeserializer.html">registerDeserializer</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="registerDeserializer-param-deserializer"><span class="type-annotation"><a href="../rdf_mapper/BaseDeserializer-class.html">BaseDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">deserializer</span></span>)
     <span class="returntype parameter">&#8594; void</span>
   </span>
   
@@ -558,7 +649,7 @@ registry.registerDeserializer&lt;Book&gt;(BookDeserializer());
 </dd>
 
         <dt id="registerMapper" class="callable">
-  <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/registerMapper.html">registerMapper</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="registerMapper-param-mapper"><span class="type-annotation"><a href="../rdf_mapper/Mapper-class.html">Mapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">mapper</span></span>)
+  <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/registerMapper.html">registerMapper</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="registerMapper-param-mapper"><span class="type-annotation"><a href="../rdf_mapper/BaseMapper-class.html">BaseMapper</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">mapper</span></span>)
     <span class="returntype parameter">&#8594; void</span>
   </span>
   
@@ -571,7 +662,7 @@ registry.registerDeserializer&lt;Book&gt;(BookDeserializer());
 </dd>
 
         <dt id="registerSerializer" class="callable">
-  <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/registerSerializer.html">registerSerializer</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="registerSerializer-param-serializer"><span class="type-annotation"><a href="../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">serializer</span></span>)
+  <span class="name"><a href="../rdf_mapper/RdfMapperRegistry/registerSerializer.html">registerSerializer</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="registerSerializer-param-serializer"><span class="type-annotation"><a href="../rdf_mapper/BaseSerializer-class.html">BaseSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">serializer</span></span>)
     <span class="returntype parameter">&#8594; void</span>
   </span>
   
@@ -646,7 +737,7 @@ registry.registerDeserializer&lt;Book&gt;(BookDeserializer());
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

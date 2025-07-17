@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the optionalRdfBag method from the ResourceReader class, for the Dart programming language.">
+  <title>optionalRdfBag method - ResourceReader class - rdf_mapper library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper.dart</a></li>
+    <li><a href="../../rdf_mapper/ResourceReader-class.html">ResourceReader</a></li>
+    <li class="self-crumb">optionalRdfBag&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
+  </ol>
+  <div class="self-name">optionalRdfBag</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="rdf_mapper&#47;ResourceReader-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">optionalRdfBag&lt;<wbr><span class="type-parameter">T</span>&gt;</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span>
+<span class="name ">optionalRdfBag</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="optionalRdfBag-param-predicate"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfPredicate-class.html">RdfPredicate</a></span> <span class="parameter-name">predicate</span>, {</span></li>
+<li><span class="parameter" id="optionalRdfBag-param-itemDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/Deserializer-class.html">Deserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">itemDeserializer</span>, </span></li>
+</ol>})
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Retrieves an optional bag from an RDF Bag (rdf:Bag) container.</p>
+<p>This convenience method deserializes an RDF Bag container using numbered
+properties (<code>rdf:_1</code>, <code>rdf:_2</code>, etc.) with the container typed as <code>rdf:Bag</code>.
+RDF Bags represent unordered collections where the numbered properties don't
+imply any ordering semantics, but elements are returned in numerical order
+for consistency.</p>
+<p><strong>Optional Semantics</strong>: This method allows the RDF Bag to be missing from the graph.
+If the predicate is not found, null is returned. If the container exists but has an invalid
+structure, an exception will be thrown. Use <a href="../../rdf_mapper/ResourceReader/requireRdfBag.html">requireRdfBag</a> if the bag must exist.</p>
+<p><strong>Container Structure</strong>: RDF Bags use numbered properties to reference elements:</p>
+<pre class="language-turtle"><code class="language-turtle">:subject :predicate _:bag .
+_:bag a rdf:Bag ;
+  rdf:_1 "first element" ;
+  rdf:_2 "second element" ;
+  rdf:_3 "third element" .
+</code></pre>
+<p><strong>Semantic Note</strong>: While RDF Bags semantically represent unordered collections,
+the implementation returns elements in numerical order of their properties for
+deterministic behavior. The ordering should not be relied upon for semantic meaning.</p>
+<p><strong>Use Cases</strong>: RDF Bags are suitable for collections where:</p>
+<ul>
+<li>Order doesn't matter semantically</li>
+<li>Duplicates are allowed</li>
+<li>You need container semantics (vs. simple multi-value properties)</li>
+</ul>
+<p>Example usage:</p>
+<pre class="language-dart"><code class="language-dart">// Optional unordered collection of tags (returns null if missing)
+final tags = reader.optionalRdfBag&lt;String&gt;(Schema.keywords);
+
+// Optional bag with default empty list
+final categories = reader.optionalRdfBag&lt;String&gt;(Schema.category) ?? const [];
+
+// Optional bag with conditional processing
+final contributors = reader.optionalRdfBag&lt;Person&gt;(Schema.contributor);
+if (contributors != null &amp;&amp; contributors.isNotEmpty) {
+  // Process contributors (order not semantically meaningful)...
+}
+</code></pre>
+<p>The <code>predicate</code> is the RDF predicate that links to the bag container.
+The optional <code>itemDeserializer</code> can be provided for custom deserialization of bag items.</p>
+<p>Returns a <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a> containing the deserialized items in numerical order, or null if not found.</p>
+<p>Throws an exception if the bag exists but has an invalid structure or wrong container type.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">List&lt;T&gt;? optionalRdfBag&lt;T&gt;(
+  RdfPredicate predicate, {
+  Deserializer&lt;T&gt;? itemDeserializer,
+}) {
+  return optionalCollection&lt;List&lt;T&gt;, T&gt;(
+    predicate,
+    RdfBagDeserializer&lt;T&gt;.new,
+    itemDeserializer: itemDeserializer,
+  );
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/ResourceReader-class.html">ResourceReader</a></li>
+    <li class="self-crumb">optionalRdfBag&lt;<wbr><span class="type-parameter">T</span>&gt; method</li>
+</ol>
+
+    <h5>ResourceReader class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    rdf_mapper
+      0.9.0
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

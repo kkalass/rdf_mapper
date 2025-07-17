@@ -54,7 +54,7 @@
 
     <section class="multi-line-signature">
       
-<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
 <span class="name ">resource</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="resource-param-instance"><span class="type-annotation">T</span> <span class="parameter-name">instance</span>, {</span></li>
 <li><span class="parameter" id="resource-param-serializer"><span class="type-annotation"><a href="../../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">serializer</span>, </span></li>
 </ol>})
@@ -63,12 +63,34 @@
 
     </section>
     
+<section class="desc markdown">
+  <p>Serializes a Dart object to RDF triples as a resource.</p>
+<p>This method converts a domain object into a collection of RDF triples that
+describe the object's properties and relationships. It's primarily used for
+objects that are represented as RDF resources (subjects with properties).</p>
+<p>The method leverages resource serializers to handle the conversion process,
+either using a provided custom serializer or looking up an appropriate
+serializer from the registry based on the object's runtime type.</p>
+<p><strong>Resource vs. Value Serialization</strong>: This method is for objects that become
+RDF subjects with properties, not simple values that become literals or IRIs.</p>
+<p>Example usage:</p>
+<pre class="language-dart"><code class="language-dart">final person = Person(name: 'John', age: 30);
+final triples = context.resource(person);
+// Produces triples like:
+// _:b1 &lt;name&gt; "John" .
+// _:b1 &lt;age&gt; "30"^^xsd:int .
+</code></pre>
+<p><code>instance</code> The Dart object to serialize as an RDF resource.
+<code>serializer</code> Optional custom serializer. If null, uses registry-based lookup.</p>
+<p>Returns an iterable of triples representing the object's properties.</p>
+<p>Throws <a href="../../rdf_mapper/SerializerNotFoundException-class.html">SerializerNotFoundException</a> if no suitable serializer is found or serialization fails.</p>
+</section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">List&lt;Triple&gt; resource&lt;T&gt;(T instance, {ResourceSerializer&lt;T&gt;? serializer});</code></pre>
+  <pre class="language-dart"><code class="language-dart">Iterable&lt;Triple&gt; resource&lt;T&gt;(T instance, {ResourceSerializer&lt;T&gt;? serializer});</code></pre>
 </section>
 
 
@@ -96,7 +118,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

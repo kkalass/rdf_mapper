@@ -56,7 +56,7 @@
       
       <span class="name ">ResourceBuilder&lt;<wbr><span class="type-parameter">S extends RdfSubject</span>&gt;</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="-param-_subject"><span class="type-annotation">S</span> <span class="parameter-name">_subject</span>, </span></li>
 <li><span class="parameter" id="-param-_service"><span class="type-annotation"><a href="../../rdf_mapper/SerializationService-class.html">SerializationService</a></span> <span class="parameter-name">_service</span>, {</span></li>
-<li><span class="parameter" id="-param-initialTriples"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/Triple-class.html">Triple</a></span>&gt;</span>?</span> <span class="parameter-name">initialTriples</span>, </span></li>
+<li><span class="parameter" id="-param-initialTriples"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/Triple-class.html">Triple</a></span>&gt;</span>?</span> <span class="parameter-name">initialTriples</span>, </span></li>
 </ol>})
     </section>
     
@@ -64,20 +64,18 @@
   <p>Creates a new ResourceBuilder for the fluent API.</p>
 <p>This constructor is typically not called directly. Instead, create a
 builder through the <a href="../../rdf_mapper/SerializationContext/resourceBuilder.html">SerializationContext.resourceBuilder</a> method.</p>
-<p>Parameters:</p>
-<ul>
-<li><code>_subject</code>: The RDF subject to build properties for.</li>
-<li><code>_service</code>: The serialization service for converting objects to RDF.</li>
-<li><code>initialTriples</code>: Optional list of initial triples to include.</li>
-</ul>
+<p>The <code>_subject</code> is the RDF subject to build properties for.
+The <code>_service</code> is the serialization service for converting objects to RDF.
+The optional <code>initialTriples</code> can provide a list of initial triples to include.</p>
 </section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">ResourceBuilder(this._subject, this._service, {List&lt;Triple&gt;? initialTriples})
-    : _triples = initialTriples ?? [];</code></pre>
+  <pre class="language-dart"><code class="language-dart">ResourceBuilder(this._subject, this._service,
+    {Iterable&lt;Triple&gt;? initialTriples})
+    : _triples = &lt;Iterable&lt;Triple&gt;&gt;[initialTriples ?? []];</code></pre>
 </section>
 
 
@@ -105,7 +103,7 @@ builder through the <a href="../../rdf_mapper/SerializationContext/resourceBuild
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

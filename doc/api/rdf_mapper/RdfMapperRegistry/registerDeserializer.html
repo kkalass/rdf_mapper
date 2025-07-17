@@ -55,7 +55,7 @@
     <section class="multi-line-signature">
       
 <span class="returntype">void</span>
-<span class="name ">registerDeserializer</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="registerDeserializer-param-deserializer"><span class="type-annotation"><a href="../../rdf_mapper/Deserializer-class.html">Deserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">deserializer</span></span></li>
+<span class="name ">registerDeserializer</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="registerDeserializer-param-deserializer"><span class="type-annotation"><a href="../../rdf_mapper/BaseDeserializer-class.html">BaseDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">deserializer</span></span></li>
 </ol>)
 
       
@@ -80,7 +80,7 @@ its implementation type and registers it for the appropriate Dart type.</p>
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">void registerDeserializer&lt;T&gt;(Deserializer&lt;T&gt; deserializer) {
+  <pre class="language-dart"><code class="language-dart">void registerDeserializer&lt;T&gt;(BaseDeserializer&lt;T&gt; deserializer) {
   switch (deserializer) {
     case IriTermDeserializer&lt;T&gt;():
       _registerIriTermDeserializer(deserializer);
@@ -94,8 +94,17 @@ its implementation type and registers it for the appropriate Dart type.</p>
     case GlobalResourceDeserializer&lt;T&gt;():
       _registerGlobalResourceDeserializer(deserializer);
       break;
+    case UnifiedResourceDeserializer&lt;T&gt;():
+      _registerGlobalResourceDeserializer(
+          _GlobalResourceDeserializer(deserializer));
+      _registerLocalResourceDeserializer(
+          _LocalResourceDeserializer(deserializer));
+      break;
     case UnmappedTriplesDeserializer&lt;T&gt;():
       _registerUnmappedTriplesDeserializer(deserializer);
+      break;
+    case MultiObjectsDeserializer&lt;T&gt;():
+      _registerMultiObjectsDeserializer(deserializer);
       break;
   }
 }</code></pre>
@@ -126,7 +135,7 @@ its implementation type and registers it for the appropriate Dart type.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>

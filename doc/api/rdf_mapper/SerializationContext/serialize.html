@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the serialize method from the SerializationContext class, for the Dart programming language.">
+  <title>serialize method - SerializationContext class - rdf_mapper library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper.dart</a></li>
+    <li><a href="../../rdf_mapper/SerializationContext-class.html">SerializationContext</a></li>
+    <li class="self-crumb">serialize&lt;<wbr><span class="type-parameter">T</span>&gt; abstract method</li>
+  </ol>
+  <div class="self-name">serialize</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="rdf_mapper&#47;SerializationContext-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">serialize&lt;<wbr><span class="type-parameter">T</span>&gt;</span> abstract method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype">(<span class="field"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfTerm-class.html">RdfTerm</a></span>&gt;</span></span>, </span><span class="field"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/Triple-class.html">Triple</a></span>&gt;</span></span></span>)</span>
+<span class="name ">serialize</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><ol class="parameter-list"> <li><span class="parameter" id="serialize-param-value"><span class="type-annotation">T</span> <span class="parameter-name">value</span>, {</span></li>
+<li><span class="parameter" id="serialize-param-serializer"><span class="type-annotation"><a href="../../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">serializer</span>, </span></li>
+<li><span class="parameter" id="serialize-param-parentSubject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfSubject-class.html">RdfSubject</a>?</span> <span class="parameter-name">parentSubject</span>, </span></li>
+</ol>})
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Serializes any Dart value to its RDF representation.</p>
+<p>This is the core serialization method that can handle any type of Dart object,
+converting it to the appropriate RDF term (literal, IRI, or blank node) along
+with any associated triples needed to fully represent the object.</p>
+<p>The method automatically determines the appropriate serialization strategy based
+on the value type and available serializers:</p>
+<ul>
+<li><strong>Primitives</strong>: Become literal terms (strings, numbers, booleans, dates)</li>
+<li><strong>Objects</strong>: Become subjects with property triples</li>
+<li><strong>Collections</strong>: May use specialized collection serializers</li>
+</ul>
+<p><strong>Parent Subject Context</strong>: The <code>parentSubject</code> parameter provides context
+for nested serialization, allowing child objects to reference their parent
+in the RDF graph structure.</p>
+<p>Example usage:</p>
+<pre class="language-dart"><code class="language-dart">// Simple value
+final (term, triples) = context.serialize("Hello");
+// Returns: (LiteralTerm("Hello"), [])
+
+// Complex object
+final person = Person(name: 'John');
+final (term, triples) = context.serialize(person, parentSubject: parentIri);
+// Returns: (BlankNodeTerm() or IriTerm(...), [triples for person properties])
+</code></pre>
+<p><code>value</code> The Dart value to serialize.
+<code>serializer</code> Optional custom serializer. If null, uses registry-based lookup.
+<code>parentSubject</code> Optional parent subject for nested serialization context.</p>
+<p>Returns a tuple containing:</p>
+<ul>
+<li>The RDF term representing the value</li>
+<li>An iterable of triples needed to fully represent the value</li>
+</ul>
+<p>Throws <a href="../../rdf_mapper/SerializerNotFoundException-class.html">SerializerNotFoundException</a> if no suitable serializer is found or serialization fails.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">(Iterable&lt;RdfTerm&gt;, Iterable&lt;Triple&gt;) serialize&lt;T&gt;(
+  T value, {
+  Serializer&lt;T&gt;? serializer,
+  RdfSubject? parentSubject,
+});</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/">rdf_mapper</a></li>
+    <li><a href="../../rdf_mapper/SerializationContext-class.html">SerializationContext</a></li>
+    <li class="self-crumb">serialize&lt;<wbr><span class="type-parameter">T</span>&gt; abstract method</li>
+</ol>
+
+    <h5>SerializationContext class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    rdf_mapper
+      0.9.0
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

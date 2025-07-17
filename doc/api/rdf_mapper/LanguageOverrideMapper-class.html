@@ -108,14 +108,14 @@ final englishMapper = LanguageOverrideMapper&lt;String&gt;('en');
 final germanMapper = LanguageOverrideMapper&lt;String&gt;('de');
 
 // Use with ResourceBuilder (manual serialization)
-builder.addValue(Schema.name, "Hello World", literalTermSerializer: englishMapper);
+builder.addValue(Schema.name, "Hello World", serializer: englishMapper);
 // Results in: "Hello World"@en
 
-builder.addValue(Schema.name, "Hallo Welt", literalTermSerializer: germanMapper);
+builder.addValue(Schema.name, "Hallo Welt", serializer: germanMapper);
 // Results in: "Hallo Welt"@de
 
 // Use with ResourceReader (manual deserialization)
-final englishText = reader.require&lt;String&gt;(Schema.name, literalTermDeserializer: englishMapper);
+final englishText = reader.require&lt;String&gt;(Schema.name, deserializer: englishMapper);
 // Validates rdf:langString datatype and returns: "Hello World" (as String)
 </code></pre>
 <h2 id="language-tag-format">Language Tag Format</h2>
@@ -153,11 +153,11 @@ is not <code>rdf:langString</code> (unless <code>bypassDatatypeCheck</code> is t
 <p><strong>✅ CORRECT Usage - Explicit Serializer/Deserializer Parameters Only:</strong></p>
 <pre class="language-dart"><code class="language-dart">// With ResourceBuilder for serialization
 final builder = context.resourceBuilder(subject);
-builder.addValue(predicate, value, literalTermSerializer: languageMapper);
+builder.addValue(predicate, value, serializer: languageMapper);
 
 // With ResourceReader for deserialization
 final reader = context.reader(subject);
-final value = reader.require&lt;String&gt;(predicate, literalTermDeserializer: languageMapper);
+final value = reader.require&lt;String&gt;(predicate, deserializer: languageMapper);
 
 // Direct context usage (less common)
 context.fromLiteralTerm&lt;String&gt;(term, deserializer: languageMapper);
@@ -213,6 +213,18 @@ localRegistry.registerMapper&lt;String&gt;(mapper);                // ❌
       id="instance-properties">
     <h2>Properties</h2>
     <dl class="properties">
+        <dt id="datatype" class="property">
+  <span class="name"><a href="../rdf_mapper/LanguageOverrideMapper/datatype.html">datatype</a></span>
+  <span class="signature">&#8594; <a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/IriTerm-class.html">IriTerm</a></span>
+  
+
+</dt>
+<dd>
+  The RDF datatype this deserializer handles.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
         <dt id="hashCode" class="property inherited">
   <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></span>
   <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
@@ -259,7 +271,7 @@ localRegistry.registerMapper&lt;String&gt;(mapper);                // ❌
     <h2>Methods</h2>
     <dl class="callables">
         <dt id="fromRdfTerm" class="callable">
-  <span class="name"><a href="../rdf_mapper/LanguageOverrideMapper/fromRdfTerm.html">fromRdfTerm</a></span><span class="signature">(<wbr><span class="parameter" id="fromRdfTerm-param-term"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/LiteralTerm-class.html">LiteralTerm</a></span> <span class="parameter-name">term</span>, </span><span class="parameter" id="fromRdfTerm-param-context"><span class="type-annotation"><a href="../rdf_mapper/DeserializationContext-class.html">DeserializationContext</a></span> <span class="parameter-name">context</span>, {</span><span class="parameter" id="fromRdfTerm-param-bypassDatatypeCheck"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">bypassDatatypeCheck</span> = <span class="default-value">false</span></span>})
+  <span class="name"><a href="../rdf_mapper/LanguageOverrideMapper/fromRdfTerm.html">fromRdfTerm</a></span><span class="signature">(<wbr><span class="parameter" id="fromRdfTerm-param-term"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/LiteralTerm-class.html">LiteralTerm</a></span> <span class="parameter-name">term</span>, </span><span class="parameter" id="fromRdfTerm-param-context"><span class="type-annotation"><a href="../rdf_mapper/DeserializationContext-class.html">DeserializationContext</a></span> <span class="parameter-name">context</span>, {</span><span class="parameter" id="fromRdfTerm-param-bypassDatatypeCheck"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">bypassDatatypeCheck</span> = <span class="default-value">false</span></span>})
     <span class="returntype parameter">&#8594; T</span>
   </span>
   
@@ -286,7 +298,7 @@ localRegistry.registerMapper&lt;String&gt;(mapper);                // ❌
 
         <dt id="toRdfTerm" class="callable">
   <span class="name"><a href="../rdf_mapper/LanguageOverrideMapper/toRdfTerm.html">toRdfTerm</a></span><span class="signature">(<wbr><span class="parameter" id="toRdfTerm-param-value"><span class="type-annotation">T</span> <span class="parameter-name">value</span>, </span><span class="parameter" id="toRdfTerm-param-context"><span class="type-annotation"><a href="../rdf_mapper/SerializationContext-class.html">SerializationContext</a></span> <span class="parameter-name">context</span></span>)
-    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rdf_core/0.9.4/rdf/LiteralTerm-class.html">LiteralTerm</a></span>
+    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/LiteralTerm-class.html">LiteralTerm</a></span>
   </span>
   
 
@@ -360,7 +372,7 @@ localRegistry.registerMapper&lt;String&gt;(mapper);                // ❌
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.8.8
+      0.9.0
   </span>
   
 </footer>
