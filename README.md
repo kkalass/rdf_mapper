@@ -240,22 +240,25 @@ The library is built around several core concepts:
 
 **ResourceBuilder** provides methods for creating RDF resources:
 - `addValue<T>(predicate, value)` - Add a single property value
-- `addRdfList<T>(predicate, list)` - Add an ordered list using RDF list structure
 - `addValues<T>(predicate, values)` - Add multiple values for the same predicate (no guaranteed order)
+- `addRdfList<T>(predicate, list)` - Add an ordered list using RDF list structure
+- `addCollection<C, T>(predicate, collection, factory)` - **Base method** Add a collection using the specified collection mapping factory - used by e.g. addValues and addRdfList
 - `addValueIfNotNull<T>(predicate, value)` - Conditionally add a value if not null
 - `when(condition, builderFunction)` - Conditionally apply builder operations
 
 **ResourceReader** provides methods for reading RDF resource properties:
 - `require<T>(predicate)` - Get a required single value (throws if missing)
 - `optional<T>(predicate)` - Get an optional single value (returns null if missing)
+- `getValues<T>(predicate)` - Get multiple values for the same predicate (no guaranteed order)
 - `requireRdfList<T>(predicate)` - Get a required ordered list from RDF list structure
 - `optionalRdfList<T>(predicate)` - Get an optional ordered list from RDF list structure  
-- `getValues<T>(predicate)` - Get multiple values for the same predicate (no guaranteed order)
+- `requireCollection<C, T>(predicate, factory)` - **Base method** Get a required collection with a mapper created by the given factory - used by e.g. requireRdfList and getValues. 
+- `optionalCollection<C, T>(predicate, factory)` - **Base method** Get an optional collection with a mapper created by the given factory - used by e.g. optionalRdfList.
 
 > **When to use different collection approaches:**
-> - Use `addRdfList()` / `optionalRdfList()` when **order matters** (e.g., book chapters, steps in a process)
+> - Use `addRdfList()` / `optionalRdfList()` / `requireRdfList()` when **order matters** (e.g., book chapters, steps in a process)
 > - Use `addValues()` / `getValues()` when you have **multiple independent values** (e.g., tags, categories, unordered lists)
-> - Use custom multi-objects serializers when you need **maximum control** over flat collection representation
+> - Use `addCollection()` / `optionalCollection()` / `requireCollection()` when you need **maximum control** over both the Dart collection type and the representation in RDF.
 
 ## Advanced Usage
 
@@ -312,439 +315,210 @@ builder.addValue(example('name'), 'Alice');  // Generates http://example.com/my-
 
 ### Complex Example
 
-The following example demonstrates handling complex models with relationships between objects and nested structures:
+Here's a complete example showing different mapper types and collection strategies:
 
 ```dart
-import 'package:rdf_core/rdf_core.dart';
-
 import 'package:rdf_mapper/rdf_mapper.dart';
 import 'package:rdf_vocabularies/schema.dart';
 
 void main() {
-  final rdf =
-      // Create mapper with default registry
-      RdfMapper.withDefaultRegistry()
-        // Register our custom mappers
-        ..registerMapper<Book>(BookMapper())
-        ..registerMapper<Chapter>(ChapterMapper())
-        ..registerMapper<ISBN>(ISBNMapper())
-        ..registerMapper<Rating>(RatingMapper());
+  final rdf = RdfMapper.withDefaultRegistry()
+    ..registerMapper<Book>(BookMapper())
+    ..registerMapper<Chapter>(ChapterMapper())
+    ..registerMapper<ISBN>(ISBNMapper());
 
-  // Create a book with chapters
   final book = Book(
-    id: 'hobbit', // Now just the identifier, not the full IRI
+    id: 'hobbit',
     title: 'The Hobbit',
     author: 'J.R.R. Tolkien',
-    published: DateTime(1937, 9, 21),
     isbn: ISBN('9780618260300'),
-    rating: Rating(5),
-    // ORDERED: Chapters must be in sequence (preserves element order)
-    chapters: [
-      Chapter('An Unexpected Party', 1),
-      Chapter('Roast Mutton', 2),
-      Chapter('A Short Rest', 3),
-    ],
-    // UNORDERED: Multiple independent values (no guaranteed order)
-    genres: ['fantasy', 'adventure', 'children'],
+    chapters: [Chapter('An Unexpected Party', 1), Chapter('Roast Mutton', 2)], // Ordered
+    genres: ['fantasy', 'adventure', 'children'],                              // Unordered
   );
 
-  // Convert the book to RDF Turtle codec
   final turtle = rdf.encodeObject(book);
-
-  // Print the resulting Turtle representation
-  final expectedTurtle = '''
-@prefix book: <http://example.org/book/> .
-@prefix schema: <https://schema.org/> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-
-book:hobbit a schema:Book;
-    schema:aggregateRating 5;
-    schema:author "J.R.R. Tolkien";
-    schema:datePublished "1937-09-20T23:00:00.000Z"^^xsd:dateTime;
-    schema:genre "adventure", "children", "fantasy";
-    schema:hasPart [ a schema:Chapter ; schema:name "An Unexpected Party" ; schema:position 1 ], [ a schema:Chapter ; schema:name "Roast Mutton" ; schema:position 2 ], [ a schema:Chapter ; schema:name "A Short Rest" ; schema:position 3 ];
-    schema:isbn <urn:isbn:9780618260300>;
-    schema:name "The Hobbit" .
-  ''';
-
-  print('Book as RDF Turtle:');
   print(turtle);
-  assert(turtle.trim() == expectedTurtle.trim());
+  
+  final deserializedBook = rdf.decodeObject<Book>(turtle);
+  print('Title: ${deserializedBook.title}');
 }
 
-// --- Domain Model ---
-
-// Primary entity with an identifier that will be part of the IRI
+// Domain model
 class Book {
   final String id;
   final String title;
   final String author;
-  final DateTime published;
   final ISBN isbn;
-  final Rating rating;
-  // ORDERED: Chapters sequence matters (mapped to RDF list)
-  final List<Chapter> chapters;
-  // UNORDERED: Multiple independent values (mapped to multiple triples)
-  final List<String> genres;
-
-  Book({
-    required this.id,
-    required this.title,
-    required this.author,
-    required this.published,
-    required this.isbn,
-    required this.rating,
-    required this.chapters,
-    required this.genres,
-  });
+  final List<Chapter> chapters;  // Will use RDF List (ordered)
+  final List<String> genres;     // Will use multiple triples (unordered)
+  
+  Book({required this.id, required this.title, required this.author, 
+        required this.isbn, required this.chapters, required this.genres});
 }
 
-// Value object using blank nodes (no identifier)
 class Chapter {
   final String title;
   final int number;
-
   Chapter(this.title, this.number);
 }
 
-// Custom identifier type using IRI mapping
 class ISBN {
   final String value;
-
   ISBN(this.value);
-
-  @override
-  String toString() => value;
 }
 
-// Custom value type using literal mapping
-class Rating {
-  final int stars;
-
-  Rating(this.stars) {
-    if (stars < 0 || stars > 5) {
-      throw ArgumentError('Rating must be between 0 and 5 stars');
-    }
-  }
-
-  @override
-  String toString() => '$stars stars';
-}
-
-// --- Mappers ---
-
-// IRI-based entity mapper
+// Mappers
 class BookMapper implements GlobalResourceMapper<Book> {
-  static final titlePredicate = SchemaBook.name;
-  static final authorPredicate = SchemaBook.author;
-  static final publishedPredicate = SchemaBook.datePublished;
-  static final isbnPredicate = SchemaBook.isbn;
-  static final ratingPredicate = SchemaBook.aggregateRating;
-  static final chapterPredicate = SchemaBook.hasPart;
-  static final genrePredicate = SchemaBook.genre;
-
-  // Base IRI prefix for book resources
-  static const String bookIriPrefix = 'http://example.org/book/';
-
   @override
   final IriTerm typeIri = SchemaBook.classIri;
 
-  /// Converts an ID to a full IRI
-  String _createIriFromId(String id) => '$bookIriPrefix$id';
-
-  /// Extracts the identifier from a full IRI
-  String _extractIdFromIri(String iri) {
-    if (!iri.startsWith(bookIriPrefix)) {
-      throw ArgumentError('Invalid Book IRI format: $iri');
-    }
-    return iri.substring(bookIriPrefix.length);
-  }
-
   @override
   Book fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return Book(
-      // Extract just the identifier part from the IRI
-      id: _extractIdFromIri(subject.iri),
-      title: reader.require<String>(titlePredicate),
-      author: reader.require<String>(authorPredicate),
-      published: reader.require<DateTime>(publishedPredicate),
-      isbn: reader.require<ISBN>(isbnPredicate),
-      rating: reader.require<Rating>(ratingPredicate),
-      // ORDERED: Use optionalRdfList for chapters (preserves sequence)
-      chapters: reader.optionalRdfList<Chapter>(chapterPredicate) ?? const [],
-      // UNORDERED: Use getValues for genres (multiple independent values)
-      genres: reader.getValues<String>(genrePredicate).toList(),
-    );
-  }
-
-  @override
-  (IriTerm, Iterable<Triple>) toRdfResource(
-    Book book,
-    SerializationContext context, {
-    RdfSubject? parentSubject,
-  }) {
-    return context
-        .resourceBuilder(IriTerm(_createIriFromId(book.id)))
-        .addValue(titlePredicate, book.title)
-        .addValue(authorPredicate, book.author)
-        .addValue<DateTime>(publishedPredicate, book.published)
-        .addValue<ISBN>(isbnPredicate, book.isbn)
-        .addValue<Rating>(ratingPredicate, book.rating)
-        // ORDERED: Use addRdfList for chapters (preserves sequence)
-        .addRdfList<Chapter>(chapterPredicate, book.chapters)
-        // UNORDERED: Use addValues for genres (multiple independent values)
-        .addValues<String>(genrePredicate, book.genres)
-        .build();
-  }
-}
-
-// Blank node-based entity mapper
-class ChapterMapper implements LocalResourceMapper<Chapter> {
-  static final titlePredicate = SchemaChapter.name;
-  static final numberPredicate = SchemaChapter.position;
-
-  @override
-  final IriTerm typeIri = SchemaChapter.classIri;
-
-  @override
-  Chapter fromRdfResource(BlankNodeTerm term, DeserializationContext context) {
-    final reader = context.reader(term);
-    return Chapter(
-      reader.require<String>(titlePredicate),
-      reader.require<int>(numberPredicate),
-    );
-  }
-
-  @override
-  (BlankNodeTerm, Iterable<Triple>) toRdfResource(
-    Chapter chapter,
-    SerializationContext ctxt, {
-    RdfSubject? parentSubject,
-  }) {
-    return ctxt
-        .resourceBuilder(BlankNodeTerm())
-        .addValue(titlePredicate, chapter.title)
-        .addValue<int>(numberPredicate, chapter.number)
-        .build();
-  }
-}
-
-// Custom IRI mapper
-class ISBNMapper implements IriTermMapper<ISBN> {
-  static const String isbnUriPrefix = 'urn:isbn:';
-
-  @override
-  IriTerm toRdfTerm(ISBN isbn, SerializationContext context) {
-    return IriTerm('$isbnUriPrefix${isbn.value}');
-  }
-
-  @override
-  ISBN fromRdfTerm(IriTerm term, DeserializationContext context) {
-    final uri = term.iri;
-    if (!uri.startsWith(isbnUriPrefix)) {
-      throw ArgumentError('Invalid ISBN URI format: $uri');
-    }
-    return ISBN(uri.substring(isbnUriPrefix.length));
-  }
-}
-
-// Custom literal mapper
-class RatingMapper implements LiteralTermMapper<Rating> {
-  @override
-  LiteralTerm toRdfTerm(Rating rating, SerializationContext context) {
-    return LiteralTerm.typed(rating.stars.toString(), 'integer');
-  }
-
-  @override
-  Rating fromRdfTerm(LiteralTerm term, DeserializationContext context) {
-    return Rating(int.parse(term.value));
-  }
-}
-```
-
-### RDF Collections
-
-The library provides multiple approaches for handling collections in RDF, each suited for different use cases:
-
-1. **RDF Lists**: Structured collections using `rdf:first`/`rdf:rest`/`rdf:nil` pattern (ordered, preserves sequence)
-2. **Multi-Objects**: Flat collections using multiple triples with the same predicate (unordered, more efficient)
-3. **RDF Containers**: Structured collections using numbered properties `rdf:_1`, `rdf:_2`, etc. (Seq/Bag/Alt - see [below](#rdf-containers-seq-bag-alt))
-
-#### RDF Lists (Ordered Collections)
-
-RDF Lists use the standard `rdf:first`/`rdf:rest`/`rdf:nil` pattern, perfect for ordered collections where sequence matters:
-
-```dart
-class Book {
-  final List<Chapter> chapters;
-  // ... other properties
-}
-
-class BookMapper implements GlobalResourceMapper<Book> {
-  @override
-  Book fromRdfResource(IriTerm subject, DeserializationContext context) {
-    final reader = context.reader(subject);
-    return Book(
-      // Deserialize RDF list to Dart List (preserves order)
-      chapters: reader.optionalRdfList<Chapter>(Schema.hasPart) ?? const [],
-      // Use requireRdfList<T>() if the list is mandatory
-      // chapters: reader.requireRdfList<Chapter>(Schema.hasPart),
+      id: subject.iri.split('/').last,
+      title: reader.require<String>(SchemaBook.name),
+      author: reader.require<String>(SchemaBook.author),
+      isbn: reader.require<ISBN>(SchemaBook.isbn),
+      chapters: reader.optionalRdfList<Chapter>(SchemaBook.hasPart) ?? const [], // RDF List
+      genres: reader.getValues<String>(SchemaBook.genre).toList(),               // Multiple values
     );
   }
 
   @override
   (IriTerm, Iterable<Triple>) toRdfResource(Book book, SerializationContext context, {RdfSubject? parentSubject}) {
-    return context
-        .resourceBuilder(subject)
-        // Serialize Dart List to RDF list structure (preserves order)
-        .addRdfList<Chapter>(Schema.hasPart, book.chapters)
+    return context.resourceBuilder(IriTerm('http://example.org/book/${book.id}'))
+        .addValue(SchemaBook.name, book.title)
+        .addValue(SchemaBook.author, book.author)
+        .addValue<ISBN>(SchemaBook.isbn, book.isbn)
+        .addRdfList<Chapter>(SchemaBook.hasPart, book.chapters)  // Preserves order
+        .addValues<String>(SchemaBook.genre, book.genres)        // Multiple triples
+        .build();
+  }
+}
+
+class ChapterMapper implements LocalResourceMapper<Chapter> {
+  @override
+  final IriTerm typeIri = SchemaChapter.classIri;
+
+  @override
+  Chapter fromRdfResource(BlankNodeTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
+    return Chapter(
+      reader.require<String>(SchemaChapter.name),
+      reader.require<int>(SchemaChapter.position),
+    );
+  }
+
+  @override
+  (BlankNodeTerm, Iterable<Triple>) toRdfResource(Chapter chapter, SerializationContext context, {RdfSubject? parentSubject}) {
+    return context.resourceBuilder(BlankNodeTerm())
+        .addValue(SchemaChapter.name, chapter.title)
+        .addValue<int>(SchemaChapter.position, chapter.number)
+        .build();
+  }
+}
+
+class ISBNMapper implements IriTermMapper<ISBN> {
+  @override
+  IriTerm toRdfTerm(ISBN isbn, SerializationContext context) => IriTerm('urn:isbn:${isbn.value}');
+
+  @override
+  ISBN fromRdfTerm(IriTerm term, DeserializationContext context) => ISBN(term.iri.split(':').last);
+}
+```
+
+### RDF Collections
+
+The library provides multiple strategies for handling collections in RDF:
+
+1. **RDF Lists**: Ordered collections using `rdf:first`/`rdf:rest`/`rdf:nil` (preserves sequence)
+2. **Multi-Objects**: Flat collections using multiple triples (unordered, efficient)
+3. **RDF Containers**: Structured collections using numbered properties `rdf:_1`, `rdf:_2` (Seq/Bag/Alt)
+
+#### Quick Guide: When to Use Each
+
+| **Use RDF Lists** (`addRdfList`/`optionalRdfList`/...) | **Use Multi-Objects** (`addValues`/`getValues`) | **Use RDF Containers** (`addRdfSeq`/`addRdfBag`/`addRdfAlt`/...) |
+|---|---|---|
+| Order matters (chapters, steps, rankings) | Order doesn't matter (tags, keywords, authors) | Need explicit container semantics |
+| Need to preserve exact sequence | Want flatter RDF structure | Seq: ordered with numbered properties |
+| Working with existing RDF list data | Better query performance needed | Bag: unordered, allows duplicates |
+| Linked list structure preferred | Simple multiple triples | Alt: alternatives with preference order |
+
+#### RDF Lists (Ordered Collections)
+
+```dart
+class BookMapper implements GlobalResourceMapper<Book> {
+  @override
+  Book fromRdfResource(IriTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
+    return Book(
+      // Preserves chapter order
+      chapters: reader.optionalRdfList<Chapter>(Schema.hasPart) ?? const [],
+    );
+  }
+
+  @override
+  (IriTerm, Iterable<Triple>) toRdfResource(Book book, SerializationContext context, {RdfSubject? parentSubject}) {
+    return context.resourceBuilder(subject)
+        .addRdfList<Chapter>(Schema.hasPart, book.chapters) // Preserves order
         .build();
   }
 }
 ```
 
-**RDF Output (Structured):**
-```turtle
-ex:book1 ex:chapters _:list1 .
-_:list1 rdf:first ex:chapter1 ;
-        rdf:rest _:list2 .
-_:list2 rdf:first ex:chapter2 ;
-        rdf:rest rdf:nil .
-```
-
 #### Multi-Objects (Flat Collections)
 
-Multi-Objects use multiple triples with the same predicate, perfect for unordered collections or when you want a flatter RDF structure:
-
 ```dart
-class Library {
-  final List<Book> featuredBooks;
-  // ... other properties
-}
-
 class LibraryMapper implements GlobalResourceMapper<Library> {
   @override
   Library fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return Library(
-      // Multi-objects approach: automatically detects multiple triples
+      // Multiple independent values (no order guarantee)
       featuredBooks: reader.getValues<Book>(Schema.featuredBooks).toList(),
     );
   }
 
   @override
   (IriTerm, Iterable<Triple>) toRdfResource(Library library, SerializationContext context, {RdfSubject? parentSubject}) {
-    return context
-        .resourceBuilder(subject)
-        // Multi-objects approach: creates one triple per book
-        .addValues<Book>(Schema.featuredBooks, library.featuredBooks)
+    return context.resourceBuilder(subject)
+        .addValues<Book>(Schema.featuredBooks, library.featuredBooks) // One triple per book
         .build();
   }
 }
 ```
 
-**RDF Output (Flat):**
-```turtle
-ex:library1 ex:featuredBooks ex:book1 .
-ex:library1 ex:featuredBooks ex:book2 .
-ex:library1 ex:featuredBooks ex:book3 .
-```
+#### Custom Collection Types
 
-#### Choosing the Right Approach
-
-| Use RDF Lists when: | Use Multi-Objects when: |
-|---------------------|-------------------------|
-| Order/sequence matters | Order doesn't matter |
-| Need to preserve exact sequence | Want flatter RDF structure |
-| Working with existing RDF list data | Better query performance needed |
-| Complex nested structures | Simple collections |
-
-> 💡 **Performance tip**: Multi-objects approach is generally more efficient for SPARQL queries and triple store operations, while RDF lists are better for preserving exact sequence relationships.
-
-#### Advanced Collection Support
-
-The collection infrastructure is completely flexible - you're not limited to `UnifiedResourceMapper` factories. You can use **any serializer/deserializer type**, including multi-objects serializers:
+Use the base collection methods for custom collection types:
 
 ```dart
-// Using UnifiedResource approach (for structured rdf like rdf:List, rdf:Seq etc, works with both IRI and BlankNode)
-final traditionalCollection = reader.requireCollection<ImmutableList<String>, String>(
-  Schema.keywords,
-  (itemDeserializer) => ImmutableListRdfDeserializer<String>(itemDeserializer),
-);
-
-// Using Multi-Objects approach (flat, efficient)
-final multiObjectsCollection = reader.requireCollection<Set<Tag>, Tag>(
-  Schema.tags,
-  (itemDeserializer) => UnorderedItemsSetDeserializer<Tag>(itemDeserializer),
-);
-
-// Mixed approaches in same mapper
-class ArticleMapper implements GlobalResourceMapper<Article> {
-  @override
-  Article fromRdfResource(IriTerm subject, DeserializationContext context) {
-    final reader = context.reader(subject);
-    return Article(
-      // Ordered: Use RDF list for chapters (sequence matters)
-      chapters: reader.optionalRdfList<Chapter>(Schema.hasPart) ?? [],
-      
-      // Unordered: Use multi-objects for tags (flat, efficient)  
-      tags: reader.getValues<Tag>(Schema.subject).toSet(),
-      
-      // Custom collection with custom serializer
-      references: reader.requireCollection<ImmutableList<Reference>, Reference>(
-        Schema.references,
-        (itemDeserializer) => MyCustomDeserializer<Reference>(itemDeserializer),
-      ),
-    );
-  }
-}
-```
-
-**Key Benefits of Flexibility:**
-- **Mix and match**: Use RDF lists for ordered data, multi-objects for unordered data in the same model
-- **Custom implementations**: Create your own serializers for specialized needs
-- **Performance optimization**: Choose the most efficient approach for each use case
-- **Legacy compatibility**: Support existing RDF data regardless of structure
-
-#### Creating Custom Collection Extension Methods
-
-You can extend the ResourceBuilder and ResourceReader APIs with your own convenience methods for custom collection types:
-
-```dart
-// Extension methods for ResourceReader
-extension ImmutableListReaderExtensions on ResourceReader {
+// Extension methods for your custom collection type
+extension ImmutableListExtensions on ResourceReader {
   ImmutableList<T> requireImmutableList<T>(RdfPredicate predicate) =>
       requireCollection<ImmutableList<T>, T>(
         predicate,
-        (itemDeserializer) => ImmutableListDeserializer<T>(itemDeserializer),
-      );
-
-  ImmutableList<T>? optionalImmutableList<T>(RdfPredicate predicate) =>
-      optionalCollection<ImmutableList<T>, T>(
-        predicate,
-        (itemDeserializer) => ImmutableListDeserializer<T>(itemDeserializer),
+        ImmutableListDeserializer<T>.new, // Your custom deserializer factory
       );
 }
 
-// Extension methods for ResourceBuilder  
 extension ImmutableListBuilderExtensions<S extends RdfSubject> on ResourceBuilder<S> {
   ResourceBuilder<S> addImmutableList<T>(RdfPredicate predicate, ImmutableList<T> collection) =>
       addCollection<ImmutableList<T>, T>(
         predicate,
         collection,
-        (itemSerializer) => ImmutableListSerializer<T>(itemSerializer),
+        ImmutableListSerializer<T>.new, // Your custom serializer factory
       );
 }
 
-// Usage in your mappers - now as convenient as the built-in methods!
+// Usage in mappers
 class MyMapper implements GlobalResourceMapper<MyClass> {
   @override
   MyClass fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return MyClass(
       items: reader.requireImmutableList<String>(Schema.keywords),
-      optionalItems: reader.optionalImmutableList<Tag>(Schema.tags),
     );
   }
 
@@ -752,171 +526,28 @@ class MyMapper implements GlobalResourceMapper<MyClass> {
   (IriTerm, Iterable<Triple>) toRdfResource(MyClass obj, SerializationContext context, {RdfSubject? parentSubject}) {
     return context.resourceBuilder(subject)
         .addImmutableList<String>(Schema.keywords, obj.items)
-        .addImmutableList<Tag>(Schema.tags, obj.optionalItems)
         .build();
   }
 }
 ```
 
-This pattern allows you to create type-safe, convenient APIs for any collection type while leveraging the library's existing collection infrastructure.
+#### RDF Containers (Seq, Bag, Alt)
 
-#### RDF List Output
-
-RDF lists are serialized using the standard pattern:
-```turtle
-<book1> schema:hasPart (
-  [ a schema:Chapter ; schema:name "Chapter 1" ; schema:position 1 ]
-  [ a schema:Chapter ; schema:name "Chapter 2" ; schema:position 2 ]
-  [ a schema:Chapter ; schema:name "Chapter 3" ; schema:position 3 ]
-) .
-```
-
-This preserves the exact order of elements, unlike simple multiple property values which have no guaranteed order.
-
-#### Choosing Between RDF Lists and Multiple Values
-
-**Use RDF Lists (`addRdfList` / `optionalRdfList`)** when:
-- **Order matters**: Book chapters, process steps, ranked items
-- **Sequence is meaningful**: Navigation breadcrumbs, recipe instructions  
-- **You need deterministic iteration**: Algorithm steps, workflow stages
-
-**Use Multiple Values (`addValues` / `getValues`)** when:
-- **Order doesn't matter**: Tags, categories, keywords
-- **Independent relationships**: Multiple authors, related links, contact emails
-- **Set-like data**: Permissions, capabilities, supported formats
+For specialized container semantics:
 
 ```dart
-// ORDERED: Use RDF Lists for sequential data
-sections: reader.optionalRdfList<Section>(vocab.sections) ?? const [],
+// Use specific container types when semantics matter
+chapters: reader.optionalRdfSeq<String>(Schema.hasPart) ?? const [],      // Ordered sequence
+keywords: reader.optionalRdfBag<String>(Schema.keywords) ?? const [],      // Unordered collection  
+formats: reader.optionalRdfAlt<String>(Schema.encodingFormat) ?? const [], // Alternatives with preference
 
-// UNORDERED: Use getValues for independent multiple values  
-tags: reader.getValues<String>(vocab.tags).toList(),
-authors: reader.getValues<Author>(vocab.authors).toList(),
+// In builder
+.addRdfSeq<String>(Schema.hasPart, resource.chapters)       // rdf:Seq
+.addRdfBag<String>(Schema.keywords, resource.keywords)      // rdf:Bag
+.addRdfAlt<String>(Schema.encodingFormat, resource.formats) // rdf:Alt
 ```
 
-**RDF Output Comparison:**
-```turtle
-# RDF List (ordered) - uses rdf:first/rdf:rest structure
-<article> vocab:sections ( 
-  [ vocab:title "Introduction" ; vocab:number 1 ]
-  [ vocab:title "Main Content" ; vocab:number 2 ]  
-  [ vocab:title "Conclusion" ; vocab:number 3 ]
-) .
-
-# Multiple Values (unordered) - separate triples
-<article> vocab:tags "rdf", "semantic-web", "tutorial" ;
-          vocab:authors [ vocab:name "Alice" ], [ vocab:name "Bob" ] .
-```
-
-> 💡 **See the complete example**: [`example/collections_example.dart`](example/collections_example.dart) demonstrates both approaches with a practical article/blog post scenario.
-
-### RDF Containers (Seq, Bag, Alt)
-
-Beyond RDF Lists, the library provides full support for the three standard RDF container types using numbered properties (`rdf:_1`, `rdf:_2`, etc.):
-
-- **rdf:Seq** - Ordered sequences where position matters
-- **rdf:Bag** - Unordered collections allowing duplicates  
-- **rdf:Alt** - Alternative values with preference ordering
-
-#### Basic RDF Container Usage
-
-```dart
-class MediaResource {
-  final List<String> chapters;      // Ordered sequence
-  final List<String> keywords;      // Unordered collection
-  final List<String> formats;       // Alternative formats with preference
-  // ... other properties
-}
-
-class MediaResourceMapper implements GlobalResourceMapper<MediaResource> {
-  @override
-  MediaResource fromRdfResource(IriTerm subject, DeserializationContext context) {
-    final reader = context.reader(subject);
-    return MediaResource(
-      // Ordered sequence (rdf:Seq) - preserves element order
-      chapters: reader.optionalRdfSeq<String>(Schema.hasPart) ?? const [],
-      
-      // Unordered bag (rdf:Bag) - no semantic ordering
-      keywords: reader.optionalRdfBag<String>(Schema.keywords) ?? const [],
-      
-      // Alternatives (rdf:Alt) - preference order (first = most preferred)
-      formats: reader.optionalRdfAlt<String>(Schema.encodingFormat) ?? const [],
-      
-      // Use require* variants if the container is mandatory
-      // chapters: reader.requireRdfSeq<String>(Schema.hasPart),
-    );
-  }
-
-  @override
-  (IriTerm, Iterable<Triple>) toRdfResource(MediaResource resource, SerializationContext context, {RdfSubject? parentSubject}) {
-    return context
-        .resourceBuilder(subject)
-        // Serialize to RDF containers with numbered properties
-        .addRdfSeq<String>(Schema.hasPart, resource.chapters)
-        .addRdfBag<String>(Schema.keywords, resource.keywords)  
-        .addRdfAlt<String>(Schema.encodingFormat, resource.formats)
-        .build();
-  }
-}
-```
-
-#### When to Use Each Container Type
-
-**Use RDF Sequences (`addRdfSeq` / `optionalRdfSeq`)** when:
-- **Order is semantically meaningful**: Chapter sequence, process steps, rankings
-- **Numerical position matters**: Table of contents, procedure steps, priority lists
-- **Sequential processing required**: Workflow stages, installation steps
-
-**Use RDF Bags (`addRdfBag` / `optionalRdfBag`)** when:
-- **Order doesn't matter semantically**: Keywords, tags, categories
-- **Duplicates are allowed**: Multiple instances of the same tag
-- **Container semantics needed**: Explicit grouping vs simple multi-value properties
-
-**Use RDF Alternatives (`addRdfAlt` / `optionalRdfAlt`)** when:
-- **Multiple options with preference**: Image formats (WebP preferred, PNG fallback, JPEG last resort)
-- **Language alternatives**: Multilingual content with preference order
-- **Fallback scenarios**: Primary/secondary/tertiary options
-
-#### RDF Container Output
-
-RDF containers use numbered properties to reference elements:
-
-```turtle
-# rdf:Seq (ordered sequence)
-<media1> schema:hasPart _:seq1 .
-_:seq1 a rdf:Seq ;
-  rdf:_1 "Chapter 1: Introduction" ;
-  rdf:_2 "Chapter 2: Getting Started" ;
-  rdf:_3 "Chapter 3: Advanced Topics" .
-
-# rdf:Bag (unordered collection)  
-<media1> schema:keywords _:bag1 .
-_:bag1 a rdf:Bag ;
-  rdf:_1 "tutorial" ;
-  rdf:_2 "programming" ;
-  rdf:_3 "semantic-web" .
-
-# rdf:Alt (alternatives with preference)
-<media1> schema:encodingFormat _:alt1 .
-_:alt1 a rdf:Alt ;
-  rdf:_1 "video/webm" ;      # Most preferred
-  rdf:_2 "video/mp4" ;       # Fallback option
-  rdf:_3 "video/avi" .       # Last resort
-```
-
-#### Choosing Between RDF Lists and RDF Containers
-
-| Feature | RDF Lists | RDF Containers |
-|---------|-----------|----------------|
-| **Structure** | Linked list (`rdf:first`/`rdf:rest`) | Numbered properties (`rdf:_1`, `rdf:_2`) |
-| **Standards** | RDF 1.1 Lists | RDF 1.0 Containers |
-| **Order Preservation** | Yes (always) | Yes (Seq), No (Bag), Preference (Alt) |
-| **Container Types** | One type (ordered) | Three types (Seq/Bag/Alt) |
-| **Use Cases** | Sequential data | Typed collections with specific semantics |
-
-**Recommendation**: Use RDF Lists for simple ordered collections. Use RDF Containers when you need explicit container semantics or the distinction between Seq/Bag/Alt is important to your domain model.
-
-> 💡 **See the complete example**: [`example/rdf_containers_example.dart`](example/rdf_containers_example.dart) demonstrates all three container types with practical use cases.
+> 💡 **See complete examples**: [`example/collections_example.dart`](example/collections_example.dart) and [`example/custom_collection_type_example.dart`](example/custom_collection_type_example.dart)
 
 ### Lossless Mapping - Preserve All Your Data
 
