@@ -59,6 +59,26 @@
 </ol>})
     </section>
     
+<section class="desc markdown">
+  <p>Creates an RDF list mapper for <code>List&lt;T&gt;</code>.</p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>itemDeserializer</code>: Optional deserializer for list elements. If not provided,
+element deserialization will be resolved through the registry.</li>
+<li><code>itemSerializer</code>: Optional serializer for list elements. If not provided,
+element serialization will be resolved through the registry.</li>
+</ul>
+<p><strong>Example usage</strong>:</p>
+<pre class="language-dart"><code class="language-dart">// Basic mapper using registry for element handling
+final stringListMapper = RdfListMapper&lt;String&gt;();
+
+// Mapper with custom element handling
+final personListMapper = RdfListMapper&lt;Person&gt;(
+  itemDeserializer: PersonDeserializer(),
+  itemSerializer: PersonSerializer(),
+);
+</code></pre>
+</section>
 
 
     
@@ -97,7 +117,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.9.1
+      0.9.2
   </span>
   
 </footer>

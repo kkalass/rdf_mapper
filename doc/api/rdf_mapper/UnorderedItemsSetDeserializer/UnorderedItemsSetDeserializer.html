@@ -58,6 +58,21 @@
 </ol>])
     </section>
     
+<section class="desc markdown">
+  <p>Creates a deserializer for set collections.</p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>_itemDeserializer</code>: Optional deserializer for individual items. If not provided,
+item deserialization will be resolved through the registry.</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre class="language-dart"><code class="language-dart">// Basic deserializer using registry
+final deserializer = UnorderedItemsSetDeserializer&lt;String&gt;();
+
+// Deserializer with custom item handling
+final tagDeserializer = UnorderedItemsSetDeserializer&lt;Tag&gt;(TagDeserializer());
+</code></pre>
+</section>
 
 
     
@@ -91,7 +106,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.9.1
+      0.9.2
   </span>
   
 </footer>

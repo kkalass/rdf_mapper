@@ -53,6 +53,41 @@
 </h1></div>
 
     
+<section class="desc markdown">
+  <p>Bidirectional mapper for RDF Lists (rdf:List) and Dart <code>List&lt;T&gt;</code> collections.</p>
+<p>RDF Lists are ordered collections that use the <code>rdf:first</code>/<code>rdf:rest</code> linked-list
+structure, terminated by <code>rdf:nil</code>. They preserve element order and are ideal for
+representing sequences where order is semantically significant.</p>
+<p><strong>RDF List Structure</strong>: Creates linked-list structures using blank nodes:</p>
+<pre class="language-turtle"><code class="language-turtle">_:list rdf:first "first element" ;
+       rdf:rest _:list2 .
+_:list2 rdf:first "second element" ;
+        rdf:rest _:list3 .
+_:list3 rdf:first "third element" ;
+        rdf:rest rdf:nil .
+</code></pre>
+<p><strong>Primary Usage</strong>: Used with <code>ResourceBuilder.addRdfList()</code> and <code>ResourceReader.requireRdfList()</code>:</p>
+<pre class="language-dart"><code class="language-dart">// Serialization within a resource serializer:
+builder.addRdfList(Schema.chapters, book.chapters);
+
+// Deserialization within a resource deserializer:
+final reader = context.reader(subject);
+final chapters = reader.requireRdfList&lt;String&gt;(Schema.chapters);
+</code></pre>
+<p><strong>Advanced Usage</strong>: Can be registered for automatic collection handling:</p>
+<pre class="language-dart"><code class="language-dart">registry.registerMapper&lt;List&lt;Chapter&gt;&gt;(RdfListMapper&lt;Chapter&gt;());
+</code></pre>
+<p><strong>Element Handling</strong>: Individual list elements are serialized/deserialized using
+the provided item mapper or registry-based lookup. Supports complex nested objects
+and maintains strict order during round-trip operations.</p>
+<p><strong>Performance Considerations</strong>: RDF Lists use linked structures which can impact
+performance for large collections. Consider using RDF Sequences for better performance
+with large ordered collections.</p>
+<p><strong>Type Parameters</strong>:</p>
+<ul>
+<li><code>T</code>: The element type within the list (e.g., <code>String</code>, <code>Person</code>, <code>Chapter</code>)</li>
+</ul>
+</section>
 
 
     <section>
@@ -86,7 +121,7 @@
           <span class="name"><a href="../rdf_mapper/RdfListMapper/RdfListMapper.html">RdfListMapper.new</a></span><span class="signature">({<span class="parameter" id="-param-itemDeserializer"><span class="type-annotation"><a href="../rdf_mapper/Deserializer-class.html">Deserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">itemDeserializer</span>, </span><span class="parameter" id="-param-itemSerializer"><span class="type-annotation"><a href="../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">itemSerializer</span></span>})</span>
         </dt>
         <dd>
-          
+          Creates an RDF list mapper for <code>List&lt;T&gt;</code>.
         </dd>
     </dl>
   </section>
@@ -243,7 +278,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.9.1
+      0.9.2
   </span>
   
 </footer>

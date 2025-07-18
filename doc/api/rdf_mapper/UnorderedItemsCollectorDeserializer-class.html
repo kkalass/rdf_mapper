@@ -53,6 +53,36 @@
 </h1></div>
 
     
+<section class="desc markdown">
+  <p>Collector-based deserializer for transforming multi-objects into custom collection types.</p>
+<p>This deserializer first deserializes multiple RDF objects to an <code>Iterable&lt;T&gt;</code>,
+then applies a collector function to transform the result into a custom type <code>R</code>.
+It's useful for creating specific collection types or applying transformations
+during deserialization.</p>
+<p><strong>Common Use Cases</strong>:</p>
+<ul>
+<li>Converting to immutable collections</li>
+<li>Applying validation or filtering during deserialization</li>
+<li>Creating domain-specific collection types</li>
+<li>Transforming to specialized data structures</li>
+</ul>
+<p><strong>Example Usage</strong>:</p>
+<pre class="language-dart"><code class="language-dart">// Create a Set from multi-objects
+final setCollector = UnorderedItemsCollectorDeserializer&lt;String, Set&lt;String&gt;&gt;(
+  (items) =&gt; items.toSet(),
+);
+
+// Create a filtered list
+final filteredCollector = UnorderedItemsCollectorDeserializer&lt;String, List&lt;String&gt;&gt;(
+  (items) =&gt; items.where((s) =&gt; s.isNotEmpty).toList(),
+);
+</code></pre>
+<p><strong>Type Parameters</strong>:</p>
+<ul>
+<li><code>T</code>: The element type within the collection</li>
+<li><code>R</code>: The resulting collection type after applying the collector</li>
+</ul>
+</section>
 
 
     <section>
@@ -84,7 +114,7 @@
           <span class="name"><a href="../rdf_mapper/UnorderedItemsCollectorDeserializer/UnorderedItemsCollectorDeserializer.html">UnorderedItemsCollectorDeserializer.new</a></span><span class="signature">(<span class="parameter" id="-param-collector"><span class="type-annotation">R</span> <span class="parameter-name">collector</span>(<span class="parameter" id="param-"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span></span>), [</span><span class="parameter" id="-param-itemDeserializer"><span class="type-annotation"><a href="../rdf_mapper/Deserializer-class.html">Deserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">itemDeserializer</span></span>])</span>
         </dt>
         <dd>
-          
+          Creates a collector-based deserializer.
         </dd>
     </dl>
   </section>
@@ -101,7 +131,7 @@
 
 </dt>
 <dd>
-  
+  Function to transform the deserialized iterable into the target type.
   <div class="features"><span class="feature">final</span></div>
 
 </dd>
@@ -228,7 +258,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.9.1
+      0.9.2
   </span>
   
 </footer>

@@ -65,7 +65,20 @@
     </section>
     
 <section class="desc markdown">
-  <p>Deserializes RDF objects to a collection of items</p>
+  <p>Deserializes RDF objects to a collection of items.</p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>objects</code>: The RDF objects to deserialize</li>
+<li><code>context</code>: The deserialization context for resolving mappers</li>
+<li><code>itemDeserializer</code>: Optional deserializer for individual items</li>
+</ul>
+<p><strong>Returns</strong>: An iterable of deserialized items of type <code>T</code></p>
+<p><strong>Process</strong>:</p>
+<ol>
+<li>Iterates through each RDF object</li>
+<li>Deserializes each object using the provided deserializer or registry</li>
+<li>Returns the collection of deserialized items</li>
+</ol>
 </section>
 
 
@@ -103,7 +116,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.9.1
+      0.9.2
   </span>
   
 </footer>

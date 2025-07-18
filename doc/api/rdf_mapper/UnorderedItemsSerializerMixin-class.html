@@ -56,8 +56,21 @@
 
     
 <section class="desc markdown">
-  <p>Mixin providing serialization functionality for unordered collections.
-Encapsulates the common logic for converting collections to RDF objects.</p>
+  <p>Mixin providing serialization functionality for unordered collections.</p>
+<p>This mixin encapsulates the common logic for converting collections to RDF objects
+using the multi-objects approach. It serializes each collection element to RDF
+terms and collects both the resulting objects and any additional triples.</p>
+<p><strong>Multi-Objects Approach</strong>: Creates multiple RDF triples with the same predicate:</p>
+<pre class="language-turtle"><code class="language-turtle">&lt;subject&gt; &lt;predicate&gt; "first element" .
+&lt;subject&gt; &lt;predicate&gt; "second elementgit" .
+&lt;subject&gt; &lt;predicate&gt; "third element" .
+</code></pre>
+<p><strong>Performance Benefits</strong>: More efficient than RDF Lists for large collections
+as it avoids linked-list structures and enables parallel processing.</p>
+<p><strong>Type Parameters</strong>:</p>
+<ul>
+<li><code>T</code>: The element type within the collection</li>
+</ul>
 </section>
 
 
@@ -144,7 +157,7 @@ Encapsulates the common logic for converting collections to RDF objects.</p>
 
 </dt>
 <dd>
-  Serializes a collection of items to RDF objects and triples
+  Serializes a collection of items to RDF objects and triples.
   
 
 </dd>
@@ -225,7 +238,7 @@ Encapsulates the common logic for converting collections to RDF objects.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.9.1
+      0.9.2
   </span>
   
 </footer>

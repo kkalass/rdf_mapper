@@ -53,6 +53,40 @@
 </h1></div>
 
     
+<section class="desc markdown">
+  <p>Bidirectional mapper for <code>List&lt;T&gt;</code> collections using the multi-objects approach.</p>
+<p>This mapper provides complete serialization and deserialization for <code>List&lt;T&gt;</code>
+collections using the multi-objects approach. While it works with lists,
+the order information is not preserved in the RDF representation, making it
+suitable for lists where order is not semantically significant.</p>
+<p><strong>Order Considerations</strong>:</p>
+<ul>
+<li>Serialization: List order is not encoded in RDF</li>
+<li>Deserialization: List order depends on RDF processing order</li>
+<li>Use RDF Lists if order preservation is required</li>
+<li>Suitable for lists used as collection containers</li>
+</ul>
+<p><strong>Performance Benefits</strong>:</p>
+<ul>
+<li>Flat RDF structure for efficient processing</li>
+<li>No linked-list overhead like RDF Lists</li>
+<li>Suitable for large collections</li>
+<li>Easy to query and filter</li>
+</ul>
+<p><strong>Usage Example</strong>:</p>
+<pre class="language-dart"><code class="language-dart">// Register for automatic list handling
+registry.registerMultiObjectsMapper&lt;List&lt;String&gt;&gt;(
+  UnorderedItemsListMapper&lt;String&gt;()
+);
+
+// Use in resource serialization
+builder.addValues(Schema.keywords, article.keywords);
+</code></pre>
+<p><strong>Type Parameters</strong>:</p>
+<ul>
+<li><code>T</code>: The element type within the list</li>
+</ul>
+</section>
 
 
     <section>
@@ -91,7 +125,7 @@
           <span class="name"><a href="../rdf_mapper/UnorderedItemsListMapper/UnorderedItemsListMapper.html">UnorderedItemsListMapper.new</a></span><span class="signature">({<span class="parameter" id="-param-itemSerializer"><span class="type-annotation"><a href="../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">itemSerializer</span>, </span><span class="parameter" id="-param-itemDeserializer"><span class="type-annotation"><a href="../rdf_mapper/Deserializer-class.html">Deserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">itemDeserializer</span></span>})</span>
         </dt>
         <dd>
-          
+          Creates a bidirectional mapper for list collections.
         </dd>
     </dl>
   </section>
@@ -142,7 +176,7 @@
 
 </dt>
 <dd class="inherited">
-  Serializes a collection of items to RDF objects and triples
+  Serializes a collection of items to RDF objects and triples.
   <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
@@ -181,7 +215,7 @@
 
 </dt>
 <dd class="inherited">
-  Deserializes RDF objects to a collection of items
+  Deserializes RDF objects to a collection of items.
   <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
@@ -262,7 +296,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.9.1
+      0.9.2
   </span>
   
 </footer>

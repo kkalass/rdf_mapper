@@ -56,8 +56,19 @@
 
     
 <section class="desc markdown">
-  <p>Mixin providing deserialization functionality for unordered collections.
-Encapsulates the common logic for converting RDF objects to collections.</p>
+  <p>Mixin providing deserialization functionality for unordered collections.</p>
+<p>This mixin encapsulates the common logic for converting RDF objects back to
+collections using the multi-objects approach. It deserializes each RDF object
+and collects the results into a collection.</p>
+<p><strong>Multi-Objects Deserialization</strong>: Processes multiple RDF objects with the same predicate:</p>
+<pre class="language-turtle"><code class="language-turtle">&lt;subject&gt; &lt;predicate&gt; "first element" .
+&lt;subject&gt; &lt;predicate&gt; "second element" .
+&lt;subject&gt; &lt;predicate&gt; "third element" .
+</code></pre>
+<p><strong>Type Parameters</strong>:</p>
+<ul>
+<li><code>T</code>: The element type within the collection</li>
+</ul>
 </section>
 
 
@@ -157,7 +168,7 @@ Encapsulates the common logic for converting RDF objects to collections.</p>
 
 </dt>
 <dd>
-  Deserializes RDF objects to a collection of items
+  Deserializes RDF objects to a collection of items.
   
 
 </dd>
@@ -225,7 +236,7 @@ Encapsulates the common logic for converting RDF objects to collections.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.9.1
+      0.9.2
   </span>
   
 </footer>

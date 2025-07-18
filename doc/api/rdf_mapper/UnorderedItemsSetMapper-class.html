@@ -53,6 +53,41 @@
 </h1></div>
 
     
+<section class="desc markdown">
+  <p>Bidirectional mapper for <code>Set&lt;T&gt;</code> collections using the multi-objects approach.</p>
+<p>This mapper provides complete serialization and deserialization for <code>Set&lt;T&gt;</code>
+collections using the multi-objects approach. It's the ideal mapper for the
+multi-objects pattern since both sets and multi-objects represent unordered
+collections with natural uniqueness handling.</p>
+<p><strong>Perfect Alignment</strong>: Sets and multi-objects are conceptually matched:</p>
+<ul>
+<li>Both represent unordered collections</li>
+<li>Both naturally handle uniqueness</li>
+<li>Both avoid complex nested structures</li>
+<li>Both support efficient processing and querying</li>
+<li>Both are ideal for tags, categories, and keywords</li>
+</ul>
+<p><strong>Automatic Deduplication</strong>: The <code>Set</code> will automatically remove any duplicate
+values that might appear in the RDF representation during deserialization.</p>
+<p><strong>RDF Representation</strong>:</p>
+<pre class="language-turtle"><code class="language-turtle">&lt;subject&gt; &lt;predicate&gt; "tag1" .
+&lt;subject&gt; &lt;predicate&gt; "tag2" .
+&lt;subject&gt; &lt;predicate&gt; "tag3" .
+</code></pre>
+<p><strong>Usage Example</strong>:</p>
+<pre class="language-dart"><code class="language-dart">// Register for automatic set handling
+registry.registerMultiObjectsMapper&lt;Set&lt;String&gt;&gt;(
+  UnorderedItemsSetMapper&lt;String&gt;()
+);
+
+// Use in resource serialization
+builder.addValues(Schema.tags, article.tags);
+</code></pre>
+<p><strong>Type Parameters</strong>:</p>
+<ul>
+<li><code>T</code>: The element type within the set</li>
+</ul>
+</section>
 
 
     <section>
@@ -91,7 +126,7 @@
           <span class="name"><a href="../rdf_mapper/UnorderedItemsSetMapper/UnorderedItemsSetMapper.html">UnorderedItemsSetMapper.new</a></span><span class="signature">({<span class="parameter" id="-param-itemSerializer"><span class="type-annotation"><a href="../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">itemSerializer</span>, </span><span class="parameter" id="-param-itemDeserializer"><span class="type-annotation"><a href="../rdf_mapper/Deserializer-class.html">Deserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">itemDeserializer</span></span>})</span>
         </dt>
         <dd>
-          
+          Creates a bidirectional mapper for set collections.
         </dd>
     </dl>
   </section>
@@ -142,7 +177,7 @@
 
 </dt>
 <dd class="inherited">
-  Serializes a collection of items to RDF objects and triples
+  Serializes a collection of items to RDF objects and triples.
   <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
@@ -181,7 +216,7 @@
 
 </dt>
 <dd class="inherited">
-  Deserializes RDF objects to a collection of items
+  Deserializes RDF objects to a collection of items.
   <div class="features"><span class="feature">inherited</span></div>
 
 </dd>
@@ -262,7 +297,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.9.1
+      0.9.2
   </span>
   
 </footer>

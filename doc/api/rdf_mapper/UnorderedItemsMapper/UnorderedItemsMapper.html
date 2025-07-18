@@ -59,6 +59,26 @@
 </ol>})
     </section>
     
+<section class="desc markdown">
+  <p>Creates a bidirectional mapper for unordered item collections.</p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>itemSerializer</code>: Optional serializer for individual items</li>
+<li><code>itemDeserializer</code>: Optional deserializer for individual items</li>
+</ul>
+<p>If serializer/deserializer are not provided, item handling will be
+resolved through the registry.</p>
+<p><strong>Example</strong>:</p>
+<pre class="language-dart"><code class="language-dart">// Basic mapper using registry
+final mapper = UnorderedItemsMapper&lt;String&gt;();
+
+// Mapper with custom item handling
+final personMapper = UnorderedItemsMapper&lt;Person&gt;(
+  itemSerializer: PersonSerializer(),
+  itemDeserializer: PersonDeserializer(),
+);
+</code></pre>
+</section>
 
 
     
@@ -95,7 +115,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.9.1
+      0.9.2
   </span>
   
 </footer>

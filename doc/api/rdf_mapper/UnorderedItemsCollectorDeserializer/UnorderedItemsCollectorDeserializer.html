@@ -60,6 +60,21 @@
 </ol>])
     </section>
     
+<section class="desc markdown">
+  <p>Creates a collector-based deserializer.</p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>collector</code>: Function to transform <code>Iterable&lt;T&gt;</code> to the target type <code>R</code></li>
+<li><code>itemDeserializer</code>: Optional deserializer for individual items</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre class="language-dart"><code class="language-dart">// Create a deserializer that produces a Set
+final deserializer = UnorderedItemsCollectorDeserializer&lt;String, Set&lt;String&gt;&gt;(
+  (items) =&gt; items.toSet(),
+  StringDeserializer(),
+);
+</code></pre>
+</section>
 
 
     
@@ -95,7 +110,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.9.1
+      0.9.2
   </span>
   
 </footer>

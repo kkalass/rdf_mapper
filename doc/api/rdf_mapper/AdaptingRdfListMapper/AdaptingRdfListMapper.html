@@ -63,6 +63,23 @@
 </ol>})
     </section>
     
+<section class="desc markdown">
+  <p>Creates an adapting RDF list mapper for custom collection type <code>C</code>.</p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>toWrappedType</code>: Function to convert from custom type <code>C</code> to <code>List&lt;T&gt;</code></li>
+<li><code>fromWrappedType</code>: Function to convert from <code>List&lt;T&gt;</code> to custom type <code>C</code></li>
+<li><code>itemDeserializer</code>: Optional deserializer for list elements</li>
+<li><code>itemSerializer</code>: Optional serializer for list elements</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre class="language-dart"><code class="language-dart">final mapper = AdaptingRdfListMapper&lt;MyCollection&lt;String&gt;, String&gt;(
+  (collection) =&gt; collection.toList(),     // C -&gt; List&lt;T&gt;
+  (list) =&gt; MyCollection.fromList(list),   // List&lt;T&gt; -&gt; C
+  itemDeserializer: StringDeserializer(),
+);
+</code></pre>
+</section>
 
 
     
@@ -105,7 +122,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.9.1
+      0.9.2
   </span>
   
 </footer>

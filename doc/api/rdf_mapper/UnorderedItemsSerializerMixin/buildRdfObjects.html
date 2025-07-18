@@ -65,7 +65,24 @@
     </section>
     
 <section class="desc markdown">
-  <p>Serializes a collection of items to RDF objects and triples</p>
+  <p>Serializes a collection of items to RDF objects and triples.</p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>values</code>: The collection of items to serialize</li>
+<li><code>context</code>: The serialization context for resolving mappers</li>
+<li><code>itemSerializer</code>: Optional serializer for individual items</li>
+</ul>
+<p><strong>Returns</strong>: A tuple containing:</p>
+<ul>
+<li><code>Iterable&lt;RdfObject&gt;</code>: The serialized RDF objects (terms)</li>
+<li><code>Iterable&lt;Triple&gt;</code>: Additional triples generated during serialization</li>
+</ul>
+<p><strong>Process</strong>:</p>
+<ol>
+<li>Serializes each item in the collection using the provided serializer or registry</li>
+<li>Collects all resulting RDF objects and triples</li>
+<li>Returns the flattened results for multi-objects processing</li>
+</ol>
 </section>
 
 
@@ -109,7 +126,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.9.1
+      0.9.2
   </span>
   
 </footer>

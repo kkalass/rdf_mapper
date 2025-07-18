@@ -58,6 +58,21 @@
 </ol>])
     </section>
     
+<section class="desc markdown">
+  <p>Creates a serializer for list collections.</p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>_itemSerializer</code>: Optional serializer for individual items. If not provided,
+item serialization will be resolved through the registry.</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre class="language-dart"><code class="language-dart">// Basic serializer using registry
+final serializer = UnorderedItemsListSerializer&lt;String&gt;();
+
+// Serializer with custom item handling
+final personSerializer = UnorderedItemsListSerializer&lt;Person&gt;(PersonSerializer());
+</code></pre>
+</section>
 
 
     
@@ -91,7 +106,7 @@
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.9.1
+      0.9.2
   </span>
   
 </footer>
