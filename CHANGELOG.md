@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.2] - 2025-07-18
+
+### Added
+
+- Added comprehensive documentation for collection mapper classes following Dart doc conventions:
+  - Enhanced documentation for `UnorderedItemsSerializerMixin<T>` and `UnorderedItemsDeserializerMixin<T>` with multi-objects approach explanations
+  - Added detailed class documentation for all unordered items mappers (`UnorderedItemsMapper<T>`, `UnorderedItemsListMapper<T>`, `UnorderedItemsSetMapper<T>`, etc.)
+  - Added comprehensive documentation for RDF list mappers (`RdfListMapper<T>`, `AdaptingRdfListMapper<C,T>`, `RdfListIterableMapper<T>`)
+  - All documentation includes usage examples, RDF structure explanations, and performance considerations
+
+### Fixed
+
+- Fixed RDF list deserialization in custom collection example to properly handle `rdf:nil` as a valid BlankNodeTerm
+
 ## [0.9.1] - 2025-07-17
 
 ### Removed
