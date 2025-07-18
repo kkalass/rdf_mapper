@@ -484,7 +484,7 @@ class ImmutableListMapperRdfList<T>
   @override
   ImmutableList<T> fromRdfResource(
       RdfSubject subject, DeserializationContext context) {
-    if (subject is! BlankNodeTerm) {
+    if (subject != Rdf.nil && subject is! BlankNodeTerm) {
       throw ArgumentError('Expected BlankNodeTerm, got ${subject.runtimeType}');
     }
     final list = readRdfList(subject, context, _itemDeserializer).toList();
