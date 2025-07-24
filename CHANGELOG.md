@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.3 - 2025-07-24]
+
+### Changed
+
+- Updated `rdf_core` dependency from `^0.9.5` to `^0.9.11` for latest RDF core improvements and bug fixes
+- Updated development dependencies for improved testing and build tooling
+- Enhanced JSON-LD serialization to use more compact relative IRI representations when appropriate
+- Improved RDF serialization output to omit unnecessary namespace prefixes (e.g., `xsd` when not used)
+
 ## [0.9.2] - 2025-07-18
 
 ### Added

@@ -405,7 +405,6 @@ void main() {
         final expectedTurtle = """
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix schema: <https://schema.org/> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <http://example.org/person/1> a schema:Person;
     foaf:age 30;

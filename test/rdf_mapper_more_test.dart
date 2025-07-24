@@ -52,7 +52,6 @@ void main() {
         equals(
           """
 @prefix to: <http://kalass.de/dart/rdf/test-ontology#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <https://example.com/pod/Graph%20Conversion%20Test> a to:TestItem;
     to:age 42;
@@ -93,7 +92,6 @@ void main() {
         equals(
           """
 @prefix test: <http://kalass.de/dart/rdf/test-ontology#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <https://example.com/pod/Graph%20Conversion%20Test> a test:TestItem;
     test:age 42;

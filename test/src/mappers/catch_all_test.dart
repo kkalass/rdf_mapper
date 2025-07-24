@@ -75,7 +75,6 @@ data:p1 a ex:Parent .
       final turtleDoc = '''
 @prefix data: <https://example.com/data/> .
 @prefix ex: <https://example.com/vocab/> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 data:c1 ex:age 42;
     ex:child [ ex:name "fas" ];
@@ -212,7 +211,6 @@ data:p2 ex:age 23;
       final turtleDoc = '''
 @prefix data: <https://example.com/data/> .
 @prefix ex: <https://example.com/vocab/> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 data:c1 ex:age 42;
     ex:child [ ex:name "fas" ];

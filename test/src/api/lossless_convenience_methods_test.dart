@@ -172,7 +172,7 @@ void main() {
 
       expect(jsonLd, contains('John Doe'));
       expect(jsonLd, contains('"@id"'));
-      expect(jsonLd, contains('http://example.org/person/1'));
+      expect(jsonLd, contains('person:1'));
     });
 
     test('should handle empty remainder graph', () {
@@ -400,7 +400,91 @@ void main() {
 
       expect(jsonLd, contains('John Doe'));
       expect(jsonLd, contains('"@id"'));
-      expect(jsonLd, contains('http://example.org/person/1'));
+      expect(jsonLd, contains('person:1'));
+    });
+    test('should work with different content types (relative IRIs)', () {
+      final people = [
+        TestPerson(
+          id: 'http://example.org/person/1',
+          name: 'John Doe',
+          age: 30,
+        ),
+      ];
+
+      final remainderGraph = RdfGraph(triples: []);
+
+      final jsonLd = rdfMapper.encodeObjectsLossless((people, remainderGraph),
+          contentType: 'application/ld+json',
+          baseUri: "http://example.org/person/",
+          stringEncoderOptions:
+              JsonLdEncoderOptions(includeBaseDeclaration: false));
+
+      expect(jsonLd, contains('John Doe'));
+      expect(jsonLd, contains('"@id"'));
+      expect(jsonLd, contains('1'));
+      expect(
+          jsonLd.trim(),
+          equals('''
+{
+  "@context": {
+    "ex": "http://example.org/"
+  },
+  "@id": "1",
+  "@type": "ex:Person",
+  "ex:name": "John Doe",
+  "ex:age": 30
+}
+'''
+              .trim()));
+    });
+    test('should work with different content types (relative IRIs, encoder)',
+        () {
+      final people = [
+        TestPerson(
+          id: 'http://example.org/person/1',
+          name: 'John Doe',
+          age: 30,
+        ),
+      ];
+
+      final remainderGraph = RdfGraph(triples: []);
+      final codec = rdfMapper.objectsLosslessCodec<TestPerson>(
+        contentType: 'application/ld+json',
+        stringEncoderOptions:
+            JsonLdEncoderOptions(includeBaseDeclaration: false),
+      );
+      final jsonLd = codec.encode(
+        (people, remainderGraph),
+        baseUri: "http://example.org/person/",
+      );
+
+      expect(jsonLd, contains('John Doe'));
+      expect(jsonLd, contains('"@id"'));
+      expect(jsonLd, contains('1'));
+      expect(
+          jsonLd.trim(),
+          equals('''
+{
+  "@context": {
+    "ex": "http://example.org/"
+  },
+  "@id": "1",
+  "@type": "ex:Person",
+  "ex:name": "John Doe",
+  "ex:age": 30
+}
+'''
+              .trim()));
+
+      final decoded =
+          codec.decode(jsonLd, documentUrl: "http://example.org/person/");
+      expect(decoded, isNotNull);
+      expect(decoded, isA<(List<TestPerson>, RdfGraph)>());
+      expect(decoded.$2, equals(remainderGraph));
+      expect(decoded.$1.length, equals(people.length));
+      expect(decoded.$1.length, equals(1));
+      expect(decoded.$1.first, equals(people.first));
+      expect(decoded.$1.toList(), equals(people));
     });
   });
 

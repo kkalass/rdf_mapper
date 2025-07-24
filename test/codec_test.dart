@@ -153,7 +153,7 @@ void main() {
 
       // Verify string looks like JSON-LD
       expect(jsonLd, contains('"@id"'));
-      expect(jsonLd, contains('http://example.org/person/1'));
+      expect(jsonLd, contains('person:1'));
       expect(jsonLd, contains('John Doe'));
 
       // Decode back to object
