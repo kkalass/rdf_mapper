@@ -88,7 +88,7 @@ For the ultimate developer experience, use our <strong>annotation-driven code ge
 <h2 id="installation">Installation</h2>
 <p>Add the following to your <code>pubspec.yaml</code>:</p>
 <pre class="language-yaml"><code class="language-yaml">dependencies:
-  rdf_mapper: ^0.9.3
+  rdf_mapper: ^0.10.0
 </code></pre>
 <p>Or use the following command:</p>
 <pre class="language-bash"><code class="language-bash">dart pub add rdf_mapper
@@ -129,7 +129,7 @@ final person = rdfMapper.decodeObject&lt;Person&gt;(turtleInput);
 print('Name: ${person.name}, Age: ${person.age}');
 </code></pre>
 <h3 id="model-and-mapper-classes-for-above-examples">Model and Mapper classes for above examples</h3>
-<pre class="language-dart"><code class="language-dart">import 'package:rdf_vocabularies/schema.dart';
+<pre class="language-dart"><code class="language-dart">import 'package:rdf_vocabularies_schema/schema.dart';
 
 // Define a model class.
 // You can define them as you like, there is no requirement for immutability or such
@@ -176,7 +176,7 @@ dart pub add rdf_mapper_generator build_runner --dev
 </code></pre>
 <h3 id="2-annotate-your-classes">2. Annotate your classes:</h3>
 <pre class="language-dart"><code class="language-dart">import 'package:rdf_mapper_annotations/rdf_mapper_annotations.dart';
-import 'package:rdf_vocabularies/schema.dart';
+import 'package:rdf_vocabularies_schema/schema.dart';
 
 @RdfGlobalResource(
   SchemaPerson.classIri,
@@ -308,7 +308,7 @@ builder.addValue(example('name'), 'Alice');  // Generates http://example.com/my-
 <h3 id="complex-example">Complex Example</h3>
 <p>Here's a complete example showing different mapper types and collection strategies:</p>
 <pre class="language-dart"><code class="language-dart">import 'package:rdf_mapper/rdf_mapper.dart';
-import 'package:rdf_vocabularies/schema.dart';
+import 'package:rdf_vocabularies_schema/schema.dart';
 
 void main() {
   final rdf = RdfMapper.withDefaultRegistry()
@@ -857,7 +857,7 @@ context.fromLiteralTerm(term, bypassDatatypeCheck: true);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.9.3
+      0.10.0
   </span>
   
 </footer>
