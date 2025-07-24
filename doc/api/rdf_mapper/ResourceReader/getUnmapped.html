@@ -70,7 +70,7 @@ for this subject that weren't explicitly handled by <a href="../../rdf_mapper/Re
 complete round-trip operations possible.</p>
 <p>The method collects all remaining triples for the current subject (and optionally
 connected blank nodes if <a href="../../rdf_mapper/UnmappedTriplesDeserializer/deep.html">UnmappedTriplesDeserializer.deep</a> of the unmappedTriplesDeserializer is true) and converts them into the specified type <code>T</code> using an
-<a href="../../rdf_mapper/UnmappedTriplesDeserializer-class.html">UnmappedTriplesDeserializer</a>. The default implementation supports <a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfGraph-class.html">RdfGraph</a>.</p>
+<a href="../../rdf_mapper/UnmappedTriplesDeserializer-class.html">UnmappedTriplesDeserializer</a>. The default implementation supports <a href="https://pub.dev/documentation/rdf_core/0.9.11/rdf/RdfGraph-class.html">RdfGraph</a>.</p>
 <p><strong>Important</strong>: This method should typically be called last in your mapper's
 <code>fromRdfResource</code> method, after all explicit property mappings have been performed.
 This ensures only truly unmapped triples are captured.</p>
@@ -88,7 +88,7 @@ Person fromRdfResource(IriTerm subject, DeserializationContext context) {
 }
 </code></pre>
 <p>The optional <code>unmappedTriplesDeserializer</code> can be provided for custom deserialization of the unmapped data type.</p>
-<p>Returns the unmapped triples converted to type <code>T</code>, typically an <a href="https://pub.dev/documentation/rdf_core/0.9.5/rdf/RdfGraph-class.html">RdfGraph</a>.</p>
+<p>Returns the unmapped triples converted to type <code>T</code>, typically an <a href="https://pub.dev/documentation/rdf_core/0.9.11/rdf/RdfGraph-class.html">RdfGraph</a>.</p>
 </section>
 
 
@@ -127,7 +127,7 @@ Person fromRdfResource(IriTerm subject, DeserializationContext context) {
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.9.2
+      0.9.3
   </span>
   
 </footer>
