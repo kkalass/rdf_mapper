@@ -1,8 +1,8 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
-import 'package:rdf_vocabularies/rdf.dart';
-import 'package:rdf_vocabularies/schema.dart';
-import 'package:rdf_vocabularies/xsd.dart';
+import 'package:rdf_vocabularies_core/rdf.dart';
+import 'package:rdf_vocabularies_schema/schema.dart';
+import 'package:rdf_vocabularies_core/xsd.dart';
 import 'package:test/test.dart';
 
 void main() {

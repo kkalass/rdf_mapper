@@ -113,7 +113,7 @@ print('Name: ${person.name}, Age: ${person.age}');
 ### Model and Mapper classes for above examples
 
 ```dart
-import 'package:rdf_vocabularies/schema.dart';
+import 'package:rdf_vocabularies_schema/schema.dart';
 
 // Define a model class.
 // You can define them as you like, there is no requirement for immutability or such
@@ -168,7 +168,7 @@ dart pub add rdf_mapper_generator build_runner --dev
 
 ```dart
 import 'package:rdf_mapper_annotations/rdf_mapper_annotations.dart';
-import 'package:rdf_vocabularies/schema.dart';
+import 'package:rdf_vocabularies_schema/schema.dart';
 
 @RdfGlobalResource(
   SchemaPerson.classIri,
@@ -319,7 +319,7 @@ Here's a complete example showing different mapper types and collection strategi
 
 ```dart
 import 'package:rdf_mapper/rdf_mapper.dart';
-import 'package:rdf_vocabularies/schema.dart';
+import 'package:rdf_vocabularies_schema/schema.dart';
 
 void main() {
   final rdf = RdfMapper.withDefaultRegistry()

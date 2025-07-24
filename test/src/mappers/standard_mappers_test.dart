@@ -6,7 +6,7 @@ import 'package:rdf_mapper/src/mappers/literal/date_time_mapper.dart';
 import 'package:rdf_mapper/src/mappers/literal/double_mapper.dart';
 import 'package:rdf_mapper/src/mappers/literal/int_mapper.dart';
 import 'package:rdf_mapper/src/mappers/literal/string_mapper.dart';
-import 'package:rdf_vocabularies/xsd.dart';
+import 'package:rdf_vocabularies_core/xsd.dart';
 import 'package:test/test.dart';
 
 import '../deserializers/mock_deserialization_context.dart';

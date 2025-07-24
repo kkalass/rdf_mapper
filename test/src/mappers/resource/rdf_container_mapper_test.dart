@@ -6,8 +6,8 @@ import 'package:rdf_mapper/src/api/serialization_context.dart';
 import 'package:rdf_mapper/src/context/deserialization_context_impl.dart';
 import 'package:rdf_mapper/src/context/serialization_context_impl.dart';
 import 'package:rdf_mapper/src/mappers/resource/rdf_container_mapper.dart';
-import 'package:rdf_vocabularies/rdf.dart';
-import 'package:rdf_vocabularies/xsd.dart';
+import 'package:rdf_vocabularies_core/rdf.dart';
+import 'package:rdf_vocabularies_core/xsd.dart';
 import 'package:test/test.dart';
 
 /// Test vocabulary for consistent property naming

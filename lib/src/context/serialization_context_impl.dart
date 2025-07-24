@@ -6,7 +6,7 @@ import 'package:rdf_mapper/src/api/rdf_mapper_interfaces.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
 import 'package:rdf_mapper/src/exceptions/serializer_not_found_exception.dart';
-import 'package:rdf_vocabularies/rdf.dart';
+import 'package:rdf_vocabularies_core/rdf.dart';
 
 final _log = Logger("rdf_orm.serialization");
 

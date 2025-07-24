@@ -1,6 +1,6 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
-import 'package:rdf_vocabularies/xsd.dart';
+import 'package:rdf_vocabularies_core/xsd.dart';
 
 /// Mapper for converting between Dart `bool` values and RDF boolean literals.
 ///

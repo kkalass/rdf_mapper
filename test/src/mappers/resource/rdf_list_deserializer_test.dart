@@ -5,8 +5,8 @@ import 'package:rdf_mapper/src/api/rdf_mapper_registry.dart';
 import 'package:rdf_mapper/src/context/deserialization_context_impl.dart';
 import 'package:rdf_mapper/src/exceptions/invalid_rdf_list_structure_exception.dart';
 import 'package:rdf_mapper/src/mappers/resource/rdf_list_deserializer.dart';
-import 'package:rdf_vocabularies/rdf.dart';
-import 'package:rdf_vocabularies/xsd.dart';
+import 'package:rdf_vocabularies_core/rdf.dart';
+import 'package:rdf_vocabularies_core/xsd.dart';
 import 'package:test/test.dart';
 
 /// Custom deserializer for testing purposes

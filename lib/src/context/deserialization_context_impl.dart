@@ -1,7 +1,7 @@
 import 'package:logging/logging.dart';
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
-import 'package:rdf_vocabularies/rdf.dart';
+import 'package:rdf_vocabularies_core/rdf.dart';
 
 final _log = Logger('DeserializationContextImpl');
 

@@ -1,6 +1,6 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
-import 'package:rdf_vocabularies/foaf.dart';
+import 'package:rdf_vocabularies_core/foaf.dart';
 import 'package:test/test.dart';
 
 void main() {

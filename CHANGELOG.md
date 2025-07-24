@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.4] - 2025-01-25
+
+### Changed
+
+- **Breaking Change**: Updated `rdf_vocabularies` dependency to use the new multipackage structure:
+  - Replaced `rdf_vocabularies: ^0.3.0` with `rdf_vocabularies_core: ^0.4.1` and `rdf_vocabularies_schema: ^0.4.1`
+  - Updated all import statements throughout the codebase to use the new package structure
+  - `import 'package:rdf_vocabularies/rdf.dart'` → `import 'package:rdf_vocabularies_core/rdf.dart'`
+  - `import 'package:rdf_vocabularies/xsd.dart'` → `import 'package:rdf_vocabularies_core/xsd.dart'`
+  - `import 'package:rdf_vocabularies/schema.dart'` → `import 'package:rdf_vocabularies_schema/schema.dart'`
+  - And similar updates for other vocabulary imports (`foaf`, `vcard`, etc.)
+
 ## [0.9.3] - 2025-07-24
 
 ### Changed

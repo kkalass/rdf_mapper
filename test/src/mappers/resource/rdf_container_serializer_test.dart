@@ -4,7 +4,7 @@ import 'package:rdf_mapper/src/api/serialization_context.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_interfaces.dart';
 import 'package:rdf_mapper/src/context/serialization_context_impl.dart';
 import 'package:rdf_mapper/src/mappers/resource/rdf_container_serializer.dart';
-import 'package:rdf_vocabularies/rdf.dart';
+import 'package:rdf_vocabularies_core/rdf.dart';
 import 'package:test/test.dart';
 
 /// Custom serializer for testing purposes

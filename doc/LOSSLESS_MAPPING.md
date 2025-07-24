@@ -116,7 +116,7 @@ Add an RdfGraph field to your model class. This field will hold all triples dire
 
 ```dart
 import 'package:rdf_mapper/rdf_mapper.dart';
-import 'package:rdf_vocabularies/schema.dart';
+import 'package:rdf_vocabularies_schema/schema.dart';
 import 'package:rdf_core/rdf_core.dart'; // Correct import for RdfGraph
 
 class Person {
@@ -147,7 +147,7 @@ Important: The reader.getUnmapped<U>() call should typically be the last operati
 
 ```dart
 import 'package:rdf_mapper/rdf_mapper.dart';
-import 'package:rdf_vocabularies/schema.dart';
+import 'package:rdf_vocabularies_schema/schema.dart';
 import 'package:rdf_core/rdf_core.dart'; 
 
 class PersonMapper implements GlobalResourceMapper<Person> {
@@ -184,7 +184,7 @@ In your GlobalResourceMapper's toRdfResource method, use the builder.addUnmapped
 
 ```dart
 import 'package:rdf_mapper/rdf_mapper.dart';
-import 'package:rdf_vocabularies/schema.dart';
+import 'package:rdf_vocabularies_schema/schema.dart';
 import 'package:rdf_core/rdf_core.dart'; 
 
 class PersonMapper implements GlobalResourceMapper<Person> {
@@ -345,7 +345,7 @@ builder.addUnmapped(value.unmappedData, unmappedTriplesSerializer: myCustomMappe
 Here's a full example demonstrating the lossless mapping process:
 ```dart
 import 'package:rdf_mapper/rdf_mapper.dart';
-import 'package:rdf_vocabularies/schema.dart';
+import 'package:rdf_vocabularies_schema/schema.dart';
 import 'package:rdf_core/rdf_core.dart'; 
 
 // 1. Define the Model with unmappedGraph field

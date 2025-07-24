@@ -1,6 +1,6 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
-import 'package:rdf_vocabularies/rdf.dart';
+import 'package:rdf_vocabularies_core/rdf.dart';
 
 /// Serializer for Dart `List<T>` collections to RDF Sequence (rdf:Seq) containers.
 ///

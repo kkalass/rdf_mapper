@@ -1,6 +1,6 @@
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
-import 'package:rdf_vocabularies/xsd.dart';
+import 'package:rdf_vocabularies_core/xsd.dart';
 
 /// Exception thrown when a deserializer encounters a datatype in the RDF graph which does not match the expected type.
 ///

@@ -14,7 +14,7 @@ library;
 
 import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/rdf_mapper.dart';
-import 'package:rdf_vocabularies/rdf.dart' show Rdf;
+import 'package:rdf_vocabularies_core/rdf.dart' show Rdf;
 
 void main() {
   print('=== Custom Collection Type RDF Mapping Example ===\n');
