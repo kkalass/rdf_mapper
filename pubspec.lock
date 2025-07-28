@@ -357,10 +357,10 @@ packages:
     dependency: "direct main"
     description:
       name: rdf_vocabularies_core
-      sha256: cd054e1b3b64929e9d7d886fb75919e22e8fb58079f16c251b0438259a4031ca
+      sha256: "4df79e7b24430b20b13d9acc634b5ab1e37985a113db180baf5371a083723fa5"
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.1"
+    version: "0.4.2"
   rdf_vocabularies_schema:
     dependency: "direct main"
     description:
