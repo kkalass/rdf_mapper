@@ -81,7 +81,7 @@ class MockDeserializationContext extends _i1.Mock
       ) as T);
 
   @override
-  List<_i4.Triple> getTriplesForSubject(
+  Iterable<_i4.Triple> getTriplesForSubject(
     _i4.RdfSubject? subject, {
     bool? includeBlankNodes = true,
     bool? trackRead = true,
@@ -96,7 +96,7 @@ class MockDeserializationContext extends _i1.Mock
           },
         ),
         returnValue: <_i4.Triple>[],
-      ) as List<_i4.Triple>);
+      ) as Iterable<_i4.Triple>);
 
   @override
   void trackTriplesRead(
