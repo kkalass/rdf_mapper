@@ -365,10 +365,10 @@ packages:
     dependency: "direct main"
     description:
       name: rdf_vocabularies_schema
-      sha256: "1e7b3deb7ad25e01335d6a227a271f256f70749c5f243475f4c3809b627771b9"
+      sha256: "79654f1a69b6905e40758dbdb604395dfb34f767b4a06832fb69facd3d1b302e"
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.1"
+    version: "0.4.2"
   shelf:
     dependency: transitive
     description:
