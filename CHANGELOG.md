@@ -5,7 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.10.0] - 2025-01-25
+## [Unreleased]
+
+### Added
+
+- **IRI Relative Mappers**: New specialized mappers for handling relative IRIs in RDF documents
+  - `IriRelativeSerializer`: Converts relative IRI strings to absolute IRI terms using a base URI
+  - `IriRelativeDeserializer`: Converts absolute IRI terms to relative IRI strings when possible
+  - `IriRelativeMapper`: Bidirectional mapper combining both serialization and deserialization
+  - Useful for document systems, APIs, and any scenario requiring compact IRI representation
+  - Full support for RFC 3986 IRI resolution and relativization rules
+  - Comprehensive test coverage with 64+ test cases covering edge cases and roundtrip consistency
+  - Example usage in `example/iri_relative_example.dart`
+
+- **Convenience IRI Mappers**: New specialized mappers for common IRI patterns
+  - `FragmentIriTermMapper`: Bidirectional mapping for IRI fragments (part after #)
+  - `LastPathElementIriTermMapper`: Bidirectional mapping for last path segments of IRIs
+  - Useful for anchor-style references, RESTful APIs, and hierarchical resource patterns
+  - Example usage in `example/convenience_iri_mappers_example.dart`
+
+- **Enhanced IRI Mapper Documentation**: Complete documentation coverage for all IRI mappers
+  - `BaseRdfIriTermMapper`: URI template-based mapper with placeholder support
+  - `IriIdSerializer`: Local identifier expansion to complete IRIs
+  - `ExtractingIriTermDeserializer`: Flexible custom extraction functions
+  - Updated README with comprehensive IRI mapper table and examples
+  - Better export organization for discoverability
+
+## [0.10.0] - 2025-07-25
 
 ### Changed
 

@@ -81,6 +81,12 @@
 /// // Graph-based operations
 /// final graph = rdfMapper.graph.serialize(myPerson);
 /// final personFromGraph = rdfMapper.graph.deserialize<Person>(graph);
+///
+/// // Working with relative IRIs for compact representation
+/// const baseUri = 'http://docs.example.org/';
+/// const relativeMapper = IriRelativeMapper(baseUri);
+/// final relativeIri = relativeMapper.toRdfTerm('chapter1.html', context);
+/// // Creates: IriTerm('http://docs.example.org/chapter1.html')
 /// ```
 ///
 library rdf_mapper;
@@ -126,7 +132,11 @@ export 'src/mappers/iri/iri_full_deserializer.dart';
 export 'src/mappers/iri/iri_full_serializer.dart';
 export 'src/mappers/iri/iri_full_mapper.dart';
 export 'src/mappers/iri/iri_id_serializer.dart';
+export 'src/mappers/iri/iri_relative_deserializer.dart';
+export 'src/mappers/iri/iri_relative_serializer.dart';
+export 'src/mappers/iri/iri_relative_mapper.dart';
 export 'src/mappers/iri/base_rdf_iri_term_mapper.dart';
+export 'src/mappers/iri/convenience_iri_mappers.dart';
 // Base classes for literal mappers - essential for custom mapper implementation
 export 'src/mappers/literal/base_rdf_literal_term_deserializer.dart';
 export 'src/mappers/literal/base_rdf_literal_term_serializer.dart';

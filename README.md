@@ -641,6 +641,96 @@ The library includes built-in mappers for common Dart types:
 | `DateTime` | xsd:dateTime |
 | `Uri` | IRI |
 
+### IRI Mappers
+
+For working with IRIs as subjects, objects, or properties, the library provides several specialized mappers:
+
+#### Complete Bidirectional Mappers
+
+These mappers implement both serialization and deserialization in a single class:
+
+| Mapper | Purpose | Use Case |
+|--------|---------|----------|
+| `IriFullMapper` | Complete IRIs | Direct IRI-to-string mapping |
+| `BaseRdfIriTermMapper` | URI templates | Template-based IRI generation with placeholders |
+| `IriRelativeMapper` | Relative IRIs | Document-relative references |
+| `FragmentIriTermMapper` | IRI fragments | Extract/append fragment parts (after #) |
+| `LastPathElementIriTermMapper` | Path elements | Extract/append last path segment |
+
+#### Individual Serializers and Deserializers
+
+For custom combinations or one-way operations, use these individual components:
+
+| Component | Direction | Purpose |
+|-----------|-----------|---------|
+| `IriIdSerializer` | Object → IRI | Expand local identifiers to full IRIs |
+| `ExtractingIriTermDeserializer` | IRI → Object | Custom extraction with flexible functions |
+| `IriRelativeSerializer` | Relative → Absolute | Convert relative to absolute IRIs |
+| `IriRelativeDeserializer` | Absolute → Relative | Convert absolute to relative IRIs |
+
+> **💡 Tip**: Individual serializers and deserializers are equivalent to the complete mappers above. For example, `IriRelativeMapper` uses the same implementation as `IriRelativeSerializer` and `IriRelativeDeserializer` internally.
+
+#### URI Template Mapping Example
+
+Use `BaseRdfIriTermMapper` for complex URI template scenarios:
+
+```dart
+class ProductMapper extends BaseRdfIriTermMapper<Product> {
+  const ProductMapper() : super('http://shop.example.org/{category}/{id}', 'id');
+
+  @override
+  String resolvePlaceholder(String placeholderName) {
+    return switch (placeholderName) {
+      'category' => 'electronics', // Could be dynamic
+      _ => super.resolvePlaceholder(placeholderName),
+    };
+  }
+
+  @override
+  String convertToString(Product product) => product.id;
+
+  @override
+  Product convertFromString(String id) => Product(id: id);
+}
+
+// Usage: Product(id: "laptop-123") ↔ "http://shop.example.org/electronics/laptop-123"
+```
+
+#### Convenience Mappers Example
+
+For specific IRI parts, use the convenience mappers:
+
+```dart
+// Fragment mapper for anchor-style references
+const fragmentMapper = FragmentIriTermMapper('http://docs.example.org/guide');
+// "introduction" ↔ "http://docs.example.org/guide#introduction"
+
+// Path element mapper for REST-style resources  
+const pathMapper = LastPathElementIriTermMapper('http://api.example.org/users/');
+// "alice" ↔ "http://api.example.org/users/alice"
+```
+
+#### Relative IRI Example
+
+Useful for document systems, APIs, or any scenario requiring compact IRI representation **in Dart objects**:
+
+```dart
+// For a documentation system
+const baseUri = 'http://docs.example.org/v2/';
+const mapper = IriRelativeMapper(baseUri);
+
+// Relative IRIs become absolute when serialized TO RDF
+final iriTerm = mapper.toRdfTerm('getting-started.html', context);
+print(iriTerm.iri); // "http://docs.example.org/v2/getting-started.html"
+
+// Absolute IRIs become relative when deserialized FROM RDF  
+final relative = mapper.fromRdfTerm(iriTerm, context);
+print(relative); // "getting-started.html"
+```
+
+**Important**: This affects the **Dart object representation** only. The RDF serialization always contains absolute IRIs. This is useful when the same Dart classes are used for both RDF mapping and other serialization formats (JSON, databases, etc.) where compact relative IRIs are preferred.
+
+
 ## 🎯 Datatype Handling and Best Practices
 
 ### Understanding Datatype Strictness
