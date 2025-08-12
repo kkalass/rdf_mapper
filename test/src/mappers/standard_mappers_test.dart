@@ -2,6 +2,7 @@ import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/deserialization_context.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
 import 'package:rdf_mapper/src/mappers/literal/bool_mapper.dart';
+import 'package:rdf_mapper/src/mappers/literal/date_mapper.dart';
 import 'package:rdf_mapper/src/mappers/literal/date_time_mapper.dart';
 import 'package:rdf_mapper/src/mappers/literal/double_mapper.dart';
 import 'package:rdf_mapper/src/mappers/literal/int_mapper.dart';
@@ -249,6 +250,35 @@ void main() {
           );
 
           expect(dateTime, equals(DateTime.utc(2023, 4, 1, 12, 30, 45)));
+        },
+      );
+    });
+
+    group('Date Mapper', () {
+      test(
+        'DateSerializer correctly serializes Dates to RDF literals',
+        () {
+          final serializer = const DateMapper();
+
+          final dateTime = DateTime.utc(2023, 4, 1, 12, 30, 45);
+          final literal = serializer.toRdfTerm(dateTime, serializationContext);
+
+          expect(literal.value, equals('2023-04-01'));
+          expect(literal.datatype, equals(Xsd.date));
+        },
+      );
+
+      test(
+        'DateDeserializer correctly deserializes RDF literals to DateTimes',
+        () {
+          final deserializer = const DateMapper();
+
+          final dateTime = deserializer.fromRdfTerm(
+            LiteralTerm.typed('2023-04-01', 'date'),
+            deserializationContext,
+          );
+
+          expect(dateTime, equals(DateTime.utc(2023, 4, 1)));
         },
       );
     });

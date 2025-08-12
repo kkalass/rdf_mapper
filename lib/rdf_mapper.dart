@@ -110,6 +110,7 @@ export 'src/api/resource_reader.dart';
 export 'src/api/rdf_mapper_registry.dart';
 export 'src/api/rdf_mapper_service.dart';
 export 'src/api/serialization_context.dart';
+export 'src/api/serialization_provider.dart';
 export 'src/api/serialization_service.dart';
 export 'src/api/rdf_mapper_interfaces.dart';
 export 'src/codec/rdf_mapper_codec.dart';
@@ -145,6 +146,7 @@ export 'src/mappers/literal/datatype_override_mapper.dart';
 // Standard literal mappers - useful for reference and extension
 export 'src/mappers/literal/base_rdf_literal_term_mapper.dart';
 export 'src/mappers/literal/bool_mapper.dart';
+export 'src/mappers/literal/date_mapper.dart';
 export 'src/mappers/literal/date_time_mapper.dart';
 export 'src/mappers/literal/delegating_rdf_literal_term_mapper.dart';
 export 'src/mappers/literal/double_mapper.dart';

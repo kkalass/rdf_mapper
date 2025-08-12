@@ -116,6 +116,11 @@ final class RdfMapperRegistry {
     registerMapper(const IntMapper());
     registerMapper(const DoubleMapper());
     registerMapper(const BoolMapper());
+
+    // Note: while it may be tempting to register DateMapper globally, that
+    // will not work because the dart DateTime type is used for both DateMapper
+    // and DateTimeMapper. Users must specify the DateMapper in their calls to Reader/Builder explicitly.
+    // registerMapper(const DateMapper());
     registerMapper(const DateTimeMapper());
 
     // Register mappers for unmapped triples

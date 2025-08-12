@@ -325,14 +325,8 @@ final class RdfMapperService {
       }
     }
 
-    RdfGraph remainder = _withoutTriples(graph, processedTriples);
+    RdfGraph remainder = graph.withoutTriples(processedTriples);
     return (rootObjects, remainder);
-  }
-
-  RdfGraph _withoutTriples(RdfGraph graph, Set<Triple> processedTriples) {
-    return graph.withoutTriples(
-      processedTriples,
-    );
   }
 
   /// Serializes an object of type [T] to an RDF graph.
@@ -518,6 +512,6 @@ final class RdfMapperService {
 
     var result = context.deserialize<T>(rdfSubject);
 
-    return (result, _withoutTriples(graph, context.getAllProcessedTriples()));
+    return (result, graph.withoutTriples(context.getAllProcessedTriples()));
   }
 }

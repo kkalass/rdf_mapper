@@ -41,25 +41,32 @@ class DeserializationContextImpl extends DeserializationContext
 
   void _registerTypeRead<T>(ResourceDeserializer<T> deser, RdfSubject subject,
       {IriTerm? typeIri}) {
+    final Set<IriTerm> typeIris;
     if (typeIri == null) {
-      typeIri = _graph
+      typeIris = _graph
           .findTriples(subject: subject, predicate: Rdf.type)
-          .singleOrNull
-          ?.object as IriTerm?;
+          .map((e) => e.object)
+          .whereType<IriTerm>()
+          .toSet();
+    } else {
+      typeIris = <IriTerm>{typeIri};
     }
-    if (typeIri == null) {
+    if (typeIris.isEmpty) {
       _log.fine('Cannot register type read for $deser without a type IRI.');
       return;
     }
-
-    if (deser.typeIri == typeIri) {
+    final deserTypeIri = deser.typeIri;
+    if (deserTypeIri == null) {
+      return;
+    }
+    if (typeIris.contains(deserTypeIri)) {
       trackTriplesRead(
         subject,
         [
           Triple(
             subject,
             Rdf.type,
-            typeIri,
+            deserTypeIri,
           )
         ],
       );
@@ -221,12 +228,21 @@ class DeserializationContextImpl extends DeserializationContext
 
   @override
   T getUnmapped<T>(RdfSubject subject,
-      {UnmappedTriplesDeserializer? unmappedTriplesDeserializer}) {
+      {UnmappedTriplesDeserializer? unmappedTriplesDeserializer,
+      bool globalUnmapped = false}) {
     unmappedTriplesDeserializer ??=
         _registry.getUnmappedTriplesDeserializer<T>();
 
-    final triples = _getRemainingTriplesForSubject(subject,
-        includeBlankNodes: unmappedTriplesDeserializer.deep);
+    if (!unmappedTriplesDeserializer.deep && globalUnmapped) {
+      throw ArgumentError(
+        'Global unmapped triples deserialization is not supported for ${unmappedTriplesDeserializer.runtimeType}. '
+        'Use a deep deserializer instead.',
+      );
+    }
+    final triples = globalUnmapped
+        ? _graph.withoutTriples(getAllProcessedTriples()).triples
+        : _getRemainingTriplesForSubject(subject,
+            includeBlankNodes: unmappedTriplesDeserializer.deep);
 
     trackTriplesRead(subject, triples);
 

@@ -101,7 +101,8 @@ abstract class DeserializationService {
   });
 
   T getUnmapped<T>(RdfSubject subject,
-      {UnmappedTriplesDeserializer? unmappedTriplesDeserializer});
+      {UnmappedTriplesDeserializer? unmappedTriplesDeserializer,
+      bool globalUnmapped = false});
 
   /// Retrieves values from an RDF collection, using a provided collection deserializer.
   ///

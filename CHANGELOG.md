@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Global Unmapped Triples Support**: Enhanced `getUnmapped()` method with `globalUnmapped` parameter
+  - `reader.getUnmapped<RdfGraph>(globalUnmapped: true)` now captures ALL unmapped triples from the entire graph
+  - Default behavior (`globalUnmapped: false`) preserves existing functionality (subject-scoped unmapped triples)
+  - Perfect for Document Pattern scenarios where you want to preserve unprocessed metadata, annotations, or "dangling" triples
+  - Includes validation to ensure compatibility with deep deserializers only
+  - Enhanced documentation with comprehensive examples for both standard and global usage
+  - Particularly useful for FOAF documents, Solid WebID profiles, and other document-centric RDF patterns
+
+- **SerializationProvider Documentation and Examples**: Enhanced documentation and example for contextual serialization
+  - `SerializationProvider` interface now includes comprehensive API documentation with examples
+  - New `example/document_pattern_example.dart` demonstrating the Document Pattern for FOAF profile documents
+  - Shows how to use `SerializationProvider.iriContextual()` for context-aware nested object mapping
+  - Perfect for Solid WebID profiles, FOAF documents, and other RDF documents with primary topics
+  - Includes examples for both single documents and multiple documents with different contexts
+  - Added export of `SerializationProvider` in main library for public API access
+
 - **IRI Relative Mappers**: New specialized mappers for handling relative IRIs in RDF documents
   - `IriRelativeSerializer`: Converts relative IRI strings to absolute IRI terms using a base URI
   - `IriRelativeDeserializer`: Converts absolute IRI terms to relative IRI strings when possible

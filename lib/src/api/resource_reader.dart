@@ -870,42 +870,65 @@ class ResourceReader {
     );
   }
 
-  /// Returns unmapped RDF triples associated with this subject that haven't been consumed by other reader methods.
+  /// Returns unmapped RDF triples that haven't been consumed by other reader methods.
   ///
   /// This method is fundamental to lossless mapping, allowing you to capture triples
-  /// for this subject that weren't explicitly handled by [require], [optional], or
-  /// [getValues] calls. This ensures no data is lost during deserialization, making
-  /// complete round-trip operations possible.
+  /// that weren't explicitly handled by [require], [optional], or [getValues] calls.
+  /// This ensures no data is lost during deserialization, making complete round-trip
+  /// operations possible.
   ///
-  /// The method collects all remaining triples for the current subject (and optionally
-  /// connected blank nodes if [UnmappedTriplesDeserializer.deep] of the unmappedTriplesDeserializer is true) and converts them into the specified type [T] using an
+  /// By default, the method collects remaining triples for the current subject (and
+  /// optionally connected blank nodes if [UnmappedTriplesDeserializer.deep] is true).
+  /// When [globalUnmapped] is true, it collects ALL unmapped triples from the entire
+  /// graph, useful for document pattern scenarios where you want to preserve all
+  /// unprocessed data.
+  ///
+  /// The collected triples are converted into the specified type [T] using an
   /// [UnmappedTriplesDeserializer]. The default implementation supports [RdfGraph].
   ///
   /// **Important**: This method should typically be called last in your mapper's
   /// [fromRdfResource] method, after all explicit property mappings have been performed.
   /// This ensures only truly unmapped triples are captured.
   ///
-  /// Usage example:
+  /// Usage examples:
   /// ```dart
+  /// // Standard usage - subject-scoped unmapped triples
   /// @override
   /// Person fromRdfResource(IriTerm subject, DeserializationContext context) {
   ///   final reader = context.reader(subject);
   ///   final name = reader.require<String>(foafName);
   ///   final age = reader.require<int>(foafAge);
   ///
-  ///   // Capture any remaining unmapped triples - call this last
+  ///   // Capture remaining unmapped triples for this subject
   ///   final unmappedGraph = reader.getUnmapped<RdfGraph>();
   ///
   ///   return Person(id: subject.iri, name: name, age: age, unmappedGraph: unmappedGraph);
   /// }
+  ///
+  /// // Document pattern - global unmapped triples
+  /// @override
+  /// Document<Person> fromRdfResource(IriTerm subject, DeserializationContext context) {
+  ///   final reader = context.reader(subject);
+  ///   final primaryTopic = reader.require<Person>(foafPrimaryTopic);
+  ///
+  ///   // Capture ALL remaining unmapped triples from the entire graph
+  ///   final unmappedGraph = reader.getUnmapped<RdfGraph>(globalUnmapped: true);
+  ///
+  ///   return Document(documentIri: subject.iri, primaryTopic: primaryTopic, unmapped: unmappedGraph);
+  /// }
   /// ```
   ///
-  /// The optional [unmappedTriplesDeserializer] can be provided for custom deserialization of the unmapped data type.
+  /// Parameters:
+  /// * [unmappedTriplesDeserializer] - Optional custom deserializer for the unmapped data type
+  /// * [globalUnmapped] - When true, collects unmapped triples from the entire graph instead of just this subject.
+  ///   Requires a deep deserializer that supports blank node traversal.
   ///
   /// Returns the unmapped triples converted to type [T], typically an [RdfGraph].
   T getUnmapped<T>(
-      {UnmappedTriplesDeserializer<T>? unmappedTriplesDeserializer}) {
+      {UnmappedTriplesDeserializer<T>? unmappedTriplesDeserializer,
+      bool globalUnmapped = false}) {
     return _service.getUnmapped(_subject,
-        unmappedTriplesDeserializer: unmappedTriplesDeserializer);
+        unmappedTriplesDeserializer: unmappedTriplesDeserializer,
+        globalUnmapped: globalUnmapped);
   }
 }

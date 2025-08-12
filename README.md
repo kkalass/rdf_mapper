@@ -549,9 +549,150 @@ formats: reader.optionalRdfAlt<String>(Schema.encodingFormat) ?? const [], // Al
 
 > 💡 **See complete examples**: [`example/collections_example.dart`](example/collections_example.dart) and [`example/custom_collection_type_example.dart`](example/custom_collection_type_example.dart)
 
+### Document Pattern with SerializationProvider
+
+For RDF documents that follow the FOAF Document pattern (like Solid WebID profiles), rdf_mapper provides the `SerializationProvider` interface for contextual serialization. This is especially useful when nested objects need access to their container's properties:
+
+```dart
+// Generic document wrapper
+class Document<T> {
+  final String documentIri;
+  final T primaryTopic;        // foaf:primaryTopic
+  final RdfGraph unmapped;     // For lossless round-trip
+  
+  Document({required this.documentIri, required this.primaryTopic, required this.unmapped});
+}
+
+// Person that can receive document context
+class Person {
+  final String id;
+  final String name;
+  final String? documentContext;  // Optional: knows about its document
+  
+  Person({required this.id, required this.name, this.documentContext});
+}
+
+// Document mapper using SerializationProvider for contextual nested mapping
+class DocumentMapper<T> implements GlobalResourceMapper<Document<T>> {
+  final SerializationProvider<Document<T>, T> _primaryTopicProvider;
+  
+  const DocumentMapper({required SerializationProvider<Document<T>, T> primaryTopicProvider})
+    : _primaryTopicProvider = primaryTopicProvider;
+
+  @override
+  IriTerm? get typeIri => FoafDocument.classIri;
+
+  @override
+  Document<T> fromRdfResource(IriTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
+    return Document<T>(
+      documentIri: subject.iri,
+      primaryTopic: reader.require(
+        Foaf.primaryTopic,
+        deserializer: _primaryTopicProvider.deserializer(subject, context),
+      ),
+      // Capture ALL unmapped triples from the entire graph for lossless document handling
+      unmapped: reader.getUnmapped<RdfGraph>(globalUnmapped: true),
+    );
+  }
+  
+  @override
+  (IriTerm, Iterable<Triple>) toRdfResource(Document<T> document, SerializationContext context, {RdfSubject? parentSubject}) {
+    final subject = IriTerm(document.documentIri);
+    return context.resourceBuilder(subject)
+      .addValue(
+        Foaf.primaryTopic,
+        document.primaryTopic,
+        serializer: _primaryTopicProvider.serializer(document, subject, context),
+      )
+      .addUnmapped(document.unmapped)
+      .build();
+  }
+}
+
+// Registration with IRI-contextual provider
+final rdfMapper = RdfMapper.withMappers((r) => r
+  .registerMapper<Document<Person>>(DocumentMapper(
+    primaryTopicProvider: SerializationProvider.iriContextual(
+      (IriTerm documentIri) => PersonMapper(
+        documentIriProvider: () => documentIri.iri  // Pass document context to Person
+      )
+    )
+  )));
+```
+
+This pattern works perfectly for:
+- **Solid WebID Profiles**: FOAF PersonalProfileDocument with foaf:primaryTopic pointing to the person
+- **FOAF Documents**: Any document that has a primary topic requiring contextual information
+- **Nested Context**: When child objects need to know about their parent containers
+
+**Key Features:**
+- **Global Unmapped Triples**: Use `reader.getUnmapped<RdfGraph>(globalUnmapped: true)` to capture ALL unmapped triples from the entire graph, not just the current subject. Perfect for document patterns where you want to preserve unprocessed metadata, annotations, or "dangling" triples.
+- **Contextual Serialization**: SerializationProvider enables nested objects to receive context from their containers
+
+**SerializationProvider factory methods:**
+- `SerializationProvider.nonContextual(mapper)` - Same mapper for all contexts
+- `SerializationProvider.iriContextual(factory)` - Create mapper based on subject IRI
+- `SerializationProvider.custom(...)` - Full control over serializer/deserializer creation
+
+**Example RDF (Solid WebID style):**
+```turtle
+@prefix : <#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix schema: <http://schema.org/> .
+
+<https://alice.datapod.example/profile/card> 
+    a foaf:PersonalProfileDocument ;
+    foaf:primaryTopic <https://alice.datapod.example/profile/card#me> .
+
+<https://alice.datapod.example/profile/card#me>
+    a foaf:Person ;
+    foaf:name "Alice Smith" ;
+    schema:email "alice@example.com" .
+```
+
+> 💡 **See complete example**: [`example/document_pattern_example.dart`](example/document_pattern_example.dart)
+
 ### Lossless Mapping - Preserve All Your Data
 
 Want to ensure no RDF data is lost during conversion? rdf_mapper provides powerful lossless mapping features:
+
+#### Global Lossless Mapping (Recommended)
+
+For document-level lossless mapping, use the `globalUnmapped` flag to capture ALL unmapped triples in a single object:
+
+```dart
+class Document {
+  final String documentIri;
+  final Person primaryTopic;
+  final RdfGraph unmapped; // Contains ALL unmapped triples from the entire document
+  
+  Document({required this.documentIri, required this.primaryTopic, required this.unmapped});
+}
+
+class DocumentMapper implements GlobalResourceMapper<Document> {
+  @override
+  Document fromRdfResource(IriTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
+    return Document(
+      documentIri: subject.iri,
+      primaryTopic: reader.require<Person>(foafPrimaryTopic),
+      // Capture ALL unmapped triples from the entire graph - no need for decodeObjectLossless!
+      unmapped: reader.getUnmapped<RdfGraph>(globalUnmapped: true),
+    );
+  }
+  // ... serialization restores with addUnmapped(document.unmapped)
+}
+
+// Simple usage - no lossless API needed!
+final document = rdfMapper.decodeObject<Document>(turtle);
+final restoredTurtle = rdfMapper.encodeObject(document);
+// Complete round-trip preservation with regular decode/encode methods!
+```
+
+#### Traditional Lossless API
+
+For scenarios where you want to keep your domain objects pure and free from RDF dependencies:
 
 ```dart
 // Decode with remainder - get your object plus any unmapped data
@@ -568,7 +709,9 @@ final restoredTurtle = rdfMapper.encodeObjectLossless((person, remainderGraph));
 // Now you have the complete original data back!
 ```
 
-**Preserve unmapped properties within objects:**
+#### Object-Level Lossless Mapping
+
+**Preserve unmapped properties within individual objects:**
 
 Using annotations with code generation (recommended):
 ```dart
@@ -622,7 +765,35 @@ class PersonMapper implements GlobalResourceMapper<Person> {
 }
 ```
 
-Perfect for applications that need to preserve unknown properties, support evolving schemas, or maintain complete data fidelity. 
+Perfect for applications that need to preserve unknown properties, support evolving schemas, or maintain complete data fidelity.
+
+**When to use each approach:**
+- **Global Lossless (`globalUnmapped: true`)**: Best for document patterns, single-object graphs, or when you want one place to capture all unmapped data. Requires your domain objects to include RDF-specific fields.
+- **Traditional Lossless API (`decodeObjectLossless`/`encodeObjectLossless`)**: When you want to keep your domain objects pure and free from RDF dependencies. The unmapped data is handled separately from your business objects, maintaining clean separation of concerns.
+- **Object-Level Lossless**: When individual objects need to preserve their own unmapped properties independently, but you're okay with RDF-aware domain objects.
+
+**Architecture considerations:**
+```dart
+// Pure domain objects - no RDF dependencies
+class Person {
+  final String id;
+  final String name;
+  // No RdfGraph field - keep business logic clean
+}
+
+// Use lossless API for external unmapped data handling
+final (person, unmappedTriples) = rdfMapper.decodeObjectLossless<Person>(turtle);
+// person is a pure business object, unmappedTriples handled separately
+
+// vs.
+
+// RDF-aware domain objects
+class Document {
+  final String documentIri;
+  final Person primaryTopic;
+  final RdfGraph unmapped; // RDF-specific field in domain model
+}
+```
 
 **Alternative unmapped types:** You can also use `Map<IriTerm, List<RdfObject>>` or `Map<RdfPredicate, List<RdfObject>>` for simpler, shallow unmapped data handling (without nested blank node triples).
 
