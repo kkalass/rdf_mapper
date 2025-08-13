@@ -88,7 +88,7 @@ For the ultimate developer experience, use our <strong>annotation-driven code ge
 <h2 id="installation">Installation</h2>
 <p>Add the following to your <code>pubspec.yaml</code>:</p>
 <pre class="language-yaml"><code class="language-yaml">dependencies:
-  rdf_mapper: ^0.10.0
+  rdf_mapper: ^0.10.1
 </code></pre>
 <p>Or use the following command:</p>
 <pre class="language-bash"><code class="language-bash">dart pub add rdf_mapper
@@ -546,8 +546,141 @@ formats: reader.optionalRdfAlt&lt;String&gt;(Schema.encodingFormat) ?? const [],
 <blockquote>
 <p>💡 <strong>See complete examples</strong>: <a href="example/collections_example.dart"><code>example/collections_example.dart</code></a> and <a href="example/custom_collection_type_example.dart"><code>example/custom_collection_type_example.dart</code></a></p>
 </blockquote>
+<h3 id="document-pattern-with-serializationprovider">Document Pattern with SerializationProvider</h3>
+<p>For RDF documents that follow the FOAF Document pattern (like Solid WebID profiles), rdf_mapper provides the <code>SerializationProvider</code> interface for contextual serialization. This is especially useful when nested objects need access to their container's properties:</p>
+<pre class="language-dart"><code class="language-dart">// Generic document wrapper
+class Document&lt;T&gt; {
+  final String documentIri;
+  final T primaryTopic;        // foaf:primaryTopic
+  final RdfGraph unmapped;     // For lossless round-trip
+  
+  Document({required this.documentIri, required this.primaryTopic, required this.unmapped});
+}
+
+// Person that can receive document context
+class Person {
+  final String id;
+  final String name;
+  final String? documentContext;  // Optional: knows about its document
+  
+  Person({required this.id, required this.name, this.documentContext});
+}
+
+// Document mapper using SerializationProvider for contextual nested mapping
+class DocumentMapper&lt;T&gt; implements GlobalResourceMapper&lt;Document&lt;T&gt;&gt; {
+  final SerializationProvider&lt;Document&lt;T&gt;, T&gt; _primaryTopicProvider;
+  
+  const DocumentMapper({required SerializationProvider&lt;Document&lt;T&gt;, T&gt; primaryTopic})
+    : _primaryTopicProvider = primaryTopic;
+
+  @override
+  IriTerm? get typeIri =&gt; FoafDocument.classIri;
+
+  @override
+  Document&lt;T&gt; fromRdfResource(IriTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
+    return Document&lt;T&gt;(
+      documentIri: subject.iri,
+      primaryTopic: reader.require(
+        Foaf.primaryTopic,
+        deserializer: _primaryTopicProvider.deserializer(subject, context),
+      ),
+      // Capture ALL unmapped triples from the entire graph for lossless document handling
+      unmapped: reader.getUnmapped&lt;RdfGraph&gt;(globalUnmapped: true),
+    );
+  }
+  
+  @override
+  (IriTerm, Iterable&lt;Triple&gt;) toRdfResource(Document&lt;T&gt; document, SerializationContext context, {RdfSubject? parentSubject}) {
+    final subject = IriTerm(document.documentIri);
+    return context.resourceBuilder(subject)
+      .addValue(
+        Foaf.primaryTopic,
+        document.primaryTopic,
+        serializer: _primaryTopicProvider.serializer(document, subject, context),
+      )
+      .addUnmapped(document.unmapped)
+      .build();
+  }
+}
+
+// Registration with IRI-contextual provider
+final rdfMapper = RdfMapper.withMappers((r) =&gt; r
+  .registerMapper&lt;Document&lt;Person&gt;&gt;(DocumentMapper(
+    primaryTopic: SerializationProvider.iriContextual(
+      (IriTerm documentIri) =&gt; PersonMapper(
+        documentIriProvider: () =&gt; documentIri.iri  // Pass document context to Person
+      )
+    )
+  )));
+</code></pre>
+<p>This pattern works perfectly for:</p>
+<ul>
+<li><strong>Solid WebID Profiles</strong>: FOAF PersonalProfileDocument with foaf:primaryTopic pointing to the person</li>
+<li><strong>FOAF Documents</strong>: Any document that has a primary topic requiring contextual information</li>
+<li><strong>Nested Context</strong>: When child objects need to know about their parent containers</li>
+</ul>
+<p><strong>Key Features:</strong></p>
+<ul>
+<li><strong>Global Unmapped Triples</strong>: Use <code>reader.getUnmapped&lt;RdfGraph&gt;(globalUnmapped: true)</code> to capture ALL unmapped triples from the entire graph, not just the current subject. Perfect for document patterns where you want to preserve unprocessed metadata, annotations, or "dangling" triples.</li>
+<li><strong>Contextual Serialization</strong>: SerializationProvider enables nested objects to receive context from their containers</li>
+</ul>
+<p><strong>SerializationProvider factory methods:</strong></p>
+<ul>
+<li><code>SerializationProvider.nonContextual(mapper)</code> - Same mapper for all contexts</li>
+<li><code>SerializationProvider.iriContextual(factory)</code> - Create mapper based on subject IRI</li>
+<li><code>SerializationProvider.custom(...)</code> - Full control over serializer/deserializer creation</li>
+</ul>
+<p><strong>Example RDF (Solid WebID style):</strong></p>
+<pre class="language-turtle"><code class="language-turtle">@prefix : &lt;#&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix schema: &lt;http://schema.org/&gt; .
+
+&lt;https://alice.datapod.example/profile/card&gt; 
+    a foaf:PersonalProfileDocument ;
+    foaf:primaryTopic &lt;https://alice.datapod.example/profile/card#me&gt; .
+
+&lt;https://alice.datapod.example/profile/card#me&gt;
+    a foaf:Person ;
+    foaf:name "Alice Smith" ;
+    schema:email "alice@example.com" .
+</code></pre>
+<blockquote>
+<p>💡 <strong>See complete example</strong>: <a href="example/document_pattern_example.dart"><code>example/document_pattern_example.dart</code></a></p>
+</blockquote>
 <h3 id="lossless-mapping---preserve-all-your-data">Lossless Mapping - Preserve All Your Data</h3>
 <p>Want to ensure no RDF data is lost during conversion? rdf_mapper provides powerful lossless mapping features:</p>
+<h4 id="global-lossless-mapping-recommended">Global Lossless Mapping (Recommended)</h4>
+<p>For document-level lossless mapping, use the <code>globalUnmapped</code> flag to capture ALL unmapped triples in a single object:</p>
+<pre class="language-dart"><code class="language-dart">class Document {
+  final String documentIri;
+  final Person primaryTopic;
+  final RdfGraph unmapped; // Contains ALL unmapped triples from the entire document
+  
+  Document({required this.documentIri, required this.primaryTopic, required this.unmapped});
+}
+
+class DocumentMapper implements GlobalResourceMapper&lt;Document&gt; {
+  @override
+  Document fromRdfResource(IriTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
+    return Document(
+      documentIri: subject.iri,
+      primaryTopic: reader.require&lt;Person&gt;(foafPrimaryTopic),
+      // Capture ALL unmapped triples from the entire graph - no need for decodeObjectLossless!
+      unmapped: reader.getUnmapped&lt;RdfGraph&gt;(globalUnmapped: true),
+    );
+  }
+  // ... serialization restores with addUnmapped(document.unmapped)
+}
+
+// Simple usage - no lossless API needed!
+final document = rdfMapper.decodeObject&lt;Document&gt;(turtle);
+final restoredTurtle = rdfMapper.encodeObject(document);
+// Complete round-trip preservation with regular decode/encode methods!
+</code></pre>
+<h4 id="traditional-lossless-api">Traditional Lossless API</h4>
+<p>For scenarios where you want to keep your domain objects pure and free from RDF dependencies:</p>
 <pre class="language-dart"><code class="language-dart">// Decode with remainder - get your object plus any unmapped data
 final (person, remainderGraph) = rdfMapper.decodeObjectLossless&lt;Person&gt;(turtle);
 
@@ -561,7 +694,8 @@ print('Preserved ${remainderGraph.triples.length} unmapped triples');
 final restoredTurtle = rdfMapper.encodeObjectLossless((person, remainderGraph));
 // Now you have the complete original data back!
 </code></pre>
-<p><strong>Preserve unmapped properties within objects:</strong></p>
+<h4 id="object-level-lossless-mapping">Object-Level Lossless Mapping</h4>
+<p><strong>Preserve unmapped properties within individual objects:</strong></p>
 <p>Using annotations with code generation (recommended):</p>
 <pre class="language-dart"><code class="language-dart">@RdfGlobalResource(SchemaPerson.classIri, IriStrategy('http://example.org/person/{id}'))
 class Person {
@@ -611,6 +745,33 @@ class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
 }
 </code></pre>
 <p>Perfect for applications that need to preserve unknown properties, support evolving schemas, or maintain complete data fidelity.</p>
+<p><strong>When to use each approach:</strong></p>
+<ul>
+<li><strong>Global Lossless (<code>globalUnmapped: true</code>)</strong>: Best for document patterns, single-object graphs, or when you want one place to capture all unmapped data. Requires your domain objects to include RDF-specific fields.</li>
+<li><strong>Traditional Lossless API (<code>decodeObjectLossless</code>/<code>encodeObjectLossless</code>)</strong>: When you want to keep your domain objects pure and free from RDF dependencies. The unmapped data is handled separately from your business objects, maintaining clean separation of concerns.</li>
+<li><strong>Object-Level Lossless</strong>: When individual objects need to preserve their own unmapped properties independently, but you're okay with RDF-aware domain objects.</li>
+</ul>
+<p><strong>Architecture considerations:</strong></p>
+<pre class="language-dart"><code class="language-dart">// Pure domain objects - no RDF dependencies
+class Person {
+  final String id;
+  final String name;
+  // No RdfGraph field - keep business logic clean
+}
+
+// Use lossless API for external unmapped data handling
+final (person, unmappedTriples) = rdfMapper.decodeObjectLossless&lt;Person&gt;(turtle);
+// person is a pure business object, unmappedTriples handled separately
+
+// vs.
+
+// RDF-aware domain objects
+class Document {
+  final String documentIri;
+  final Person primaryTopic;
+  final RdfGraph unmapped; // RDF-specific field in domain model
+}
+</code></pre>
 <p><strong>Alternative unmapped types:</strong> You can also use <code>Map&lt;IriTerm, List&lt;RdfObject&gt;&gt;</code> or <code>Map&lt;RdfPredicate, List&lt;RdfObject&gt;&gt;</code> for simpler, shallow unmapped data handling (without nested blank node triples).</p>
 <p>See the <a href="doc/LOSSLESS_MAPPING.md">Lossless Mapping Guide</a> for complete details.</p>
 <h2 id="supported-rdf-types">Supported RDF Types</h2>
@@ -649,6 +810,129 @@ class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
 </tr>
 </tbody>
 </table>
+<h3 id="iri-mappers">IRI Mappers</h3>
+<p>For working with IRIs as subjects, objects, or properties, the library provides several specialized mappers:</p>
+<h4 id="complete-bidirectional-mappers">Complete Bidirectional Mappers</h4>
+<p>These mappers implement both serialization and deserialization in a single class:</p>
+<table>
+<thead>
+<tr>
+<th>Mapper</th>
+<th>Purpose</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>IriFullMapper</code></td>
+<td>Complete IRIs</td>
+<td>Direct IRI-to-string mapping</td>
+</tr>
+<tr>
+<td><code>BaseRdfIriTermMapper</code></td>
+<td>URI templates</td>
+<td>Template-based IRI generation with placeholders</td>
+</tr>
+<tr>
+<td><code>IriRelativeMapper</code></td>
+<td>Relative IRIs</td>
+<td>Document-relative references</td>
+</tr>
+<tr>
+<td><code>FragmentIriTermMapper</code></td>
+<td>IRI fragments</td>
+<td>Extract/append fragment parts (after #)</td>
+</tr>
+<tr>
+<td><code>LastPathElementIriTermMapper</code></td>
+<td>Path elements</td>
+<td>Extract/append last path segment</td>
+</tr>
+</tbody>
+</table>
+<h4 id="individual-serializers-and-deserializers">Individual Serializers and Deserializers</h4>
+<p>For custom combinations or one-way operations, use these individual components:</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Direction</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>IriIdSerializer</code></td>
+<td>Object → IRI</td>
+<td>Expand local identifiers to full IRIs</td>
+</tr>
+<tr>
+<td><code>ExtractingIriTermDeserializer</code></td>
+<td>IRI → Object</td>
+<td>Custom extraction with flexible functions</td>
+</tr>
+<tr>
+<td><code>IriRelativeSerializer</code></td>
+<td>Relative → Absolute</td>
+<td>Convert relative to absolute IRIs</td>
+</tr>
+<tr>
+<td><code>IriRelativeDeserializer</code></td>
+<td>Absolute → Relative</td>
+<td>Convert absolute to relative IRIs</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>💡 Tip</strong>: Individual serializers and deserializers are equivalent to the complete mappers above. For example, <code>IriRelativeMapper</code> uses the same implementation as <code>IriRelativeSerializer</code> and <code>IriRelativeDeserializer</code> internally.</p>
+</blockquote>
+<h4 id="uri-template-mapping-example">URI Template Mapping Example</h4>
+<p>Use <code>BaseRdfIriTermMapper</code> for complex URI template scenarios:</p>
+<pre class="language-dart"><code class="language-dart">class ProductMapper extends BaseRdfIriTermMapper&lt;Product&gt; {
+  const ProductMapper() : super('http://shop.example.org/{category}/{id}', 'id');
+
+  @override
+  String resolvePlaceholder(String placeholderName) {
+    return switch (placeholderName) {
+      'category' =&gt; 'electronics', // Could be dynamic
+      _ =&gt; super.resolvePlaceholder(placeholderName),
+    };
+  }
+
+  @override
+  String convertToString(Product product) =&gt; product.id;
+
+  @override
+  Product convertFromString(String id) =&gt; Product(id: id);
+}
+
+// Usage: Product(id: "laptop-123") ↔ "http://shop.example.org/electronics/laptop-123"
+</code></pre>
+<h4 id="convenience-mappers-example">Convenience Mappers Example</h4>
+<p>For specific IRI parts, use the convenience mappers:</p>
+<pre class="language-dart"><code class="language-dart">// Fragment mapper for anchor-style references
+const fragmentMapper = FragmentIriTermMapper('http://docs.example.org/guide');
+// "introduction" ↔ "http://docs.example.org/guide#introduction"
+
+// Path element mapper for REST-style resources  
+const pathMapper = LastPathElementIriTermMapper('http://api.example.org/users/');
+// "alice" ↔ "http://api.example.org/users/alice"
+</code></pre>
+<h4 id="relative-iri-example">Relative IRI Example</h4>
+<p>Useful for document systems, APIs, or any scenario requiring compact IRI representation <strong>in Dart objects</strong>:</p>
+<pre class="language-dart"><code class="language-dart">// For a documentation system
+const baseUri = 'http://docs.example.org/v2/';
+const mapper = IriRelativeMapper(baseUri);
+
+// Relative IRIs become absolute when serialized TO RDF
+final iriTerm = mapper.toRdfTerm('getting-started.html', context);
+print(iriTerm.iri); // "http://docs.example.org/v2/getting-started.html"
+
+// Absolute IRIs become relative when deserialized FROM RDF  
+final relative = mapper.fromRdfTerm(iriTerm, context);
+print(relative); // "getting-started.html"
+</code></pre>
+<p><strong>Important</strong>: This affects the <strong>Dart object representation</strong> only. The RDF serialization always contains absolute IRIs. This is useful when the same Dart classes are used for both RDF mapping and other serialization formats (JSON, databases, etc.) where compact relative IRIs are preferred.</p>
 <h2 id="-datatype-handling-and-best-practices">🎯 Datatype Handling and Best Practices</h2>
 <h3 id="understanding-datatype-strictness">Understanding Datatype Strictness</h3>
 <p>RDF Mapper enforces <strong>datatype strictness</strong> by default to ensure:</p>
@@ -857,7 +1141,7 @@ context.fromLiteralTerm(term, bypassDatatypeCheck: true);
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.10.0
+      0.10.1
   </span>
   
 </footer>

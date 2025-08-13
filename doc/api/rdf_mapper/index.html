@@ -136,6 +136,12 @@ final person = rdfMapper.decodeObject&lt;Person&gt;(turtle);
 // Graph-based operations
 final graph = rdfMapper.graph.serialize(myPerson);
 final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
+
+// Working with relative IRIs for compact representation
+const baseUri = 'http://docs.example.org/';
+const relativeMapper = IriRelativeMapper(baseUri);
+final relativeIri = relativeMapper.toRdfTerm('chapter1.html', context);
+// Creates: IriTerm('http://docs.example.org/chapter1.html')
 </code></pre>
 </section>
 
@@ -255,6 +261,14 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
   A literal term mapper that overrides the default datatype with a custom one.
 </dd>
 
+          <dt id="DateMapper">
+  <span class="name "><a href="../rdf_mapper/DateMapper-class.html">DateMapper</a></span> 
+
+</dt>
+<dd>
+  Mapper for converting between Dart <code>DateTime</code> values and RDF date literals.
+</dd>
+
           <dt id="DateTimeMapper">
   <span class="name "><a href="../rdf_mapper/DateTimeMapper-class.html">DateTimeMapper</a></span> 
 
@@ -310,6 +324,14 @@ but use different RDF datatypes.
 </dt>
 <dd>
   A flexible IRI term deserializer that uses a custom extraction function.
+</dd>
+
+          <dt id="FragmentIriTermMapper">
+  <span class="name "><a href="../rdf_mapper/FragmentIriTermMapper-class.html">FragmentIriTermMapper</a></span> 
+
+</dt>
+<dd>
+  Bidirectional mapper for IRI fragments (the part after #).
 </dd>
 
           <dt id="GlobalResourceDeserializer">
@@ -384,6 +406,38 @@ but use different RDF datatypes.
   Serializer that converts a local identifier to a complete IRI term.
 </dd>
 
+          <dt id="IriRelativeDeserializer">
+  <span class="name "><a href="../rdf_mapper/IriRelativeDeserializer-class.html">IriRelativeDeserializer</a></span> 
+
+</dt>
+<dd>
+  Deserializer that converts absolute IRI terms to relative IRI strings.
+</dd>
+
+          <dt id="IriRelativeMapper">
+  <span class="name "><a href="../rdf_mapper/IriRelativeMapper-class.html">IriRelativeMapper</a></span> 
+
+</dt>
+<dd>
+  Bidirectional mapper for relative IRI handling between strings and IRI terms.
+</dd>
+
+          <dt id="IriRelativeSerializationProvider">
+  <span class="name "><a href="../rdf_mapper/IriRelativeSerializationProvider-class.html">IriRelativeSerializationProvider</a><span class="signature">&lt;<wbr><span class="type-parameter">D</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Serialization provider for IRI-relative string mapping with contextual base URI resolution.
+</dd>
+
+          <dt id="IriRelativeSerializer">
+  <span class="name "><a href="../rdf_mapper/IriRelativeSerializer-class.html">IriRelativeSerializer</a></span> 
+
+</dt>
+<dd>
+  Serializer that converts relative IRI strings to absolute IRI terms.
+</dd>
+
           <dt id="IriTermDeserializer">
   <span class="name "><a href="../rdf_mapper/IriTermDeserializer-class.html">IriTermDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> 
 
@@ -422,6 +476,14 @@ but use different RDF datatypes.
 </dt>
 <dd>
   A literal term mapper that applies a language tag to string values.
+</dd>
+
+          <dt id="LastPathElementIriTermMapper">
+  <span class="name "><a href="../rdf_mapper/LastPathElementIriTermMapper-class.html">LastPathElementIriTermMapper</a></span> 
+
+</dt>
+<dd>
+  Bidirectional mapper for the last path element of an IRI.
 </dd>
 
           <dt id="LiteralTermDeserializer">
@@ -597,7 +659,7 @@ but use different RDF datatypes.
 
 </dt>
 <dd>
-  Default implementation of <a href="../rdf_mapper/UnmappedTriplesMapper-class.html">UnmappedTriplesMapper</a> for <a href="https://pub.dev/documentation/rdf_core/0.9.11/rdf/RdfGraph-class.html">RdfGraph</a>.
+  Default implementation of <a href="../rdf_mapper/UnmappedTriplesMapper-class.html">UnmappedTriplesMapper</a> for <a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/RdfGraph-class.html">RdfGraph</a>.
 </dd>
 
           <dt id="RdfListDeserializer">
@@ -913,7 +975,7 @@ but use different RDF datatypes.
 </dd>
 
           <dt id="ResourceBuilder">
-  <span class="name "><a href="../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S extends <a href="https://pub.dev/documentation/rdf_core/0.9.11/rdf/RdfSubject-class.html">RdfSubject</a></span>&gt;</span></span> 
+  <span class="name "><a href="../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S extends <a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/RdfSubject-class.html">RdfSubject</a></span>&gt;</span></span> 
 
 </dt>
 <dd>
@@ -950,6 +1012,14 @@ but use different RDF datatypes.
 </dt>
 <dd>
   Core interface for serializing Dart objects to RDF.
+</dd>
+
+          <dt id="SerializationProvider">
+  <span class="name "><a href="../rdf_mapper/SerializationProvider-class.html">SerializationProvider</a><span class="signature">&lt;<wbr><span class="type-parameter">P</span>, <span class="type-parameter">T</span>&gt;</span></span> 
+
+</dt>
+<dd>
+  Provides contextual serialization and deserialization for nested objects.
 </dd>
 
           <dt id="SerializationService">
@@ -1360,7 +1430,7 @@ but use different RDF datatypes.
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.10.0
+      0.10.1
   </span>
   
 </footer>

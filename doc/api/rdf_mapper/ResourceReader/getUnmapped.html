@@ -56,6 +56,7 @@
       
 <span class="returntype">T</span>
 <span class="name ">getUnmapped</span>&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="getUnmapped-param-unmappedTriplesDeserializer"><span class="type-annotation"><a href="../../rdf_mapper/UnmappedTriplesDeserializer-class.html">UnmappedTriplesDeserializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">unmappedTriplesDeserializer</span>, </span></li>
+<li><span class="parameter" id="getUnmapped-param-globalUnmapped"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">globalUnmapped</span> = <span class="default-value">false</span>, </span></li>
 </ol>})
 
       
@@ -63,32 +64,54 @@
     </section>
     
 <section class="desc markdown">
-  <p>Returns unmapped RDF triples associated with this subject that haven't been consumed by other reader methods.</p>
+  <p>Returns unmapped RDF triples that haven't been consumed by other reader methods.</p>
 <p>This method is fundamental to lossless mapping, allowing you to capture triples
-for this subject that weren't explicitly handled by <a href="../../rdf_mapper/ResourceReader/require.html">require</a>, <a href="../../rdf_mapper/ResourceReader/optional.html">optional</a>, or
-<a href="../../rdf_mapper/ResourceReader/getValues.html">getValues</a> calls. This ensures no data is lost during deserialization, making
-complete round-trip operations possible.</p>
-<p>The method collects all remaining triples for the current subject (and optionally
-connected blank nodes if <a href="../../rdf_mapper/UnmappedTriplesDeserializer/deep.html">UnmappedTriplesDeserializer.deep</a> of the unmappedTriplesDeserializer is true) and converts them into the specified type <code>T</code> using an
-<a href="../../rdf_mapper/UnmappedTriplesDeserializer-class.html">UnmappedTriplesDeserializer</a>. The default implementation supports <a href="https://pub.dev/documentation/rdf_core/0.9.11/rdf/RdfGraph-class.html">RdfGraph</a>.</p>
+that weren't explicitly handled by <a href="../../rdf_mapper/ResourceReader/require.html">require</a>, <a href="../../rdf_mapper/ResourceReader/optional.html">optional</a>, or <a href="../../rdf_mapper/ResourceReader/getValues.html">getValues</a> calls.
+This ensures no data is lost during deserialization, making complete round-trip
+operations possible.</p>
+<p>By default, the method collects remaining triples for the current subject (and
+optionally connected blank nodes if <a href="../../rdf_mapper/UnmappedTriplesDeserializer/deep.html">UnmappedTriplesDeserializer.deep</a> is true).
+When <code>globalUnmapped</code> is true, it collects ALL unmapped triples from the entire
+graph, useful for document pattern scenarios where you want to preserve all
+unprocessed data.</p>
+<p>The collected triples are converted into the specified type <code>T</code> using an
+<a href="../../rdf_mapper/UnmappedTriplesDeserializer-class.html">UnmappedTriplesDeserializer</a>. The default implementation supports <a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/RdfGraph-class.html">RdfGraph</a>.</p>
 <p><strong>Important</strong>: This method should typically be called last in your mapper's
 <code>fromRdfResource</code> method, after all explicit property mappings have been performed.
 This ensures only truly unmapped triples are captured.</p>
-<p>Usage example:</p>
-<pre class="language-dart"><code class="language-dart">@override
+<p>Usage examples:</p>
+<pre class="language-dart"><code class="language-dart">// Standard usage - subject-scoped unmapped triples
+@override
 Person fromRdfResource(IriTerm subject, DeserializationContext context) {
   final reader = context.reader(subject);
   final name = reader.require&lt;String&gt;(foafName);
   final age = reader.require&lt;int&gt;(foafAge);
 
-  // Capture any remaining unmapped triples - call this last
+  // Capture remaining unmapped triples for this subject
   final unmappedGraph = reader.getUnmapped&lt;RdfGraph&gt;();
 
   return Person(id: subject.iri, name: name, age: age, unmappedGraph: unmappedGraph);
 }
+
+// Document pattern - global unmapped triples
+@override
+Document&lt;Person&gt; fromRdfResource(IriTerm subject, DeserializationContext context) {
+  final reader = context.reader(subject);
+  final primaryTopic = reader.require&lt;Person&gt;(foafPrimaryTopic);
+
+  // Capture ALL remaining unmapped triples from the entire graph
+  final unmappedGraph = reader.getUnmapped&lt;RdfGraph&gt;(globalUnmapped: true);
+
+  return Document(documentIri: subject.iri, primaryTopic: primaryTopic, unmapped: unmappedGraph);
+}
 </code></pre>
-<p>The optional <code>unmappedTriplesDeserializer</code> can be provided for custom deserialization of the unmapped data type.</p>
-<p>Returns the unmapped triples converted to type <code>T</code>, typically an <a href="https://pub.dev/documentation/rdf_core/0.9.11/rdf/RdfGraph-class.html">RdfGraph</a>.</p>
+<p>Parameters:</p>
+<ul>
+<li><code>unmappedTriplesDeserializer</code> - Optional custom deserializer for the unmapped data type</li>
+<li><code>globalUnmapped</code> - When true, collects unmapped triples from the entire graph instead of just this subject.
+Requires a deep deserializer that supports blank node traversal.</li>
+</ul>
+<p>Returns the unmapped triples converted to type <code>T</code>, typically an <a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/RdfGraph-class.html">RdfGraph</a>.</p>
 </section>
 
 
@@ -96,9 +119,11 @@ Person fromRdfResource(IriTerm subject, DeserializationContext context) {
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">T getUnmapped&lt;T&gt;(
-    {UnmappedTriplesDeserializer&lt;T&gt;? unmappedTriplesDeserializer}) {
+    {UnmappedTriplesDeserializer&lt;T&gt;? unmappedTriplesDeserializer,
+    bool globalUnmapped = false}) {
   return _service.getUnmapped(_subject,
-      unmappedTriplesDeserializer: unmappedTriplesDeserializer);
+      unmappedTriplesDeserializer: unmappedTriplesDeserializer,
+      globalUnmapped: globalUnmapped);
 }</code></pre>
 </section>
 
@@ -127,7 +152,7 @@ Person fromRdfResource(IriTerm subject, DeserializationContext context) {
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.10.0
+      0.10.1
   </span>
   
 </footer>

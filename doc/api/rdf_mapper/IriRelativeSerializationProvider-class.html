@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the IriRelativeSerializationProvider class from the rdf_mapper library, for the Dart programming language.">
+  <title>IriRelativeSerializationProvider class - rdf_mapper library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">rdf_mapper</a></li>
+    <li><a href="../rdf_mapper/">rdf_mapper.dart</a></li>
+    <li class="self-crumb">IriRelativeSerializationProvider<span class="signature">&lt;<wbr><span class="type-parameter">D</span>&gt;</span> class</li>
+  </ol>
+  <div class="self-name">IriRelativeSerializationProvider</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="rdf_mapper&#47;rdf_mapper-library-sidebar.html"
+    data-below-sidebar="rdf_mapper&#47;IriRelativeSerializationProvider-class-sidebar.html">
+    <div>
+<h1><span class="kind-class">IriRelativeSerializationProvider&lt;<wbr><span class="type-parameter">D</span>&gt;</span> class 
+    <a href="https://dart.dev/language/class-modifiers#final" class="feature feature-final" title="This class can neither be extended, implemented, nor mixed in.">final</a>
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>Serialization provider for IRI-relative string mapping with contextual base URI resolution.</p>
+<p>This provider creates IRI relative serializers and deserializers that automatically
+use the subject IRI as the base URI for relative IRI resolution. It's primarily designed
+for <strong>code generation scenarios</strong> and generic factory patterns where the base URI is not
+known at compile time.</p>
+<p><strong>For hand-written code</strong>, directly using <code>IriRelativeSerializer(subject.iri)</code> and
+<code>IriRelativeDeserializer(subject.iri)</code> is usually simpler and more straightforward.</p>
+<h2 id="key-features">Key Features</h2>
+<ul>
+<li><strong>Automatic Base URI Resolution</strong>: Uses the subject IRI as base URI for each serialization/deserialization</li>
+<li><strong>Code Generation Friendly</strong>: Perfect for generated mappers that need to adapt to different contexts</li>
+<li><strong>Type-Safe Contextual Mapping</strong>: Works with any parent type <code>D</code> while maintaining type safety</li>
+<li><strong>Zero Configuration</strong>: No need to manually pass base URIs - automatically inferred from context</li>
+</ul>
+<h2 id="common-use-cases">Common Use Cases</h2>
+<h3 id="code-generation-and-generic-factories">Code Generation and Generic Factories</h3>
+<p>This provider is primarily designed for <strong>code generation scenarios</strong> where mappers
+need to be created dynamically based on context. It's especially useful when:</p>
+<ul>
+<li>Generating mappers that adapt to different document contexts automatically</li>
+<li>Building generic factories that don't know the base URI at compile time</li>
+<li>Creating reusable mapping patterns for document-based RDF structures</li>
+</ul>
+<pre class="language-dart"><code class="language-dart">// Example: Code-generated mapper that adapts to any document context
+class GeneratedPersonMapper implements GlobalResourceMapper&lt;Person&gt; {
+  static const _photoProvider = IriRelativeSerializationProvider&lt;Person&gt;();
+
+  @override
+  Person fromRdfResource(IriTerm subject, DeserializationContext context) {
+    final reader = context.reader(subject);
+    return Person(
+      id: subject.iri,
+      name: reader.require&lt;String&gt;(FoafPerson.name),
+      // Automatically uses subject IRI as base - no hardcoded URIs!
+      photoPath: reader.optional&lt;String&gt;(
+        FoafPerson.image,
+        deserializer: _photoProvider.deserializer(subject, context)
+      ),
+    );
+  }
+
+  @override
+  (IriTerm, Iterable&lt;Triple&gt;) toRdfResource(Person person, SerializationContext context, {RdfSubject? parentSubject}) {
+    final subject = IriTerm(person.id);
+    return context
+        .resourceBuilder(subject)
+        .addValue(FoafPerson.name, person.name)
+        .addValueIfNotNull(
+          FoafPerson.image,
+          person.photoPath,
+          serializer: _photoProvider.serializer(person, subject, context)
+        )
+        .build();
+  }
+}
+</code></pre>
+<h3 id="alternative-direct-usage-simpler-for-hand-written-code">Alternative: Direct Usage (Simpler for Hand-Written Code)</h3>
+<p>For hand-written mappers where you know the context, direct instantiation is simpler:</p>
+<pre class="language-dart"><code class="language-dart">// Simpler approach for hand-written code:
+photoPath: reader.optional&lt;String&gt;(
+  FoafPerson.image,
+  deserializer: IriRelativeDeserializer(subject.iri)
+),
+</code></pre>
+<h2 id="behavior">Behavior</h2>
+<ul>
+<li><strong>Serialization</strong>: Converts relative IRI strings to absolute IRI terms using subject IRI as base</li>
+<li><strong>Deserialization</strong>: Converts absolute IRI terms to relative IRI strings when possible</li>
+<li><strong>Base URI</strong>: Always uses the current subject IRI as the base URI for resolution</li>
+<li><strong>Fallback</strong>: If an IRI cannot be relativized, returns the absolute IRI string</li>
+</ul>
+<h2 id="example-rdf-mapping">Example RDF Mapping</h2>
+<p>With person IRI <code>https://alice.example/profile#me</code>:</p>
+<pre class="language-turtle"><code class="language-turtle">&lt;https://alice.example/profile#me&gt; a foaf:Person ;
+    foaf:name "Alice Smith" ;
+    foaf:img &lt;https://alice.example/photos/avatar.jpg&gt; .  # Absolute in RDF
+</code></pre>
+<p>The <code>photoPath</code> field in the Person object would contain <code>"photos/avatar.jpg"</code> (relative string),
+while the RDF contains the absolute IRI <code>&lt;https://alice.example/photos/avatar.jpg&gt;</code>.</p>
+<p>This allows your Dart objects to use clean, portable relative paths while maintaining
+absolute IRIs in the RDF representation for proper semantic web compatibility.</p>
+<h2 id="type-parameters">Type Parameters</h2>
+<ul>
+<li><code>D</code> The parent/document type that provides context for the serialization</li>
+</ul>
+</section>
+
+
+    <section>
+      <dl class="dl-horizontal">
+        
+
+        
+  <dt>Implemented types</dt>
+  <dd>
+    <ul class="comma-separated clazz-relationships">
+        <li><a href="../rdf_mapper/SerializationProvider-class.html">SerializationProvider</a><span class="signature">&lt;<wbr><span class="type-parameter">D</span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></li>
+    </ul>
+  </dd>
+        
+
+
+        
+        
+
+
+      </dl>
+    </section>
+
+    
+  <section class="summary offset-anchor" id="constructors">
+    <h2>Constructors</h2>
+    <dl class="constructor-summary-list">
+        <dt id="IriRelativeSerializationProvider.new" class="callable">
+          <span class="name"><a href="../rdf_mapper/IriRelativeSerializationProvider/IriRelativeSerializationProvider.html">IriRelativeSerializationProvider.new</a></span><span class="signature">()</span>
+        </dt>
+        <dd>
+          Creates a new IRI relative serialization provider.
+            <div class="constructor-modifier features">const</div>
+        </dd>
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="instance-properties">
+    <h2>Properties</h2>
+    <dl class="properties">
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  The hash code for this object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="deserializer" class="callable">
+  <span class="name"><a href="../rdf_mapper/IriRelativeSerializationProvider/deserializer.html">deserializer</a></span><span class="signature">(<wbr><span class="parameter" id="deserializer-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="deserializer-param-context"><span class="type-annotation"><a href="../rdf_mapper/DeserializationContext-class.html">DeserializationContext</a></span> <span class="parameter-name">context</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../rdf_mapper/Deserializer-class.html">Deserializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Creates a deserializer that relativizes IRIs against the subject IRI.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a nonexistent method or property is accessed.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="serializer" class="callable">
+  <span class="name"><a href="../rdf_mapper/IriRelativeSerializationProvider/serializer.html">serializer</a></span><span class="signature">(<wbr><span class="parameter" id="serializer-param-parent"><span class="type-annotation">D</span> <span class="parameter-name">parent</span>, </span><span class="parameter" id="serializer-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="serializer-param-context"><span class="type-annotation"><a href="../rdf_mapper/SerializationContext-class.html">SerializationContext</a></span> <span class="parameter-name">context</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Creates a serializer that resolves relative IRIs against the subject IRI.
+  <div class="features"><span class="feature">override</span></div>
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+    
+    
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">rdf_mapper</a></li>
+    <li><a href="../rdf_mapper/">rdf_mapper</a></li>
+    <li class="self-crumb">IriRelativeSerializationProvider<span class="signature">&lt;<wbr><span class="type-parameter">D</span>&gt;</span> class</li>
+</ol>
+
+    <h5>rdf_mapper library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    rdf_mapper
+      0.10.1
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

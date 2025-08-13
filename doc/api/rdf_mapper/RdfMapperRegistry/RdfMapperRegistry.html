@@ -81,6 +81,11 @@ basic data types without requiring custom mappers.</p>
   registerMapper(const IntMapper());
   registerMapper(const DoubleMapper());
   registerMapper(const BoolMapper());
+
+  &#47;&#47; Note: while it may be tempting to register DateMapper globally, that
+  &#47;&#47; will not work because the dart DateTime type is used for both DateMapper
+  &#47;&#47; and DateTimeMapper. Users must specify the DateMapper in their calls to Reader&#47;Builder explicitly.
+  &#47;&#47; registerMapper(const DateMapper());
   registerMapper(const DateTimeMapper());
 
   &#47;&#47; Register mappers for unmapped triples
@@ -118,7 +123,7 @@ basic data types without requiring custom mappers.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.10.0
+      0.10.1
   </span>
   
 </footer>
