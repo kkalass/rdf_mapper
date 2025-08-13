@@ -136,6 +136,7 @@ export 'src/mappers/iri/iri_id_serializer.dart';
 export 'src/mappers/iri/iri_relative_deserializer.dart';
 export 'src/mappers/iri/iri_relative_serializer.dart';
 export 'src/mappers/iri/iri_relative_mapper.dart';
+export 'src/mappers/iri/iri_relative_serialization_provider.dart';
 export 'src/mappers/iri/base_rdf_iri_term_mapper.dart';
 export 'src/mappers/iri/convenience_iri_mappers.dart';
 // Base classes for literal mappers - essential for custom mapper implementation

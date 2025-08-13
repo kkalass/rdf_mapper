@@ -28,6 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **IRI Relative Mappers**: New specialized mappers for handling relative IRIs in RDF documents
   - `IriRelativeSerializer`: Converts relative IRI strings to absolute IRI terms using a base URI
   - `IriRelativeDeserializer`: Converts absolute IRI terms to relative IRI strings when possible
+  - `IriRelativeSerializationProvider`: Contextual serialization provider for code generation scenarios
+  - Particularly useful for generated mappers that need to adapt to different document contexts automatically
   - `IriRelativeMapper`: Bidirectional mapper combining both serialization and deserialization
   - Useful for document systems, APIs, and any scenario requiring compact IRI representation
   - Full support for RFC 3986 IRI resolution and relativization rules
