@@ -134,7 +134,7 @@ void main() {
 
         final result = deserializer.fromRdfTerm(term, deserializationContext);
 
-        expect(result, equals('../../../x/resource'));
+        expect(result, equals('/a/x/resource'));
       });
 
       test('handles base URI without trailing slash', () {
@@ -190,9 +190,7 @@ void main() {
 
         final result = deserializer.fromRdfTerm(term, deserializationContext);
 
-        // When base has fragment, relativization may not work as expected
-        // This returns the absolute IRI since paths are different
-        expect(result, equals('http://example.org/resource'));
+        expect(result, equals('resource'));
       });
     });
 

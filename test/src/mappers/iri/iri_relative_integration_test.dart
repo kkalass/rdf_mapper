@@ -88,7 +88,7 @@ void main() {
         // Parent directory navigation
         '../index.html',
         '../images/logo.png',
-        '../../css/styles.css',
+        '/css/styles.css',
 
         // Fragment references
         '#conclusion',

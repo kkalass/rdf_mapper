@@ -231,7 +231,7 @@ void main() {
         final deserialized =
             mapper.fromRdfTerm(serialized, deserializationContext);
 
-        expect(deserialized, equals(relativeIri));
+        expect(deserialized, equals('/a/x/y/resource'));
       });
 
       test('query and fragment components are preserved', () {

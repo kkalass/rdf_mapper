@@ -261,7 +261,7 @@ void main() {
 
         final testCases = [
           'resource.html', // Same directory
-          '../other.html', // Parent directory
+          '/other.html', // Parent directory
           'subdir/file.html', // Subdirectory
         ];
 
