@@ -349,26 +349,26 @@ packages:
     dependency: "direct main"
     description:
       name: rdf_core
-      sha256: "106624bbc2137d190839fd2ab8fac708afcf3ddc8b5169e81d1f7a157f9e6be2"
+      sha256: "30245c9b2cb7ab42b4db9c6e5bc9a099fd7d870fe3b0f278998fb76260b48650"
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.13"
+    version: "0.9.14"
   rdf_vocabularies_core:
     dependency: "direct main"
     description:
       name: rdf_vocabularies_core
-      sha256: "4df79e7b24430b20b13d9acc634b5ab1e37985a113db180baf5371a083723fa5"
+      sha256: ae04ee8c0ba2f2e12c6d23cd510e826592a68bba12506df16f5aa54885f61f72
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.2"
+    version: "0.4.4"
   rdf_vocabularies_schema:
     dependency: "direct main"
     description:
       name: rdf_vocabularies_schema
-      sha256: "79654f1a69b6905e40758dbdb604395dfb34f767b4a06832fb69facd3d1b302e"
+      sha256: "2169000ca4119d021da5db144932f2a396d72a9ae2c0fd7f325933876667768f"
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.2"
+    version: "0.4.4"
   shelf:
     dependency: transitive
     description:

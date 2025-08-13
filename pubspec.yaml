@@ -19,9 +19,9 @@ description: >
 environment:
   sdk: '^3.6.0'
 dependencies:
-  rdf_core: ^0.9.13
-  rdf_vocabularies_core: ^0.4.1
-  rdf_vocabularies_schema: ^0.4.1
+  rdf_core: ^0.9.14
+  rdf_vocabularies_core: ^0.4.4
+  rdf_vocabularies_schema: ^0.4.4
   logging: ^1.2.0
 
 dev_dependencies:
