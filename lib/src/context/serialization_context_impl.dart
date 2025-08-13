@@ -59,7 +59,7 @@ class SerializationContextImpl extends SerializationContext
     final ser = _getSerializerFallbackToRuntimeType(
       serializer,
       instance,
-      _registry.getLiteralTermSerializer,
+      _registry.getLiteralTermSerializer<T>,
       _registry.getLiteralTermSerializerByType,
     )!;
 
@@ -191,7 +191,7 @@ class SerializationContextImpl extends SerializationContext
     final literalSer = _getSerializerFallbackToRuntimeType(
       null,
       instance,
-      _registry.getLiteralTermSerializer,
+      _registry.getLiteralTermSerializer<T>,
       _registry.getLiteralTermSerializerByType,
     );
 
@@ -207,7 +207,7 @@ class SerializationContextImpl extends SerializationContext
     final iriSer = _getSerializerFallbackToRuntimeType(
       null,
       instance,
-      _registry.getIriTermSerializer,
+      _registry.getIriTermSerializer<T>,
       _registry.getIriTermSerializerByType,
     );
 
@@ -220,7 +220,7 @@ class SerializationContextImpl extends SerializationContext
     final resourceSer = _getSerializerFallbackToRuntimeType(
       null,
       instance,
-      _registry.getResourceSerializer,
+      _registry.getResourceSerializer<T>,
       _registry.getResourceSerializerByType,
     );
 
@@ -233,14 +233,13 @@ class SerializationContextImpl extends SerializationContext
     final multiObjectsSer = _getSerializerFallbackToRuntimeType(
       null,
       instance,
-      _registry.getMultiObjectsSerializer,
+      _registry.getMultiObjectsSerializer<T>,
       _registry.getMultiObjectsSerializerByType,
     );
 
     if (multiObjectsSer != null) {
       return multiObjectsSer.toRdfObjects(instance, this);
     }
-
     throw SerializerNotFoundException('', T);
   }
 
@@ -471,10 +470,10 @@ class SerializationContextImpl extends SerializationContext
   Iterable<Triple> unmappedTriples<T>(RdfSubject subject, T value,
       {UnmappedTriplesSerializer<T>? unmappedTriplesSerializer}) {
     var ser = unmappedTriplesSerializer ??
-        _getSerializerFallbackToRuntimeType(
+        _getSerializerFallbackToRuntimeType<T, UnmappedTriplesSerializer<T>>(
           null,
           value,
-          _registry.getUnmappedTriplesSerializer,
+          _registry.getUnmappedTriplesSerializer<T>,
           _registry.getUnmappedTriplesSerializerByType,
         );
     if (ser == null) {

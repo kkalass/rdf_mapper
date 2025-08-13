@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Serializer Registry Lookup**: Fixed bug where registered mappers were sometimes not found correctly due to missing type parameters in registry lookup calls
+  - Added proper generic type parameters to `_registry.getLiteralTermSerializer<T>()`, `_registry.getIriTermSerializer<T>()`, `_registry.getResourceSerializer<T>()`, `_registry.getMultiObjectsSerializer<T>()`, and `_registry.getUnmappedTriplesSerializer<T>()` calls
+  - Ensures type-specific serializers are correctly resolved during serialization operations
+  - Prevents fallback to runtime type lookup when compile-time type information is available
+
 ### Added
 
 - **Global Unmapped Triples Support**: Enhanced `getUnmapped()` method with `globalUnmapped` parameter

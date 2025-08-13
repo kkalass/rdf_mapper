@@ -576,8 +576,8 @@ class Person {
 class DocumentMapper<T> implements GlobalResourceMapper<Document<T>> {
   final SerializationProvider<Document<T>, T> _primaryTopicProvider;
   
-  const DocumentMapper({required SerializationProvider<Document<T>, T> primaryTopicProvider})
-    : _primaryTopicProvider = primaryTopicProvider;
+  const DocumentMapper({required SerializationProvider<Document<T>, T> primaryTopic})
+    : _primaryTopicProvider = primaryTopic;
 
   @override
   IriTerm? get typeIri => FoafDocument.classIri;
@@ -613,7 +613,7 @@ class DocumentMapper<T> implements GlobalResourceMapper<Document<T>> {
 // Registration with IRI-contextual provider
 final rdfMapper = RdfMapper.withMappers((r) => r
   .registerMapper<Document<Person>>(DocumentMapper(
-    primaryTopicProvider: SerializationProvider.iriContextual(
+    primaryTopic: SerializationProvider.iriContextual(
       (IriTerm documentIri) => PersonMapper(
         documentIriProvider: () => documentIri.iri  // Pass document context to Person
       )

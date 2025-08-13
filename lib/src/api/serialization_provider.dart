@@ -28,8 +28,8 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 ///   final SerializationProvider<Document<T>, T> _primaryTopicProvider;
 ///
 ///   const DocumentMapper({
-///     required SerializationProvider<Document<T>, T> primaryTopicProvider,
-///   }) : _primaryTopicProvider = primaryTopicProvider;
+///     required SerializationProvider<Document<T>, T> primaryTopic,
+///   }) : _primaryTopicProvider = primaryTopic;
 ///
 ///   @override
 ///   Document<T> fromRdfResource(IriTerm subject, DeserializationContext context) {
@@ -77,7 +77,7 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 /// // For Person documents where Person mapper needs document IRI context
 /// RdfMapper mapper = RdfMapper.withMappers((r) =>
 ///     r.registerMapper<Document<Person>>(DocumentMapper(
-///         primaryTopicProvider: SerializationProvider.iriContextual(
+///         primaryTopic: SerializationProvider.iriContextual(
 ///             (IriTerm iri) => PersonMapper(documentIriProvider: () => iri.iri)
 ///         ))));
 /// ```
