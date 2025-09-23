@@ -33,12 +33,12 @@ class Parent {
 // Example vocabulary definitions
 class Vocab {
   static const namespace = "https://example.com/vocab/";
-  static const Parent = IriTerm.prevalidated("${namespace}Parent");
-  static const child = IriTerm.prevalidated("${namespace}child");
-  static const name = IriTerm.prevalidated("${namespace}name");
-  static const age = IriTerm.prevalidated("${namespace}age");
-  static const foo = IriTerm.prevalidated("${namespace}foo");
-  static const barChild = IriTerm.prevalidated("${namespace}barChild");
+  static const Parent = const IriTerm("${namespace}Parent");
+  static const child = const IriTerm("${namespace}child");
+  static const name = const IriTerm("${namespace}name");
+  static const age = const IriTerm("${namespace}age");
+  static const foo = const IriTerm("${namespace}foo");
+  static const barChild = const IriTerm("${namespace}barChild");
 }
 
 class ParentMapper implements GlobalResourceMapper<Parent> {
@@ -55,7 +55,7 @@ class ParentMapper implements GlobalResourceMapper<Parent> {
     final unmappedTriples = reader.getUnmapped<RdfGraph>();
 
     return Parent(
-      id: subject.iri,
+      id: subject.value,
       name: name,
       child: child,
       unmappedTriples: unmappedTriples,
@@ -69,7 +69,7 @@ class ParentMapper implements GlobalResourceMapper<Parent> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm(value.id))
+        .resourceBuilder(context.createIriTerm(value.id))
         .addValue(Vocab.name, value.name)
         .addValue(Vocab.child, value.child)
         // addUnmapped() restores all the unmapped triples that were captured during deserialization

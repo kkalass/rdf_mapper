@@ -155,13 +155,13 @@ class MediaResource {
 class MediaResourceMapper implements GlobalResourceMapper<MediaResource> {
   // Simple vocabulary for this example
   static const _ns = 'https://example.org/vocab/';
-  static final hasChapter = IriTerm('${_ns}hasChapter');
-  static final hasKeyword = IriTerm('${_ns}hasKeyword');
-  static final hasFormat = IriTerm('${_ns}hasFormat');
-  static final title = IriTerm('${_ns}title');
+  static final hasChapter = const IriTerm('${_ns}hasChapter');
+  static final hasKeyword = const IriTerm('${_ns}hasKeyword');
+  static final hasFormat = const IriTerm('${_ns}hasFormat');
+  static final title = const IriTerm('${_ns}title');
 
   @override
-  IriTerm? get typeIri => IriTerm('${_ns}MediaResource');
+  IriTerm? get typeIri => const IriTerm('${_ns}MediaResource');
 
   @override
   MediaResource fromRdfResource(
@@ -169,7 +169,7 @@ class MediaResourceMapper implements GlobalResourceMapper<MediaResource> {
     final reader = context.reader(subject);
 
     return MediaResource(
-      id: subject.iri,
+      id: subject.value,
       title: reader.require<String>(title),
 
       // Deserialize RDF containers to Dart Lists
@@ -183,7 +183,7 @@ class MediaResourceMapper implements GlobalResourceMapper<MediaResource> {
   (IriTerm, Iterable<Triple>) toRdfResource(
       MediaResource resource, SerializationContext context,
       {RdfSubject? parentSubject}) {
-    final subject = IriTerm(resource.id);
+    final subject = context.createIriTerm(resource.id);
 
     return context
         .resourceBuilder(subject)
@@ -214,12 +214,12 @@ class TutorialCourse {
 
 class TutorialCourseMapper implements GlobalResourceMapper<TutorialCourse> {
   static const _ns = 'https://example.org/course/';
-  static final hasLesson = IriTerm('${_ns}hasLesson');
-  static final hasObjective = IriTerm('${_ns}hasObjective');
-  static final title = IriTerm('${_ns}title');
+  static final hasLesson = const IriTerm('${_ns}hasLesson');
+  static final hasObjective = const IriTerm('${_ns}hasObjective');
+  static final title = const IriTerm('${_ns}title');
 
   @override
-  IriTerm? get typeIri => IriTerm('${_ns}Course');
+  IriTerm? get typeIri => const IriTerm('${_ns}Course');
 
   @override
   TutorialCourse fromRdfResource(
@@ -227,7 +227,7 @@ class TutorialCourseMapper implements GlobalResourceMapper<TutorialCourse> {
     final reader = context.reader(subject);
 
     return TutorialCourse(
-      id: subject.iri,
+      id: subject.value,
       title: reader.require<String>(title),
       lessons:
           reader.requireRdfSeq<String>(hasLesson), // Required ordered sequence
@@ -240,7 +240,7 @@ class TutorialCourseMapper implements GlobalResourceMapper<TutorialCourse> {
   (IriTerm, Iterable<Triple>) toRdfResource(
       TutorialCourse course, SerializationContext context,
       {RdfSubject? parentSubject}) {
-    final subject = IriTerm(course.id);
+    final subject = context.createIriTerm(course.id);
 
     return context
         .resourceBuilder(subject)
@@ -269,12 +269,12 @@ class MultilingualDocument {
 class MultilingualDocumentMapper
     implements GlobalResourceMapper<MultilingualDocument> {
   static const _ns = 'https://example.org/doc/';
-  static final hasTitle = IriTerm('${_ns}hasTitle');
-  static final hasLanguage = IriTerm('${_ns}hasLanguage');
-  static final hasCategory = IriTerm('${_ns}hasCategory');
+  static final hasTitle = const IriTerm('${_ns}hasTitle');
+  static final hasLanguage = const IriTerm('${_ns}hasLanguage');
+  static final hasCategory = const IriTerm('${_ns}hasCategory');
 
   @override
-  IriTerm? get typeIri => IriTerm('${_ns}Document');
+  IriTerm? get typeIri => const IriTerm('${_ns}Document');
 
   @override
   MultilingualDocument fromRdfResource(
@@ -282,7 +282,7 @@ class MultilingualDocumentMapper
     final reader = context.reader(subject);
 
     return MultilingualDocument(
-      id: subject.iri,
+      id: subject.value,
       titles: reader.requireRdfAlt<String>(hasTitle), // Required alternatives
       languages:
           reader.requireRdfAlt<String>(hasLanguage), // Required alternatives
@@ -295,7 +295,7 @@ class MultilingualDocumentMapper
   (IriTerm, Iterable<Triple>) toRdfResource(
       MultilingualDocument doc, SerializationContext context,
       {RdfSubject? parentSubject}) {
-    final subject = IriTerm(doc.id);
+    final subject = context.createIriTerm(doc.id);
 
     return context
         .resourceBuilder(subject)

@@ -93,7 +93,7 @@ void main() {
       });
 
       test('uses custom datatype when provided', () {
-        final customDatatype = IriTerm('http://example.org/point');
+        final customDatatype = const IriTerm('http://example.org/point');
         final serializer = TestPointSerializer(datatype: customDatatype);
 
         final term = serializer.toRdfTerm(Point(10, 20), serializationContext);
@@ -122,7 +122,8 @@ void main() {
 
         expect(term, isA<LiteralTerm>());
         expect(term.value.toLowerCase(), equals('#ff0080'));
-        expect(term.datatype, equals(IriTerm('http://example.org/color')));
+        expect(
+            term.datatype, equals(const IriTerm('http://example.org/color')));
       });
     });
 
@@ -140,7 +141,7 @@ void main() {
       });
 
       test('validates datatype against required datatype', () {
-        final customDatatype = IriTerm('http://example.org/point');
+        final customDatatype = const IriTerm('http://example.org/point');
         final deserializer = TestPointDeserializer(datatype: customDatatype);
 
         // Valid datatype
@@ -189,7 +190,7 @@ void main() {
 
         final term = LiteralTerm(
           '#FF0080',
-          datatype: IriTerm('http://example.org/color'),
+          datatype: const IriTerm('http://example.org/color'),
         );
 
         final color = colorDeserializer.fromRdfTerm(
@@ -204,7 +205,7 @@ void main() {
       });
 
       test('handles non-standard datatypes', () {
-        final customDatatype = IriTerm('http://example.org/customType');
+        final customDatatype = const IriTerm('http://example.org/customType');
         final term = LiteralTerm('10,20', datatype: customDatatype);
 
         final deserializer = TestPointDeserializer(datatype: customDatatype);
@@ -261,7 +262,7 @@ class Color {
 class ColorSerializer extends BaseRdfLiteralTermSerializer<Color> {
   const ColorSerializer()
       : super(
-          datatype: const IriTerm.prevalidated('http://example.org/color'),
+          datatype: const IriTerm('http://example.org/color'),
         );
 
   @override
@@ -273,7 +274,7 @@ class ColorSerializer extends BaseRdfLiteralTermSerializer<Color> {
 class ColorDeserializer extends BaseRdfLiteralTermDeserializer<Color> {
   const ColorDeserializer()
       : super(
-          datatype: const IriTerm.prevalidated('http://example.org/color'),
+          datatype: const IriTerm('http://example.org/color'),
         );
 
   @override

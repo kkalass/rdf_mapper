@@ -6,6 +6,9 @@ import 'package:rdf_mapper/src/api/rdf_mapper_interfaces.dart';
 // Mock implementation of SerializationContext for testing
 class MockSerializationContext extends SerializationContext {
   @override
+  IriTerm createIriTerm(String value) => IriTerm.validated(value);
+
+  @override
   ResourceBuilder<S> resourceBuilder<S extends RdfSubject>(S subject) {
     throw UnimplementedError();
   }

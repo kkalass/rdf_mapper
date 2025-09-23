@@ -13,7 +13,7 @@ void main() {
   late RdfMapperRegistry registry;
   late RdfGraph graph;
   late DeserializationContextImpl context;
-  final subject = IriTerm('http://example.org/subject');
+  final subject = const IriTerm('http://example.org/subject');
 
   setUp(() {
     registry = RdfMapperRegistry();
@@ -23,50 +23,51 @@ void main() {
         // String property
         Triple(
           subject,
-          IriTerm('http://example.org/name'),
+          const IriTerm('http://example.org/name'),
           LiteralTerm.string('John Doe'),
         ),
 
         // Integer property
         Triple(
           subject,
-          IriTerm('http://example.org/age'),
+          const IriTerm('http://example.org/age'),
           LiteralTerm.typed('30', 'integer'),
         ),
 
         // Boolean property
         Triple(
           subject,
-          IriTerm('http://example.org/active'),
+          const IriTerm('http://example.org/active'),
           LiteralTerm.typed('true', 'boolean'),
         ),
 
         // IRI property
         Triple(
           subject,
-          IriTerm('http://example.org/friend'),
-          IriTerm('http://example.org/person/jane'),
+          const IriTerm('http://example.org/friend'),
+          const IriTerm('http://example.org/person/jane'),
         ),
 
         // Multi-valued property
         Triple(
           subject,
-          IriTerm('http://example.org/tags'),
+          const IriTerm('http://example.org/tags'),
           LiteralTerm.string('tag1'),
         ),
         Triple(
           subject,
-          IriTerm('http://example.org/tags'),
+          const IriTerm('http://example.org/tags'),
           LiteralTerm.string('tag2'),
         ),
         Triple(
           subject,
-          IriTerm('http://example.org/tags'),
+          const IriTerm('http://example.org/tags'),
           LiteralTerm.string('tag3'),
         ),
 
         // Blank node property
-        Triple(subject, IriTerm('http://example.org/address'), addressNode),
+        Triple(
+            subject, const IriTerm('http://example.org/address'), addressNode),
         Triple(
           addressNode,
           VcardUniversalProperties.locality,
@@ -82,7 +83,7 @@ void main() {
     test('getPropertyValue returns null for non-existent properties', () {
       final value = context.optional<String>(
         subject,
-        IriTerm('http://example.org/nonexistent'),
+        const IriTerm('http://example.org/nonexistent'),
       );
       expect(value, isNull);
     });
@@ -90,7 +91,7 @@ void main() {
     test('getPropertyValue correctly retrieves string values', () {
       final value = context.optional<String>(
         subject,
-        IriTerm('http://example.org/name'),
+        const IriTerm('http://example.org/name'),
       );
       expect(value, equals('John Doe'));
     });
@@ -98,7 +99,7 @@ void main() {
     test('getPropertyValue correctly retrieves integer values', () {
       final value = context.optional<int>(
         subject,
-        IriTerm('http://example.org/age'),
+        const IriTerm('http://example.org/age'),
       );
       expect(value, equals(30));
     });
@@ -106,7 +107,7 @@ void main() {
     test('getPropertyValue correctly retrieves boolean values', () {
       final value = context.optional<bool>(
         subject,
-        IriTerm('http://example.org/active'),
+        const IriTerm('http://example.org/active'),
       );
       expect(value, equals(true));
     });
@@ -117,7 +118,7 @@ void main() {
 
       final value = context.optional<String>(
         subject,
-        IriTerm('http://example.org/friend'),
+        const IriTerm('http://example.org/friend'),
       );
       expect(value, equals('http://example.org/person/jane'));
     });
@@ -126,7 +127,7 @@ void main() {
       expect(
         () => context.require<String>(
           subject,
-          IriTerm('http://example.org/nonexistent'),
+          const IriTerm('http://example.org/nonexistent'),
         ),
         throwsA(isA<PropertyValueNotFoundException>()),
       );
@@ -138,7 +139,7 @@ void main() {
         expect(
           () => context.optional<String>(
             subject,
-            IriTerm('http://example.org/tags'),
+            const IriTerm('http://example.org/tags'),
           ),
           throwsA(isA<TooManyPropertyValuesException>()),
         );
@@ -150,7 +151,7 @@ void main() {
       () {
         final value = context.optional<String>(
           subject,
-          IriTerm('http://example.org/tags'),
+          const IriTerm('http://example.org/tags'),
           enforceSingleValue: false,
         );
         expect(value, equals('tag1')); // Returns the first value
@@ -160,7 +161,7 @@ void main() {
     test('getPropertyValues collects all values for a property', () {
       final values = context.collect<String, List<String>>(
         subject,
-        IriTerm('http://example.org/tags'),
+        const IriTerm('http://example.org/tags'),
         (values) => values.toList(),
       );
 
@@ -171,7 +172,7 @@ void main() {
     test('getPropertyValueList is a convenient shorthand for lists', () {
       final values = context.getValues<String>(
         subject,
-        IriTerm('http://example.org/tags'),
+        const IriTerm('http://example.org/tags'),
       );
 
       expect(values, hasLength(3));
@@ -187,7 +188,7 @@ void main() {
 
         final address = context.optional<TestAddress>(
           subject,
-          IriTerm('http://example.org/address'),
+          const IriTerm('http://example.org/address'),
         );
 
         expect(address, isNotNull);
@@ -202,8 +203,8 @@ void main() {
 
       // Call fromRdfByType directly
       final person = context.deserializeResource(
-        IriTerm('http://example.org/subject'),
-        IriTerm('http://example.org/Person'),
+        const IriTerm('http://example.org/subject'),
+        const IriTerm('http://example.org/Person'),
       );
 
       expect(person, isA<TestPerson>());
@@ -215,7 +216,7 @@ void main() {
 
       final value = context.optional<String>(
         subject,
-        IriTerm('http://example.org/name'),
+        const IriTerm('http://example.org/name'),
         deserializer: customLiteralDeserializer,
       );
 
@@ -231,7 +232,7 @@ void main() {
       // Create a cycle: blankNode1 -> blankNode2 -> blankNode1
       final blankNode1 = BlankNodeTerm();
       final blankNode2 = BlankNodeTerm();
-      final predicate = IriTerm('http://example.org/references');
+      final predicate = const IriTerm('http://example.org/references');
 
       final cyclicGraph = RdfGraph(triples: [
         Triple(blankNode1, predicate, blankNode2),
@@ -257,7 +258,7 @@ void main() {
 
     test('handles self-referencing blank nodes', () {
       final selfRefBlankNode = BlankNodeTerm();
-      final predicate = IriTerm('http://example.org/self');
+      final predicate = const IriTerm('http://example.org/self');
 
       final selfRefGraph = RdfGraph(triples: [
         Triple(subject, predicate, selfRefBlankNode),
@@ -282,7 +283,7 @@ void main() {
       final blankNode1 = BlankNodeTerm();
       final blankNode2 = BlankNodeTerm();
       final blankNode3 = BlankNodeTerm();
-      final predicate = IriTerm('http://example.org/connects');
+      final predicate = const IriTerm('http://example.org/connects');
 
       final complexGraph = RdfGraph(triples: [
         Triple(subject, predicate, blankNode1),
@@ -320,8 +321,8 @@ void main() {
       final blankNode1 = BlankNodeTerm();
       final blankNode2 = BlankNodeTerm();
       final testGraph = RdfGraph(triples: [
-        Triple(blankNode1, IriTerm('http://example.org/ref'), blankNode2),
-        Triple(blankNode2, IriTerm('http://example.org/ref'), blankNode1),
+        Triple(blankNode1, const IriTerm('http://example.org/ref'), blankNode2),
+        Triple(blankNode2, const IriTerm('http://example.org/ref'), blankNode1),
       ]);
 
       final result = DeserializationContextImpl.getBlankNodeObjectsDeep(
@@ -338,8 +339,8 @@ void main() {
       final visited = <BlankNodeTerm>{blankNode1};
 
       final testGraph = RdfGraph(triples: [
-        Triple(blankNode1, IriTerm('http://example.org/ref'), blankNode2),
-        Triple(blankNode2, IriTerm('http://example.org/prop'),
+        Triple(blankNode1, const IriTerm('http://example.org/ref'), blankNode2),
+        Triple(blankNode2, const IriTerm('http://example.org/prop'),
             LiteralTerm.string('value')),
       ]);
 
@@ -369,18 +370,18 @@ class TestAddress {
 
 class TestPersonDeserializer implements GlobalResourceDeserializer<TestPerson> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/Person');
+  final IriTerm typeIri = const IriTerm('http://example.org/Person');
 
   @override
   TestPerson fromRdfResource(IriTerm term, DeserializationContext context) {
-    return TestPerson(term.iri);
+    return TestPerson(term.value);
   }
 }
 
 class CustomIriDeserializer implements IriTermDeserializer<String> {
   @override
   String fromRdfTerm(IriTerm term, DeserializationContext context) {
-    return term.iri;
+    return term.value;
   }
 }
 

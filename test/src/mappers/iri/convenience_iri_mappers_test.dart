@@ -20,12 +20,12 @@ void main() {
     group('toRdfTerm', () {
       test('appends fragment to base IRI', () {
         final result = mapper.toRdfTerm('section1', serializationContext);
-        expect(result.iri, equals('http://example.org/document#section1'));
+        expect(result.value, equals('http://example.org/document#section1'));
       });
 
       test('handles empty fragment', () {
         final result = mapper.toRdfTerm('', serializationContext);
-        expect(result.iri, equals('http://example.org/document#'));
+        expect(result.value, equals('http://example.org/document#'));
       });
 
       test('handles base IRI with trailing hash', () {
@@ -33,31 +33,31 @@ void main() {
             FragmentIriTermMapper('http://example.org/document#');
         final result =
             mapperWithHash.toRdfTerm('section1', serializationContext);
-        expect(result.iri, equals('http://example.org/document#section1'));
+        expect(result.value, equals('http://example.org/document#section1'));
       });
     });
 
     group('fromRdfTerm', () {
       test('extracts fragment from IRI', () {
-        final term = IriTerm('http://example.org/document#section1');
+        final term = const IriTerm('http://example.org/document#section1');
         final result = mapper.fromRdfTerm(term, deserializationContext);
         expect(result, equals('section1'));
       });
 
       test('returns empty string for IRI without fragment', () {
-        final term = IriTerm('http://example.org/document');
+        final term = const IriTerm('http://example.org/document');
         final result = mapper.fromRdfTerm(term, deserializationContext);
         expect(result, equals(''));
       });
 
       test('extracts last fragment for multiple hash symbols', () {
-        final term = IriTerm('http://example.org/doc#ument#section1');
+        final term = const IriTerm('http://example.org/doc#ument#section1');
         final result = mapper.fromRdfTerm(term, deserializationContext);
         expect(result, equals('section1'));
       });
 
       test('handles empty fragment in IRI', () {
-        final term = IriTerm('http://example.org/document#');
+        final term = const IriTerm('http://example.org/document#');
         final result = mapper.fromRdfTerm(term, deserializationContext);
         expect(result, equals(''));
       });
@@ -96,50 +96,51 @@ void main() {
     group('toRdfTerm', () {
       test('appends path element to base IRI', () {
         final result = mapper.toRdfTerm('item123', serializationContext);
-        expect(result.iri, equals('http://example.org/api/resources/item123'));
+        expect(result.value, equals('http://example.org/api/resources/item123'));
       });
 
       test('handles base IRI without trailing slash', () {
         const mapperNoSlash =
             LastPathElementIriTermMapper('http://example.org/api/resources');
         final result = mapperNoSlash.toRdfTerm('item123', serializationContext);
-        expect(result.iri, equals('http://example.org/api/resources/item123'));
+        expect(result.value, equals('http://example.org/api/resources/item123'));
       });
 
       test('handles empty path element', () {
         final result = mapper.toRdfTerm('', serializationContext);
-        expect(result.iri, equals('http://example.org/api/resources/'));
+        expect(result.value, equals('http://example.org/api/resources/'));
       });
     });
 
     group('fromRdfTerm', () {
       test('extracts last path element from IRI', () {
-        final term = IriTerm('http://example.org/api/resources/item123');
+        final term = const IriTerm('http://example.org/api/resources/item123');
         final result = mapper.fromRdfTerm(term, deserializationContext);
         expect(result, equals('item123'));
       });
 
       test('returns empty string for IRI ending with slash', () {
-        final term = IriTerm('http://example.org/api/resources/');
+        final term = const IriTerm('http://example.org/api/resources/');
         final result = mapper.fromRdfTerm(term, deserializationContext);
         expect(result, equals(''));
       });
 
       test('handles IRI without slashes', () {
-        final term = IriTerm('http:item123');
+        final term = const IriTerm('http:item123');
         final result = mapper.fromRdfTerm(term, deserializationContext);
         expect(result, equals('http:item123'));
       });
 
       test('extracts from nested path', () {
         final term =
-            IriTerm('http://example.org/api/resources/category/item123');
+            const IriTerm('http://example.org/api/resources/category/item123');
         final result = mapper.fromRdfTerm(term, deserializationContext);
         expect(result, equals('item123'));
       });
 
       test('handles multiple consecutive slashes', () {
-        final term = IriTerm('http://example.org//api///resources//item123');
+        final term =
+            const IriTerm('http://example.org//api///resources//item123');
         final result = mapper.fromRdfTerm(term, deserializationContext);
         expect(result, equals('item123'));
       });

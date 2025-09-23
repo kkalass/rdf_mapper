@@ -132,6 +132,7 @@ class RdfObjectCodec<T> extends Codec<T, RdfGraph> {
     void Function(RdfMapperRegistry registry)? register,
     RdfMapper? rdfMapper,
     CompletenessMode completeness = CompletenessMode.strict,
+    IriTermFactory iriTermFactory = IriTerm.validated,
   }) {
     if (rdfMapper == null && register == null) {
       throw ArgumentError(
@@ -148,7 +149,8 @@ class RdfObjectCodec<T> extends Codec<T, RdfGraph> {
       register(registry);
     }
     return RdfObjectCodec<T>(
-        service: RdfMapperService(registry: registry),
+        service: RdfMapperService(
+            registry: registry, iriTermFactory: iriTermFactory),
         completeness: completeness);
   }
 
@@ -429,6 +431,7 @@ class RdfObjectLosslessCodec<T> extends Codec<(T, RdfGraph), RdfGraph> {
   factory RdfObjectLosslessCodec.forMappers({
     void Function(RdfMapperRegistry registry)? register,
     RdfMapper? rdfMapper,
+    IriTermFactory iriTermFactory = IriTerm.validated,
   }) {
     if (rdfMapper == null && register == null) {
       throw ArgumentError(
@@ -445,7 +448,8 @@ class RdfObjectLosslessCodec<T> extends Codec<(T, RdfGraph), RdfGraph> {
       register(registry);
     }
     return RdfObjectLosslessCodec<T>(
-        service: RdfMapperService(registry: registry));
+        service: RdfMapperService(
+            registry: registry, iriTermFactory: iriTermFactory));
   }
 
   @override

@@ -349,10 +349,10 @@ packages:
     dependency: "direct main"
     description:
       name: rdf_core
-      sha256: "30245c9b2cb7ab42b4db9c6e5bc9a099fd7d870fe3b0f278998fb76260b48650"
+      sha256: cc208fdc51227d11d32ba82dd28c741637f006cdfbee99b27366317083efe4f6
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.14"
+    version: "0.9.15"
   rdf_vocabularies_core:
     dependency: "direct main"
     description:

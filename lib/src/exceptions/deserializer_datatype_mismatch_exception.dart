@@ -27,20 +27,20 @@ class DeserializerDatatypeMismatchException extends DeserializationException {
 
   @override
   String toString() {
-    final isActualXsd = actual.iri.startsWith(Xsd.namespace);
-    final isExpectedXsd = expected.iri.startsWith(Xsd.namespace);
+    final isActualXsd = actual.value.startsWith(Xsd.namespace);
+    final isExpectedXsd = expected.value.startsWith(Xsd.namespace);
     final shortActual = isActualXsd
-        ? 'xsd:${actual.iri.substring(Xsd.namespace.length)}'
-        : actual.iri;
+        ? 'xsd:${actual.value.substring(Xsd.namespace.length)}'
+        : actual.value;
     final shortExpected = isExpectedXsd
-        ? 'xsd:${expected.iri.substring(Xsd.namespace.length)}'
-        : expected.iri;
+        ? 'xsd:${expected.value.substring(Xsd.namespace.length)}'
+        : expected.value;
     final dartActual = isActualXsd
-        ? 'Xsd.${actual.iri.substring(Xsd.namespace.length)}'
-        : "IriTerm('${actual.iri}')";
+        ? 'Xsd.${actual.value.substring(Xsd.namespace.length)}'
+        : "const IriTerm('${actual.value}')";
     final dartActualConstContext = isActualXsd
-        ? 'Xsd.${actual.iri.substring(Xsd.namespace.length)}'
-        : "IriTerm.prevalidated('${actual.iri}')";
+        ? 'Xsd.${actual.value.substring(Xsd.namespace.length)}'
+        : "const IriTerm('${actual.value}')";
     final targetTypeCapitalized =
         '${targetType.toString()[0].toUpperCase()}${targetType.toString().substring(1)}';
     return '''

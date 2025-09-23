@@ -116,7 +116,8 @@ void main() {
       });
 
       test('preserves custom datatype during serialization', () {
-        final customDatatype = IriTerm('http://example.org/my-double-type');
+        final customDatatype =
+            const IriTerm('http://example.org/my-double-type');
         final customMapper = MyCustomDoubleMapper(customDatatype);
         final customValue = MyCustomDouble(123.456);
 
@@ -130,7 +131,8 @@ void main() {
 
     group('custom datatype handling', () {
       test('works with custom datatype for deserialization', () {
-        final customDatatype = IriTerm('http://example.org/my-double-type');
+        final customDatatype =
+            const IriTerm('http://example.org/my-double-type');
         final customMapper = MyCustomDoubleMapper(customDatatype);
         final term = LiteralTerm('9.876', datatype: customDatatype);
 
@@ -140,8 +142,10 @@ void main() {
       });
 
       test('throws exception with wrong custom datatype', () {
-        final customDatatype = IriTerm('http://example.org/my-double-type');
-        final otherDatatype = IriTerm('http://example.org/other-double-type');
+        final customDatatype =
+            const IriTerm('http://example.org/my-double-type');
+        final otherDatatype =
+            const IriTerm('http://example.org/other-double-type');
         final customMapper = MyCustomDoubleMapper(customDatatype);
         final term = LiteralTerm('9.876', datatype: otherDatatype);
 
@@ -176,7 +180,8 @@ void main() {
       });
 
       test('maintains custom datatype through roundtrip', () {
-        final customDatatype = IriTerm('http://example.org/my-special-double');
+        final customDatatype =
+            const IriTerm('http://example.org/my-special-double');
         final customMapper = MyCustomDoubleMapper(customDatatype);
         final originalValue = MyCustomDouble(2.718281828);
 

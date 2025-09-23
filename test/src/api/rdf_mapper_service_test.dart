@@ -18,19 +18,20 @@ void main() {
       registry.registerMapper<TestPerson>(TestPersonMapper());
 
       // Create test triples
-      final subject = IriTerm('http://example.org/person/1');
+      final subject = const IriTerm('http://example.org/person/1');
       final triples = [
         Triple(
           subject,
-          IriTerm('http://xmlns.com/foaf/0.1/name'),
+          const IriTerm('http://xmlns.com/foaf/0.1/name'),
           LiteralTerm.string('John Doe'),
         ),
         Triple(
           subject,
-          IriTerm('http://xmlns.com/foaf/0.1/age'),
+          const IriTerm('http://xmlns.com/foaf/0.1/age'),
           LiteralTerm.typed('30', 'integer'),
         ),
-        Triple(subject, Rdf.type, IriTerm('http://xmlns.com/foaf/0.1/Person')),
+        Triple(subject, Rdf.type,
+            const IriTerm('http://xmlns.com/foaf/0.1/Person')),
       ];
 
       // Deserialize the object
@@ -50,23 +51,23 @@ void main() {
       registry.registerMapper<TestPerson>(TestPersonMapper());
 
       // Create a test graph
-      final subject = IriTerm('http://example.org/person/1');
+      final subject = const IriTerm('http://example.org/person/1');
       final graph = RdfGraph(
         triples: [
           Triple(
             subject,
-            IriTerm('http://xmlns.com/foaf/0.1/name'),
+            const IriTerm('http://xmlns.com/foaf/0.1/name'),
             LiteralTerm.string('John Doe'),
           ),
           Triple(
             subject,
-            IriTerm('http://xmlns.com/foaf/0.1/age'),
+            const IriTerm('http://xmlns.com/foaf/0.1/age'),
             LiteralTerm.typed('30', 'integer'),
           ),
           Triple(
             subject,
             Rdf.type,
-            IriTerm('http://xmlns.com/foaf/0.1/Person'),
+            const IriTerm('http://xmlns.com/foaf/0.1/Person'),
           ),
         ],
       );
@@ -85,23 +86,23 @@ void main() {
       registry.registerMapper<TestPerson>(TestPersonMapper());
 
       // Create a test graph with a single subject
-      final subject = IriTerm('http://example.org/person/1');
+      final subject = const IriTerm('http://example.org/person/1');
       final graph = RdfGraph(
         triples: [
           Triple(
             subject,
-            IriTerm('http://xmlns.com/foaf/0.1/name'),
+            const IriTerm('http://xmlns.com/foaf/0.1/name'),
             LiteralTerm.string('John Doe'),
           ),
           Triple(
             subject,
-            IriTerm('http://xmlns.com/foaf/0.1/age'),
+            const IriTerm('http://xmlns.com/foaf/0.1/age'),
             LiteralTerm.typed('30', 'integer'),
           ),
           Triple(
             subject,
             Rdf.type,
-            IriTerm('http://xmlns.com/foaf/0.1/Person'),
+            const IriTerm('http://xmlns.com/foaf/0.1/Person'),
           ),
         ],
       );
@@ -130,14 +131,14 @@ void main() {
       final graph = RdfGraph(
         triples: [
           Triple(
-            IriTerm('http://example.org/person/1'),
+            const IriTerm('http://example.org/person/1'),
             Rdf.type,
-            IriTerm('http://xmlns.com/foaf/0.1/Person'),
+            const IriTerm('http://xmlns.com/foaf/0.1/Person'),
           ),
           Triple(
-            IriTerm('http://example.org/person/2'),
+            const IriTerm('http://example.org/person/2'),
             Rdf.type,
-            IriTerm('http://xmlns.com/foaf/0.1/Person'),
+            const IriTerm('http://xmlns.com/foaf/0.1/Person'),
           ),
         ],
       );
@@ -160,35 +161,35 @@ void main() {
           triples: [
             // Person 1
             Triple(
-              IriTerm('http://example.org/person/1'),
+              const IriTerm('http://example.org/person/1'),
               Rdf.type,
-              IriTerm('http://xmlns.com/foaf/0.1/Person'),
+              const IriTerm('http://xmlns.com/foaf/0.1/Person'),
             ),
             Triple(
-              IriTerm('http://example.org/person/1'),
-              IriTerm('http://xmlns.com/foaf/0.1/name'),
+              const IriTerm('http://example.org/person/1'),
+              const IriTerm('http://xmlns.com/foaf/0.1/name'),
               LiteralTerm.string('John Doe'),
             ),
             Triple(
-              IriTerm('http://example.org/person/1'),
-              IriTerm('http://xmlns.com/foaf/0.1/age'),
+              const IriTerm('http://example.org/person/1'),
+              const IriTerm('http://xmlns.com/foaf/0.1/age'),
               LiteralTerm.typed('30', 'integer'),
             ),
 
             // Person 2
             Triple(
-              IriTerm('http://example.org/person/2'),
+              const IriTerm('http://example.org/person/2'),
               Rdf.type,
-              IriTerm('http://xmlns.com/foaf/0.1/Person'),
+              const IriTerm('http://xmlns.com/foaf/0.1/Person'),
             ),
             Triple(
-              IriTerm('http://example.org/person/2'),
-              IriTerm('http://xmlns.com/foaf/0.1/name'),
+              const IriTerm('http://example.org/person/2'),
+              const IriTerm('http://xmlns.com/foaf/0.1/name'),
               LiteralTerm.string('Jane Smith'),
             ),
             Triple(
-              IriTerm('http://example.org/person/2'),
-              IriTerm('http://xmlns.com/foaf/0.1/age'),
+              const IriTerm('http://example.org/person/2'),
+              const IriTerm('http://xmlns.com/foaf/0.1/age'),
               LiteralTerm.typed('28', 'integer'),
             ),
           ],
@@ -229,25 +230,25 @@ void main() {
         triples: [
           // Person
           Triple(
-            IriTerm('http://example.org/person/1'),
+            const IriTerm('http://example.org/person/1'),
             Rdf.type,
-            IriTerm('http://xmlns.com/foaf/0.1/Person'),
+            const IriTerm('http://xmlns.com/foaf/0.1/Person'),
           ),
           Triple(
-            IriTerm('http://example.org/person/1'),
-            IriTerm('http://xmlns.com/foaf/0.1/name'),
+            const IriTerm('http://example.org/person/1'),
+            const IriTerm('http://xmlns.com/foaf/0.1/name'),
             LiteralTerm.string('John Doe'),
           ),
 
           // Address (unmapped type)
           Triple(
-            IriTerm('http://example.org/address/1'),
+            const IriTerm('http://example.org/address/1'),
             Rdf.type,
-            IriTerm('http://example.org/Address'),
+            const IriTerm('http://example.org/Address'),
           ),
           Triple(
-            IriTerm('http://example.org/address/1'),
-            IriTerm('http://example.org/street'),
+            const IriTerm('http://example.org/address/1'),
+            const IriTerm('http://example.org/street'),
             LiteralTerm.string('123 Main St'),
           ),
         ],
@@ -279,21 +280,21 @@ void main() {
 
       // Check for the name triple
       final nameTriples = graph.findTriples(
-        subject: IriTerm('http://example.org/person/1'),
-        predicate: IriTerm('http://xmlns.com/foaf/0.1/name'),
+        subject: const IriTerm('http://example.org/person/1'),
+        predicate: const IriTerm('http://xmlns.com/foaf/0.1/name'),
       );
       expect(nameTriples.length, equals(1));
       expect((nameTriples[0].object as LiteralTerm).value, equals('John Doe'));
 
       // Check for the type triple
       final typeTriples = graph.findTriples(
-        subject: IriTerm('http://example.org/person/1'),
+        subject: const IriTerm('http://example.org/person/1'),
         predicate: Rdf.type,
       );
       expect(typeTriples.length, equals(1));
       expect(
         typeTriples[0].object,
-        equals(IriTerm('http://xmlns.com/foaf/0.1/Person')),
+        equals(const IriTerm('http://xmlns.com/foaf/0.1/Person')),
       );
     });
 
@@ -318,8 +319,8 @@ void main() {
       expect(
         graph
             .findTriples(
-              subject: IriTerm('http://example.org/person/1'),
-              predicate: IriTerm('http://xmlns.com/foaf/0.1/name'),
+              subject: const IriTerm('http://example.org/person/1'),
+              predicate: const IriTerm('http://xmlns.com/foaf/0.1/name'),
             )
             .length,
         equals(1),
@@ -352,10 +353,10 @@ void main() {
 
       // Verify the graph contains triples for both people
       final person1Triples = graph.findTriples(
-        subject: IriTerm('http://example.org/person/1'),
+        subject: const IriTerm('http://example.org/person/1'),
       );
       final person2Triples = graph.findTriples(
-        subject: IriTerm('http://example.org/person/2'),
+        subject: const IriTerm('http://example.org/person/2'),
       );
 
       expect(person1Triples.isNotEmpty, isTrue);
@@ -365,8 +366,8 @@ void main() {
       expect(
         graph
             .findTriples(
-              subject: IriTerm('http://example.org/person/1'),
-              predicate: IriTerm('http://xmlns.com/foaf/0.1/name'),
+              subject: const IriTerm('http://example.org/person/1'),
+              predicate: const IriTerm('http://xmlns.com/foaf/0.1/name'),
             )[0]
             .object,
         isA<LiteralTerm>(),
@@ -375,8 +376,8 @@ void main() {
       expect(
         (graph
                 .findTriples(
-                  subject: IriTerm('http://example.org/person/1'),
-                  predicate: IriTerm('http://xmlns.com/foaf/0.1/name'),
+                  subject: const IriTerm('http://example.org/person/1'),
+                  predicate: const IriTerm('http://xmlns.com/foaf/0.1/name'),
                 )[0]
                 .object as LiteralTerm)
             .value,
@@ -386,8 +387,8 @@ void main() {
       expect(
         (graph
                 .findTriples(
-                  subject: IriTerm('http://example.org/person/2'),
-                  predicate: IriTerm('http://xmlns.com/foaf/0.1/name'),
+                  subject: const IriTerm('http://example.org/person/2'),
+                  predicate: const IriTerm('http://xmlns.com/foaf/0.1/name'),
                 )[0]
                 .object as LiteralTerm)
             .value,
@@ -413,59 +414,59 @@ void main() {
           triples: [
             // Person 1
             Triple(
-              IriTerm('http://example.org/person/1'),
+              const IriTerm('http://example.org/person/1'),
               Rdf.type,
-              IriTerm('http://example.org/Person'),
+              const IriTerm('http://example.org/Person'),
             ),
             Triple(
-              IriTerm('http://example.org/person/1'),
-              IriTerm('http://example.org/name'),
+              const IriTerm('http://example.org/person/1'),
+              const IriTerm('http://example.org/name'),
               LiteralTerm.string('John'),
             ),
             Triple(
-              IriTerm('http://example.org/person/1'),
-              IriTerm('http://example.org/address'),
-              IriTerm('http://example.org/address/1'),
+              const IriTerm('http://example.org/person/1'),
+              const IriTerm('http://example.org/address'),
+              const IriTerm('http://example.org/address/1'),
             ),
 
             // Person 2
             Triple(
-              IriTerm('http://example.org/person/2'),
+              const IriTerm('http://example.org/person/2'),
               Rdf.type,
-              IriTerm('http://example.org/Person'),
+              const IriTerm('http://example.org/Person'),
             ),
             Triple(
-              IriTerm('http://example.org/person/2'),
-              IriTerm('http://example.org/name'),
+              const IriTerm('http://example.org/person/2'),
+              const IriTerm('http://example.org/name'),
               LiteralTerm.string('Jane'),
             ),
             Triple(
-              IriTerm('http://example.org/person/2'),
-              IriTerm('http://example.org/address'),
-              IriTerm('http://example.org/address/2'),
+              const IriTerm('http://example.org/person/2'),
+              const IriTerm('http://example.org/address'),
+              const IriTerm('http://example.org/address/2'),
             ),
 
             // Address 1
             Triple(
-              IriTerm('http://example.org/address/1'),
+              const IriTerm('http://example.org/address/1'),
               Rdf.type,
-              IriTerm('http://example.org/Address'),
+              const IriTerm('http://example.org/Address'),
             ),
             Triple(
-              IriTerm('http://example.org/address/1'),
-              IriTerm('http://example.org/city'),
+              const IriTerm('http://example.org/address/1'),
+              const IriTerm('http://example.org/city'),
               LiteralTerm.string('New York'),
             ),
 
             // Address 2
             Triple(
-              IriTerm('http://example.org/address/2'),
+              const IriTerm('http://example.org/address/2'),
               Rdf.type,
-              IriTerm('http://example.org/Address'),
+              const IriTerm('http://example.org/Address'),
             ),
             Triple(
-              IriTerm('http://example.org/address/2'),
-              IriTerm('http://example.org/city'),
+              const IriTerm('http://example.org/address/2'),
+              const IriTerm('http://example.org/city'),
               LiteralTerm.string('San Francisco'),
             ),
           ],
@@ -514,59 +515,59 @@ void main() {
           triples: [
             // Document
             Triple(
-              IriTerm('http://example.org/doc/1'),
+              const IriTerm('http://example.org/doc/1'),
               Rdf.type,
-              IriTerm('http://example.org/Document'),
+              const IriTerm('http://example.org/Document'),
             ),
             Triple(
-              IriTerm('http://example.org/doc/1'),
-              IriTerm('http://example.org/title'),
+              const IriTerm('http://example.org/doc/1'),
+              const IriTerm('http://example.org/title'),
               LiteralTerm.string('Test Document'),
             ),
             Triple(
-              IriTerm('http://example.org/doc/1'),
-              IriTerm('http://example.org/tag'),
-              IriTerm('http://example.org/tag/1'),
+              const IriTerm('http://example.org/doc/1'),
+              const IriTerm('http://example.org/tag'),
+              const IriTerm('http://example.org/tag/1'),
             ),
             Triple(
-              IriTerm('http://example.org/doc/1'),
-              IriTerm('http://example.org/tag'),
-              IriTerm('http://example.org/tag/2'),
+              const IriTerm('http://example.org/doc/1'),
+              const IriTerm('http://example.org/tag'),
+              const IriTerm('http://example.org/tag/2'),
             ),
 
             // Referenced Tag 1
             Triple(
-              IriTerm('http://example.org/tag/1'),
+              const IriTerm('http://example.org/tag/1'),
               Rdf.type,
-              IriTerm('http://example.org/Tag'),
+              const IriTerm('http://example.org/Tag'),
             ),
             Triple(
-              IriTerm('http://example.org/tag/1'),
-              IriTerm('http://example.org/name'),
+              const IriTerm('http://example.org/tag/1'),
+              const IriTerm('http://example.org/name'),
               LiteralTerm.string('important'),
             ),
 
             // Referenced Tag 2
             Triple(
-              IriTerm('http://example.org/tag/2'),
+              const IriTerm('http://example.org/tag/2'),
               Rdf.type,
-              IriTerm('http://example.org/Tag'),
+              const IriTerm('http://example.org/Tag'),
             ),
             Triple(
-              IriTerm('http://example.org/tag/2'),
-              IriTerm('http://example.org/name'),
+              const IriTerm('http://example.org/tag/2'),
+              const IriTerm('http://example.org/name'),
               LiteralTerm.string('work'),
             ),
 
             // Standalone Tag (not referenced)
             Triple(
-              IriTerm('http://example.org/tag/3'),
+              const IriTerm('http://example.org/tag/3'),
               Rdf.type,
-              IriTerm('http://example.org/Tag'),
+              const IriTerm('http://example.org/Tag'),
             ),
             Triple(
-              IriTerm('http://example.org/tag/3'),
-              IriTerm('http://example.org/name'),
+              const IriTerm('http://example.org/tag/3'),
+              const IriTerm('http://example.org/name'),
               LiteralTerm.string('standalone'),
             ),
           ],
@@ -617,59 +618,59 @@ void main() {
         triples: [
           // Document
           Triple(
-            IriTerm('http://example.org/doc/1'),
+            const IriTerm('http://example.org/doc/1'),
             Rdf.type,
-            IriTerm('http://example.org/Document'),
+            const IriTerm('http://example.org/Document'),
           ),
           Triple(
-            IriTerm('http://example.org/doc/1'),
-            IriTerm('http://example.org/title'),
+            const IriTerm('http://example.org/doc/1'),
+            const IriTerm('http://example.org/title'),
             LiteralTerm.string('Test Document'),
           ),
           Triple(
-            IriTerm('http://example.org/doc/1'),
-            IriTerm('http://example.org/tag'),
-            IriTerm('http://example.org/tag/1'),
+            const IriTerm('http://example.org/doc/1'),
+            const IriTerm('http://example.org/tag'),
+            const IriTerm('http://example.org/tag/1'),
           ),
           Triple(
-            IriTerm('http://example.org/doc/1'),
-            IriTerm('http://example.org/tag'),
-            IriTerm('http://example.org/tag/2'),
+            const IriTerm('http://example.org/doc/1'),
+            const IriTerm('http://example.org/tag'),
+            const IriTerm('http://example.org/tag/2'),
           ),
 
           // Referenced Tag 1
           Triple(
-            IriTerm('http://example.org/tag/1'),
+            const IriTerm('http://example.org/tag/1'),
             Rdf.type,
-            IriTerm('http://example.org/Tag'),
+            const IriTerm('http://example.org/Tag'),
           ),
           Triple(
-            IriTerm('http://example.org/tag/1'),
-            IriTerm('http://example.org/name'),
+            const IriTerm('http://example.org/tag/1'),
+            const IriTerm('http://example.org/name'),
             LiteralTerm.string('important'),
           ),
 
           // Referenced Tag 2
           Triple(
-            IriTerm('http://example.org/tag/2'),
+            const IriTerm('http://example.org/tag/2'),
             Rdf.type,
-            IriTerm('http://example.org/Tag'),
+            const IriTerm('http://example.org/Tag'),
           ),
           Triple(
-            IriTerm('http://example.org/tag/2'),
-            IriTerm('http://example.org/name'),
+            const IriTerm('http://example.org/tag/2'),
+            const IriTerm('http://example.org/name'),
             LiteralTerm.string('work'),
           ),
 
           // Standalone Tag (not referenced)
           Triple(
-            IriTerm('http://example.org/tag/3'),
+            const IriTerm('http://example.org/tag/3'),
             Rdf.type,
-            IriTerm('http://example.org/Tag'),
+            const IriTerm('http://example.org/Tag'),
           ),
           Triple(
-            IriTerm('http://example.org/tag/3'),
-            IriTerm('http://example.org/name'),
+            const IriTerm('http://example.org/tag/3'),
+            const IriTerm('http://example.org/name'),
             LiteralTerm.string('standalone'),
           ),
         ],
@@ -717,51 +718,54 @@ class Tag {
 
 class DocumentDeserializer implements GlobalResourceDeserializer<Document> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/Document');
+  final IriTerm typeIri = const IriTerm('http://example.org/Document');
 
   @override
   Document fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
-    final title = reader.require<String>(IriTerm('http://example.org/title'));
+    final title =
+        reader.require<String>(const IriTerm('http://example.org/title'));
 
     final tagNames = reader
-        .getValues<Tag>(IriTerm('http://example.org/tag'))
+        .getValues<Tag>(const IriTerm('http://example.org/tag'))
         .map((tag) => tag.name)
         .toList();
 
-    return Document(id: subject.iri, title: title, tags: tagNames);
+    return Document(id: subject.value, title: title, tags: tagNames);
   }
 }
 
 class DocumentWithTagReferencesDeserializer
     implements GlobalResourceDeserializer<Document> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/Document');
+  final IriTerm typeIri = const IriTerm('http://example.org/Document');
 
   @override
   Document fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
-    final title = reader.require<String>(IriTerm('http://example.org/title'));
+    final title =
+        reader.require<String>(const IriTerm('http://example.org/title'));
 
     final tagIris = reader.getValues<String>(
-      IriTerm('http://example.org/tag'),
+      const IriTerm('http://example.org/tag'),
       deserializer: IriStringDeserializer(),
     );
 
-    return Document(id: subject.iri, title: title, tags: tagIris);
+    return Document(id: subject.value, title: title, tags: tagIris);
   }
 }
 
 class TagDeserializer implements GlobalResourceDeserializer<Tag> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/Tag');
+  final IriTerm typeIri = const IriTerm('http://example.org/Tag');
 
   @override
   Tag fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
-    final name = reader.require<String>(IriTerm('http://example.org/name'));
+    final name =
+        reader.require<String>(const IriTerm('http://example.org/name'));
 
-    return Tag(id: subject.iri, name: name);
+    return Tag(id: subject.value, name: name);
   }
 }
 
@@ -769,7 +773,7 @@ class TagDeserializer implements GlobalResourceDeserializer<Tag> {
 class IriStringDeserializer implements IriTermDeserializer<String> {
   @override
   String fromRdfTerm(IriTerm term, DeserializationContext context) {
-    return term.iri;
+    return term.value;
   }
 }
 
@@ -795,13 +799,14 @@ class Person {
 
 class AddressMapper implements GlobalResourceMapper<Address> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/Address');
+  final IriTerm typeIri = const IriTerm('http://example.org/Address');
 
   @override
   Address fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
-    final city = reader.require<String>(IriTerm('http://example.org/city'));
-    return Address(id: subject.iri, city: city);
+    final city =
+        reader.require<String>(const IriTerm('http://example.org/city'));
+    return Address(id: subject.value, city: city);
   }
 
   @override
@@ -811,24 +816,25 @@ class AddressMapper implements GlobalResourceMapper<Address> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm(value.id))
-        .addValue(IriTerm('http://example.org/city'), value.city)
+        .resourceBuilder(context.createIriTerm(value.id))
+        .addValue(const IriTerm('http://example.org/city'), value.city)
         .build();
   }
 }
 
 class PersonMapper implements GlobalResourceMapper<Person> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/Person');
+  final IriTerm typeIri = const IriTerm('http://example.org/Person');
 
   @override
   Person fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
-    final name = reader.require<String>(IriTerm('http://example.org/name'));
+    final name =
+        reader.require<String>(const IriTerm('http://example.org/name'));
     final address = reader.optional<Address>(
-      IriTerm('http://example.org/address'),
+      const IriTerm('http://example.org/address'),
     );
-    return Person(id: subject.iri, name: name, address: address);
+    return Person(id: subject.value, name: name, address: address);
   }
 
   @override
@@ -838,10 +844,13 @@ class PersonMapper implements GlobalResourceMapper<Person> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm(value.id))
-        .addValue(IriTerm('http://example.org/name'), value.name)
-        .addValueIfNotNull(IriTerm('http://example.org/address'),
-            value.address == null ? null : IriTerm(value.address!.id))
+        .resourceBuilder(context.createIriTerm(value.id))
+        .addValue(const IriTerm('http://example.org/name'), value.name)
+        .addValueIfNotNull(
+            const IriTerm('http://example.org/address'),
+            value.address == null
+                ? null
+                : context.createIriTerm(value.address!.id))
         .build();
   }
 }
@@ -858,21 +867,21 @@ class TestPerson {
 
 class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   @override
-  final IriTerm typeIri = IriTerm('http://xmlns.com/foaf/0.1/Person');
+  final IriTerm typeIri = const IriTerm('http://xmlns.com/foaf/0.1/Person');
 
   @override
   TestPerson fromRdfResource(IriTerm term, DeserializationContext context) {
-    final id = term.iri;
+    final id = term.value;
     final reader = context.reader(term);
 
     // Get name property
     final name = reader.optional<String>(
-      IriTerm('http://xmlns.com/foaf/0.1/name'),
+      const IriTerm('http://xmlns.com/foaf/0.1/name'),
     );
 
     // Get age property
     final age =
-        reader.optional<int>(IriTerm('http://xmlns.com/foaf/0.1/age')) ??
+        reader.optional<int>(const IriTerm('http://xmlns.com/foaf/0.1/age')) ??
             0; // Default age to 0 if not present
 
     return TestPerson(id: id, name: name ?? 'Unknown', age: age);
@@ -884,19 +893,19 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    final subject = IriTerm(value.id);
+    final subject = context.createIriTerm(value.id);
     final triples = <Triple>[
       // Name triple
       Triple(
         subject,
-        IriTerm('http://xmlns.com/foaf/0.1/name'),
+        const IriTerm('http://xmlns.com/foaf/0.1/name'),
         LiteralTerm.string(value.name),
       ),
 
       // Age triple
       Triple(
         subject,
-        IriTerm('http://xmlns.com/foaf/0.1/age'),
+        const IriTerm('http://xmlns.com/foaf/0.1/age'),
         LiteralTerm.typed(value.age.toString(), 'integer'),
       ),
     ];

@@ -22,6 +22,7 @@ import 'package:rdf_core/rdf_core.dart';
 /// ```
 class Namespace {
   final String _base;
+  final IriTermFactory _iriTermFactory;
 
   /// Creates a new namespace with the specified base IRI.
   ///
@@ -29,7 +30,9 @@ class Namespace {
   /// but this is not enforced to allow for flexibility in namespace conventions.
   ///
   /// @param base The base IRI for this namespace (e.g., "http://schema.org/")
-  const Namespace(this._base);
+  const Namespace(this._base,
+      {IriTermFactory iriTermFactory = IriTerm.validated})
+      : _iriTermFactory = iriTermFactory;
 
   /// Creates an IRI term by combining the namespace base with a local name.
   ///
@@ -38,7 +41,7 @@ class Namespace {
   ///
   /// @param localName The local part of the IRI (e.g., "Person", "name")
   /// @return An IriTerm representing the complete IRI
-  IriTerm call(String localName) => IriTerm('$_base$localName');
+  IriTerm call(String localName) => _iriTermFactory('$_base$localName');
 
   /// Returns the base IRI of this namespace.
   ///

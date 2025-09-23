@@ -23,7 +23,10 @@ import 'package:rdf_mapper/src/api/serialization_context.dart';
 final class IriRelativeSerializer implements IriTermSerializer<String> {
   /// The base URI used for resolving relative IRIs to absolute ones.
   final String baseUri;
-  const IriRelativeSerializer(this.baseUri);
+
+  const IriRelativeSerializer(
+    this.baseUri,
+  );
 
   /// Converts a potentially relative IRI string to an absolute IRI term.
   ///
@@ -37,6 +40,6 @@ final class IriRelativeSerializer implements IriTermSerializer<String> {
   /// Returns an [IriTerm] with the resolved absolute IRI.
   @override
   toRdfTerm(String iri, SerializationContext context) {
-    return IriTerm(resolveIri(iri, baseUri));
+    return context.createIriTerm(resolveIri(iri, baseUri));
   }
 }

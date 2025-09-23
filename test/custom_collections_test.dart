@@ -67,7 +67,7 @@ void main() {
         final rdfGraph = graph.encodeObject(library);
 
         // Check that the library has a featuredBooks property
-        final librarySubject = IriTerm('https://example.org/lib1');
+        final librarySubject = const IriTerm('https://example.org/lib1');
         final featuredBooksTriples = rdfGraph.triples
             .where((t) =>
                 t.subject == librarySubject &&
@@ -82,9 +82,9 @@ void main() {
 
         // Check that RDF list structure exists (rdf:first and rdf:rest predicates)
         final rdfFirst =
-            IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#first');
+            const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#first');
         final rdfRest =
-            IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#rest');
+            const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#rest');
 
         final firstTriples =
             rdfGraph.triples.where((t) => t.predicate == rdfFirst).toList();
@@ -115,7 +115,7 @@ void main() {
         final rdfGraph = graph.encodeObject(library);
 
         // Check that the library has a featuredBooks property
-        final librarySubject = IriTerm('https://example.org/lib1');
+        final librarySubject = const IriTerm('https://example.org/lib1');
         final featuredBooksTriples = rdfGraph.triples
             .where((t) =>
                 t.subject == librarySubject &&
@@ -126,7 +126,7 @@ void main() {
 
         // For empty list, the object should be rdf:nil
         final rdfNil =
-            IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#nil');
+            const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#nil');
         expect(featuredBooksTriples.first.object, equals(rdfNil));
       });
 
@@ -140,7 +140,7 @@ void main() {
         final rdfGraph = graph.encodeObject(library);
 
         // Check that the library has a featuredBooks property
-        final librarySubject = IriTerm('https://example.org/lib1');
+        final librarySubject = const IriTerm('https://example.org/lib1');
         final featuredBooksTriples = rdfGraph.triples
             .where((t) =>
                 t.subject == librarySubject &&
@@ -155,11 +155,11 @@ void main() {
 
         // Check RDF list structure
         final rdfFirst =
-            IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#first');
+            const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#first');
         final rdfRest =
-            IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#rest');
+            const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#rest');
         final rdfNil =
-            IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#nil');
+            const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#nil');
 
         // Should have one rdf:first pointing to the book
         final firstTriples = rdfGraph.triples
@@ -197,7 +197,7 @@ void main() {
         final rdfGraph = graph.encodeObject(library);
 
         // Walk through the RDF list to verify order
-        final librarySubject = IriTerm('https://example.org/lib1');
+        final librarySubject = const IriTerm('https://example.org/lib1');
         final featuredBooksTriples = rdfGraph.triples
             .where((t) =>
                 t.subject == librarySubject &&
@@ -207,11 +207,11 @@ void main() {
         expect(featuredBooksTriples, hasLength(1));
 
         final rdfFirst =
-            IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#first');
+            const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#first');
         final rdfRest =
-            IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#rest');
+            const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#rest');
         final rdfNil =
-            IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#nil');
+            const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#nil');
 
         // Walk the list and collect book titles in order
         final collectedTitles = <String>[];
@@ -522,9 +522,9 @@ void main() {
 
         // Verify different RDF structures
         final rdfFirst =
-            IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#first');
+            const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#first');
         final rdfRest =
-            IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#rest');
+            const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#rest');
 
         // RDF List approach should have rdf:first and rdf:rest triples
         final rdfListFirstTriples =
@@ -872,15 +872,15 @@ class LibraryVocab {
   static const String _ns = 'https://example.org/library/';
 
   // Types
-  static final library = IriTerm('${_ns}Library');
-  static final book = IriTerm('${_ns}Book');
-  static final tag = IriTerm('${_ns}Tag');
+  static final library = const IriTerm('${_ns}Library');
+  static final book = const IriTerm('${_ns}Book');
+  static final tag = const IriTerm('${_ns}Tag');
 
   // Properties
-  static final name = IriTerm('${_ns}name');
-  static final title = IriTerm('${_ns}title');
-  static final featuredBooks = IriTerm('${_ns}featuredBooks');
-  static final categories = IriTerm('${_ns}categories');
+  static final name = const IriTerm('${_ns}name');
+  static final title = const IriTerm('${_ns}title');
+  static final featuredBooks = const IriTerm('${_ns}featuredBooks');
+  static final categories = const IriTerm('${_ns}categories');
 }
 
 // Mappers
@@ -894,7 +894,7 @@ class LibraryMapper implements GlobalResourceMapper<Library> {
     final reader = context.reader(subject);
 
     return Library(
-      id: subject.iri,
+      id: subject.value,
       name: reader.require<String>(LibraryVocab.name),
 
       // Use our custom extension methods - as convenient as built-in methods!
@@ -911,7 +911,7 @@ class LibraryMapper implements GlobalResourceMapper<Library> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm(library.id))
+        .resourceBuilder(context.createIriTerm(library.id))
         .addValue(LibraryVocab.name, library.name)
 
         // Use our custom extension methods - as convenient as built-in methods!
@@ -1049,7 +1049,7 @@ class LibraryMultiObjectsMapper implements GlobalResourceMapper<Library> {
     final reader = context.reader(subject);
 
     return Library(
-      id: subject.iri,
+      id: subject.value,
       name: reader.require<String>(LibraryVocab.name),
 
       // Use multi-objects extension methods
@@ -1066,7 +1066,7 @@ class LibraryMultiObjectsMapper implements GlobalResourceMapper<Library> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm(library.id))
+        .resourceBuilder(context.createIriTerm(library.id))
         .addValue(LibraryVocab.name, library.name)
 
         // Use multi-objects extension methods

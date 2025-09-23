@@ -260,8 +260,7 @@ void main() {
 
     group('Custom Datatype', () {
       test('works with custom datatype', () {
-        const customDatatype =
-            IriTerm.prevalidated('http://example.org/customDate');
+        const customDatatype = const IriTerm('http://example.org/customDate');
         final mapper = const DateMapper(customDatatype);
 
         final dateTime = DateTime.utc(2023, 12, 25);
@@ -272,8 +271,7 @@ void main() {
       });
 
       test('deserializes with custom datatype', () {
-        const customDatatype =
-            IriTerm.prevalidated('http://example.org/customDate');
+        const customDatatype = const IriTerm('http://example.org/customDate');
         final mapper = const DateMapper(customDatatype);
         final literal = LiteralTerm('2023-12-25', datatype: customDatatype);
 

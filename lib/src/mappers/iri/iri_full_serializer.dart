@@ -1,4 +1,3 @@
-import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_interfaces.dart';
 import 'package:rdf_mapper/src/api/serialization_context.dart';
 
@@ -24,6 +23,6 @@ final class IriFullSerializer implements IriTermSerializer<String> {
   /// @return An IRI term with the specified IRI
   @override
   toRdfTerm(String iri, SerializationContext context) {
-    return IriTerm(iri);
+    return context.createIriTerm(iri);
   }
 }

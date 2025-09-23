@@ -263,7 +263,8 @@ class DocumentMapper implements GlobalResourceMapper<Document> {
   static final createdAtPredicate = SchemaCreativeWork.dateCreated;
 
   // Custom predicate for category (not in Schema.org)
-  static final categoryPredicate = IriTerm('http://example.org/vocab/category');
+  static final categoryPredicate =
+      const IriTerm('http://example.org/vocab/category');
 
   const DocumentMapper();
 
@@ -275,7 +276,7 @@ class DocumentMapper implements GlobalResourceMapper<Document> {
     final reader = context.reader(subject);
 
     return Document(
-      id: _extractIdFromIri(subject.iri),
+      id: _extractIdFromIri(subject.value),
       title: reader.require<String>(titlePredicate),
       content: reader.require<String>(contentPredicate),
       status: reader.require<DocumentStatus>(statusPredicate),
@@ -291,7 +292,7 @@ class DocumentMapper implements GlobalResourceMapper<Document> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm(_createIriFromId(document.id)))
+        .resourceBuilder(context.createIriTerm(_createIriFromId(document.id)))
         .addValue(titlePredicate, document.title)
         .addValue(contentPredicate, document.content)
         // The enum mappers we registered will handle the conversion automatically

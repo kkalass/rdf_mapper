@@ -29,6 +29,7 @@ final _log = Logger("rdf_orm.service");
 /// higher-level abstractions like RdfMapper and GraphOperations.
 final class RdfMapperService {
   final RdfMapperRegistry _registry;
+  final IriTermFactory _iriTermFactory;
 
   /// Creates a new RDF mapper service.
   ///
@@ -36,8 +37,11 @@ final class RdfMapperService {
   /// serialization and deserialization operations.
   ///
   /// [registry] The registry containing mappers for different types
-  RdfMapperService({required RdfMapperRegistry registry})
-      : _registry = registry;
+  RdfMapperService(
+      {required RdfMapperRegistry registry,
+      IriTermFactory iriTermFactory = IriTerm.validated})
+      : _registry = registry,
+        _iriTermFactory = iriTermFactory;
 
   /// Access to the underlying registry for registering custom mappers.
   ///
@@ -66,7 +70,7 @@ final class RdfMapperService {
   /// // Deserialize a person from a specific subject
   /// final person = service.deserializeBySubject<Person>(
   ///   graph,
-  ///   IriTerm('http://example.org/people/john'),
+  ///   const IriTerm('http://example.org/people/john'),
   ///   register: (registry) {
   ///     registry.registerMapper(AddressMapper());
   ///   }
@@ -365,7 +369,8 @@ final class RdfMapperService {
     if (register != null) {
       register(registry);
     }
-    final context = SerializationContextImpl(registry: registry);
+    final context = SerializationContextImpl(
+        registry: registry, iriTermFactory: _iriTermFactory);
     final triples = context.resource(instance);
     return RdfGraph.fromTriples(triples);
   }
@@ -411,7 +416,8 @@ final class RdfMapperService {
     if (register != null) {
       register(registry);
     }
-    final context = SerializationContextImpl(registry: registry);
+    final context = SerializationContextImpl(
+        registry: registry, iriTermFactory: _iriTermFactory);
     var triples = instances.expand((instance) {
       return context.resource(instance);
     }).toList();

@@ -39,7 +39,7 @@ import 'package:rdf_vocabularies_core/xsd.dart';
 /// For RDF data using custom date datatypes:
 ///
 /// ```dart
-/// final customDatatype = IriTerm('http://example.org/custom-date');
+/// final customDatatype = const IriTerm('http://example.org/custom-date');
 /// final customMapper = DateMapper(customDatatype);
 /// ```
 ///

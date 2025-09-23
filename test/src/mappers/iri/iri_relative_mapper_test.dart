@@ -34,7 +34,7 @@ void main() {
         final result = mapper.toRdfTerm('resource/1', serializationContext);
 
         expect(result, isA<IriTerm>());
-        expect(result.iri, equals('http://example.org/base/resource/1'));
+        expect(result.value, equals('http://example.org/base/resource/1'));
       });
 
       test('resolves relative path with dot notation', () {
@@ -45,7 +45,7 @@ void main() {
             mapper.toRdfTerm('../other/resource', serializationContext);
 
         expect(result, isA<IriTerm>());
-        expect(result.iri, equals('http://example.org/base/other/resource'));
+        expect(result.value, equals('http://example.org/base/other/resource'));
       });
 
       test('leaves absolute IRI unchanged', () {
@@ -56,7 +56,7 @@ void main() {
         final result = mapper.toRdfTerm(absoluteIri, serializationContext);
 
         expect(result, isA<IriTerm>());
-        expect(result.iri, equals(absoluteIri));
+        expect(result.value, equals(absoluteIri));
       });
 
       test('resolves fragment-only reference', () {
@@ -66,7 +66,7 @@ void main() {
         final result = mapper.toRdfTerm('#section1', serializationContext);
 
         expect(result, isA<IriTerm>());
-        expect(result.iri, equals('http://example.org/base/document#section1'));
+        expect(result.value, equals('http://example.org/base/document#section1'));
       });
 
       test('resolves empty string to base URI', () {
@@ -76,7 +76,7 @@ void main() {
         final result = mapper.toRdfTerm('', serializationContext);
 
         expect(result, isA<IriTerm>());
-        expect(result.iri, equals('http://example.org/base/document'));
+        expect(result.value, equals('http://example.org/base/document'));
       });
     });
 
@@ -84,7 +84,7 @@ void main() {
       test('relativizes IRI within same directory', () {
         const baseUri = 'http://example.org/base/';
         const mapper = IriRelativeMapper(baseUri);
-        final term = IriTerm('http://example.org/base/resource');
+        final term = const IriTerm('http://example.org/base/resource');
 
         final result = mapper.fromRdfTerm(term, deserializationContext);
 
@@ -94,7 +94,7 @@ void main() {
       test('relativizes IRI with dot notation for parent directory', () {
         const baseUri = 'http://example.org/base/dir/';
         const mapper = IriRelativeMapper(baseUri);
-        final term = IriTerm('http://example.org/base/other/resource');
+        final term = const IriTerm('http://example.org/base/other/resource');
 
         final result = mapper.fromRdfTerm(term, deserializationContext);
 
@@ -104,7 +104,7 @@ void main() {
       test('returns absolute IRI when cannot be relativized', () {
         const baseUri = 'http://example.org/base/';
         const mapper = IriRelativeMapper(baseUri);
-        final term = IriTerm('https://other.org/resource');
+        final term = const IriTerm('https://other.org/resource');
 
         final result = mapper.fromRdfTerm(term, deserializationContext);
 
@@ -114,7 +114,7 @@ void main() {
       test('relativizes fragment-only difference', () {
         const baseUri = 'http://example.org/base/document';
         const mapper = IriRelativeMapper(baseUri);
-        final term = IriTerm('http://example.org/base/document#section1');
+        final term = const IriTerm('http://example.org/base/document#section1');
 
         final result = mapper.fromRdfTerm(term, deserializationContext);
 
@@ -124,7 +124,7 @@ void main() {
       test('returns empty string for identical IRIs', () {
         const baseUri = 'http://example.org/base/document';
         const mapper = IriRelativeMapper(baseUri);
-        final term = IriTerm('http://example.org/base/document');
+        final term = const IriTerm('http://example.org/base/document');
 
         final result = mapper.fromRdfTerm(term, deserializationContext);
 
@@ -160,7 +160,7 @@ void main() {
         // Serialize: relative string -> absolute IRI term
         final serialized = mapper.toRdfTerm(relativeIri, serializationContext);
         expect(
-            serialized.iri, equals('http://example.org/base/other/resource'));
+            serialized.value, equals('http://example.org/base/other/resource'));
 
         // Deserialize: absolute IRI term -> relative string
         final deserialized =
@@ -176,7 +176,7 @@ void main() {
 
         // Serialize: fragment reference -> absolute IRI term
         final serialized = mapper.toRdfTerm(fragmentIri, serializationContext);
-        expect(serialized.iri,
+        expect(serialized.value,
             equals('http://example.org/base/document#section1'));
 
         // Deserialize: absolute IRI term -> fragment reference
@@ -193,7 +193,7 @@ void main() {
 
         // Serialize: empty string -> base URI as IRI term
         final serialized = mapper.toRdfTerm(emptyIri, serializationContext);
-        expect(serialized.iri, equals(baseUri));
+        expect(serialized.value, equals(baseUri));
 
         // Deserialize: base URI IRI term -> empty string
         final deserialized =
@@ -209,7 +209,7 @@ void main() {
 
         // Serialize: absolute IRI string -> absolute IRI term (unchanged)
         final serialized = mapper.toRdfTerm(absoluteIri, serializationContext);
-        expect(serialized.iri, equals(absoluteIri));
+        expect(serialized.value, equals(absoluteIri));
 
         // Deserialize: absolute IRI term -> absolute IRI string (unchanged)
         final deserialized =
@@ -225,7 +225,7 @@ void main() {
 
         // Serialize
         final serialized = mapper.toRdfTerm(relativeIri, serializationContext);
-        expect(serialized.iri, equals('http://example.org/a/x/y/resource'));
+        expect(serialized.value, equals('http://example.org/a/x/y/resource'));
 
         // Deserialize
         final deserialized =
@@ -241,7 +241,7 @@ void main() {
 
         // Serialize
         final serialized = mapper.toRdfTerm(relativeIri, serializationContext);
-        expect(serialized.iri,
+        expect(serialized.value,
             equals('http://example.org/base/resource?param=value#section'));
 
         // Deserialize
@@ -259,7 +259,7 @@ void main() {
         // Serialize
         final serialized = mapper.toRdfTerm(relativeIri, serializationContext);
         // International characters get URL-encoded in IRIs
-        expect(serialized.iri,
+        expect(serialized.value,
             equals('http://example.org/base/r%C3%A9sum%C3%A9/andr%C3%A9'));
 
         // Deserialize back to original form (relativization decodes back)
@@ -290,7 +290,7 @@ void main() {
 
         // URN should pass through unchanged
         final serialized = mapper.toRdfTerm(urnIri, serializationContext);
-        expect(serialized.iri, equals(urnIri));
+        expect(serialized.value, equals(urnIri));
 
         final deserialized =
             mapper.fromRdfTerm(serialized, deserializationContext);

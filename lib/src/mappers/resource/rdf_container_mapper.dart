@@ -1,3 +1,4 @@
+import 'package:rdf_core/rdf_core.dart';
 import 'package:rdf_mapper/src/api/rdf_mapper_interfaces.dart';
 import 'package:rdf_mapper/src/mappers/resource/rdf_container_deserializer.dart';
 import 'package:rdf_mapper/src/mappers/resource/rdf_container_serializer.dart';
@@ -54,7 +55,8 @@ class RdfSeqMapper<T> extends UnifiedResourceMapperBase<List<T>, T> {
   RdfSeqMapper(
       {Deserializer<T>? itemDeserializer,
       Serializer<T>? itemSerializer,
-      Mapper<T>? itemMapper})
+      Mapper<T>? itemMapper,
+      IriTermFactory iriTermFactory = IriTerm.validated})
       : super(
           RdfSeqSerializer(itemSerializer: itemSerializer ?? itemMapper),
           RdfSeqDeserializer(itemDeserializer: itemDeserializer ?? itemMapper),

@@ -16,14 +16,15 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 ///
 /// Examples:
 /// With base URI `"http://example.org/base/"`:
-/// - Serialization: `"resource/1"` → `IriTerm("http://example.org/base/resource/1")`
-/// - Deserialization: `IriTerm("http://example.org/base/resource/1")` → `"resource/1"`
+/// - Serialization: `"resource/1"` → `const IriTerm("http://example.org/base/resource/1")`
+/// - Deserialization: `const IriTerm("http://example.org/base/resource/1")` → `"resource/1"`
 ///
 /// This is particularly useful for document-relative IRI references where maintaining
 /// the relative structure is important for readability and portability in non-RDF formats.
 final class IriRelativeMapper implements IriTermMapper<String> {
   /// The base URI used for resolving relative IRIs and relativizing absolute IRIs.
   final String baseUri;
+
   const IriRelativeMapper(this.baseUri);
 
   /// Converts a potentially relative IRI string to an absolute IRI term.
@@ -38,7 +39,7 @@ final class IriRelativeMapper implements IriTermMapper<String> {
   /// Returns an [IriTerm] with the resolved absolute IRI.
   @override
   toRdfTerm(String iri, SerializationContext context) {
-    return IriTerm(resolveIri(iri, baseUri));
+    return context.createIriTerm(resolveIri(iri, baseUri));
   }
 
   /// Converts an absolute IRI term to a potentially relative IRI string.
@@ -54,6 +55,6 @@ final class IriRelativeMapper implements IriTermMapper<String> {
   /// Returns a string containing either a relative or absolute IRI.
   @override
   fromRdfTerm(IriTerm term, DeserializationContext context) {
-    return relativizeIri(term.iri, baseUri);
+    return relativizeIri(term.value, baseUri);
   }
 }

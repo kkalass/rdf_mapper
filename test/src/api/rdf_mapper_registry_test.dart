@@ -158,7 +158,7 @@ void main() {
     test('getSubjectDeserializerByType throws when deserializer not found', () {
       expect(
         () => registry.getGlobalResourceDeserializerByType(
-          IriTerm('http://example.org/UnknownType'),
+          const IriTerm('http://example.org/UnknownType'),
         ),
         throwsA(isA<DeserializerNotFoundException>()),
       );
@@ -244,14 +244,14 @@ class AnotherCustomType {
 class TestIriDeserializer implements IriTermDeserializer<CustomType> {
   @override
   CustomType fromRdfTerm(IriTerm term, DeserializationContext context) {
-    return CustomType(term.iri);
+    return CustomType(term.value);
   }
 }
 
 class TestIriSerializer implements IriTermSerializer<CustomType> {
   @override
   IriTerm toRdfTerm(CustomType value, SerializationContext context) {
-    return IriTerm(value.value);
+    return context.createIriTerm(value.value);
   }
 }
 
@@ -259,8 +259,7 @@ class TestLiteralDeserializer implements LiteralTermDeserializer<CustomType> {
   final IriTerm datatype;
 
   const TestLiteralDeserializer(
-      [this.datatype =
-          const IriTerm.prevalidated('http://example.org/CustomType')]);
+      [this.datatype = const IriTerm('http://example.org/CustomType')]);
 
   @override
   CustomType fromRdfTerm(LiteralTerm term, DeserializationContext context,
@@ -280,17 +279,17 @@ class TestLiteralSerializer implements LiteralTermSerializer<CustomType> {
 class TestSubjectDeserializer
     implements GlobalResourceDeserializer<CustomType> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/CustomType');
+  final IriTerm typeIri = const IriTerm('http://example.org/CustomType');
 
   @override
   CustomType fromRdfResource(IriTerm term, DeserializationContext context) {
-    return CustomType(term.iri);
+    return CustomType(term.value);
   }
 }
 
 class TestSubjectSerializer implements GlobalResourceSerializer<CustomType> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/CustomType');
+  final IriTerm typeIri = const IriTerm('http://example.org/CustomType');
 
   @override
   (IriTerm, Iterable<Triple>) toRdfResource(
@@ -298,11 +297,12 @@ class TestSubjectSerializer implements GlobalResourceSerializer<CustomType> {
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    final subject = IriTerm('http://example.org/instance/${value.value}');
+    final subject =
+        context.createIriTerm('http://example.org/instance/${value.value}');
     final triples = <Triple>[
       Triple(
         subject,
-        IriTerm('http://example.org/value'),
+        const IriTerm('http://example.org/value'),
         LiteralTerm.string(value.value),
       ),
     ];
@@ -312,11 +312,11 @@ class TestSubjectSerializer implements GlobalResourceSerializer<CustomType> {
 
 class TestSubjectMapper implements GlobalResourceMapper<CustomType> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/CustomType');
+  final IriTerm typeIri = const IriTerm('http://example.org/CustomType');
 
   @override
   CustomType fromRdfResource(IriTerm term, DeserializationContext context) {
-    return CustomType(term.iri);
+    return CustomType(term.value);
   }
 
   @override
@@ -325,11 +325,12 @@ class TestSubjectMapper implements GlobalResourceMapper<CustomType> {
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    final subject = IriTerm('http://example.org/instance/${value.value}');
+    final subject =
+        context.createIriTerm('http://example.org/instance/${value.value}');
     final triples = <Triple>[
       Triple(
         subject,
-        IriTerm('http://example.org/value'),
+        const IriTerm('http://example.org/value'),
         LiteralTerm.string(value.value),
       ),
     ];
@@ -340,12 +341,12 @@ class TestSubjectMapper implements GlobalResourceMapper<CustomType> {
 class AnotherTestSubjectMapper
     implements GlobalResourceMapper<AnotherCustomType> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/AnotherCustomType');
+  final IriTerm typeIri = const IriTerm('http://example.org/AnotherCustomType');
 
   @override
   AnotherCustomType fromRdfResource(
       IriTerm term, DeserializationContext context) {
-    return AnotherCustomType(term.iri);
+    return AnotherCustomType(term.value);
   }
 
   @override
@@ -354,11 +355,12 @@ class AnotherTestSubjectMapper
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    final subject = IriTerm('http://example.org/another/${value.value}');
+    final subject =
+        context.createIriTerm('http://example.org/another/${value.value}');
     final triples = <Triple>[
       Triple(
         subject,
-        IriTerm('http://example.org/value'),
+        const IriTerm('http://example.org/value'),
         LiteralTerm.string(value.value),
       ),
     ];

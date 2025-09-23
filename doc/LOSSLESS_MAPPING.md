@@ -193,7 +193,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
 
   @override
   (IriTerm, Iterable<Triple>) toRdfResource(Person value, SerializationContext context, {RdfSubject? parentSubject}) {
-    final builder = context.resourceBuilder(IriTerm(value.id))
+    final builder = context.resourceBuilder(const IriTerm(value.id))
       .addValue(SchemaPerson.foafName, value.name)
       .addValue(SchemaPerson.foafAge, value.age)
 
@@ -240,7 +240,7 @@ _:secret ex:code "XYZ" ;
 
 final (person, remainderGraph) = rdfMapper.decodeObjectLossless<Person>(
   turtleInput,
-  subject: IriTerm('http://example.org/person/1'),
+  subject: const IriTerm('http://example.org/person/1'),
 );
 
 print('Decoded Person: $person');
@@ -375,7 +375,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
 
   @override
   (IriTerm, Iterable<Triple>) toRdfResource(Person value, SerializationContext context, {RdfSubject? parentSubject}) {
-    final builder = context.resourceBuilder(IriTerm(value.id))
+    final builder = context.resourceBuilder(const IriTerm(value.id))
       .addValue(SchemaPerson.foafName, value.name)
       .addValue(SchemaPerson.foafAge, value.age)
 
@@ -439,7 +439,7 @@ _:geom geo:asWKT "POINT(10 20)" . # Further nested blank node
   // Decode the Person object in a lossless way
   final (person, remainderGraph) = rdfMapper.decodeObjectLossless<Person>(
     turtleInput,
-    subject: IriTerm('http://example.org/person/1'),
+    subject: const IriTerm('http://example.org/person/1'),
   );
 
   print('\n--- Decoded Person Object ---');
@@ -531,7 +531,7 @@ class PersonWithMapMapper implements GlobalResourceMapper<PersonWithMapUnmapped>
 
   @override
   (IriTerm, Iterable<Triple>) toRdfResource(PersonWithMapUnmapped value, SerializationContext context, {RdfSubject? parentSubject}) {
-    return context.resourceBuilder(IriTerm(value.id))
+    return context.resourceBuilder(const IriTerm(value.id))
       .addValue(foafName, value.name)
       .addUnmapped(value.unmappedData)
       .build();

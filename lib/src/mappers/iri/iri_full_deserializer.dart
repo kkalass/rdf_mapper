@@ -21,6 +21,6 @@ final class IriFullDeserializer implements IriTermDeserializer<String> {
   /// @return The complete IRI string
   @override
   fromRdfTerm(IriTerm term, DeserializationContext context) {
-    return term.iri;
+    return term.value;
   }
 }

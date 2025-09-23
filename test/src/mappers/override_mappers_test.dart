@@ -86,9 +86,10 @@ void main() {
     late MockSerializationContext serializationContext;
 
     // Define custom datatypes for testing
-    final customStringType = IriTerm('http://example.org/types/CustomString');
-    final temperatureType = IriTerm('http://qudt.org/vocab/unit/CEL');
-    final customIntType = IriTerm('http://example.org/types/CustomInt');
+    final customStringType =
+        const IriTerm('http://example.org/types/CustomString');
+    final temperatureType = const IriTerm('http://qudt.org/vocab/unit/CEL');
+    final customIntType = const IriTerm('http://example.org/types/CustomInt');
 
     setUp(() {
       stringMapper = DatatypeOverrideMapper<String>(customStringType);
@@ -105,7 +106,7 @@ void main() {
       });
 
       test('is const constructible', () {
-        const customType = IriTerm.prevalidated('http://example.org/test');
+        const customType = const IriTerm('http://example.org/test');
         const mapper = DatatypeOverrideMapper<String>(customType);
         expect(mapper.datatype, equals(customType));
       });
@@ -497,7 +498,7 @@ void main() {
     test(
         'DatatypeOverrideMapper and LanguageOverrideMapper have different use cases',
         () {
-      final customType = IriTerm('http://example.org/CustomType');
+      final customType = const IriTerm('http://example.org/CustomType');
       final datatypeMapper = DatatypeOverrideMapper<String>(customType);
       const languageMapper = LanguageOverrideMapper<String>('en');
 
@@ -511,7 +512,7 @@ void main() {
 
     test('Both mappers can work with same base type', () {
       // Both can work with String, but produce different RDF representations
-      final customType = IriTerm('http://example.org/SpecialString');
+      final customType = const IriTerm('http://example.org/SpecialString');
       final datatypeMapper = DatatypeOverrideMapper<String>(customType);
       const languageMapper = LanguageOverrideMapper<String>('fr');
 
@@ -540,7 +541,7 @@ void main() {
       // This test documents the critical warning but doesn't actually test the recursion
       // to avoid breaking the test suite with a stack overflow
 
-      final customType = IriTerm('http://example.org/CustomType');
+      final customType = const IriTerm('http://example.org/CustomType');
       final datatypeMapper = DatatypeOverrideMapper<String>(customType);
       const languageMapper = LanguageOverrideMapper<String>('en');
 
@@ -567,7 +568,7 @@ void main() {
     });
 
     test('confirms delegation behavior that causes recursion risk', () {
-      final customType = IriTerm('http://example.org/Test');
+      final customType = const IriTerm('http://example.org/Test');
       final mapper = DatatypeOverrideMapper<String>(customType);
       final context = MockSerializationContext();
 

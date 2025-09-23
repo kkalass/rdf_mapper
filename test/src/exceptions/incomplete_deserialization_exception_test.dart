@@ -9,22 +9,22 @@ void main() {
       test('should create exception with all properties', () {
         final graph = RdfGraph(triples: [
           Triple(
-            IriTerm('http://example.org/person/1'),
-            IriTerm('http://example.org/ns#name'),
+            const IriTerm('http://example.org/person/1'),
+            const IriTerm('http://example.org/ns#name'),
             LiteralTerm('John Doe'),
           ),
           Triple(
-            IriTerm('http://example.org/person/1'),
-            IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-            IriTerm('http://example.org/ns#Person'),
+            const IriTerm('http://example.org/person/1'),
+            const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+            const IriTerm('http://example.org/ns#Person'),
           ),
         ]);
 
         final unmappedSubjects = <RdfSubject>{
-          IriTerm('http://example.org/person/1')
+          const IriTerm('http://example.org/person/1')
         };
         final unmappedTypes = <IriTerm>{
-          IriTerm('http://example.org/ns#Person')
+          const IriTerm('http://example.org/ns#Person')
         };
 
         final exception = IncompleteDeserializationException(
@@ -57,8 +57,8 @@ void main() {
       test('should format message with single triple', () {
         final graph = RdfGraph(triples: [
           Triple(
-            IriTerm('http://example.org/person/1'),
-            IriTerm('http://example.org/ns#name'),
+            const IriTerm('http://example.org/person/1'),
+            const IriTerm('http://example.org/ns#name'),
             LiteralTerm('John Doe'),
           ),
         ]);
@@ -79,13 +79,13 @@ void main() {
       test('should format message with multiple triples', () {
         final graph = RdfGraph(triples: [
           Triple(
-            IriTerm('http://example.org/person/1'),
-            IriTerm('http://example.org/ns#name'),
+            const IriTerm('http://example.org/person/1'),
+            const IriTerm('http://example.org/ns#name'),
             LiteralTerm('John Doe'),
           ),
           Triple(
-            IriTerm('http://example.org/person/1'),
-            IriTerm('http://example.org/ns#age'),
+            const IriTerm('http://example.org/person/1'),
+            const IriTerm('http://example.org/ns#age'),
             LiteralTerm('30'),
           ),
         ]);
@@ -232,7 +232,7 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   TestPerson fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return TestPerson(
-      id: subject.iri,
+      id: subject.value,
       name: reader.require<String>(_ns('name')),
       age: reader.require<int>(_ns('age')),
     );
@@ -245,7 +245,7 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
     RdfSubject? parentSubject,
   }) =>
       context
-          .resourceBuilder(IriTerm(instance.id))
+          .resourceBuilder(context.createIriTerm(instance.id))
           .addValue(Rdf.type, _ns('Person'))
           .addValue(_ns('name'), instance.name)
           .addValue(_ns('age'), instance.age)

@@ -38,6 +38,23 @@ abstract class SerializationContext {
   /// to delegate to existing serializers.
   LiteralTerm toLiteralTerm<T>(T value, {LiteralTermSerializer<T>? serializer});
 
+  /// Creates an IRI term from a string value.
+  ///
+  /// This method provides a centralized way to create IRI terms, allowing
+  /// the serialization context to apply any necessary processing, validation,
+  /// or factory patterns to IRI creation.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// final personIri = context.createIriTerm('http://example.org/person/123');
+  /// final namespaceIri = context.createIriTerm('http://schema.org/name');
+  /// ```
+  ///
+  /// [value] The string representation of the IRI.
+  ///
+  /// Returns an [IriTerm] instance representing the given IRI string.
+  IriTerm createIriTerm(String value);
+
   /// Serializes a Dart object to RDF triples as a resource.
   ///
   /// This method converts a domain object into a collection of RDF triples that
@@ -93,7 +110,7 @@ abstract class SerializationContext {
   /// // Complex object
   /// final person = Person(name: 'John');
   /// final (term, triples) = context.serialize(person, parentSubject: parentIri);
-  /// // Returns: (BlankNodeTerm() or IriTerm(...), [triples for person properties])
+  /// // Returns: (BlankNodeTerm() or const IriTerm(...), [triples for person properties])
   /// ```
   ///
   /// [value] The Dart value to serialize.

@@ -15,7 +15,7 @@ import 'package:rdf_mapper/src/exceptions/deserialization_exception.dart';
 /// Example usage:
 /// ```dart
 /// final customUriDeserializer = ExtractingIriTermDeserializer<Uri>(
-///   extract: (term, _) => Uri.parse(term.iri),
+///   extract: (term, _) => Uri.parse(term.value),
 /// );
 /// ```
 class ExtractingIriTermDeserializer<T> implements IriTermDeserializer<T> {
@@ -40,7 +40,7 @@ class ExtractingIriTermDeserializer<T> implements IriTermDeserializer<T> {
       rethrow;
     } catch (e) {
       throw DeserializationException(
-        'Failed to parse Iri Id from ${T.toString()}: ${term.iri}. Error: $e',
+        'Failed to parse Iri Id from ${T.toString()}: ${term.value}. Error: $e',
       );
     }
   }

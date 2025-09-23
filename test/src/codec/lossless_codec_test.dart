@@ -26,13 +26,13 @@ void main() {
 
       final remainderTriples = [
         Triple(
-          IriTerm('http://example.org/company/1'),
+          const IriTerm('http://example.org/company/1'),
           Rdf.type,
-          IriTerm('http://example.org/Company'),
+          const IriTerm('http://example.org/Company'),
         ),
         Triple(
-          IriTerm('http://example.org/company/1'),
-          IriTerm('http://example.org/name'),
+          const IriTerm('http://example.org/company/1'),
+          const IriTerm('http://example.org/name'),
           LiteralTerm.string('Acme Corp'),
         ),
       ];
@@ -45,14 +45,14 @@ void main() {
       expect(graph.triples, hasLength(5)); // 3 person + 2 remainder
       expect(
         graph.triples.any((t) =>
-            t.subject == IriTerm('http://example.org/person/1') &&
-            t.predicate == IriTerm('http://example.org/name')),
+            t.subject == const IriTerm('http://example.org/person/1') &&
+            t.predicate == const IriTerm('http://example.org/name')),
         isTrue,
       );
       expect(
         graph.triples.any((t) =>
-            t.subject == IriTerm('http://example.org/company/1') &&
-            t.predicate == IriTerm('http://example.org/name')),
+            t.subject == const IriTerm('http://example.org/company/1') &&
+            t.predicate == const IriTerm('http://example.org/name')),
         isTrue,
       );
 
@@ -68,7 +68,7 @@ void main() {
       expect(decodedRemainder.triples, hasLength(2));
       expect(
         decodedRemainder.triples.any((t) =>
-            t.subject == IriTerm('http://example.org/company/1') &&
+            t.subject == const IriTerm('http://example.org/company/1') &&
             t.predicate == Rdf.type),
         isTrue,
       );
@@ -111,8 +111,8 @@ void main() {
 
       final remainderGraph = RdfGraph(triples: [
         Triple(
-          IriTerm('http://example.org/other'),
-          IriTerm('http://example.org/property'),
+          const IriTerm('http://example.org/other'),
+          const IriTerm('http://example.org/property'),
           LiteralTerm.string('other value'),
         ),
       ]);
@@ -157,13 +157,13 @@ void main() {
 
       final remainderTriples = [
         Triple(
-          IriTerm('http://example.org/company/1'),
+          const IriTerm('http://example.org/company/1'),
           Rdf.type,
-          IriTerm('http://example.org/Company'),
+          const IriTerm('http://example.org/Company'),
         ),
         Triple(
-          IriTerm('http://example.org/company/1'),
-          IriTerm('http://example.org/name'),
+          const IriTerm('http://example.org/company/1'),
+          const IriTerm('http://example.org/name'),
           LiteralTerm.string('Acme Corp'),
         ),
       ];
@@ -190,7 +190,7 @@ void main() {
       expect(decodedRemainder.triples, hasLength(2));
       expect(
         decodedRemainder.triples.any((t) =>
-            t.subject == IriTerm('http://example.org/company/1') &&
+            t.subject == const IriTerm('http://example.org/company/1') &&
             t.predicate == Rdf.type),
         isTrue,
       );
@@ -214,8 +214,8 @@ void main() {
 
       final remainderGraph = RdfGraph(triples: [
         Triple(
-          IriTerm('http://example.org/other'),
-          IriTerm('http://example.org/property'),
+          const IriTerm('http://example.org/other'),
+          const IriTerm('http://example.org/property'),
           LiteralTerm.string('unrelated'),
         ),
       ]);
@@ -255,8 +255,8 @@ void main() {
 
       final remainderGraph = RdfGraph(triples: [
         Triple(
-          IriTerm('http://example.org/metadata'),
-          IriTerm('http://example.org/created'),
+          const IriTerm('http://example.org/metadata'),
+          const IriTerm('http://example.org/created'),
           LiteralTerm.string('2025-07-09'),
         ),
       ]);
@@ -286,8 +286,8 @@ void main() {
 
       final invalidGraph = RdfGraph(triples: [
         Triple(
-          IriTerm('http://example.org/invalid'),
-          IriTerm('http://example.org/property'),
+          const IriTerm('http://example.org/invalid'),
+          const IriTerm('http://example.org/property'),
           LiteralTerm.string('value'),
         ),
       ]);
@@ -347,7 +347,7 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   TestPerson fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return TestPerson(
-      id: subject.iri,
+      id: subject.value,
       name: reader.require<String>(_ns('name')),
       age: reader.require<int>(_ns('age')),
     );
@@ -360,7 +360,7 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
     RdfSubject? parentSubject,
   }) =>
       context
-          .resourceBuilder(IriTerm(instance.id))
+          .resourceBuilder(context.createIriTerm(instance.id))
           .addValue(Rdf.type, _ns('Person'))
           .addValue(_ns('name'), instance.name)
           .addValue(_ns('age'), instance.age)
@@ -401,7 +401,7 @@ class TestCompanyMapper implements GlobalResourceMapper<TestCompany> {
   TestCompany fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return TestCompany(
-      id: subject.iri,
+      id: subject.value,
       name: reader.require<String>(_ns('name')),
       foundedYear: reader.optional<int>(_ns('foundedYear')),
     );
@@ -414,7 +414,7 @@ class TestCompanyMapper implements GlobalResourceMapper<TestCompany> {
     RdfSubject? parentSubject,
   }) {
     final builder = context
-        .resourceBuilder(IriTerm(instance.id))
+        .resourceBuilder(context.createIriTerm(instance.id))
         .addValue(Rdf.type, _ns('Company'))
         .addValue(_ns('name'), instance.name);
 

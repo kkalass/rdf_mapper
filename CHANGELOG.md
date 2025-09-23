@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.2] - 2025-09-23
+
+### Added
+
+- **IRI Term Factory Support**: Comprehensive integration of configurable IRI term factories throughout the library
+  - Added `IriTermFactory` parameter to `RdfMapper` constructor and factory methods
+  - Added `createIriTerm(String)` method to `SerializationContext` interface for centralized IRI creation
+  - Enhanced `SerializationContextImpl` to support configurable IRI term factories
+  - Enables custom IRI validation, processing, or factory patterns at the library level
+  - Default factory uses `IriTerm.validated` for backward compatibility with enhanced validation
+
+### Changed
+
+- **Breaking Change**: Enhanced `RdfMapper` constructor signature to include optional `IriTermFactory` parameter
+  - `RdfMapper({required RdfMapperRegistry registry, RdfCore? rdfCore, IriTermFactory iriTermFactory = IriTerm.validated})`
+  - `RdfMapper.withDefaultRegistry({IriTermFactory iriTermFactory = IriTerm.validated})`
+  - `RdfMapper.withMappers(Function register, {IriTermFactory iriTermFactory = IriTerm.validated})`
+- **Breaking Change**: Updated `SerializationContextImpl` constructor to include `IriTermFactory` parameter
+- Updated all examples and mappers to use `context.createIriTerm()` instead of direct `IriTerm()` constructor calls
+  - Provides centralized IRI creation with factory support
+  - Enables better validation and processing control
+  - Maintains consistency across serialization contexts
+- Updated `rdf_core` dependency from `^0.9.14` to `^0.9.15` for latest RDF core improvements and factory support
+- Updated development dependencies:
+  - `build_runner` from `2.7.0` to `2.8.0`
+  - `mockito` from `5.5.0` to `5.5.1`
+- Enhanced codebase compatibility with latest rdf_core API changes
+- Improved test coverage for IRI term factory integration
+
+### Technical Details
+
+- The `IriTermFactory` integration allows for centralized control over IRI term creation throughout the serialization process
+- All IRI creation now flows through the configured factory, enabling custom validation, processing, or alternative implementations
+- Backward compatibility is maintained with the default `IriTerm.validated` factory
+- Examples demonstrate proper usage of the new `context.createIriTerm()` pattern
+
 ## [0.10.1] - 2025-08-13
 
 ### Fixed

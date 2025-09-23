@@ -31,7 +31,7 @@ void main() {
         final iriTerm = mapper.toRdfTerm(testIri, serializationContext);
 
         expect(iriTerm, isA<IriTerm>());
-        expect(iriTerm.iri, equals(testIri));
+        expect(iriTerm.value, equals(testIri));
       });
 
       test('correctly handles HTTPS URLs', () {
@@ -41,7 +41,7 @@ void main() {
         final iriTerm = mapper.toRdfTerm(testIri, serializationContext);
 
         expect(iriTerm, isA<IriTerm>());
-        expect(iriTerm.iri, equals(testIri));
+        expect(iriTerm.value, equals(testIri));
       });
 
       test('correctly handles URNs', () {
@@ -51,7 +51,7 @@ void main() {
         final iriTerm = mapper.toRdfTerm(testIri, serializationContext);
 
         expect(iriTerm, isA<IriTerm>());
-        expect(iriTerm.iri, equals(testIri));
+        expect(iriTerm.value, equals(testIri));
       });
 
       test('correctly handles IRIs with fragments', () {
@@ -61,7 +61,7 @@ void main() {
         final iriTerm = mapper.toRdfTerm(testIri, serializationContext);
 
         expect(iriTerm, isA<IriTerm>());
-        expect(iriTerm.iri, equals(testIri));
+        expect(iriTerm.value, equals(testIri));
       });
 
       test('correctly handles IRIs with query parameters', () {
@@ -71,7 +71,7 @@ void main() {
         final iriTerm = mapper.toRdfTerm(testIri, serializationContext);
 
         expect(iriTerm, isA<IriTerm>());
-        expect(iriTerm.iri, equals(testIri));
+        expect(iriTerm.value, equals(testIri));
       });
 
       test('preserves special characters in IRI', () {
@@ -81,7 +81,7 @@ void main() {
         final iriTerm = mapper.toRdfTerm(testIri, serializationContext);
 
         expect(iriTerm, isA<IriTerm>());
-        expect(iriTerm.iri, equals(testIri));
+        expect(iriTerm.value, equals(testIri));
       });
     });
 
@@ -89,7 +89,7 @@ void main() {
       test('correctly deserializes IRI term to complete IRI string', () {
         const mapper = IriFullMapper();
         const testIri = 'http://example.org/resource/456';
-        final iriTerm = IriTerm(testIri);
+        final iriTerm = const IriTerm(testIri);
 
         final result = mapper.fromRdfTerm(iriTerm, deserializationContext);
 
@@ -99,7 +99,7 @@ void main() {
       test('correctly handles HTTPS URLs in deserialization', () {
         const mapper = IriFullMapper();
         const testIri = 'https://secure.example.org/api/v2/data';
-        final iriTerm = IriTerm(testIri);
+        final iriTerm = const IriTerm(testIri);
 
         final result = mapper.fromRdfTerm(iriTerm, deserializationContext);
 
@@ -109,7 +109,7 @@ void main() {
       test('correctly handles URNs in deserialization', () {
         const mapper = IriFullMapper();
         const testIri = 'urn:isbn:9780134685991';
-        final iriTerm = IriTerm(testIri);
+        final iriTerm = const IriTerm(testIri);
 
         final result = mapper.fromRdfTerm(iriTerm, deserializationContext);
 
@@ -119,7 +119,7 @@ void main() {
       test('correctly handles IRIs with fragments in deserialization', () {
         const mapper = IriFullMapper();
         const testIri = 'http://example.org/ontology#Person';
-        final iriTerm = IriTerm(testIri);
+        final iriTerm = const IriTerm(testIri);
 
         final result = mapper.fromRdfTerm(iriTerm, deserializationContext);
 
@@ -129,7 +129,7 @@ void main() {
       test('preserves special characters during deserialization', () {
         const mapper = IriFullMapper();
         const testIri = 'http://example.org/resource/with%20encoded%20chars';
-        final iriTerm = IriTerm(testIri);
+        final iriTerm = const IriTerm(testIri);
 
         final result = mapper.fromRdfTerm(iriTerm, deserializationContext);
 

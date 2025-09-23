@@ -29,10 +29,10 @@ class ChildClass {
 /// Mapper for ParentClass which dynamically provides a mapper for ChildClass
 class ParentClassMapper implements GlobalResourceMapper<ParentClass> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/ParentClass');
+  final IriTerm typeIri = const IriTerm('http://example.org/ParentClass');
 
-  static final namePredicate = IriTerm('http://example.org/name');
-  static final childPredicate = IriTerm('http://example.org/child');
+  static final namePredicate = const IriTerm('http://example.org/name');
+  static final childPredicate = const IriTerm('http://example.org/child');
 
   @override
   ParentClass fromRdfResource(IriTerm subject, DeserializationContext context) {
@@ -43,10 +43,10 @@ class ParentClassMapper implements GlobalResourceMapper<ParentClass> {
       childPredicate,
       // Dynamically register a mapper for ChildClass that needs parent context
       // This simulates a scenario where the child mapper needs properties from the parent
-      deserializer: ChildClassMapper(parentId: subject.iri),
+      deserializer: ChildClassMapper(parentId: subject.value),
     );
 
-    return ParentClass(id: subject.iri, name: name, child: child);
+    return ParentClass(id: subject.value, name: name, child: child);
   }
 
   @override
@@ -56,7 +56,7 @@ class ParentClassMapper implements GlobalResourceMapper<ParentClass> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm(value.id))
+        .resourceBuilder(context.createIriTerm(value.id))
         .addValue(namePredicate, value.name)
         .addValue(
           childPredicate,
@@ -75,10 +75,10 @@ class ChildClassMapper implements GlobalResourceMapper<ChildClass> {
   ChildClassMapper({required this.parentId});
 
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/ChildClass');
+  final IriTerm typeIri = const IriTerm('http://example.org/ChildClass');
 
-  static final valuePredicate = IriTerm('http://example.org/value');
-  static final parentIdPredicate = IriTerm('http://example.org/parentId');
+  static final valuePredicate = const IriTerm('http://example.org/value');
+  static final parentIdPredicate = const IriTerm('http://example.org/parentId');
 
   @override
   ChildClass fromRdfResource(IriTerm subject, DeserializationContext context) {
@@ -87,7 +87,7 @@ class ChildClassMapper implements GlobalResourceMapper<ChildClass> {
 
     // Use the parentId that was passed to the mapper constructor
 
-    return ChildClass(id: subject.iri, value: value, parentId: parentId);
+    return ChildClass(id: subject.value, value: value, parentId: parentId);
   }
 
   @override
@@ -97,7 +97,7 @@ class ChildClassMapper implements GlobalResourceMapper<ChildClass> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm(value.id))
+        .resourceBuilder(context.createIriTerm(value.id))
         .addValue(valuePredicate, value.value)
         .addValue(parentIdPredicate, value.parentId)
         .build();
@@ -135,7 +135,7 @@ void main() {
 
       // Verify that the child was properly serialized
       final childTriples = graph.findTriples(
-        subject: IriTerm('http://example.org/child/1'),
+        subject: const IriTerm('http://example.org/child/1'),
       );
       expect(childTriples.length, greaterThan(0));
     });
@@ -207,10 +207,10 @@ void main() {
       expect(parent.child.value, equals('Child Value'));
       expect(remainder.triples.isEmpty, isFalse);
       expect(remainder.triples.length, 1);
-      expect(
-          remainder.triples[0].subject, IriTerm('http://example.org/child/1'));
+      expect(remainder.triples[0].subject,
+          const IriTerm('http://example.org/child/1'));
       expect(remainder.triples[0].predicate,
-          IriTerm('http://example.org/parentId'));
+          const IriTerm('http://example.org/parentId'));
       expect(remainder.triples[0].object,
           LiteralTerm('http://example.org/parent/1'));
     });

@@ -30,7 +30,7 @@ void main() {
         final result = serializer.toRdfTerm('resource/1', serializationContext);
 
         expect(result, isA<IriTerm>());
-        expect(result.iri, equals('http://example.org/base/resource/1'));
+        expect(result.value, equals('http://example.org/base/resource/1'));
       });
 
       test('resolves relative path with dot notation', () {
@@ -41,7 +41,7 @@ void main() {
             serializer.toRdfTerm('../other/resource', serializationContext);
 
         expect(result, isA<IriTerm>());
-        expect(result.iri, equals('http://example.org/base/other/resource'));
+        expect(result.value, equals('http://example.org/base/other/resource'));
       });
 
       test('resolves current directory reference', () {
@@ -51,7 +51,7 @@ void main() {
         final result = serializer.toRdfTerm('./resource', serializationContext);
 
         expect(result, isA<IriTerm>());
-        expect(result.iri, equals('http://example.org/base/resource'));
+        expect(result.value, equals('http://example.org/base/resource'));
       });
 
       test('resolves fragment-only reference', () {
@@ -61,7 +61,7 @@ void main() {
         final result = serializer.toRdfTerm('#section1', serializationContext);
 
         expect(result, isA<IriTerm>());
-        expect(result.iri, equals('http://example.org/base/document#section1'));
+        expect(result.value, equals('http://example.org/base/document#section1'));
       });
 
       test('resolves query-only reference', () {
@@ -73,7 +73,7 @@ void main() {
 
         expect(result, isA<IriTerm>());
         expect(
-            result.iri, equals('http://example.org/base/document?param=value'));
+            result.value, equals('http://example.org/base/document?param=value'));
       });
 
       test('resolves empty string to base URI', () {
@@ -83,7 +83,7 @@ void main() {
         final result = serializer.toRdfTerm('', serializationContext);
 
         expect(result, isA<IriTerm>());
-        expect(result.iri, equals('http://example.org/base/document'));
+        expect(result.value, equals('http://example.org/base/document'));
       });
 
       test('leaves absolute IRI unchanged', () {
@@ -94,7 +94,7 @@ void main() {
         final result = serializer.toRdfTerm(absoluteIri, serializationContext);
 
         expect(result, isA<IriTerm>());
-        expect(result.iri, equals(absoluteIri));
+        expect(result.value, equals(absoluteIri));
       });
 
       test('handles absolute IRI with same scheme but different authority', () {
@@ -105,7 +105,7 @@ void main() {
         final result = serializer.toRdfTerm(absoluteIri, serializationContext);
 
         expect(result, isA<IriTerm>());
-        expect(result.iri, equals(absoluteIri));
+        expect(result.value, equals(absoluteIri));
       });
 
       test('handles URN schemes correctly', () {
@@ -116,7 +116,7 @@ void main() {
         final result = serializer.toRdfTerm(urnIri, serializationContext);
 
         expect(result, isA<IriTerm>());
-        expect(result.iri, equals(urnIri));
+        expect(result.value, equals(urnIri));
       });
 
       test('resolves complex relative paths', () {
@@ -127,7 +127,7 @@ void main() {
             serializer.toRdfTerm('../../x/y/resource', serializationContext);
 
         expect(result, isA<IriTerm>());
-        expect(result.iri, equals('http://example.org/a/b/x/y/resource'));
+        expect(result.value, equals('http://example.org/a/b/x/y/resource'));
       });
 
       test('handles base URI without trailing slash', () {
@@ -137,7 +137,7 @@ void main() {
         final result = serializer.toRdfTerm('resource', serializationContext);
 
         expect(result, isA<IriTerm>());
-        expect(result.iri, equals('http://example.org/resource'));
+        expect(result.value, equals('http://example.org/resource'));
       });
 
       test('preserves query and fragment in relative IRIs', () {
@@ -148,7 +148,7 @@ void main() {
             'resource?param=value#section', serializationContext);
 
         expect(result, isA<IriTerm>());
-        expect(result.iri,
+        expect(result.value,
             equals('http://example.org/base/resource?param=value#section'));
       });
 
@@ -161,7 +161,7 @@ void main() {
 
         expect(result, isA<IriTerm>());
         // International characters get URL-encoded in IRIs
-        expect(result.iri,
+        expect(result.value,
             equals('http://example.org/base/r%C3%A9sum%C3%A9/andr%C3%A9'));
       });
     });
@@ -174,7 +174,7 @@ void main() {
         final result = serializer.toRdfTerm('resource', serializationContext);
 
         expect(result, isA<IriTerm>());
-        expect(result.iri, equals('http://example.org/resource'));
+        expect(result.value, equals('http://example.org/resource'));
       });
 
       test('handles base URI with fragment', () {
@@ -184,7 +184,7 @@ void main() {
         final result = serializer.toRdfTerm('resource', serializationContext);
 
         expect(result, isA<IriTerm>());
-        expect(result.iri, equals('http://example.org/resource'));
+        expect(result.value, equals('http://example.org/resource'));
       });
 
       test('handles malformed relative IRI gracefully', () {

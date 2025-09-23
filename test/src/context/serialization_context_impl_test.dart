@@ -37,7 +37,7 @@ void main() {
             .where(
               (triple) =>
                   triple.predicate == Rdf.type &&
-                  triple.subject == IriTerm(person.id),
+                  triple.subject == context.createIriTerm(person.id),
             )
             .toList();
 
@@ -66,7 +66,7 @@ void main() {
           .where(
             (triple) =>
                 triple.predicate == Rdf.type &&
-                triple.subject == IriTerm(person.id),
+                triple.subject == context.createIriTerm(person.id),
           )
           .toList();
 
@@ -87,8 +87,8 @@ void main() {
       );
 
       // Use childSubject to serialize the person as a child of another subject
-      final parentSubject = IriTerm('http://example.org/container/1');
-      final predicate = IriTerm('http://example.org/contains');
+      final parentSubject = const IriTerm('http://example.org/container/1');
+      final predicate = const IriTerm('http://example.org/contains');
       final triples = context.value(parentSubject, predicate, person);
 
       // Count the number of type triples for the person
@@ -96,7 +96,7 @@ void main() {
           .where(
             (triple) =>
                 triple.predicate == Rdf.type &&
-                triple.subject == IriTerm(person.id),
+                triple.subject == context.createIriTerm(person.id),
           )
           .toList();
 
@@ -118,7 +118,7 @@ class TestPerson {
 class TestPersonSerializerWithTypeTriple
     implements GlobalResourceSerializer<TestPerson> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/Person');
+  final IriTerm typeIri = const IriTerm('http://example.org/Person');
 
   @override
   (IriTerm, Iterable<Triple>) toRdfResource(
@@ -126,12 +126,12 @@ class TestPersonSerializerWithTypeTriple
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    final subject = IriTerm(value.id);
+    final subject = context.createIriTerm(value.id);
     final triples = <Triple>[
       // Name triple
       Triple(
         subject,
-        IriTerm('http://xmlns.com/foaf/0.1/name'),
+        const IriTerm('http://xmlns.com/foaf/0.1/name'),
         LiteralTerm.string(value.name),
       ),
 
@@ -147,7 +147,7 @@ class TestPersonSerializerWithTypeTriple
 class TestPersonSerializerWithoutTypeTriple
     implements GlobalResourceSerializer<TestPerson> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/Person');
+  final IriTerm typeIri = const IriTerm('http://example.org/Person');
 
   @override
   (IriTerm, Iterable<Triple>) toRdfResource(
@@ -155,12 +155,12 @@ class TestPersonSerializerWithoutTypeTriple
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    final subject = IriTerm(value.id);
+    final subject = context.createIriTerm(value.id);
     final triples = <Triple>[
       // Name triple
       Triple(
         subject,
-        IriTerm('http://xmlns.com/foaf/0.1/name'),
+        const IriTerm('http://xmlns.com/foaf/0.1/name'),
         LiteralTerm.string(value.name),
       ),
       // No type triple added here

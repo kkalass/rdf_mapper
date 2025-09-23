@@ -75,11 +75,11 @@ class Contact {
 // Mappers
 class PersonMapper implements GlobalResourceMapper<Person> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/Person');
+  final IriTerm typeIri = const IriTerm('http://example.org/Person');
 
-  static final namePredicate = IriTerm('http://example.org/name');
-  static final addressPredicate = IriTerm('http://example.org/address');
-  static final contactPredicate = IriTerm('http://example.org/contact');
+  static final namePredicate = const IriTerm('http://example.org/name');
+  static final addressPredicate = const IriTerm('http://example.org/address');
+  static final contactPredicate = const IriTerm('http://example.org/contact');
 
   @override
   Person fromRdfResource(IriTerm subject, DeserializationContext context) {
@@ -90,7 +90,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
     final contacts = reader.getValues<Contact>(contactPredicate);
 
     return Person(
-      id: subject.iri,
+      id: subject.value,
       name: name,
       address: address,
       contacts: contacts,
@@ -104,7 +104,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm(value.id))
+        .resourceBuilder(context.createIriTerm(value.id))
         .addValue(namePredicate, value.name)
         .addValueIfNotNull(addressPredicate, value.address)
         .addValues(contactPredicate, value.contacts)
@@ -114,10 +114,10 @@ class PersonMapper implements GlobalResourceMapper<Person> {
 
 class AddressMapper implements LocalResourceMapper<Address> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/Address');
+  final IriTerm typeIri = const IriTerm('http://example.org/Address');
 
-  static final streetPredicate = IriTerm('http://example.org/street');
-  static final cityPredicate = IriTerm('http://example.org/city');
+  static final streetPredicate = const IriTerm('http://example.org/street');
+  static final cityPredicate = const IriTerm('http://example.org/city');
 
   @override
   Address fromRdfResource(
@@ -145,10 +145,11 @@ class AddressMapper implements LocalResourceMapper<Address> {
 
 class ContactMapper implements GlobalResourceMapper<Contact> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/Contact');
+  final IriTerm typeIri = const IriTerm('http://example.org/Contact');
 
-  static final typePredicate = IriTerm('http://example.org/contactType');
-  static final valuePredicate = IriTerm('http://example.org/contactValue');
+  static final typePredicate = const IriTerm('http://example.org/contactType');
+  static final valuePredicate =
+      const IriTerm('http://example.org/contactValue');
 
   @override
   Contact fromRdfResource(IriTerm subject, DeserializationContext context) {
@@ -156,7 +157,7 @@ class ContactMapper implements GlobalResourceMapper<Contact> {
     final type = reader.require<String>(typePredicate);
     final value = reader.require<String>(valuePredicate);
 
-    return Contact(id: subject.iri, type: type, value: value);
+    return Contact(id: subject.value, type: type, value: value);
   }
 
   @override
@@ -166,7 +167,7 @@ class ContactMapper implements GlobalResourceMapper<Contact> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm(value.id))
+        .resourceBuilder(context.createIriTerm(value.id))
         .addValue(typePredicate, value.type)
         .addValue(valuePredicate, value.value)
         .build();
@@ -176,10 +177,10 @@ class ContactMapper implements GlobalResourceMapper<Contact> {
 // Standalone address mapper for IRI-based addresses (not blank nodes)
 class StandaloneAddressMapper implements GlobalResourceMapper<Address> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/Address');
+  final IriTerm typeIri = const IriTerm('http://example.org/Address');
 
-  static final streetPredicate = IriTerm('http://example.org/street');
-  static final cityPredicate = IriTerm('http://example.org/city');
+  static final streetPredicate = const IriTerm('http://example.org/street');
+  static final cityPredicate = const IriTerm('http://example.org/city');
 
   @override
   Address fromRdfResource(IriTerm subject, DeserializationContext context) {
@@ -197,7 +198,7 @@ class StandaloneAddressMapper implements GlobalResourceMapper<Address> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm('http://example.org/address/1'))
+        .resourceBuilder(const IriTerm('http://example.org/address/1'))
         .addValue(streetPredicate, value.street)
         .addValue(cityPredicate, value.city)
         .build();
@@ -370,15 +371,16 @@ void main() {
         final blankNode = BlankNodeTerm();
         final graph = RdfGraph(
           triples: [
-            Triple(blankNode, Rdf.type, IriTerm('http://example.org/Address')),
+            Triple(blankNode, Rdf.type,
+                const IriTerm('http://example.org/Address')),
             Triple(
               blankNode,
-              IriTerm('http://example.org/street'),
+              const IriTerm('http://example.org/street'),
               LiteralTerm.string('123 Isolated St'),
             ),
             Triple(
               blankNode,
-              IriTerm('http://example.org/city'),
+              const IriTerm('http://example.org/city'),
               LiteralTerm.string('Ghost Town'),
             ),
           ],

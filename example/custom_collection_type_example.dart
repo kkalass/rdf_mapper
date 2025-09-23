@@ -116,11 +116,11 @@ void _demonstrateRdfStructures(RdfMapper rdf) {
 class CollectionVocab {
   static const _base = 'http://example.org/vocab#';
 
-  static const Library = IriTerm.prevalidated(_base + 'Library');
-  static const tags = IriTerm.prevalidated(_base + 'tags');
-  static const collaborators = IriTerm.prevalidated(_base + 'collaborators');
-  static const members = IriTerm.prevalidated(_base + 'members');
-  static const director = IriTerm.prevalidated(_base + 'director');
+  static const Library = const IriTerm(_base + 'Library');
+  static const tags = const IriTerm(_base + 'tags');
+  static const collaborators = const IriTerm(_base + 'collaborators');
+  static const members = const IriTerm(_base + 'members');
+  static const director = const IriTerm(_base + 'director');
 }
 
 /// Library demonstrating different RDF mapping strategies for the same custom collection type.
@@ -186,7 +186,7 @@ class Person {
 // =============================================================================
 // MAPPERS
 // =============================================================================
-final IriTerm demoPredicate = IriTerm('http://example.org/items');
+final IriTerm demoPredicate = const IriTerm('http://example.org/items');
 
 class RdfListDemoMapper implements LocalResourceMapper<RdfListDemo> {
   @override
@@ -276,8 +276,8 @@ class LibraryMapper implements GlobalResourceMapper<Library> {
   Library fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return Library(
-      id: _extractIdFromIri(subject.iri),
-      name: reader.require<String>(IriTerm('http://schema.org/name')),
+      id: _extractIdFromIri(subject.value),
+      name: reader.require<String>(const IriTerm('http://schema.org/name')),
       // Strategy 1: Use RDF List for collaborators (preserves order)
       collaborators: reader
           .requireImmutableListRdfList<String>(CollectionVocab.collaborators),
@@ -294,10 +294,11 @@ class LibraryMapper implements GlobalResourceMapper<Library> {
   (IriTerm, Iterable<Triple>) toRdfResource(
       Library library, SerializationContext context,
       {RdfSubject? parentSubject}) {
-    final subject = IriTerm('http://example.org/library/${library.id}');
+    final subject =
+        context.createIriTerm('http://example.org/library/${library.id}');
     return context
         .resourceBuilder(subject)
-        .addValue(IriTerm('http://schema.org/name'), library.name)
+        .addValue(const IriTerm('http://schema.org/name'), library.name)
         // Strategy 1: Add as RDF List
         .addImmutableListRdfList<String>(
             CollectionVocab.collaborators, library.collaborators)
@@ -323,15 +324,15 @@ class LibraryMapper implements GlobalResourceMapper<Library> {
 /// Simple mapper for Person
 class PersonMapper implements GlobalResourceMapper<Person> {
   @override
-  final IriTerm typeIri = IriTerm('http://schema.org/Person');
+  final IriTerm typeIri = const IriTerm('http://schema.org/Person');
 
   @override
   Person fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return Person(
-      id: _extractIdFromIri(subject.iri),
-      name: reader.require<String>(IriTerm('http://schema.org/name')),
-      email: reader.require<String>(IriTerm('http://schema.org/email')),
+      id: _extractIdFromIri(subject.value),
+      name: reader.require<String>(const IriTerm('http://schema.org/name')),
+      email: reader.require<String>(const IriTerm('http://schema.org/email')),
     );
   }
 
@@ -339,11 +340,12 @@ class PersonMapper implements GlobalResourceMapper<Person> {
   (IriTerm, Iterable<Triple>) toRdfResource(
       Person person, SerializationContext context,
       {RdfSubject? parentSubject}) {
-    final subject = IriTerm('http://example.org/person/${person.id}');
+    final subject =
+        context.createIriTerm('http://example.org/person/${person.id}');
     return context
         .resourceBuilder(subject)
-        .addValue(IriTerm('http://schema.org/name'), person.name)
-        .addValue(IriTerm('http://schema.org/email'), person.email)
+        .addValue(const IriTerm('http://schema.org/name'), person.name)
+        .addValue(const IriTerm('http://schema.org/email'), person.email)
         .build();
   }
 

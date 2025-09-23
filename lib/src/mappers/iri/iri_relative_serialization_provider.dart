@@ -8,8 +8,8 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 /// for **code generation scenarios** and generic factory patterns where the base URI is not
 /// known at compile time.
 ///
-/// **For hand-written code**, directly using `IriRelativeSerializer(subject.iri)` and
-/// `IriRelativeDeserializer(subject.iri)` is usually simpler and more straightforward.
+/// **For hand-written code**, directly using `IriRelativeSerializer(subject.value)` and
+/// `IriRelativeDeserializer(subject.value)` is usually simpler and more straightforward.
 ///
 /// ## Key Features
 ///
@@ -36,7 +36,7 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 ///   Person fromRdfResource(IriTerm subject, DeserializationContext context) {
 ///     final reader = context.reader(subject);
 ///     return Person(
-///       id: subject.iri,
+///       id: subject.value,
 ///       name: reader.require<String>(FoafPerson.name),
 ///       // Automatically uses subject IRI as base - no hardcoded URIs!
 ///       photoPath: reader.optional<String>(
@@ -48,7 +48,7 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 ///
 ///   @override
 ///   (IriTerm, Iterable<Triple>) toRdfResource(Person person, SerializationContext context, {RdfSubject? parentSubject}) {
-///     final subject = IriTerm(person.id);
+///     final subject = const IriTerm(person.id);
 ///     return context
 ///         .resourceBuilder(subject)
 ///         .addValue(FoafPerson.name, person.name)
@@ -68,7 +68,7 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 /// // Simpler approach for hand-written code:
 /// photoPath: reader.optional<String>(
 ///   FoafPerson.image,
-///   deserializer: IriRelativeDeserializer(subject.iri)
+///   deserializer: IriRelativeDeserializer(subject.value)
 /// ),
 /// ```
 ///
@@ -117,7 +117,7 @@ final class IriRelativeSerializationProvider<D>
   @override
   Deserializer<String> deserializer(
       IriTerm subject, DeserializationContext context) {
-    return IriRelativeDeserializer(subject.iri);
+    return IriRelativeDeserializer(subject.value);
   }
 
   /// Creates a serializer that resolves relative IRIs against the subject IRI.
@@ -134,6 +134,6 @@ final class IriRelativeSerializationProvider<D>
   @override
   Serializer<String> serializer(
       D parent, IriTerm subject, SerializationContext context) {
-    return IriRelativeSerializer(subject.iri);
+    return IriRelativeSerializer(subject.value);
   }
 }

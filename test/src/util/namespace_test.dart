@@ -8,22 +8,22 @@ void main() {
       final foaf = Namespace('http://xmlns.com/foaf/0.1/');
       final schema = Namespace('http://schema.org/');
 
-      expect(foaf('Person').iri, equals('http://xmlns.com/foaf/0.1/Person'));
-      expect(schema('address').iri, equals('http://schema.org/address'));
+      expect(foaf('Person').value, equals('http://xmlns.com/foaf/0.1/Person'));
+      expect(schema('address').value, equals('http://schema.org/address'));
     });
 
     test('handles various namespace formats', () {
       // With trailing slash
       final ns1 = Namespace('http://example.org/ns/');
-      expect(ns1('test').iri, equals('http://example.org/ns/test'));
+      expect(ns1('test').value, equals('http://example.org/ns/test'));
 
       // With trailing hash
       final ns2 = Namespace('http://example.org/ns#');
-      expect(ns2('test').iri, equals('http://example.org/ns#test'));
+      expect(ns2('test').value, equals('http://example.org/ns#test'));
 
       // Without trailing delimiter
       final ns3 = Namespace('http://example.org/ns');
-      expect(ns3('test').iri, equals('http://example.org/nstest'));
+      expect(ns3('test').value, equals('http://example.org/nstest'));
     });
 
     test('provides access to base URI', () {
@@ -50,7 +50,7 @@ void main() {
 
     test('works in complex RDF builder scenarios', () {
       // Mock a simple node builder for testing
-      final mockSubject = IriTerm('http://example.org/subject');
+      final mockSubject = const IriTerm('http://example.org/subject');
       final triples = <Triple>[];
 
       void addTriple(RdfPredicate predicate, RdfObject object) {
@@ -67,18 +67,18 @@ void main() {
         foaf('age'),
         LiteralTerm(
           '25',
-          datatype: IriTerm('http://www.w3.org/2001/XMLSchema#integer'),
+          datatype: const IriTerm('http://www.w3.org/2001/XMLSchema#integer'),
         ),
       );
 
       // Verify triples were created correctly
       expect(triples.length, equals(2));
       expect(
-        (triples[0].predicate as IriTerm).iri,
+        (triples[0].predicate as IriTerm).value,
         equals('http://example.org/name'),
       );
       expect(
-        (triples[1].predicate as IriTerm).iri,
+        (triples[1].predicate as IriTerm).value,
         equals('http://xmlns.com/foaf/0.1/age'),
       );
     });

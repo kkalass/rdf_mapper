@@ -19,7 +19,7 @@ import 'package:rdf_vocabularies_core/xsd.dart';
 /// For RDF data using custom boolean datatypes:
 ///
 /// ```dart
-/// final customDatatype = IriTerm('http://example.org/custom-boolean');
+/// final customDatatype = const IriTerm('http://example.org/custom-boolean');
 /// final customMapper = BoolMapper(customDatatype);
 ///
 /// // Register globally or use locally

@@ -22,11 +22,11 @@ class Chapter {
 }
 
 class ChapterMapper implements LocalResourceMapper<Chapter> {
-  static final titlePredicate = IriTerm('http://example.org/title');
-  static final numberPredicate = IriTerm('http://example.org/number');
+  static final titlePredicate = const IriTerm('http://example.org/title');
+  static final numberPredicate = const IriTerm('http://example.org/number');
 
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/Chapter');
+  final IriTerm typeIri = const IriTerm('http://example.org/Chapter');
 
   @override
   Chapter fromRdfResource(BlankNodeTerm term, DeserializationContext context) {
@@ -78,12 +78,13 @@ void main() {
       // Check for type triple
       final typeTriples = graph.findTriples(
         subject: blankNode,
-        predicate: IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+        predicate:
+            const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
       );
       expect(typeTriples.length, equals(1));
       expect(
         typeTriples[0].object,
-        equals(IriTerm('http://example.org/Chapter')),
+        equals(const IriTerm('http://example.org/Chapter')),
       );
 
       // Check for title
@@ -112,8 +113,8 @@ void main() {
       final triples = [
         Triple(
           blankNode,
-          IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-          IriTerm('http://example.org/Chapter'),
+          const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+          const IriTerm('http://example.org/Chapter'),
         ),
         Triple(
           blankNode,
@@ -153,7 +154,8 @@ void main() {
       final blankNode = graph.triples.first.subject as BlankNodeTerm;
       final typeTriples = graph.findTriples(
         subject: blankNode,
-        predicate: IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+        predicate:
+            const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
       );
       expect(typeTriples.length, equals(0));
 
@@ -239,7 +241,7 @@ class AnonymousData {
 }
 
 class AnonymousMapper implements LocalResourceMapper<AnonymousData> {
-  static final contentPredicate = IriTerm('http://example.org/content');
+  static final contentPredicate = const IriTerm('http://example.org/content');
 
   @override
   final IriTerm? typeIri = null; // Explicitly null
@@ -274,11 +276,11 @@ class Document {
 }
 
 class DocumentMapper implements GlobalResourceMapper<Document> {
-  static final titlePredicate = IriTerm('http://example.org/title');
-  static final chaptersPredicate = IriTerm('http://example.org/chapters');
+  static final titlePredicate = const IriTerm('http://example.org/title');
+  static final chaptersPredicate = const IriTerm('http://example.org/chapters');
 
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/Document');
+  final IriTerm typeIri = const IriTerm('http://example.org/Document');
 
   @override
   Document fromRdfResource(IriTerm term, DeserializationContext context) {
@@ -301,7 +303,7 @@ class DocumentMapper implements GlobalResourceMapper<Document> {
 
     // Use the childResources method to properly handle the chapters
     return context
-        .resourceBuilder(IriTerm(docId))
+        .resourceBuilder(context.createIriTerm(docId))
         .addValue(titlePredicate, document.title)
         .addValues(chaptersPredicate, document.chapters)
         .build();

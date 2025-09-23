@@ -215,7 +215,7 @@ class BookMapper implements GlobalResourceMapper<Book> {
     final reader = context.reader(subject);
     return Book(
       // Extract just the identifier part from the IRI
-      id: _extractIdFromIri(subject.iri),
+      id: _extractIdFromIri(subject.value),
       title: reader.require<String>(titlePredicate),
       author: reader.require<String>(authorPredicate),
       published: reader.require<DateTime>(publishedPredicate),
@@ -233,7 +233,7 @@ class BookMapper implements GlobalResourceMapper<Book> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm(_createIriFromId(book.id)))
+        .resourceBuilder(context.createIriTerm(_createIriFromId(book.id)))
         .addValue(titlePredicate, book.title)
         .addValue(authorPredicate, book.author)
         .addValue<DateTime>(publishedPredicate, book.published)
@@ -288,12 +288,12 @@ class ISBNMapper implements IriTermMapper<ISBN> {
 
   @override
   IriTerm toRdfTerm(ISBN isbn, SerializationContext context) {
-    return IriTerm('$ISBN_URI_PREFIX${isbn.value}');
+    return context.createIriTerm('$ISBN_URI_PREFIX${isbn.value}');
   }
 
   @override
   ISBN fromRdfTerm(IriTerm term, DeserializationContext context) {
-    final uri = term.iri;
+    final uri = term.value;
     if (!uri.startsWith(ISBN_URI_PREFIX)) {
       throw ArgumentError('Invalid ISBN URI format: $uri');
     }

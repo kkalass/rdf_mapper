@@ -70,7 +70,10 @@ abstract class BaseRdfIriTermMapper<T> implements IriTermMapper<T> {
   ///
   /// [template] The URI template with placeholders (e.g., 'https://example.org/{category}/{value}')
   /// [valueVariableName] The name of the placeholder that represents the object value
-  const BaseRdfIriTermMapper(this.template, this.valueVariableName);
+  const BaseRdfIriTermMapper(
+    this.template,
+    this.valueVariableName,
+  );
 
   /// Provides values for extra placeholders in the template.
   ///
@@ -169,12 +172,12 @@ abstract class BaseRdfIriTermMapper<T> implements IriTermMapper<T> {
       }
     });
 
-    return IriTerm(iri);
+    return context.createIriTerm(iri);
   }
 
   @override
   T fromRdfTerm(IriTerm term, DeserializationContext context) {
-    final iri = term.iri;
+    final iri = term.value;
     final match = _extractionPattern.firstMatch(iri);
 
     if (match == null) {

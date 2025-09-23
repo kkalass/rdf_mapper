@@ -74,7 +74,7 @@ class DocumentMapper<T> implements GlobalResourceMapper<Document<T>> {
   Document<T> fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
 
-    final documentIri = subject.iri;
+    final documentIri = subject.value;
     final T primaryTopic = reader.require(
       FoafPersonalProfileDocument.primaryTopic,
       deserializer: _primaryTopicProvider.deserializer(subject, context),
@@ -97,7 +97,7 @@ class DocumentMapper<T> implements GlobalResourceMapper<Document<T>> {
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    final subject = IriTerm(document.documentIri);
+    final subject = context.createIriTerm(document.documentIri);
 
     return context
         .resourceBuilder(subject)
@@ -135,7 +135,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
         deserializer: IriRelativeDeserializer(docIri));
 
     return Person(
-      id: subject.iri,
+      id: subject.value,
       name: reader.require<String>(FoafPerson.name),
       email: reader.optional<String>(FoafPerson.schemahttpEmail),
       birthDate: reader.optional<DateTime>(FoafPerson.schemahttpBirthDate,
@@ -150,7 +150,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    final subject = IriTerm(person.id);
+    final subject = context.createIriTerm(person.id);
 
     // Convert relative photo path back to absolute IRI
     final docIri = documentIriProvider();
@@ -176,7 +176,7 @@ void main() {
         primaryTopic:
             SerializationProvider.iriContextual<Document<Person>, Person>(
       (IriTerm documentIri) => PersonMapper(
-        documentIriProvider: () => documentIri.iri,
+        documentIriProvider: () => documentIri.value,
       ),
     ))));
 

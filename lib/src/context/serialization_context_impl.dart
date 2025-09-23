@@ -28,14 +28,24 @@ final _log = Logger("rdf_orm.serialization");
 class SerializationContextImpl extends SerializationContext
     implements SerializationService {
   final RdfMapperRegistry _registry;
+  final IriTermFactory _iriTermFactory;
 
-  SerializationContextImpl({required RdfMapperRegistry registry})
-      : _registry = registry;
+  SerializationContextImpl(
+      {required RdfMapperRegistry registry,
+      IriTermFactory iriTermFactory = IriTerm.validated})
+      : _registry = registry,
+        _iriTermFactory = iriTermFactory;
+
+  @override
+  IriTerm createIriTerm(String value) => _iriTermFactory(value);
 
   /// Implementation of the resourceBuilder method to support fluent API.
   @override
   ResourceBuilder<S> resourceBuilder<S extends RdfSubject>(S subject) {
-    return ResourceBuilder<S>(subject, this);
+    return ResourceBuilder<S>(
+      subject,
+      this,
+    );
   }
 
   /// Converts a Dart object to an RDF literal term.

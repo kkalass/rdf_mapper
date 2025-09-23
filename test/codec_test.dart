@@ -307,7 +307,7 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   TestPerson fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return TestPerson(
-      id: subject.iri,
+      id: subject.value,
       name: reader.require<String>(_ns('name')),
       age: reader.require<int>(_ns('age')),
       address: reader.optional<TestAddress>(_ns('address')),
@@ -321,8 +321,8 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
     RdfSubject? parentSubject,
   }) =>
       context
-          .resourceBuilder(IriTerm(instance.id))
-          .addValue<String>(Rdf.type, _ns('Person').iri,
+          .resourceBuilder(context.createIriTerm(instance.id))
+          .addValue<String>(Rdf.type, _ns('Person').value,
               // String value would default to Literal, so we need to specify
               // the IriTermSerializer to ensure it is serialized as an Iri
               serializer: const IriFullSerializer())
@@ -356,7 +356,7 @@ class TestAddressMapper implements LocalResourceMapper<TestAddress> {
   }) =>
       context
           .resourceBuilder(BlankNodeTerm())
-          .addValue<String>(Rdf.type, _ns('Address').iri,
+          .addValue<String>(Rdf.type, _ns('Address').value,
               // String value would default to Literal, so we need to specify
               // the IriTermSerializer to ensure it is serialized as an Iri
               serializer: const IriFullSerializer())
@@ -375,7 +375,7 @@ class TestCompanyMapper implements GlobalResourceMapper<TestCompany> {
   TestCompany fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return TestCompany(
-      id: subject.iri,
+      id: subject.value,
       name: reader.require<String>(_ns('name')),
       foundedYear: reader.require<int>(_ns('foundedYear')),
     );
@@ -388,7 +388,7 @@ class TestCompanyMapper implements GlobalResourceMapper<TestCompany> {
     RdfSubject? parentSubject,
   }) =>
       context
-          .resourceBuilder(IriTerm(instance.id))
+          .resourceBuilder(context.createIriTerm(instance.id))
           // IriTerm is automatically serialized as an IriTerm, we don't need to specify
           // the IriTermSerializer
           .addValue(Rdf.type, _ns('Company'))

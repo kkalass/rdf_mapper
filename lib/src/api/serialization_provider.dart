@@ -54,7 +54,7 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 ///     SerializationContext context, {
 ///     RdfSubject? parentSubject,
 ///   }) {
-///     final subject = IriTerm(document.documentIri);
+///     final subject = const IriTerm(document.documentIri);
 ///     return context
 ///         .resourceBuilder(subject)
 ///         .addValue(

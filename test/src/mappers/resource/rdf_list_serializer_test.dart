@@ -55,7 +55,7 @@ class TestProduct {
 /// Custom serializers for testing
 class TestPersonSerializer implements LocalResourceSerializer<TestPerson> {
   @override
-  IriTerm? get typeIri => IriTerm('http://example.org/Person');
+  IriTerm? get typeIri => const IriTerm('http://example.org/Person');
 
   @override
   (BlankNodeTerm, Iterable<Triple>) toRdfResource(
@@ -63,9 +63,9 @@ class TestPersonSerializer implements LocalResourceSerializer<TestPerson> {
       {RdfSubject? parentSubject}) {
     final subject = BlankNodeTerm();
     final triples = [
-      Triple(subject, IriTerm('http://example.org/name'),
+      Triple(subject, const IriTerm('http://example.org/name'),
           LiteralTerm.string(instance.name)),
-      Triple(subject, IriTerm('http://example.org/age'),
+      Triple(subject, const IriTerm('http://example.org/age'),
           LiteralTerm.typed(instance.age.toString(), 'integer')),
     ];
     return (subject, triples);
@@ -74,17 +74,18 @@ class TestPersonSerializer implements LocalResourceSerializer<TestPerson> {
 
 class TestProductSerializer implements GlobalResourceSerializer<TestProduct> {
   @override
-  IriTerm get typeIri => IriTerm('http://example.org/Product');
+  IriTerm get typeIri => const IriTerm('http://example.org/Product');
 
   @override
   (IriTerm, Iterable<Triple>) toRdfResource(
       TestProduct instance, SerializationContext context,
       {RdfSubject? parentSubject}) {
-    final subject = IriTerm('http://example.org/product/${instance.id}');
+    final subject =
+        context.createIriTerm('http://example.org/product/${instance.id}');
     final triples = [
-      Triple(subject, IriTerm('http://example.org/name'),
+      Triple(subject, const IriTerm('http://example.org/name'),
           LiteralTerm.string(instance.name)),
-      Triple(subject, IriTerm('http://example.org/price'),
+      Triple(subject, const IriTerm('http://example.org/price'),
           LiteralTerm.typed(instance.price.toString(), 'decimal')),
     ];
     return (subject, triples);
@@ -104,7 +105,7 @@ class CycleDetectingPersonSerializer
   static int serializationCount = 0;
 
   @override
-  IriTerm? get typeIri => IriTerm('http://example.org/Person');
+  IriTerm? get typeIri => const IriTerm('http://example.org/Person');
 
   @override
   (BlankNodeTerm, Iterable<Triple>) toRdfResource(
@@ -118,9 +119,9 @@ class CycleDetectingPersonSerializer
 
     final subject = BlankNodeTerm();
     final triples = [
-      Triple(subject, IriTerm('http://example.org/name'),
+      Triple(subject, const IriTerm('http://example.org/name'),
           LiteralTerm.string(instance.name)),
-      Triple(subject, IriTerm('http://example.org/age'),
+      Triple(subject, const IriTerm('http://example.org/age'),
           LiteralTerm.typed(instance.age.toString(), 'integer')),
     ];
     return (subject, triples);
@@ -136,7 +137,7 @@ class SafePersonSerializer implements LocalResourceSerializer<TestPerson> {
   final Map<TestPerson, BlankNodeTerm> _serializedObjects = {};
 
   @override
-  IriTerm? get typeIri => IriTerm('http://example.org/Person');
+  IriTerm? get typeIri => const IriTerm('http://example.org/Person');
 
   @override
   (BlankNodeTerm, Iterable<Triple>) toRdfResource(
@@ -147,9 +148,9 @@ class SafePersonSerializer implements LocalResourceSerializer<TestPerson> {
         _serializedObjects.putIfAbsent(instance, () => BlankNodeTerm());
 
     final triples = [
-      Triple(subject, IriTerm('http://example.org/name'),
+      Triple(subject, const IriTerm('http://example.org/name'),
           LiteralTerm.string(instance.name)),
-      Triple(subject, IriTerm('http://example.org/age'),
+      Triple(subject, const IriTerm('http://example.org/age'),
           LiteralTerm.typed(instance.age.toString(), 'integer')),
     ];
     return (subject, triples);
@@ -161,7 +162,7 @@ class FailingPersonSerializer implements LocalResourceSerializer<TestPerson> {
   static int callCount = 0;
 
   @override
-  IriTerm? get typeIri => IriTerm('http://example.org/Person');
+  IriTerm? get typeIri => const IriTerm('http://example.org/Person');
 
   @override
   (BlankNodeTerm, Iterable<Triple>) toRdfResource(
@@ -174,7 +175,7 @@ class FailingPersonSerializer implements LocalResourceSerializer<TestPerson> {
 
     final subject = BlankNodeTerm();
     final triples = [
-      Triple(subject, IriTerm('http://example.org/name'),
+      Triple(subject, const IriTerm('http://example.org/name'),
           LiteralTerm.string(instance.name)),
     ];
     return (subject, triples);
@@ -191,7 +192,7 @@ class CountingPersonSerializer implements LocalResourceSerializer<TestPerson> {
   static const maxDepth = 1000;
 
   @override
-  IriTerm? get typeIri => IriTerm('http://example.org/Person');
+  IriTerm? get typeIri => const IriTerm('http://example.org/Person');
 
   @override
   (BlankNodeTerm, Iterable<Triple>) toRdfResource(
@@ -205,9 +206,9 @@ class CountingPersonSerializer implements LocalResourceSerializer<TestPerson> {
     try {
       final subject = BlankNodeTerm();
       final triples = [
-        Triple(subject, IriTerm('http://example.org/name'),
+        Triple(subject, const IriTerm('http://example.org/name'),
             LiteralTerm.string('${instance.name}_$depth')),
-        Triple(subject, IriTerm('http://example.org/age'),
+        Triple(subject, const IriTerm('http://example.org/age'),
             LiteralTerm.typed(instance.age.toString(), 'integer')),
       ];
       return (subject, triples);
@@ -350,7 +351,7 @@ void main() {
 
       // Check that person properties are included
       final nameTriples = triples
-          .where((t) => t.predicate == IriTerm('http://example.org/name'))
+          .where((t) => t.predicate == const IriTerm('http://example.org/name'))
           .toList();
       expect(nameTriples.length, equals(2));
 
@@ -382,7 +383,7 @@ void main() {
       expect(firstTriples.length, equals(2));
 
       final productIris =
-          firstTriples.map((t) => (t.object as IriTerm).iri).toSet();
+          firstTriples.map((t) => (t.object as IriTerm).value).toSet();
       expect(
           productIris,
           equals({
@@ -487,7 +488,7 @@ void main() {
       for (int i = 0; i < 3; i++) {
         final firstTriple = triples.firstWhere(
             (t) => t.subject == currentNode && t.predicate == Rdf.first);
-        final iri = (firstTriple.object as IriTerm).iri;
+        final iri = (firstTriple.object as IriTerm).value;
         orderedIris.add(iri);
 
         if (i < 2) {
@@ -536,8 +537,8 @@ void main() {
       for (final triple in firstTriples) {
         expect(triple.object, isA<LiteralTerm>());
         final literal = triple.object as LiteralTerm;
-        expect(
-            literal.datatype.iri, contains('date')); // Should be dateTime type
+        expect(literal.datatype.value,
+            contains('date')); // Should be dateTime type
       }
     });
 
@@ -641,7 +642,7 @@ void main() {
 
       // Verify all persons were serialized
       final nameTriples = triples
-          .where((t) => t.predicate == IriTerm('http://example.org/name'))
+          .where((t) => t.predicate == const IriTerm('http://example.org/name'))
           .length;
       expect(nameTriples, equals(10));
     });

@@ -26,7 +26,7 @@ void main() {
       test('relativizes IRI within same directory', () {
         const baseUri = 'http://example.org/base/';
         const deserializer = IriRelativeDeserializer(baseUri);
-        final term = IriTerm('http://example.org/base/resource');
+        final term = const IriTerm('http://example.org/base/resource');
 
         final result = deserializer.fromRdfTerm(term, deserializationContext);
 
@@ -36,7 +36,7 @@ void main() {
       test('relativizes IRI in subdirectory', () {
         const baseUri = 'http://example.org/base/';
         const deserializer = IriRelativeDeserializer(baseUri);
-        final term = IriTerm('http://example.org/base/subdir/resource');
+        final term = const IriTerm('http://example.org/base/subdir/resource');
 
         final result = deserializer.fromRdfTerm(term, deserializationContext);
 
@@ -46,7 +46,7 @@ void main() {
       test('relativizes IRI with dot notation for parent directory', () {
         const baseUri = 'http://example.org/base/dir/';
         const deserializer = IriRelativeDeserializer(baseUri);
-        final term = IriTerm('http://example.org/base/other/resource');
+        final term = const IriTerm('http://example.org/base/other/resource');
 
         final result = deserializer.fromRdfTerm(term, deserializationContext);
 
@@ -56,7 +56,7 @@ void main() {
       test('relativizes fragment-only difference', () {
         const baseUri = 'http://example.org/base/document';
         const deserializer = IriRelativeDeserializer(baseUri);
-        final term = IriTerm('http://example.org/base/document#section1');
+        final term = const IriTerm('http://example.org/base/document#section1');
 
         final result = deserializer.fromRdfTerm(term, deserializationContext);
 
@@ -66,7 +66,8 @@ void main() {
       test('relativizes query-only difference', () {
         const baseUri = 'http://example.org/base/document';
         const deserializer = IriRelativeDeserializer(baseUri);
-        final term = IriTerm('http://example.org/base/document?param=value');
+        final term =
+            const IriTerm('http://example.org/base/document?param=value');
 
         final result = deserializer.fromRdfTerm(term, deserializationContext);
 
@@ -77,7 +78,7 @@ void main() {
       test('returns empty string for identical IRIs', () {
         const baseUri = 'http://example.org/base/document';
         const deserializer = IriRelativeDeserializer(baseUri);
-        final term = IriTerm('http://example.org/base/document');
+        final term = const IriTerm('http://example.org/base/document');
 
         final result = deserializer.fromRdfTerm(term, deserializationContext);
 
@@ -89,7 +90,7 @@ void main() {
           () {
         const baseUri = 'http://example.org/base/';
         const deserializer = IriRelativeDeserializer(baseUri);
-        final term = IriTerm('https://other.org/resource');
+        final term = const IriTerm('https://other.org/resource');
 
         final result = deserializer.fromRdfTerm(term, deserializationContext);
 
@@ -100,7 +101,7 @@ void main() {
           () {
         const baseUri = 'http://example.org/base/';
         const deserializer = IriRelativeDeserializer(baseUri);
-        final term = IriTerm('ftp://example.org/resource');
+        final term = const IriTerm('ftp://example.org/resource');
 
         final result = deserializer.fromRdfTerm(term, deserializationContext);
 
@@ -110,7 +111,7 @@ void main() {
       test('returns absolute URN unchanged', () {
         const baseUri = 'http://example.org/base/';
         const deserializer = IriRelativeDeserializer(baseUri);
-        final term = IriTerm('urn:isbn:0451450523');
+        final term = const IriTerm('urn:isbn:0451450523');
 
         final result = deserializer.fromRdfTerm(term, deserializationContext);
 
@@ -120,7 +121,7 @@ void main() {
       test('relativizes complex nested paths', () {
         const baseUri = 'http://example.org/a/b/c/';
         const deserializer = IriRelativeDeserializer(baseUri);
-        final term = IriTerm('http://example.org/a/b/x/y/resource');
+        final term = const IriTerm('http://example.org/a/b/x/y/resource');
 
         final result = deserializer.fromRdfTerm(term, deserializationContext);
 
@@ -130,7 +131,7 @@ void main() {
       test('relativizes with multiple parent directory references', () {
         const baseUri = 'http://example.org/a/b/c/d/';
         const deserializer = IriRelativeDeserializer(baseUri);
-        final term = IriTerm('http://example.org/a/x/resource');
+        final term = const IriTerm('http://example.org/a/x/resource');
 
         final result = deserializer.fromRdfTerm(term, deserializationContext);
 
@@ -140,7 +141,7 @@ void main() {
       test('handles base URI without trailing slash', () {
         const baseUri = 'http://example.org/base';
         const deserializer = IriRelativeDeserializer(baseUri);
-        final term = IriTerm('http://example.org/resource');
+        final term = const IriTerm('http://example.org/resource');
 
         final result = deserializer.fromRdfTerm(term, deserializationContext);
 
@@ -150,8 +151,8 @@ void main() {
       test('preserves query and fragment in relative result', () {
         const baseUri = 'http://example.org/base/';
         const deserializer = IriRelativeDeserializer(baseUri);
-        final term =
-            IriTerm('http://example.org/base/resource?param=value#section');
+        final term = const IriTerm(
+            'http://example.org/base/resource?param=value#section');
 
         final result = deserializer.fromRdfTerm(term, deserializationContext);
 
@@ -162,8 +163,8 @@ void main() {
         const baseUri = 'http://example.org/base/';
         const deserializer = IriRelativeDeserializer(baseUri);
         // Use URL-encoded form as that's what the IRI term would actually contain
-        final term =
-            IriTerm('http://example.org/base/r%C3%A9sum%C3%A9/andr%C3%A9');
+        final term = const IriTerm(
+            'http://example.org/base/r%C3%A9sum%C3%A9/andr%C3%A9');
 
         final result = deserializer.fromRdfTerm(term, deserializationContext);
 
@@ -174,7 +175,7 @@ void main() {
       test('relativizes when base has query but target does not', () {
         const baseUri = 'http://example.org/base?param=value';
         const deserializer = IriRelativeDeserializer(baseUri);
-        final term = IriTerm('http://example.org/resource');
+        final term = const IriTerm('http://example.org/resource');
 
         final result = deserializer.fromRdfTerm(term, deserializationContext);
 
@@ -186,7 +187,7 @@ void main() {
       test('relativizes when base has fragment but target does not', () {
         const baseUri = 'http://example.org/base#fragment';
         const deserializer = IriRelativeDeserializer(baseUri);
-        final term = IriTerm('http://example.org/resource');
+        final term = const IriTerm('http://example.org/resource');
 
         final result = deserializer.fromRdfTerm(term, deserializationContext);
 
@@ -199,7 +200,7 @@ void main() {
         const baseUri = 'http://example.org/base/';
         const deserializer = IriRelativeDeserializer(baseUri);
         const originalIri = 'http://example.org/base/subdir/resource';
-        final term = IriTerm(originalIri);
+        final term = const IriTerm(originalIri);
 
         final relativized =
             deserializer.fromRdfTerm(term, deserializationContext);

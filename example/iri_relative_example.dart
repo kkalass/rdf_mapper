@@ -36,7 +36,7 @@ void main() {
   for (final relativeIri in relativeIris) {
     final iriTerm =
         serializer.toRdfTerm(relativeIri, MockSerializationContext());
-    print('  "$relativeIri" → "${iriTerm.iri}"');
+    print('  "$relativeIri" → "${iriTerm.value}"');
   }
 
   print('');
@@ -57,7 +57,7 @@ void main() {
   ];
 
   for (final absoluteIri in absoluteIris) {
-    final iriTerm = IriTerm(absoluteIri);
+    final iriTerm = IriTerm.validated(absoluteIri);
     final result =
         deserializer.fromRdfTerm(iriTerm, MockDeserializationContext());
     final status = result == absoluteIri ? '(unchanged)' : '(relativized)';
@@ -90,7 +90,7 @@ void main() {
     final consistent = relativeIri == backToRelative;
     final status = consistent ? '✓' : '✗';
 
-    print('  $status "$relativeIri" → "${iriTerm.iri}" → "$backToRelative"');
+    print('  $status "$relativeIri" → "${iriTerm.value}" → "$backToRelative"');
   }
 
   print('');
@@ -112,7 +112,7 @@ void main() {
     final result =
         mapper.toRdfTerm(testRelativeIri, MockSerializationContext());
     print('  Base: $base');
-    print('    "$testRelativeIri" → "${result.iri}"');
+    print('    "$testRelativeIri" → "${result.value}"');
   }
 
   print('');
@@ -136,7 +136,7 @@ void main() {
   print('  Converting relative doc links to absolute IRIs:');
   for (final link in documentLinks) {
     final iri = docMapper.toRdfTerm(link, MockSerializationContext());
-    print('    $link → ${iri.iri}');
+    print('    $link → ${iri.value}');
   }
 
   print('');
@@ -156,7 +156,7 @@ void main() {
   print('  Converting relative API paths to absolute IRIs:');
   for (final endpoint in apiEndpoints) {
     final iri = apiMapper.toRdfTerm(endpoint, MockSerializationContext());
-    print('    $endpoint → ${iri.iri}');
+    print('    $endpoint → ${iri.value}');
   }
 
   print('');
@@ -176,7 +176,7 @@ void main() {
 
   print('  Converting absolute URIs to relative for compact storage:');
   for (final uri in absoluteContentUris) {
-    final iriTerm = IriTerm(uri);
+    final iriTerm = IriTerm.validated(uri);
     final relative =
         cmsMapper.fromRdfTerm(iriTerm, MockDeserializationContext());
     final isRelative = relative != uri;

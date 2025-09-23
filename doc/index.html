@@ -103,12 +103,12 @@ class Person {
                         <pre class="code-content" id="mapper-tab"><code class="language-dart">// Custom mapper for bidirectional conversion
 class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
   // Define predicates as fields for readability
-  final IriTerm namePredicate = IriTerm('http://xmlns.com/foaf/0.1/name');
-  final IriTerm agePredicate = IriTerm('http://xmlns.com/foaf/0.1/age');
+  final IriTerm namePredicate = const IriTerm('http://xmlns.com/foaf/0.1/name');
+  final IriTerm agePredicate = const IriTerm('http://xmlns.com/foaf/0.1/age');
   
   // Define the RDF type for Person objects
   @override
-  IriTerm? get typeIri => IriTerm('http://xmlns.com/foaf/0.1/Person');
+  IriTerm? get typeIri => const IriTerm('http://xmlns.com/foaf/0.1/Person');
   
   // Convert Person object to RDF (serialization)
   @override
@@ -118,7 +118,7 @@ class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
       {RdfSubject? parentSubject}) {
 
     // Using fluent builder API for clean triple creation
-    return context.resourceBuilder(IriTerm(value.id))
+    return context.resourceBuilder(const IriTerm(value.id))
       .addValue(namePredicate, value.name)
       .addValue(agePredicate, value.age)
       .build();
@@ -587,7 +587,7 @@ class BookMapper implements GlobalResourceMapper&lt;Book&gt; {
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm('$bookIriPrefix${book.id}'))
+        .resourceBuilder(const IriTerm('$bookIriPrefix${book.id}'))
         .addValue(titlePredicate, book.title)
         .addValue(authorPredicate, book.author)
         .addValue&lt;DateTime&gt;(publishedPredicate, book.published)
@@ -664,7 +664,7 @@ class ISBNMapper implements IriTermMapper&lt;ISBN&gt; {
 
   @override
   IriTerm toRdfTerm(ISBN value, SerializationContext context) {
-    return IriTerm('$ISBN_URI_PREFIX${value.value}');
+    return const IriTerm('$ISBN_URI_PREFIX${value.value}');
   }
   
   @override

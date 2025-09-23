@@ -213,7 +213,7 @@ abstract mixin class RdfContainerDeserializerMixin<T> {
 
     for (final triple in subjectTriples) {
       if (triple.predicate is IriTerm) {
-        final predicateIri = (triple.predicate as IriTerm).iri;
+        final predicateIri = (triple.predicate as IriTerm).value;
         if (predicateIri.startsWith('${rdfNamespace}_')) {
           final numberStr = predicateIri.substring('${rdfNamespace}_'.length);
           final number = int.tryParse(numberStr);
@@ -245,7 +245,7 @@ abstract mixin class RdfContainerDeserializerMixin<T> {
 
   /// Formats an IRI for display in error messages.
   String _formatIri(IriTerm iri) {
-    final iriStr = iri.iri;
+    final iriStr = iri.value;
     // Try to show common namespace prefixes
     if (iriStr.startsWith('http://www.w3.org/1999/02/22-rdf-syntax-ns#')) {
       return 'rdf:${iriStr.substring('http://www.w3.org/1999/02/22-rdf-syntax-ns#'.length)}';

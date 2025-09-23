@@ -16,9 +16,9 @@ void main() {
 
   group('ResourceBuilder', () {
     test('constant method should add direct RDF object term', () {
-      final subject = IriTerm('http://example.org/resource/1');
-      final predicate = IriTerm('http://example.org/predicate');
-      final object = IriTerm('http://example.org/object');
+      final subject = const IriTerm('http://example.org/resource/1');
+      final predicate = const IriTerm('http://example.org/predicate');
+      final object = const IriTerm('http://example.org/object');
 
       final (_, triples) =
           context.resourceBuilder(subject).addValue(predicate, object).build();
@@ -30,8 +30,8 @@ void main() {
     test(
       'literals method should extract multiple literal values from source object',
       () {
-        final subject = IriTerm('http://example.org/resource/1');
-        final predicate = IriTerm('http://example.org/tag');
+        final subject = const IriTerm('http://example.org/resource/1');
+        final predicate = const IriTerm('http://example.org/tag');
         final container = TestContainer(tags: ['tag1', 'tag2', 'tag3']);
 
         final (_, triples) = context
@@ -58,8 +58,8 @@ void main() {
     test(
       'iris method should extract multiple IRI values from source object',
       () {
-        final subject = IriTerm('http://example.org/resource/1');
-        final predicate = IriTerm('http://example.org/relation');
+        final subject = const IriTerm('http://example.org/resource/1');
+        final predicate = const IriTerm('http://example.org/relation');
         final container = TestContainer(
           relatedIds: [
             'http://example.org/related/1',
@@ -87,7 +87,7 @@ void main() {
           }),
         );
         expect(
-          triples.map((t) => (t.object as IriTerm).iri).toSet(),
+          triples.map((t) => (t.object as IriTerm).value).toSet(),
           equals({
             'http://example.org/related/1',
             'http://example.org/related/2',
@@ -104,8 +104,8 @@ void main() {
         final personSerializer = TestPersonSerializer();
         registry.registerSerializer<TestPerson>(personSerializer);
 
-        final subject = IriTerm('http://example.org/resource/1');
-        final predicate = IriTerm('http://example.org/hasMember');
+        final subject = const IriTerm('http://example.org/resource/1');
+        final predicate = const IriTerm('http://example.org/hasMember');
         final container = TestContainer(
           people: [
             TestPerson(id: 'http://example.org/person/1', name: 'Alice'),
@@ -131,7 +131,7 @@ void main() {
 
         expect(linkTriples.length, equals(2));
         expect(
-          linkTriples.map((t) => (t.object as IriTerm).iri).toSet(),
+          linkTriples.map((t) => (t.object as IriTerm).value).toSet(),
           equals({
             'http://example.org/person/1',
             'http://example.org/person/2',
@@ -141,7 +141,9 @@ void main() {
         // Check name triples for each person
         final nameTriples = triples
             .where(
-              (t) => t.predicate == IriTerm('http://xmlns.com/foaf/0.1/name'),
+              (t) =>
+                  t.predicate ==
+                  const IriTerm('http://xmlns.com/foaf/0.1/name'),
             )
             .toList();
 
@@ -156,14 +158,14 @@ void main() {
             triples.where((t) => t.predicate == Rdf.type).toList();
         expect(typeTriples.length, equals(2));
         expect(
-          typeTriples.map((t) => (t.object as IriTerm).iri).toSet(),
+          typeTriples.map((t) => (t.object as IriTerm).value).toSet(),
           equals({"http://example.org/Person"}),
         );
       },
     );
 
     test('method chaining should work with new methods', () {
-      final subject = IriTerm('http://example.org/resource/1');
+      final subject = const IriTerm('http://example.org/resource/1');
       final container = TestContainer(
         tags: ['tag1', 'tag2'],
         relatedIds: ['http://example.org/related/1'],
@@ -176,25 +178,25 @@ void main() {
 
       final (_, triples) = context
           .resourceBuilder(subject)
-          .addValue(IriTerm('http://example.org/title'), 'Test Resource')
+          .addValue(const IriTerm('http://example.org/title'), 'Test Resource')
           .addValue(
-            IriTerm('http://example.org/type'),
-            IriTerm('http://example.org/Container'),
+            const IriTerm('http://example.org/type'),
+            const IriTerm('http://example.org/Container'),
           )
           .addValuesFromSource(
-            IriTerm('http://example.org/tag'),
+            const IriTerm('http://example.org/tag'),
             (c) => c.tags,
             container,
           )
           .addValuesFromSource<TestContainer, String>(
-              IriTerm('http://example.org/related'),
+              const IriTerm('http://example.org/related'),
               (c) => c.relatedIds,
               container,
               // String values would default to Literal, so we need to specify
               // the IriTermSerializer to ensure it is serialized as an Iri
               serializer: const IriFullSerializer())
           .addValuesFromSource(
-            IriTerm('http://example.org/hasMember'),
+            const IriTerm('http://example.org/hasMember'),
             (c) => c.people,
             container,
           )
@@ -229,7 +231,7 @@ class TestPerson {
 
 class TestPersonSerializer implements GlobalResourceSerializer<TestPerson> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/Person');
+  final IriTerm typeIri = const IriTerm('http://example.org/Person');
 
   @override
   (IriTerm, Iterable<Triple>) toRdfResource(
@@ -238,7 +240,7 @@ class TestPersonSerializer implements GlobalResourceSerializer<TestPerson> {
     RdfSubject? parentSubject,
   }) =>
       context
-          .resourceBuilder(IriTerm(value.id))
-          .addValue(IriTerm('http://xmlns.com/foaf/0.1/name'), value.name)
+          .resourceBuilder(context.createIriTerm(value.id))
+          .addValue(const IriTerm('http://xmlns.com/foaf/0.1/name'), value.name)
           .build();
 }

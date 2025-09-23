@@ -120,19 +120,19 @@ class ExampleVocab {
   static const String _ns = 'https://example.org/vocab/';
 
   // Types
-  static final article = IriTerm('${_ns}Article');
-  static final section = IriTerm('${_ns}Section');
-  static final author = IriTerm('${_ns}Author');
+  static final article = const IriTerm('${_ns}Article');
+  static final section = const IriTerm('${_ns}Section');
+  static final author = const IriTerm('${_ns}Author');
 
   // Properties
-  static final title = IriTerm('${_ns}title');
-  static final sections = IriTerm('${_ns}sections');
-  static final authors = IriTerm('${_ns}authors');
-  static final tags = IriTerm('${_ns}tags');
-  static final relatedArticles = IriTerm('${_ns}relatedArticles');
-  static final name = IriTerm('${_ns}name');
-  static final email = IriTerm('${_ns}email');
-  static final number = IriTerm('${_ns}number');
+  static final title = const IriTerm('${_ns}title');
+  static final sections = const IriTerm('${_ns}sections');
+  static final authors = const IriTerm('${_ns}authors');
+  static final tags = const IriTerm('${_ns}tags');
+  static final relatedArticles = const IriTerm('${_ns}relatedArticles');
+  static final name = const IriTerm('${_ns}name');
+  static final email = const IriTerm('${_ns}email');
+  static final number = const IriTerm('${_ns}number');
 }
 
 // Mappers
@@ -146,7 +146,7 @@ class ArticleMapper implements GlobalResourceMapper<Article> {
     final reader = context.reader(subject);
 
     return Article(
-      id: subject.iri,
+      id: subject.value,
       title: reader.require<String>(ExampleVocab.title),
 
       // ORDERED: Use optionalRdfList for sections that must maintain sequence
@@ -172,7 +172,7 @@ class ArticleMapper implements GlobalResourceMapper<Article> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm(article.id))
+        .resourceBuilder(context.createIriTerm(article.id))
         .addValue(ExampleVocab.title, article.title)
 
         // ORDERED: Use addRdfList for sections to preserve sequence

@@ -55,7 +55,7 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 ///
 /// ```dart
 /// // Define a custom datatype for temperature values
-/// final celsiusType = IriTerm('http://qudt.org/vocab/unit/CEL');
+/// final celsiusType = const IriTerm('http://qudt.org/vocab/unit/CEL');
 ///
 /// // Create a mapper that treats doubles as Celsius temperatures
 /// final temperatureMapper = DatatypeOverrideMapper<double>(celsiusType);

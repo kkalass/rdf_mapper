@@ -289,7 +289,7 @@ abstract mixin class RdfListDeserializerMixin<T> {
   /// Formats a predicate for display in error messages.
   String _formatPredicate(RdfPredicate predicate) {
     if (predicate is IriTerm) {
-      final iri = predicate.iri;
+      final iri = predicate.value;
       // Try to show common namespace prefixes
       if (iri.startsWith('http://www.w3.org/1999/02/22-rdf-syntax-ns#')) {
         return 'rdf:${iri.substring('http://www.w3.org/1999/02/22-rdf-syntax-ns#'.length)}';

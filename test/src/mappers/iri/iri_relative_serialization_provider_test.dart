@@ -22,7 +22,7 @@ void main() {
     group('Basic Functionality', () {
       test('creates serializer with subject IRI as base', () {
         const provider = IriRelativeSerializationProvider<String>();
-        final subject = IriTerm('https://example.org/doc/');
+        final subject = const IriTerm('https://example.org/doc/');
 
         final serializer =
             provider.serializer('parent', subject, serializationContext);
@@ -31,12 +31,12 @@ void main() {
         // Test that it uses the subject IRI as base by serializing a relative IRI
         final result = (serializer as IriRelativeSerializer)
             .toRdfTerm('photos/avatar.jpg', serializationContext);
-        expect(result.iri, equals('https://example.org/doc/photos/avatar.jpg'));
+        expect(result.value, equals('https://example.org/doc/photos/avatar.jpg'));
       });
 
       test('creates deserializer with subject IRI as base', () {
         const provider = IriRelativeSerializationProvider<String>();
-        final subject = IriTerm('https://example.org/doc/');
+        final subject = const IriTerm('https://example.org/doc/');
 
         final deserializer =
             provider.deserializer(subject, deserializationContext);
@@ -44,7 +44,7 @@ void main() {
         expect(deserializer, isA<IriRelativeDeserializer>());
         // Test that it uses the subject IRI as base by deserializing an absolute IRI
         final absoluteIri =
-            IriTerm('https://example.org/doc/photos/avatar.jpg');
+            const IriTerm('https://example.org/doc/photos/avatar.jpg');
         final result = (deserializer as IriRelativeDeserializer)
             .fromRdfTerm(absoluteIri, deserializationContext);
         expect(result, equals('photos/avatar.jpg'));
@@ -55,8 +55,8 @@ void main() {
       test('different subjects produce different base URIs for serializers',
           () {
         const provider = IriRelativeSerializationProvider<String>();
-        final subject1 = IriTerm('https://alice.example/');
-        final subject2 = IriTerm('https://bob.example/');
+        final subject1 = const IriTerm('https://alice.example/');
+        final subject2 = const IriTerm('https://bob.example/');
 
         final serializer1 = provider.serializer(
             'parent', subject1, serializationContext) as IriRelativeSerializer;
@@ -69,15 +69,15 @@ void main() {
         final result2 =
             serializer2.toRdfTerm('photos/pic.jpg', serializationContext);
 
-        expect(result1.iri, equals('https://alice.example/photos/pic.jpg'));
-        expect(result2.iri, equals('https://bob.example/photos/pic.jpg'));
+        expect(result1.value, equals('https://alice.example/photos/pic.jpg'));
+        expect(result2.value, equals('https://bob.example/photos/pic.jpg'));
       });
 
       test('different subjects produce different base URIs for deserializers',
           () {
         const provider = IriRelativeSerializationProvider<String>();
-        final subject1 = IriTerm('https://alice.example/');
-        final subject2 = IriTerm('https://bob.example/');
+        final subject1 = const IriTerm('https://alice.example/');
+        final subject2 = const IriTerm('https://bob.example/');
 
         final deserializer1 = provider.deserializer(
             subject1, deserializationContext) as IriRelativeDeserializer;
@@ -85,8 +85,10 @@ void main() {
             subject2, deserializationContext) as IriRelativeDeserializer;
 
         // Same absolute IRI should relativize differently based on subject context
-        final absoluteIri1 = IriTerm('https://alice.example/photos/pic.jpg');
-        final absoluteIri2 = IriTerm('https://bob.example/photos/pic.jpg');
+        final absoluteIri1 =
+            const IriTerm('https://alice.example/photos/pic.jpg');
+        final absoluteIri2 =
+            const IriTerm('https://bob.example/photos/pic.jpg');
 
         final result1 =
             deserializer1.fromRdfTerm(absoluteIri1, deserializationContext);
@@ -101,7 +103,7 @@ void main() {
     group('Person Use Cases', () {
       test('handles person with relative photo URLs', () {
         const provider = IriRelativeSerializationProvider<String>();
-        final personIri = IriTerm('https://alice.example/');
+        final personIri = const IriTerm('https://alice.example/');
 
         final serializer = provider.serializer(
             'person', personIri, serializationContext) as IriRelativeSerializer;
@@ -111,11 +113,11 @@ void main() {
         // Test person-relative photo path
         final photoIri =
             serializer.toRdfTerm('photos/avatar.jpg', serializationContext);
-        expect(photoIri.iri, equals('https://alice.example/photos/avatar.jpg'));
+        expect(photoIri.value, equals('https://alice.example/photos/avatar.jpg'));
 
         // Test relativization back to person IRI
         final absolutePhoto =
-            IriTerm('https://alice.example/photos/avatar.jpg');
+            const IriTerm('https://alice.example/photos/avatar.jpg');
         final relativized =
             deserializer.fromRdfTerm(absolutePhoto, deserializationContext);
         expect(relativized, equals('photos/avatar.jpg'));
@@ -123,8 +125,8 @@ void main() {
 
       test('handles multiple people with different contexts', () {
         const provider = IriRelativeSerializationProvider<String>();
-        final alice = IriTerm('https://alice.example/');
-        final bob = IriTerm('https://bob.example/');
+        final alice = const IriTerm('https://alice.example/');
+        final bob = const IriTerm('https://bob.example/');
 
         final aliceSerializer = provider.serializer(
             'alice', alice, serializationContext) as IriRelativeSerializer;
@@ -137,15 +139,15 @@ void main() {
         final bobPhoto =
             bobSerializer.toRdfTerm('img/me.jpg', serializationContext);
 
-        expect(alicePhoto.iri, equals('https://alice.example/img/me.jpg'));
-        expect(bobPhoto.iri, equals('https://bob.example/img/me.jpg'));
+        expect(alicePhoto.value, equals('https://alice.example/img/me.jpg'));
+        expect(bobPhoto.value, equals('https://bob.example/img/me.jpg'));
       });
     });
 
     group('Edge Cases', () {
       test('handles absolute IRIs in serialization', () {
         const provider = IriRelativeSerializationProvider<String>();
-        final subject = IriTerm('https://example.org/doc');
+        final subject = const IriTerm('https://example.org/doc');
 
         final serializer = provider.serializer(
             'parent', subject, serializationContext) as IriRelativeSerializer;
@@ -153,18 +155,18 @@ void main() {
         // Absolute IRI should remain absolute
         final result = serializer.toRdfTerm(
             'https://other.example/resource', serializationContext);
-        expect(result.iri, equals('https://other.example/resource'));
+        expect(result.value, equals('https://other.example/resource'));
       });
 
       test('handles non-relativizable IRIs in deserialization', () {
         const provider = IriRelativeSerializationProvider<String>();
-        final subject = IriTerm('https://example.org/doc');
+        final subject = const IriTerm('https://example.org/doc');
 
         final deserializer = provider.deserializer(
             subject, deserializationContext) as IriRelativeDeserializer;
 
         // IRI from different domain should remain absolute
-        final absoluteIri = IriTerm('https://other.example/resource');
+        final absoluteIri = const IriTerm('https://other.example/resource');
         final result =
             deserializer.fromRdfTerm(absoluteIri, deserializationContext);
         expect(result, equals('https://other.example/resource'));
@@ -172,7 +174,7 @@ void main() {
 
       test('handles complex base URIs with paths and fragments', () {
         const provider = IriRelativeSerializationProvider<String>();
-        final subject = IriTerm('https://example.org/path/to/');
+        final subject = const IriTerm('https://example.org/path/to/');
 
         final serializer = provider.serializer(
             'parent', subject, serializationContext) as IriRelativeSerializer;
@@ -182,10 +184,11 @@ void main() {
         // Test relative resolution from complex base
         final result =
             serializer.toRdfTerm('../other.html', serializationContext);
-        expect(result.iri, equals('https://example.org/path/other.html'));
+        expect(result.value, equals('https://example.org/path/other.html'));
 
         // Test relativization back to complex base
-        final absoluteIri = IriTerm('https://example.org/path/other.html');
+        final absoluteIri =
+            const IriTerm('https://example.org/path/other.html');
         final relativized =
             deserializer.fromRdfTerm(absoluteIri, deserializationContext);
         expect(relativized, equals('../other.html'));
@@ -204,7 +207,7 @@ void main() {
         // Test with custom class parent type
         const customProvider = IriRelativeSerializationProvider<Person>();
 
-        final subject = IriTerm('https://example.org/doc');
+        final subject = const IriTerm('https://example.org/doc');
 
         // All should work with their respective parent types
         expect(
@@ -230,7 +233,7 @@ void main() {
     group('Roundtrip Tests', () {
       test('serialization and deserialization are consistent', () {
         const provider = IriRelativeSerializationProvider<String>();
-        final subject = IriTerm('https://example.org/base/doc');
+        final subject = const IriTerm('https://example.org/base/doc');
 
         final serializer = provider.serializer(
             'parent', subject, serializationContext) as IriRelativeSerializer;
@@ -252,7 +255,7 @@ void main() {
 
       test('works with various relative IRI patterns', () {
         const provider = IriRelativeSerializationProvider<String>();
-        final subject = IriTerm('https://example.org/docs/');
+        final subject = const IriTerm('https://example.org/docs/');
 
         final serializer = provider.serializer(
             'parent', subject, serializationContext) as IriRelativeSerializer;

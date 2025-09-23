@@ -23,7 +23,7 @@ import 'package:rdf_mapper/src/mappers/resource/rdf_list_serializer.dart';
 /// Basic example:
 /// ```dart
 /// final (subject, triples) = context
-///     .resourceBuilder(IriTerm('http://example.org/resource'))
+///     .resourceBuilder(const IriTerm('http://example.org/resource'))
 ///     .addValue(Dc.title, 'The Title')
 ///     .addValue(Dc.creator, 'The Author')
 ///     .build();
@@ -32,7 +32,7 @@ import 'package:rdf_mapper/src/mappers/resource/rdf_list_serializer.dart';
 /// More complex example with nested objects:
 /// ```dart
 /// final (person, triples) = context
-///     .resourceBuilder(IriTerm('http://example.org/person/1'))
+///     .resourceBuilder(const IriTerm('http://example.org/person/1'))
 ///     .addValue(Foaf.name, 'John Doe')
 ///     .addValue(Foaf.age, 30)
 ///     .addValue(Foaf.address, address)
@@ -107,7 +107,7 @@ class ResourceBuilder<S extends RdfSubject> {
   ///
   /// Usage example:
   /// ```dart
-  /// return context.resourceBuilder(IriTerm(person.id))
+  /// return context.resourceBuilder(const IriTerm(person.id))
   ///   .addValue(foafName, person.name)
   ///   .addValue(foafAge, person.age)
   ///   .addUnmapped(person.unmappedGraph)  // Restore previously captured data
@@ -468,7 +468,8 @@ class ResourceBuilder<S extends RdfSubject> {
       addCollection<List<T>, T>(
         predicate,
         values,
-        RdfSeqSerializer<T>.new,
+        ({itemSerializer}) =>
+            RdfSeqSerializer<T>(itemSerializer: itemSerializer),
         itemSerializer: itemSerializer,
       );
 

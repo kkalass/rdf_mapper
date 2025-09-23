@@ -14,12 +14,12 @@ import 'package:test/test.dart';
 
 /// Test vocabulary for consistent property naming
 class TestVocab {
-  static final chapters = IriTerm('http://test.org/chapters');
-  static final keywords = IriTerm('http://test.org/keywords');
-  static final alternatives = IriTerm('http://test.org/alternatives');
-  static final contributors = IriTerm('http://test.org/contributors');
-  static final priorities = IriTerm('http://test.org/priorities');
-  static final formats = IriTerm('http://test.org/formats');
+  static final chapters = const IriTerm('http://test.org/chapters');
+  static final keywords = const IriTerm('http://test.org/keywords');
+  static final alternatives = const IriTerm('http://test.org/alternatives');
+  static final contributors = const IriTerm('http://test.org/contributors');
+  static final priorities = const IriTerm('http://test.org/priorities');
+  static final formats = const IriTerm('http://test.org/formats');
 }
 
 /// Custom serializer/deserializer for testing
@@ -65,19 +65,19 @@ class TestAuthor {
 
 class TestAuthorSerializer implements GlobalResourceSerializer<TestAuthor> {
   @override
-  IriTerm get typeIri => IriTerm('http://test.org/Author');
+  IriTerm get typeIri => const IriTerm('http://test.org/Author');
 
   @override
   (IriTerm, Iterable<Triple>) toRdfResource(
       TestAuthor instance, SerializationContext context,
       {RdfSubject? parentSubject}) {
-    final subject =
-        IriTerm('http://test.org/author/${Uri.encodeComponent(instance.name)}');
+    final subject = context.createIriTerm(
+        'http://test.org/author/${Uri.encodeComponent(instance.name)}');
     final triples = [
       Triple(subject, Rdf.type, typeIri),
-      Triple(subject, IriTerm('http://test.org/name'),
+      Triple(subject, const IriTerm('http://test.org/name'),
           LiteralTerm.string(instance.name)),
-      Triple(subject, IriTerm('http://test.org/email'),
+      Triple(subject, const IriTerm('http://test.org/email'),
           LiteralTerm.string(instance.email)),
     ];
     return (subject, triples);
@@ -86,13 +86,14 @@ class TestAuthorSerializer implements GlobalResourceSerializer<TestAuthor> {
 
 class TestAuthorDeserializer implements GlobalResourceDeserializer<TestAuthor> {
   @override
-  final IriTerm typeIri = IriTerm('http://test.org/Author');
+  final IriTerm typeIri = const IriTerm('http://test.org/Author');
 
   @override
   TestAuthor fromRdfResource(IriTerm term, DeserializationContext context) {
     final reader = context.reader(term);
-    final name = reader.require<String>(IriTerm('http://test.org/name'));
-    final email = reader.require<String>(IriTerm('http://test.org/email'));
+    final name = reader.require<String>(const IriTerm('http://test.org/name'));
+    final email =
+        reader.require<String>(const IriTerm('http://test.org/email'));
     return TestAuthor(name, email);
   }
 }
@@ -111,12 +112,12 @@ void main() {
 
   /// Helper to create RDF numbered property IRIs (rdf:_1, rdf:_2, etc.)
   IriTerm rdfLi(int number) =>
-      IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#_$number');
+      IriTerm.validated('http://www.w3.org/1999/02/22-rdf-syntax-ns#_$number');
 
   group('ResourceReader RDF Container Methods', () {
     group('requireRdfSeq', () {
       test('reads ordered sequence successfully', () {
-        final subject = IriTerm('http://test.org/book');
+        final subject = const IriTerm('http://test.org/book');
         final container = BlankNodeTerm();
 
         graph = RdfGraph(triples: [
@@ -136,7 +137,7 @@ void main() {
       });
 
       test('reads sequence with custom item deserializer', () {
-        final subject = IriTerm('http://test.org/document');
+        final subject = const IriTerm('http://test.org/document');
         final container = BlankNodeTerm();
 
         graph = RdfGraph(triples: [
@@ -156,10 +157,10 @@ void main() {
       });
 
       test('reads sequence with complex objects', () {
-        final subject = IriTerm('http://test.org/project');
+        final subject = const IriTerm('http://test.org/project');
         final container = BlankNodeTerm();
-        final author1 = IriTerm('http://test.org/author/Alice');
-        final author2 = IriTerm('http://test.org/author/Bob');
+        final author1 = const IriTerm('http://test.org/author/Alice');
+        final author2 = const IriTerm('http://test.org/author/Bob');
 
         graph = RdfGraph(triples: [
           Triple(subject, TestVocab.contributors, container),
@@ -167,16 +168,16 @@ void main() {
           Triple(container, rdfLi(1), author1),
           Triple(container, rdfLi(2), author2),
           // Author 1 data
-          Triple(author1, Rdf.type, IriTerm('http://test.org/Author')),
-          Triple(author1, IriTerm('http://test.org/name'),
+          Triple(author1, Rdf.type, const IriTerm('http://test.org/Author')),
+          Triple(author1, const IriTerm('http://test.org/name'),
               LiteralTerm.string('Alice')),
-          Triple(author1, IriTerm('http://test.org/email'),
+          Triple(author1, const IriTerm('http://test.org/email'),
               LiteralTerm.string('alice@test.org')),
           // Author 2 data
-          Triple(author2, Rdf.type, IriTerm('http://test.org/Author')),
-          Triple(author2, IriTerm('http://test.org/name'),
+          Triple(author2, Rdf.type, const IriTerm('http://test.org/Author')),
+          Triple(author2, const IriTerm('http://test.org/name'),
               LiteralTerm.string('Bob')),
-          Triple(author2, IriTerm('http://test.org/email'),
+          Triple(author2, const IriTerm('http://test.org/email'),
               LiteralTerm.string('bob@test.org')),
         ]);
         deserializationContext =
@@ -192,7 +193,7 @@ void main() {
       });
 
       test('throws exception when property not found', () {
-        final subject = IriTerm('http://test.org/book');
+        final subject = const IriTerm('http://test.org/book');
 
         graph = RdfGraph(triples: []);
         deserializationContext =
@@ -207,7 +208,7 @@ void main() {
       });
 
       test('throws exception when container is wrong type', () {
-        final subject = IriTerm('http://test.org/book');
+        final subject = const IriTerm('http://test.org/book');
         final container = BlankNodeTerm();
 
         graph = RdfGraph(triples: [
@@ -229,7 +230,7 @@ void main() {
 
     group('optionalRdfSeq', () {
       test('reads sequence when present', () {
-        final subject = IriTerm('http://test.org/book');
+        final subject = const IriTerm('http://test.org/book');
         final container = BlankNodeTerm();
 
         graph = RdfGraph(triples: [
@@ -248,7 +249,7 @@ void main() {
       });
 
       test('returns null when property not found', () {
-        final subject = IriTerm('http://test.org/book');
+        final subject = const IriTerm('http://test.org/book');
 
         graph = RdfGraph(triples: []);
         deserializationContext =
@@ -261,7 +262,7 @@ void main() {
       });
 
       test('returns empty list when container has no items', () {
-        final subject = IriTerm('http://test.org/book');
+        final subject = const IriTerm('http://test.org/book');
         final container = BlankNodeTerm();
 
         graph = RdfGraph(triples: [
@@ -280,7 +281,7 @@ void main() {
 
     group('requireRdfBag', () {
       test('reads unordered bag successfully', () {
-        final subject = IriTerm('http://test.org/article');
+        final subject = const IriTerm('http://test.org/article');
         final container = BlankNodeTerm();
 
         graph = RdfGraph(triples: [
@@ -301,7 +302,7 @@ void main() {
       });
 
       test('allows duplicate values in bag', () {
-        final subject = IriTerm('http://test.org/article');
+        final subject = const IriTerm('http://test.org/article');
         final container = BlankNodeTerm();
 
         graph = RdfGraph(triples: [
@@ -321,7 +322,7 @@ void main() {
       });
 
       test('throws exception when container is wrong type', () {
-        final subject = IriTerm('http://test.org/article');
+        final subject = const IriTerm('http://test.org/article');
         final container = BlankNodeTerm();
 
         graph = RdfGraph(triples: [
@@ -343,7 +344,7 @@ void main() {
 
     group('optionalRdfBag', () {
       test('reads bag when present', () {
-        final subject = IriTerm('http://test.org/article');
+        final subject = const IriTerm('http://test.org/article');
         final container = BlankNodeTerm();
 
         graph = RdfGraph(triples: [
@@ -362,7 +363,7 @@ void main() {
       });
 
       test('returns null when property not found', () {
-        final subject = IriTerm('http://test.org/article');
+        final subject = const IriTerm('http://test.org/article');
 
         graph = RdfGraph(triples: []);
         deserializationContext =
@@ -377,7 +378,7 @@ void main() {
 
     group('requireRdfAlt', () {
       test('reads alternatives successfully', () {
-        final subject = IriTerm('http://test.org/image');
+        final subject = const IriTerm('http://test.org/image');
         final container = BlankNodeTerm();
 
         graph = RdfGraph(triples: [
@@ -397,7 +398,7 @@ void main() {
       });
 
       test('preserves preference order', () {
-        final subject = IriTerm('http://test.org/content');
+        final subject = const IriTerm('http://test.org/content');
         final container = BlankNodeTerm();
 
         graph = RdfGraph(triples: [
@@ -417,7 +418,7 @@ void main() {
       });
 
       test('throws exception when container is wrong type', () {
-        final subject = IriTerm('http://test.org/image');
+        final subject = const IriTerm('http://test.org/image');
         final container = BlankNodeTerm();
 
         graph = RdfGraph(triples: [
@@ -439,7 +440,7 @@ void main() {
 
     group('optionalRdfAlt', () {
       test('reads alternatives when present', () {
-        final subject = IriTerm('http://test.org/image');
+        final subject = const IriTerm('http://test.org/image');
         final container = BlankNodeTerm();
 
         graph = RdfGraph(triples: [
@@ -458,7 +459,7 @@ void main() {
       });
 
       test('returns null when property not found', () {
-        final subject = IriTerm('http://test.org/image');
+        final subject = const IriTerm('http://test.org/image');
 
         graph = RdfGraph(triples: []);
         deserializationContext =
@@ -475,7 +476,7 @@ void main() {
   group('ResourceBuilder RDF Container Methods', () {
     group('addRdfSeq', () {
       test('adds ordered sequence successfully', () {
-        final subject = IriTerm('http://test.org/book');
+        final subject = const IriTerm('http://test.org/book');
         serializationContext = SerializationContextImpl(registry: registry);
 
         final builder = ResourceBuilder(subject, serializationContext);
@@ -503,7 +504,7 @@ void main() {
         final numberedTriples = <int, Triple>{};
         for (final triple in containerTriples) {
           if (triple.predicate is IriTerm) {
-            final iri = (triple.predicate as IriTerm).iri;
+            final iri = (triple.predicate as IriTerm).value;
             if (iri
                 .startsWith('http://www.w3.org/1999/02/22-rdf-syntax-ns#_')) {
               final number = int.tryParse(iri.substring(
@@ -525,7 +526,7 @@ void main() {
       });
 
       test('adds sequence with custom item serializer', () {
-        final subject = IriTerm('http://test.org/document');
+        final subject = const IriTerm('http://test.org/document');
         serializationContext = SerializationContextImpl(registry: registry);
 
         final builder = ResourceBuilder(subject, serializationContext);
@@ -543,7 +544,7 @@ void main() {
         final numberedTriples = <int, Triple>{};
         for (final triple in containerTriples) {
           if (triple.predicate is IriTerm) {
-            final iri = (triple.predicate as IriTerm).iri;
+            final iri = (triple.predicate as IriTerm).value;
             if (iri
                 .startsWith('http://www.w3.org/1999/02/22-rdf-syntax-ns#_')) {
               final number = int.tryParse(iri.substring(
@@ -562,7 +563,7 @@ void main() {
       });
 
       test('adds sequence with complex objects', () {
-        final subject = IriTerm('http://test.org/project');
+        final subject = const IriTerm('http://test.org/project');
         serializationContext = SerializationContextImpl(registry: registry);
 
         final authors = [
@@ -578,8 +579,8 @@ void main() {
         // Should have created author resources
         final authorTriples = triples
             .where((t) =>
-                t.predicate == IriTerm('http://test.org/name') ||
-                t.predicate == IriTerm('http://test.org/email'))
+                t.predicate == const IriTerm('http://test.org/name') ||
+                t.predicate == const IriTerm('http://test.org/email'))
             .toList();
         expect(authorTriples, hasLength(4)); // 2 authors × 2 properties each
 
@@ -591,7 +592,7 @@ void main() {
       });
 
       test('adds empty sequence', () {
-        final subject = IriTerm('http://test.org/book');
+        final subject = const IriTerm('http://test.org/book');
         serializationContext = SerializationContextImpl(registry: registry);
 
         final builder = ResourceBuilder(subject, serializationContext);
@@ -615,7 +616,7 @@ void main() {
 
     group('addRdfBag', () {
       test('adds unordered bag successfully', () {
-        final subject = IriTerm('http://test.org/article');
+        final subject = const IriTerm('http://test.org/article');
         serializationContext = SerializationContextImpl(registry: registry);
 
         final builder = ResourceBuilder(subject, serializationContext);
@@ -640,7 +641,7 @@ void main() {
       });
 
       test('allows duplicate values in bag', () {
-        final subject = IriTerm('http://test.org/article');
+        final subject = const IriTerm('http://test.org/article');
         serializationContext = SerializationContextImpl(registry: registry);
 
         final builder = ResourceBuilder(subject, serializationContext);
@@ -659,7 +660,7 @@ void main() {
       });
 
       test('adds empty bag', () {
-        final subject = IriTerm('http://test.org/article');
+        final subject = const IriTerm('http://test.org/article');
         serializationContext = SerializationContextImpl(registry: registry);
 
         final builder = ResourceBuilder(subject, serializationContext);
@@ -680,7 +681,7 @@ void main() {
 
     group('addRdfAlt', () {
       test('adds alternatives successfully', () {
-        final subject = IriTerm('http://test.org/image');
+        final subject = const IriTerm('http://test.org/image');
         serializationContext = SerializationContextImpl(registry: registry);
 
         final builder = ResourceBuilder(subject, serializationContext);
@@ -707,7 +708,7 @@ void main() {
         final numberedTriples = <int, Triple>{};
         for (final triple in containerTriples) {
           if (triple.predicate is IriTerm) {
-            final iri = (triple.predicate as IriTerm).iri;
+            final iri = (triple.predicate as IriTerm).value;
             if (iri
                 .startsWith('http://www.w3.org/1999/02/22-rdf-syntax-ns#_')) {
               final number = int.tryParse(iri.substring(
@@ -729,7 +730,7 @@ void main() {
       });
 
       test('adds single alternative', () {
-        final subject = IriTerm('http://test.org/content');
+        final subject = const IriTerm('http://test.org/content');
         serializationContext = SerializationContextImpl(registry: registry);
 
         final builder = ResourceBuilder(subject, serializationContext);
@@ -751,7 +752,7 @@ void main() {
       });
 
       test('adds empty alternatives', () {
-        final subject = IriTerm('http://test.org/content');
+        final subject = const IriTerm('http://test.org/content');
         serializationContext = SerializationContextImpl(registry: registry);
 
         final builder = ResourceBuilder(subject, serializationContext);
@@ -772,7 +773,7 @@ void main() {
 
     group('Integration Tests', () {
       test('builder and reader round-trip works correctly', () {
-        final subject = IriTerm('http://test.org/book');
+        final subject = const IriTerm('http://test.org/book');
         serializationContext = SerializationContextImpl(registry: registry);
 
         // Build a resource with all three container types
@@ -802,7 +803,7 @@ void main() {
       });
 
       test('complex objects round-trip correctly', () {
-        final subject = IriTerm('http://test.org/project');
+        final subject = const IriTerm('http://test.org/project');
         serializationContext = SerializationContextImpl(registry: registry);
 
         final authors = [

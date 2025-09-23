@@ -43,16 +43,16 @@ void main() {
         );
         expect(
           typeTriple.subject,
-          equals(IriTerm('http://example.org/item/test-id')),
+          equals(const IriTerm('http://example.org/item/test-id')),
         );
         expect(typeTriple.object, equals(TestItemSerializer().typeIri));
 
         final nameTriple = graph.triples.firstWhere(
-          (t) => t.predicate == IriTerm('http://example.org/name'),
+          (t) => t.predicate == const IriTerm('http://example.org/name'),
         );
         expect(
           nameTriple.subject,
-          equals(IriTerm('http://example.org/item/test-id')),
+          equals(const IriTerm('http://example.org/item/test-id')),
         );
         expect(nameTriple.object, equals(LiteralTerm.string('Test Name')));
       },
@@ -71,7 +71,7 @@ class TestItem {
 // Test serializer
 class TestItemSerializer implements GlobalResourceSerializer<TestItem> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/TestItem');
+  final IriTerm typeIri = const IriTerm('http://example.org/TestItem');
 
   @override
   (IriTerm, Iterable<Triple>) toRdfResource(
@@ -79,11 +79,12 @@ class TestItemSerializer implements GlobalResourceSerializer<TestItem> {
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    final subject = IriTerm('http://example.org/item/${value.id}');
+    final subject =
+        context.createIriTerm('http://example.org/item/${value.id}');
     final triples = <Triple>[
       Triple(
         subject,
-        IriTerm('http://example.org/name'),
+        const IriTerm('http://example.org/name'),
         LiteralTerm.string(value.name),
       ),
     ];

@@ -264,10 +264,11 @@ to the same RDF datatype (xsd:decimal), preserving semantic meaning and preventi
       });
 
       test('provides helpful error message with custom datatypes', () {
-        final customDatatype = IriTerm('http://example.org/custom-number-type');
+        final customDatatype =
+            const IriTerm('http://example.org/custom-number-type');
         final mapper = DoubleMapper(customDatatype);
         final wrongTypeTerm = LiteralTerm('3.14',
-            datatype: IriTerm('http://example.org/other-number-type'));
+            datatype: const IriTerm('http://example.org/other-number-type'));
 
         try {
           mapper.fromRdfTerm(wrongTypeTerm, context);
@@ -283,14 +284,14 @@ RDF Datatype Mismatch: Cannot deserialize http://example.org/other-number-type t
 
 Quick Fix during initialization (affects ALL double instances):
 
-final rdfMapper = RdfMapper.withMappers((registry) => registry.registerMapper<double>(DoubleMapper(IriTerm('http://example.org/other-number-type'))))
+final rdfMapper = RdfMapper.withMappers((registry) => registry.registerMapper<double>(DoubleMapper(const IriTerm('http://example.org/other-number-type'))))
 
 Other Solutions:
 
 1. Create a custom wrapper type (recommended for type safety):
    • Annotations library:
 
-     @RdfLiteral(IriTerm.prevalidated('http://example.org/other-number-type'))
+     @RdfLiteral(const IriTerm('http://example.org/other-number-type'))
      class MyCustomDouble {
        @RdfValue()
        final double value;
@@ -304,7 +305,7 @@ Other Solutions:
        const MyCustomDouble(this.value);
      }
      class MyCustomDoubleMapper extends DelegatingRdfLiteralTermMapper<MyCustomDouble, double> {
-       const MyCustomDoubleMapper() : super(const DoubleMapper(), IriTerm('http://example.org/other-number-type'));
+       const MyCustomDoubleMapper() : super(const DoubleMapper(), const IriTerm('http://example.org/other-number-type'));
        @override
        MyCustomDouble convertFrom(double value) => MyCustomDouble(value);
        @override
@@ -315,17 +316,17 @@ Other Solutions:
 2. Local scope for a specific predicate:
    • Annotations library (simpler option):
 
-     @RdfProperty(myPredicate, literal: const LiteralMapping.withType(IriTerm.prevalidated('http://example.org/other-number-type')))
+     @RdfProperty(myPredicate, literal: const LiteralMapping.withType(const IriTerm('http://example.org/other-number-type')))
 
    • Annotations library (mapper instance):
 
      @RdfProperty(myPredicate,
-         literal: LiteralMapping.mapperInstance(DoubleMapper(IriTerm.prevalidated('http://example.org/other-number-type'))))
+         literal: LiteralMapping.mapperInstance(DoubleMapper(const IriTerm('http://example.org/other-number-type'))))
 
    • Manual (Custom resource mapper):
 
-     reader.require(myPredicate, deserializer: DoubleMapper(IriTerm('http://example.org/other-number-type')))
-     builder.addValue(myPredicate, myValue, serializer: DoubleMapper(IriTerm('http://example.org/other-number-type')))
+     reader.require(myPredicate, deserializer: DoubleMapper(const IriTerm('http://example.org/other-number-type')))
+     builder.addValue(myPredicate, myValue, serializer: DoubleMapper(const IriTerm('http://example.org/other-number-type')))
 
 3. Custom mapper bypass:
    Use bypassDatatypeCheck: true when calling context.fromLiteralTerm
@@ -398,7 +399,7 @@ to the same RDF datatype (http://example.org/custom-number-type), preserving sem
 
     group('custom datatype mappers', () {
       test('DoubleMapper with custom datatype throws on mismatch', () {
-        final customDatatype = IriTerm('http://example.org/my-decimal');
+        final customDatatype = const IriTerm('http://example.org/my-decimal');
         final mapper = DoubleMapper(customDatatype);
         final wrongTypeTerm = LiteralTerm('3.14', datatype: Xsd.decimal);
 
@@ -417,7 +418,7 @@ to the same RDF datatype (http://example.org/custom-number-type), preserving sem
       });
 
       test('DoubleMapper with custom datatype works with correct type', () {
-        final customDatatype = IriTerm('http://example.org/my-decimal');
+        final customDatatype = const IriTerm('http://example.org/my-decimal');
         final mapper = DoubleMapper(customDatatype);
         final correctTerm = LiteralTerm('3.14', datatype: customDatatype);
 

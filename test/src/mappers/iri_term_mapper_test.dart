@@ -29,7 +29,7 @@ void main() {
 
       // Verify serialized term
       expect(term, isA<IriTerm>());
-      expect((term).iri, equals('http://example.org/resource/123'));
+      expect((term).value, equals('http://example.org/resource/123'));
 
       // Deserialize from term
       final deserializedReference = mapper.fromRdfTerm(
@@ -64,19 +64,19 @@ void main() {
 
       // Verify the main subject properties
       final subjectTriples = graph.findTriples(
-        subject: IriTerm('http://example.org/container/1'),
+        subject: const IriTerm('http://example.org/container/1'),
       );
       expect(subjectTriples.length, greaterThan(1));
 
       // Find the resource reference triple
       final resourceTriples = graph.findTriples(
-        subject: IriTerm('http://example.org/container/1'),
-        predicate: IriTerm('http://example.org/resource'),
+        subject: const IriTerm('http://example.org/container/1'),
+        predicate: const IriTerm('http://example.org/resource'),
       );
       expect(resourceTriples.length, equals(1));
       expect(resourceTriples[0].object, isA<IriTerm>());
       expect(
-        (resourceTriples[0].object as IriTerm).iri,
+        (resourceTriples[0].object as IriTerm).value,
         equals('http://example.org/resource/123'),
       );
 
@@ -151,12 +151,12 @@ void main() {
       // Find the triple with the IRI term
       final identityTriples = graph.findTriples(
         subject: graph.triples.first.subject,
-        predicate: IriTerm('http://example.org/identity'),
+        predicate: const IriTerm('http://example.org/identity'),
       );
       expect(identityTriples.length, equals(1));
       expect(identityTriples[0].object, isA<IriTerm>());
       expect(
-        (identityTriples[0].object as IriTerm).iri,
+        (identityTriples[0].object as IriTerm).value,
         equals('http://example.org/resources/resource-123'),
       );
 
@@ -189,35 +189,35 @@ void main() {
 
       // Verify both subjects are in the graph
       final aliceSubject = graph.findTriples(
-        subject: IriTerm('http://example.org/person/alice'),
+        subject: const IriTerm('http://example.org/person/alice'),
       );
       final bobSubject = graph.findTriples(
-        subject: IriTerm('http://example.org/person/bob'),
+        subject: const IriTerm('http://example.org/person/bob'),
       );
       expect(aliceSubject, isNotEmpty);
       expect(bobSubject, isNotEmpty);
 
       // Verify the knows relationships are properly serialized
       final aliceKnows = graph.findTriples(
-        subject: IriTerm('http://example.org/person/alice'),
-        predicate: IriTerm('http://example.org/knows'),
+        subject: const IriTerm('http://example.org/person/alice'),
+        predicate: const IriTerm('http://example.org/knows'),
       );
       expect(aliceKnows.length, equals(1));
       expect(aliceKnows[0].object, isA<IriTerm>());
       expect(
-        (aliceKnows[0].object as IriTerm).iri,
+        (aliceKnows[0].object as IriTerm).value,
         equals('http://example.org/person/bob'),
       );
 
       // Verify Bob knows Alice
       final bobKnows = graph.findTriples(
-        subject: IriTerm('http://example.org/person/bob'),
-        predicate: IriTerm('http://example.org/knows'),
+        subject: const IriTerm('http://example.org/person/bob'),
+        predicate: const IriTerm('http://example.org/knows'),
       );
       expect(bobKnows.length, equals(1));
       expect(bobKnows[0].object, isA<IriTerm>());
       expect(
-        (bobKnows[0].object as IriTerm).iri,
+        (bobKnows[0].object as IriTerm).value,
         equals('http://example.org/person/alice'),
       );
 
@@ -315,19 +315,19 @@ class PersonReference {
 class ResourceReferenceMapper implements IriTermMapper<ResourceReference> {
   @override
   ResourceReference fromRdfTerm(IriTerm term, DeserializationContext context) {
-    return ResourceReference(uri: term.iri);
+    return ResourceReference(uri: term.value);
   }
 
   @override
   IriTerm toRdfTerm(ResourceReference value, SerializationContext context) {
-    return IriTerm(value.uri);
+    return context.createIriTerm(value.uri);
   }
 }
 
 class ResourceContainerMapper
     implements GlobalResourceMapper<ResourceContainer> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/ResourceContainer');
+  final IriTerm typeIri = const IriTerm('http://example.org/ResourceContainer');
 
   @override
   ResourceContainer fromRdfResource(
@@ -335,12 +335,13 @@ class ResourceContainerMapper
     DeserializationContext context,
   ) {
     final reader = context.reader(subject);
-    final name = reader.require<String>(IriTerm('http://example.org/name'));
+    final name =
+        reader.require<String>(const IriTerm('http://example.org/name'));
     final resource = reader.require<ResourceReference>(
-      IriTerm('http://example.org/resource'),
+      const IriTerm('http://example.org/resource'),
     );
 
-    return ResourceContainer(id: subject.iri, name: name, resource: resource);
+    return ResourceContainer(id: subject.value, name: name, resource: resource);
   }
 
   @override
@@ -350,11 +351,11 @@ class ResourceContainerMapper
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm(value.id))
-        .addValue(IriTerm('http://example.org/name'), value.name)
+        .resourceBuilder(context.createIriTerm(value.id))
+        .addValue(const IriTerm('http://example.org/name'), value.name)
         // We have a IriTermMapper for ResourceReference, no need to specify
         // that this shall be serialized as IriTerm
-        .addValue(IriTerm('http://example.org/resource'), value.resource)
+        .addValue(const IriTerm('http://example.org/resource'), value.resource)
         .build();
   }
 }
@@ -362,7 +363,8 @@ class ResourceContainerMapper
 class MultiReferenceContainerMapper
     implements GlobalResourceMapper<MultiReferenceContainer> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/MultiReferenceContainer');
+  final IriTerm typeIri =
+      const IriTerm('http://example.org/MultiReferenceContainer');
 
   @override
   MultiReferenceContainer fromRdfResource(
@@ -370,13 +372,14 @@ class MultiReferenceContainerMapper
     DeserializationContext context,
   ) {
     final reader = context.reader(subject);
-    final name = reader.require<String>(IriTerm('http://example.org/name'));
+    final name =
+        reader.require<String>(const IriTerm('http://example.org/name'));
     final resources = reader.getValues<ResourceReference>(
-      IriTerm('http://example.org/resources'),
+      const IriTerm('http://example.org/resources'),
     );
 
     return MultiReferenceContainer(
-      id: subject.iri,
+      id: subject.value,
       name: name,
       resources: resources,
     );
@@ -389,11 +392,11 @@ class MultiReferenceContainerMapper
     RdfSubject? parentSubject,
   }) {
     final builder = context
-        .resourceBuilder(IriTerm(value.id))
-        .addValue(IriTerm('http://example.org/name'), value.name);
+        .resourceBuilder(context.createIriTerm(value.id))
+        .addValue(const IriTerm('http://example.org/name'), value.name);
 
     for (final resource in value.resources) {
-      builder.addValue(IriTerm('http://example.org/resources'), resource);
+      builder.addValue(const IriTerm('http://example.org/resources'), resource);
     }
 
     return builder.build();
@@ -405,7 +408,8 @@ class TransformedResourceMapper
   static const String baseUri = 'http://example.org/resources/';
 
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/TransformedResource');
+  final IriTerm typeIri =
+      const IriTerm('http://example.org/TransformedResource');
 
   @override
   TransformedResource fromRdfResource(
@@ -414,7 +418,7 @@ class TransformedResourceMapper
   ) {
     final reader = context.reader(subject);
     final identityIri = reader.require<ResourceReference>(
-      IriTerm('http://example.org/identity'),
+      const IriTerm('http://example.org/identity'),
     );
 
     // Extract the ID from the full URI
@@ -434,26 +438,27 @@ class TransformedResourceMapper
     final identity = ResourceReference(uri: identityUri);
 
     return context
-        .resourceBuilder(IriTerm(identityUri))
-        .addValue(IriTerm('http://example.org/identity'), identity)
+        .resourceBuilder(context.createIriTerm(identityUri))
+        .addValue(const IriTerm('http://example.org/identity'), identity)
         .build();
   }
 }
 
 class PersonMapper implements GlobalResourceMapper<Person> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/Person');
+  final IriTerm typeIri = const IriTerm('http://example.org/Person');
 
   @override
   Person fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
-    final name = reader.require<String>(IriTerm('http://example.org/name'));
+    final name =
+        reader.require<String>(const IriTerm('http://example.org/name'));
     final knows = reader
-        .getValues<ResourceReference>(IriTerm('http://example.org/knows'))
+        .getValues<ResourceReference>(const IriTerm('http://example.org/knows'))
         .map((ref) => PersonReference(uri: ref.uri))
         .toList();
 
-    final person = Person(id: subject.iri, name: name);
+    final person = Person(id: subject.value, name: name);
     person.knows = knows;
     return person;
   }
@@ -465,11 +470,11 @@ class PersonMapper implements GlobalResourceMapper<Person> {
     RdfSubject? parentSubject,
   }) {
     final builder = context
-        .resourceBuilder(IriTerm(value.id))
-        .addValue(IriTerm('http://example.org/name'), value.name);
+        .resourceBuilder(context.createIriTerm(value.id))
+        .addValue(const IriTerm('http://example.org/name'), value.name);
 
     for (final personRef in value.knows) {
-      builder.addValue(IriTerm('http://example.org/knows'),
+      builder.addValue(const IriTerm('http://example.org/knows'),
           ResourceReference(uri: personRef.uri));
     }
 

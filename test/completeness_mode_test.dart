@@ -17,13 +17,13 @@ void main() {
       // Create a graph with triples that can't be deserialized
       final graph = RdfGraph(triples: [
         Triple(
-          IriTerm('http://example.org/person/1'),
+          const IriTerm('http://example.org/person/1'),
           Rdf.type,
-          IriTerm('http://xmlns.com/foaf/0.1/Person'),
+          const IriTerm('http://xmlns.com/foaf/0.1/Person'),
         ),
         Triple(
-          IriTerm('http://example.org/person/1'),
-          IriTerm('http://xmlns.com/foaf/0.1/name'),
+          const IriTerm('http://example.org/person/1'),
+          const IriTerm('http://xmlns.com/foaf/0.1/name'),
           LiteralTerm.string('John Doe'),
         ),
       ]);
@@ -40,13 +40,13 @@ void main() {
       // Create a graph with triples that can't be deserialized
       final graph = RdfGraph(triples: [
         Triple(
-          IriTerm('http://example.org/person/1'),
+          const IriTerm('http://example.org/person/1'),
           Rdf.type,
-          IriTerm('http://xmlns.com/foaf/0.1/Person'),
+          const IriTerm('http://xmlns.com/foaf/0.1/Person'),
         ),
         Triple(
-          IriTerm('http://example.org/person/1'),
-          IriTerm('http://xmlns.com/foaf/0.1/name'),
+          const IriTerm('http://example.org/person/1'),
+          const IriTerm('http://xmlns.com/foaf/0.1/name'),
           LiteralTerm.string('John Doe'),
         ),
       ]);
@@ -60,9 +60,9 @@ void main() {
     test('strict mode is the default', () {
       final graph = RdfGraph(triples: [
         Triple(
-          IriTerm('http://example.org/person/1'),
+          const IriTerm('http://example.org/person/1'),
           Rdf.type,
-          IriTerm('http://xmlns.com/foaf/0.1/Person'),
+          const IriTerm('http://xmlns.com/foaf/0.1/Person'),
         ),
       ]);
 
@@ -77,13 +77,13 @@ void main() {
         () {
       final graph = RdfGraph(triples: [
         Triple(
-          IriTerm('http://example.org/person/1'),
+          const IriTerm('http://example.org/person/1'),
           Rdf.type,
-          IriTerm('http://xmlns.com/foaf/0.1/Person'),
+          const IriTerm('http://xmlns.com/foaf/0.1/Person'),
         ),
         Triple(
-          IriTerm('http://example.org/person/1'),
-          IriTerm('http://xmlns.com/foaf/0.1/name'),
+          const IriTerm('http://example.org/person/1'),
+          const IriTerm('http://xmlns.com/foaf/0.1/name'),
           LiteralTerm.string('John Doe'),
         ),
       ]);
@@ -95,9 +95,9 @@ void main() {
         expect(e.hasRemainingTriples, isTrue);
         expect(e.remainingTripleCount, equals(2));
         expect(e.unmappedSubjects,
-            contains(IriTerm('http://example.org/person/1')));
+            contains(const IriTerm('http://example.org/person/1')));
         expect(e.unmappedTypes,
-            contains(IriTerm('http://xmlns.com/foaf/0.1/Person')));
+            contains(const IriTerm('http://xmlns.com/foaf/0.1/Person')));
       }
     });
   });

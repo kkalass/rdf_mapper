@@ -86,7 +86,7 @@ void main() {
         'StringDeserializer with custom datatype accepts only that datatype',
         () {
           const customDatatype =
-              IriTerm.prevalidated('http://example.org/customString');
+              const IriTerm('http://example.org/customString');
           final deserializer = const StringMapper(customDatatype);
 
           final customLiteral = LiteralTerm(

@@ -93,9 +93,8 @@ class TypedEntity {
 }
 
 /// Mappers for wrapper types
-const celsiusDatatype = IriTerm.prevalidated('http://qudt.org/vocab/unit/CEL');
-const kilogramDatatype =
-    IriTerm.prevalidated('http://qudt.org/vocab/unit/KiloGM');
+const celsiusDatatype = const IriTerm('http://qudt.org/vocab/unit/CEL');
+const kilogramDatatype = const IriTerm('http://qudt.org/vocab/unit/KiloGM');
 
 class TemperatureMapper
     extends DelegatingRdfLiteralTermMapper<Temperature, double> {
@@ -121,18 +120,20 @@ class WeightMapper extends DelegatingRdfLiteralTermMapper<Weight, double> {
 /// Custom mapper for TestEntityWithDouble
 class TestEntityWithDoubleMapper
     implements GlobalResourceMapper<TestEntityWithDouble> {
-  static final temperaturePredicate = IriTerm('http://example.org/temperature');
-  static final weightPredicate = IriTerm('http://example.org/weight');
+  static final temperaturePredicate =
+      const IriTerm('http://example.org/temperature');
+  static final weightPredicate = const IriTerm('http://example.org/weight');
 
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/TestEntityWithDouble');
+  final IriTerm typeIri =
+      const IriTerm('http://example.org/TestEntityWithDouble');
 
   @override
   TestEntityWithDouble fromRdfResource(
       IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return TestEntityWithDouble(
-      id: subject.iri,
+      id: subject.value,
       temperature: reader.require<double>(temperaturePredicate),
       weight: reader.require<double>(weightPredicate),
     );
@@ -145,7 +146,7 @@ class TestEntityWithDoubleMapper
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm(entity.id))
+        .resourceBuilder(context.createIriTerm(entity.id))
         .addValue(temperaturePredicate, entity.temperature)
         .addValue(weightPredicate, entity.weight)
         .build();
@@ -154,17 +155,18 @@ class TestEntityWithDoubleMapper
 
 /// Mapper for typed entity that uses wrapper types
 class TypedEntityMapper implements GlobalResourceMapper<TypedEntity> {
-  static final temperaturePredicate = IriTerm('http://example.org/temperature');
-  static final weightPredicate = IriTerm('http://example.org/weight');
+  static final temperaturePredicate =
+      const IriTerm('http://example.org/temperature');
+  static final weightPredicate = const IriTerm('http://example.org/weight');
 
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/TypedEntity');
+  final IriTerm typeIri = const IriTerm('http://example.org/TypedEntity');
 
   @override
   TypedEntity fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return TypedEntity(
-      id: subject.iri,
+      id: subject.value,
       temperature: reader.require<Temperature>(temperaturePredicate),
       weight: reader.require<Weight>(weightPredicate),
     );
@@ -177,7 +179,7 @@ class TypedEntityMapper implements GlobalResourceMapper<TypedEntity> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm(entity.id))
+        .resourceBuilder(context.createIriTerm(entity.id))
         .addValue(temperaturePredicate, entity.temperature)
         .addValue(weightPredicate, entity.weight)
         .build();
@@ -277,7 +279,7 @@ void main() {
 
     test('should demonstrate limitation when mixing multiple custom datatypes',
         () {
-      final customTempType = IriTerm('http://qudt.org/vocab/unit/CEL');
+      final customTempType = const IriTerm('http://qudt.org/vocab/unit/CEL');
       // Note: We're only registering one custom datatype to demonstrate the limitation
 
       final rdfData = '''

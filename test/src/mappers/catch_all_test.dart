@@ -12,15 +12,15 @@ class Parent {
 // Example mapper
 class Vocab {
   static const namespace = "https://example.com/vocab/";
-  static const Parent = IriTerm.prevalidated("${namespace}Parent");
-  static const child = IriTerm.prevalidated("${namespace}child");
+  static const Parent = const IriTerm("${namespace}Parent");
+  static const child = const IriTerm("${namespace}child");
   // not to be referenced in our mappers, those are used by
   // the iri terms in the general catch-all RdfGraph instances
-  static const Child = IriTerm.prevalidated("${namespace}Child");
-  static const name = IriTerm.prevalidated("${namespace}name");
-  static const age = IriTerm.prevalidated("${namespace}age");
-  static const foo = IriTerm.prevalidated("${namespace}foo");
-  static const barChild = IriTerm.prevalidated("${namespace}barChild");
+  static const Child = const IriTerm("${namespace}Child");
+  static const name = const IriTerm("${namespace}name");
+  static const age = const IriTerm("${namespace}age");
+  static const foo = const IriTerm("${namespace}foo");
+  static const barChild = const IriTerm("${namespace}barChild");
 }
 
 class ParentMapper implements GlobalResourceMapper<Parent> {
@@ -28,7 +28,7 @@ class ParentMapper implements GlobalResourceMapper<Parent> {
   fromRdfResource(IriTerm term, DeserializationContext context) {
     var reader = context.reader(term);
     return Parent()
-      ..iri = term.iri
+      ..iri = term.value
       ..child = reader.optional<RdfGraph>(Vocab.child)
       ..remainingTriples = reader.getUnmapped();
   }
@@ -37,7 +37,7 @@ class ParentMapper implements GlobalResourceMapper<Parent> {
   (IriTerm, Iterable<Triple>) toRdfResource(value, SerializationContext context,
       {RdfSubject? parentSubject}) {
     return context
-        .resourceBuilder(IriTerm(value.iri))
+        .resourceBuilder(context.createIriTerm(value.iri))
         .when(value.child != null, (b) => b.addValue(Vocab.child, value.child!))
         .addUnmapped(value.remainingTriples)
         .build();
@@ -98,8 +98,8 @@ data:p1 a ex:Parent;
       // And the remainingTriples graph of p1 has the triple for vocab:foo,
       // and also a blank node including its triples
       expect(result, hasLength(1));
-      final p1Subject = IriTerm("https://example.com/data/p1");
-      final c1Subject = IriTerm("https://example.com/data/c1");
+      final p1Subject = const IriTerm("https://example.com/data/p1");
+      final c1Subject = const IriTerm("https://example.com/data/c1");
 
       final p1 = result.whereType<Parent>().single;
       final c1 = p1.child;
@@ -180,8 +180,8 @@ data:p2 ex:age 23;
       expect(reencoded.trim(), isNot(equals(turtleDoc.trim())));
       // The result should still only contain the Parent p1
       expect(result, hasLength(1));
-      final p1Subject = IriTerm("https://example.com/data/p1");
-      final c1Subject = IriTerm("https://example.com/data/c1");
+      final p1Subject = const IriTerm("https://example.com/data/p1");
+      final c1Subject = const IriTerm("https://example.com/data/c1");
 
       final p1 = result.whereType<Parent>().single;
       final c1 = p1.child;
@@ -239,9 +239,9 @@ data:p2 ex:age 23;
       // And the remainingTriples graph of p1 has the triple for vocab:foo,
       // and also a blank node including its triples
       expect(result, hasLength(1));
-      final p1Subject = IriTerm("https://example.com/data/p1");
-      final p2Subject = IriTerm("https://example.com/data/p2");
-      final c1Subject = IriTerm("https://example.com/data/c1");
+      final p1Subject = const IriTerm("https://example.com/data/p1");
+      final p2Subject = const IriTerm("https://example.com/data/p2");
+      final c1Subject = const IriTerm("https://example.com/data/c1");
 
       final p1 = result.whereType<Parent>().single;
       final p2 = remainder;

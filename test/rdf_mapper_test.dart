@@ -74,7 +74,7 @@ void main() {
 
         // Check for the person name triple
         final nameTriples = graph.findTriples(
-          subject: IriTerm('http://example.org/person/1'),
+          subject: const IriTerm('http://example.org/person/1'),
           predicate: SchemaPerson.givenName,
         );
         // At least one name triple should exist
@@ -91,8 +91,8 @@ void main() {
 
         // Check for the person age triple
         final ageTriples = graph.findTriples(
-          subject: IriTerm('http://example.org/person/1'),
-          predicate: IriTerm('http://xmlns.com/foaf/0.1/age'),
+          subject: const IriTerm('http://example.org/person/1'),
+          predicate: const IriTerm('http://xmlns.com/foaf/0.1/age'),
         );
         // At least one age triple should exist
         expect(ageTriples.isNotEmpty, isTrue);
@@ -108,7 +108,7 @@ void main() {
 
         // Check for the person type triple
         final typeTriples = graph.findTriples(
-          subject: IriTerm('http://example.org/person/1'),
+          subject: const IriTerm('http://example.org/person/1'),
           predicate: Rdf.type,
         );
         // At least one type triple should exist
@@ -118,7 +118,7 @@ void main() {
         final typeTriple = typeTriples.firstWhere(
           (t) =>
               t.object is IriTerm &&
-              (t.object as IriTerm).iri == 'https://schema.org/Person',
+              (t.object as IriTerm).value == 'https://schema.org/Person',
           orElse: () => throw TestFailure('Expected type triple not found'),
         );
         expect(typeTriple, isNotNull);
@@ -130,7 +130,7 @@ void main() {
       rdfMapper.registerMapper<TestPerson>(TestPersonMapper());
 
       // Create a test graph
-      final subjectId = IriTerm('http://example.org/person/1');
+      final subjectId = const IriTerm('http://example.org/person/1');
       final graph = RdfGraph(
         triples: [
           Triple(
@@ -143,7 +143,8 @@ void main() {
             SchemaPerson.foafAge,
             LiteralTerm.typed('30', 'integer'),
           ),
-          Triple(subjectId, Rdf.type, IriTerm('https://schema.org/Person')),
+          Triple(
+              subjectId, Rdf.type, const IriTerm('https://schema.org/Person')),
         ],
       );
 
@@ -165,7 +166,7 @@ void main() {
       rdfMapper.registerMapper<TestPerson>(TestPersonMapper());
 
       // Create a test graph with a single subject
-      final subjectId = IriTerm('http://example.org/person/1');
+      final subjectId = const IriTerm('http://example.org/person/1');
       final graph = RdfGraph(
         triples: [
           Triple(
@@ -217,7 +218,7 @@ void main() {
 
         // Check for John's name property
         final johnNameTriples = graph.findTriples(
-          subject: IriTerm('http://example.org/person/1'),
+          subject: const IriTerm('http://example.org/person/1'),
           predicate: SchemaPerson.givenName,
         );
 
@@ -236,7 +237,7 @@ void main() {
 
         // Check for Jane's name property
         final janeNameTriples = graph.findTriples(
-          subject: IriTerm('http://example.org/person/2'),
+          subject: const IriTerm('http://example.org/person/2'),
           predicate: SchemaPerson.givenName,
         );
 
@@ -266,35 +267,35 @@ void main() {
           triples: [
             // Person 1
             Triple(
-              IriTerm('http://example.org/person/1'),
+              const IriTerm('http://example.org/person/1'),
               Rdf.type,
               SchemaPerson.classIri,
             ),
             Triple(
-              IriTerm('http://example.org/person/1'),
+              const IriTerm('http://example.org/person/1'),
               SchemaPerson.givenName,
               LiteralTerm.string('John Doe'),
             ),
             Triple(
-              IriTerm('http://example.org/person/1'),
+              const IriTerm('http://example.org/person/1'),
               SchemaPerson.foafAge,
               LiteralTerm.typed('30', 'integer'),
             ),
 
             // Person 2
             Triple(
-              IriTerm('http://example.org/person/2'),
+              const IriTerm('http://example.org/person/2'),
               Rdf.type,
               SchemaPerson.classIri,
             ),
             Triple(
-              IriTerm('http://example.org/person/2'),
+              const IriTerm('http://example.org/person/2'),
               SchemaPerson.givenName,
               LiteralTerm.string('Jane Smith'),
             ),
             Triple(
-              IriTerm('http://example.org/person/2'),
-              IriTerm('http://xmlns.com/foaf/0.1/age'),
+              const IriTerm('http://example.org/person/2'),
+              const IriTerm('http://xmlns.com/foaf/0.1/age'),
               LiteralTerm.typed('28', 'integer'),
             ),
           ],
@@ -343,7 +344,7 @@ void main() {
 
       // Verify the serialization worked by checking for at least one name triple
       final nameTriples = graph.findTriples(
-        subject: IriTerm('http://example.org/person/1'),
+        subject: const IriTerm('http://example.org/person/1'),
         predicate: SchemaPerson.givenName,
       );
       expect(nameTriples.isNotEmpty, isTrue);
@@ -580,17 +581,17 @@ _:b0 a schema:PostalAddress;
               contentType: 'application/predefined-results',
               parsed: [
                 Triple(
-                  IriTerm('http://example.org/testperson'),
+                  const IriTerm('http://example.org/testperson'),
                   Rdf.type,
                   SchemaPerson.classIri,
                 ),
                 Triple(
-                  IriTerm('http://example.org/testperson'),
+                  const IriTerm('http://example.org/testperson'),
                   SchemaPerson.givenName,
                   LiteralTerm.string('Test Person'),
                 ),
                 Triple(
-                  IriTerm('http://example.org/testperson'),
+                  const IriTerm('http://example.org/testperson'),
                   SchemaPerson.foafAge,
                   LiteralTerm.integer(42),
                 ),
@@ -934,7 +935,7 @@ class Company {
   int get hashCode => id.hashCode ^ name.hashCode ^ address.hashCode;
 }
 
-const worksForPredicate = IriTerm.prevalidated('https://schema.org/worksFor');
+const worksForPredicate = const IriTerm('https://schema.org/worksFor');
 
 // Update TestPerson to include employer
 class Employee {
@@ -1017,12 +1018,12 @@ class CompanyReferenceMapper implements IriTermMapper<CompanyReference> {
     IriTerm subject,
     DeserializationContext context,
   ) {
-    return CompanyReference(iri: subject.iri);
+    return CompanyReference(iri: subject.value);
   }
 
   @override
   IriTerm toRdfTerm(CompanyReference company, SerializationContext context) {
-    return IriTerm(company.iri);
+    return context.createIriTerm(company.iri);
   }
 }
 
@@ -1037,7 +1038,7 @@ class CompanyMapper implements GlobalResourceMapper<Company> {
   @override
   Company fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
-    final id = subject.iri;
+    final id = subject.value;
     final name = reader.require<String>(namePredicate);
     final address = reader.optional<Address>(addressPredicate);
 
@@ -1051,7 +1052,7 @@ class CompanyMapper implements GlobalResourceMapper<Company> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm(company.id))
+        .resourceBuilder(context.createIriTerm(company.id))
         .addValue(namePredicate, company.name)
         .addValueIfNotNull(addressPredicate, company.address)
         .build();
@@ -1071,7 +1072,7 @@ class EmployeeMapper implements GlobalResourceMapper<Employee> {
   @override
   Employee fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
-    final id = subject.iri;
+    final id = subject.value;
     final name = reader.require<String>(givenNamePredicate);
     final age = reader.require<int>(agePredicate);
     final address = reader.optional<Address>(addressPredicate);
@@ -1093,7 +1094,7 @@ class EmployeeMapper implements GlobalResourceMapper<Employee> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm(person.id))
+        .resourceBuilder(context.createIriTerm(person.id))
         .addValue(givenNamePredicate, person.name)
         .addValue(agePredicate, person.age)
         .addValueIfNotNull(addressPredicate, person.address)
@@ -1107,7 +1108,7 @@ class EmployeeWithCompanyReferenceMapper
   static final addressPredicate = SchemaPerson.address;
   static final employerPredicate = worksForPredicate;
   static final givenNamePredicate = SchemaPerson.givenName;
-  static final agePredicate = IriTerm('http://xmlns.com/foaf/0.1/age');
+  static final agePredicate = const IriTerm('http://xmlns.com/foaf/0.1/age');
 
   @override
   final IriTerm typeIri = SchemaPerson.classIri;
@@ -1118,7 +1119,7 @@ class EmployeeWithCompanyReferenceMapper
     DeserializationContext context,
   ) {
     final reader = context.reader(subject);
-    final id = subject.iri;
+    final id = subject.value;
     final name = reader.require<String>(givenNamePredicate);
     final age = reader.require<int>(agePredicate);
     final address = reader.optional<Address>(addressPredicate);
@@ -1140,7 +1141,7 @@ class EmployeeWithCompanyReferenceMapper
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm(person.id))
+        .resourceBuilder(context.createIriTerm(person.id))
         .addValue(givenNamePredicate, person.name)
         .addValue(agePredicate, person.age)
         .addValueIfNotNull(addressPredicate, person.address)
@@ -1267,7 +1268,7 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   @override
   TestPerson fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
-    final id = subject.iri;
+    final id = subject.value;
     final name = reader.require<String>(SchemaPerson.givenName);
     final age = reader.require<int>(SchemaPerson.foafAge);
     final address = reader.optional<Address>(SchemaPerson.address);
@@ -1289,7 +1290,7 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm(person.id))
+        .resourceBuilder(context.createIriTerm(person.id))
         .addValue(SchemaPerson.givenName, person.name)
         .addValue(SchemaPerson.foafAge, person.age)
         .addValueIfNotNull(SchemaPerson.address, person.address)
@@ -1399,11 +1400,11 @@ class _TestLiteralMapper implements LiteralTermMapper<_TestType> {
 class _TestIriTermMapper implements IriTermMapper<_TestType> {
   @override
   IriTerm toRdfTerm(_TestType value, SerializationContext context) {
-    return IriTerm('http://example.org/${value.value}');
+    return context.createIriTerm('http://example.org/${value.value}');
   }
 
   @override
   _TestType fromRdfTerm(IriTerm term, DeserializationContext context) {
-    return _TestType(term.iri.split('/').last);
+    return _TestType(term.value.split('/').last);
   }
 }

@@ -81,8 +81,7 @@ class RdfAltSerializer<T> extends BaseRdfContainerListSerializer<T> {
   ///
   /// [itemSerializer] Optional serializer for list elements. If not provided,
   /// element serialization will be resolved through the registry.
-  const RdfAltSerializer({Serializer<T>? itemSerializer})
-      : super(Rdf.Alt, itemSerializer);
+  const RdfAltSerializer({Serializer<T>? itemSerializer}) : super(Rdf.Alt);
 }
 
 /// Serializer for Dart `List<T>` collections to RDF Bag (rdf:Bag) containers.
@@ -254,7 +253,9 @@ abstract mixin class RdfContainerSerializerMixin<T> {
 
       // Then yield the container membership triples
       for (final itemObject in itemObjects) {
-        yield Triple(containerSubject, IriTerm('${Rdf.namespace}_$counter'),
+        yield Triple(
+            containerSubject,
+            context.createIriTerm('${Rdf.namespace}_$counter'),
             itemObject as RdfObject);
       }
 

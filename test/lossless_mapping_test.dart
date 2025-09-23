@@ -43,10 +43,15 @@ class PersonWithUnmapped {
 class PersonWithUnmappedMapper
     implements GlobalResourceMapper<PersonWithUnmapped> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/Person');
+  final IriTerm typeIri = const IriTerm('http://example.org/Person');
 
-  static final namePredicate = IriTerm('http://example.org/name');
-  static final agePredicate = IriTerm('http://example.org/age');
+  static final namePredicate = const IriTerm('http://example.org/name');
+  static final agePredicate = const IriTerm('http://example.org/age');
+  final IriTermFactory _iriFactory;
+
+  const PersonWithUnmappedMapper(
+      {IriTermFactory iriFactory = IriTerm.validated})
+      : _iriFactory = iriFactory;
 
   @override
   PersonWithUnmapped fromRdfResource(
@@ -60,7 +65,7 @@ class PersonWithUnmappedMapper
     final unmappedGraph = reader.getUnmapped<RdfGraph>();
 
     return PersonWithUnmapped(
-      id: subject.iri,
+      id: subject.value,
       name: name,
       age: age,
       unmappedGraph: unmappedGraph,
@@ -74,7 +79,7 @@ class PersonWithUnmappedMapper
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm(value.id))
+        .resourceBuilder(_iriFactory(value.id))
         .addValue(namePredicate, value.name)
         .addValue(agePredicate, value.age)
         .addUnmapped(value.unmappedGraph)
@@ -107,16 +112,16 @@ class SimplePerson {
 /// Simple mapper that doesn't handle unmapped triples
 class SimplePersonMapper implements GlobalResourceMapper<SimplePerson> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/Person');
+  final IriTerm typeIri = const IriTerm('http://example.org/Person');
 
-  static final namePredicate = IriTerm('http://example.org/name');
+  static final namePredicate = const IriTerm('http://example.org/name');
 
   @override
   SimplePerson fromRdfResource(
       IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     final name = reader.require<String>(namePredicate);
-    return SimplePerson(id: subject.iri, name: name);
+    return SimplePerson(id: subject.value, name: name);
   }
 
   @override
@@ -126,7 +131,7 @@ class SimplePersonMapper implements GlobalResourceMapper<SimplePerson> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm(value.id))
+        .resourceBuilder(context.createIriTerm(value.id))
         .addValue(namePredicate, value.name)
         .build();
   }
@@ -270,16 +275,16 @@ void main() {
       // Verify unmapped triples are preserved
       final unmappedTriples = person.unmappedGraph.triples;
       expect(
-          unmappedTriples.any(
-              (t) => t.predicate == IriTerm('http://xmlns.com/foaf/0.1/mbox')),
+          unmappedTriples.any((t) =>
+              t.predicate == const IriTerm('http://xmlns.com/foaf/0.1/mbox')),
           isTrue);
       expect(
-          unmappedTriples
-              .any((t) => t.predicate == IriTerm('http://example.org/website')),
+          unmappedTriples.any((t) =>
+              t.predicate == const IriTerm('http://example.org/website')),
           isTrue);
       expect(
-          unmappedTriples.any(
-              (t) => t.predicate == IriTerm('http://example.org/birthYear')),
+          unmappedTriples.any((t) =>
+              t.predicate == const IriTerm('http://example.org/birthYear')),
           isTrue);
     });
 
@@ -287,14 +292,14 @@ void main() {
       // Create a person with unmapped triples
       final unmappedGraph = RdfGraph(triples: [
         Triple(
-          IriTerm('http://example.org/person/1'),
-          IriTerm('http://xmlns.com/foaf/0.1/mbox'),
+          const IriTerm('http://example.org/person/1'),
+          const IriTerm('http://xmlns.com/foaf/0.1/mbox'),
           LiteralTerm.string('john@example.com'),
         ),
         Triple(
-          IriTerm('http://example.org/person/1'),
-          IriTerm('http://example.org/website'),
-          IriTerm('http://johndoe.example.com'),
+          const IriTerm('http://example.org/person/1'),
+          const IriTerm('http://example.org/website'),
+          const IriTerm('http://johndoe.example.com'),
         ),
       ]);
 
@@ -312,12 +317,12 @@ void main() {
 
       // Verify unmapped triples are included
       expect(
-          graph.triples.any(
-              (t) => t.predicate == IriTerm('http://xmlns.com/foaf/0.1/mbox')),
+          graph.triples.any((t) =>
+              t.predicate == const IriTerm('http://xmlns.com/foaf/0.1/mbox')),
           isTrue);
       expect(
-          graph.triples
-              .any((t) => t.predicate == IriTerm('http://example.org/website')),
+          graph.triples.any((t) =>
+              t.predicate == const IriTerm('http://example.org/website')),
           isTrue);
     });
 
@@ -389,12 +394,12 @@ void main() {
 
       // Verify organization triples are in remainder
       expect(
-          remainder.triples.any(
-              (t) => t.subject == IriTerm('http://example.org/organization/1')),
+          remainder.triples.any((t) =>
+              t.subject == const IriTerm('http://example.org/organization/1')),
           isTrue);
       expect(
-          remainder.triples
-              .any((t) => t.subject == IriTerm('http://example.org/unrelated')),
+          remainder.triples.any((t) =>
+              t.subject == const IriTerm('http://example.org/unrelated')),
           isTrue);
     });
 
@@ -419,12 +424,12 @@ void main() {
       // Person should have unmapped mbox triple
       expect(person.unmappedGraph.triples, hasLength(1));
       expect(person.unmappedGraph.triples.first.predicate,
-          equals(IriTerm('http://xmlns.com/foaf/0.1/mbox')));
+          equals(const IriTerm('http://xmlns.com/foaf/0.1/mbox')));
 
       // Remainder should contain organization triples
       expect(
-          remainder.triples.any(
-              (t) => t.subject == IriTerm('http://example.org/organization/1')),
+          remainder.triples.any((t) =>
+              t.subject == const IriTerm('http://example.org/organization/1')),
           isTrue);
     });
 
@@ -587,8 +592,8 @@ void main() {
           age: 30,
           unmappedGraph: RdfGraph(triples: [
             Triple(
-              IriTerm('http://example.org/person/1'),
-              IriTerm('http://xmlns.com/foaf/0.1/mbox'),
+              const IriTerm('http://example.org/person/1'),
+              const IriTerm('http://xmlns.com/foaf/0.1/mbox'),
               LiteralTerm.string('john@example.com'),
             ),
           ]),
@@ -599,9 +604,9 @@ void main() {
           age: 25,
           unmappedGraph: RdfGraph(triples: [
             Triple(
-              IriTerm('http://example.org/person/2'),
-              IriTerm('http://example.org/website'),
-              IriTerm('http://janedoe.example.com'),
+              const IriTerm('http://example.org/person/2'),
+              const IriTerm('http://example.org/website'),
+              const IriTerm('http://janedoe.example.com'),
             ),
           ]),
         ),
@@ -614,12 +619,12 @@ void main() {
 
       // Verify unmapped triples are present
       expect(
-          graph.triples.any(
-              (t) => t.predicate == IriTerm('http://xmlns.com/foaf/0.1/mbox')),
+          graph.triples.any((t) =>
+              t.predicate == const IriTerm('http://xmlns.com/foaf/0.1/mbox')),
           isTrue);
       expect(
-          graph.triples
-              .any((t) => t.predicate == IriTerm('http://example.org/website')),
+          graph.triples.any((t) =>
+              t.predicate == const IriTerm('http://example.org/website')),
           isTrue);
     });
   });

@@ -25,7 +25,7 @@ final class StringMapper extends BaseRdfLiteralTermMapper<String> {
             targetType: String);
       }
       throw Exception(
-        'Expected datatype ${datatype.iri} but got ${term.datatype.iri}',
+        'Expected datatype ${datatype.value} but got ${term.datatype.value}',
       );
     }
 

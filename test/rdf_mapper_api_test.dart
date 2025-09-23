@@ -137,17 +137,17 @@ class TestEntity {
 }
 
 class TestEntityMapper implements GlobalResourceMapper<TestEntity> {
-  static final namePredicate = IriTerm('http://schema.org/name');
-  static final valuePredicate = IriTerm('http://schema.org/value');
+  static final namePredicate = const IriTerm('http://schema.org/name');
+  static final valuePredicate = const IriTerm('http://schema.org/value');
 
   @override
-  final IriTerm typeIri = IriTerm('http://schema.org/TestEntity');
+  final IriTerm typeIri = const IriTerm('http://schema.org/TestEntity');
 
   @override
   TestEntity fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return TestEntity(
-      id: subject.iri,
+      id: subject.value,
       name: reader.require<String>(namePredicate),
       value: reader.require<int>(valuePredicate),
     );
@@ -160,7 +160,7 @@ class TestEntityMapper implements GlobalResourceMapper<TestEntity> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm(entity.id))
+        .resourceBuilder(context.createIriTerm(entity.id))
         .addValue(namePredicate, entity.name)
         .addValue(valuePredicate, entity.value)
         .build();

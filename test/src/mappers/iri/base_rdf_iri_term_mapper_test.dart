@@ -58,11 +58,11 @@ void main() {
 
       test('should serialize enum to IRI', () {
         final iri = mapper.toRdfTerm(TestEnum.value1, serializationContext);
-        expect(iri.iri, equals('https://example.org/test/value1'));
+        expect(iri.value, equals('https://example.org/test/value1'));
       });
 
       test('should deserialize IRI to enum', () {
-        final iri = IriTerm('https://example.org/test/specialValue');
+        final iri = const IriTerm('https://example.org/test/specialValue');
         final value = mapper.fromRdfTerm(iri, deserializationContext);
         expect(value, equals(TestEnum.specialValue));
       });
@@ -77,7 +77,7 @@ void main() {
       });
 
       test('should throw on invalid IRI format', () {
-        final invalidIri = IriTerm('https://other.org/test/value1');
+        final invalidIri = const IriTerm('https://other.org/test/value1');
         expect(
           () => mapper.fromRdfTerm(invalidIri, deserializationContext),
           throwsArgumentError,
@@ -96,12 +96,13 @@ void main() {
 
       test('should serialize with providers', () {
         final iri = mapper.toRdfTerm(TestEnum.value2, serializationContext);
-        expect(
-            iri.iri, equals('https://mycompany.com/ontology/ns/enums/value2'));
+        expect(iri.value,
+            equals('https://mycompany.com/ontology/ns/enums/value2'));
       });
 
       test('should deserialize with providers', () {
-        final iri = IriTerm('https://mycompany.com/ontology/ns/enums/value1');
+        final iri =
+            const IriTerm('https://mycompany.com/ontology/ns/enums/value1');
         final value = mapper.fromRdfTerm(iri, deserializationContext);
         expect(value, equals(TestEnum.value1));
       });
@@ -112,14 +113,14 @@ void main() {
 
         final iri =
             newMapper.toRdfTerm(TestEnum.specialValue, serializationContext);
-        expect(iri.iri, equals('http://different.org/ns/enums/specialValue'));
+        expect(iri.value, equals('http://different.org/ns/enums/specialValue'));
       });
     });
 
     group('Validation', () {
       test('should throw when value variable not in template', () {
         const mapper = SimpleTestMapperWithBadVariable();
-        final iri = IriTerm('https://example.org/test/somevalue');
+        final iri = const IriTerm('https://example.org/test/somevalue');
         expect(
           () => mapper.fromRdfTerm(iri, MockDeserializationContext()),
           throwsArgumentError,
@@ -164,6 +165,8 @@ class TestMapperWithMissingProvider extends BaseRdfIriTermMapper<TestEnum> {
 }
 
 class MockSerializationContext implements SerializationContext {
+  @override
+  IriTerm createIriTerm(String value) => IriTerm(value);
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

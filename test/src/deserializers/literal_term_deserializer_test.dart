@@ -97,7 +97,7 @@ void main() {
       // Test with a custom literal format
       final term = LiteralTerm(
         'x:10,y:20',
-        datatype: IriTerm('http://example.org/Point'),
+        datatype: const IriTerm('http://example.org/Point'),
       );
       final result = deserializer.fromRdfTerm(term, context);
 
@@ -111,7 +111,7 @@ void main() {
 class CustomLiteralDeserializer implements LiteralTermDeserializer<Point> {
   final IriTerm datatype;
   const CustomLiteralDeserializer(
-      [this.datatype = const IriTerm.prevalidated('http://example.org/Point')]);
+      [this.datatype = const IriTerm('http://example.org/Point')]);
   @override
   Point fromRdfTerm(
       LiteralTerm term, covariant MockDeserializationContext context,

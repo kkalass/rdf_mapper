@@ -40,7 +40,7 @@ void main() {
 
       // Serialize: relative string -> absolute IRI term
       final iriTerm = serializer.toRdfTerm(relativeIri, serializationContext);
-      expect(iriTerm.iri,
+      expect(iriTerm.value,
           equals('http://example.org/documents/chapter1/section2'));
 
       // Deserialize: absolute IRI term -> relative string
@@ -64,10 +64,10 @@ void main() {
           serializer.toRdfTerm(relativeIri, serializationContext);
       final mapperSerializeResult =
           mapper.toRdfTerm(relativeIri, serializationContext);
-      expect(mapperSerializeResult.iri, equals(serializerResult.iri));
+      expect(mapperSerializeResult.value, equals(serializerResult.value));
 
       // Compare deserialization
-      final iriTerm = IriTerm('http://example.org/api/users/456');
+      final iriTerm = const IriTerm('http://example.org/api/users/456');
       final deserializerResult =
           deserializer.fromRdfTerm(iriTerm, deserializationContext);
       final mapperDeserializeResult =
@@ -127,7 +127,7 @@ void main() {
       for (final absoluteIri in absoluteIris) {
         // Serialize: should pass through unchanged
         final serialized = mapper.toRdfTerm(absoluteIri, serializationContext);
-        expect(serialized.iri, equals(absoluteIri));
+        expect(serialized.value, equals(absoluteIri));
 
         // Deserialize: should also pass through unchanged
         final deserialized =
@@ -153,7 +153,7 @@ void main() {
         // Test basic functionality
         final result = mapper.toRdfTerm('resource', serializationContext);
         expect(result, isA<IriTerm>());
-        expect(result.iri, contains('resource'));
+        expect(result.value, contains('resource'));
       }
     });
 
@@ -202,7 +202,7 @@ void main() {
       const testIri = 'test/resource';
       final result1 = mapper1.toRdfTerm(testIri, serializationContext);
       final result2 = mapper2.toRdfTerm(testIri, serializationContext);
-      expect(result1.iri, equals(result2.iri));
+      expect(result1.value, equals(result2.value));
     });
   });
 }

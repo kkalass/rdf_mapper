@@ -20,7 +20,7 @@ void main() {
       final deserializer = StringIriDeserializer();
 
       // Test with simple IRI
-      final term = IriTerm('http://example.org/resource');
+      final term = const IriTerm('http://example.org/resource');
       final result = deserializer.fromRdfTerm(term, context);
 
       expect(result, equals('http://example.org/resource'));
@@ -30,7 +30,7 @@ void main() {
       final deserializer = UriIriDeserializer();
 
       // Test with valid URI
-      final term = IriTerm('http://example.org/resource');
+      final term = const IriTerm('http://example.org/resource');
       final result = deserializer.fromRdfTerm(term, context);
 
       expect(result.toString(), equals('http://example.org/resource'));
@@ -43,7 +43,7 @@ void main() {
       final deserializer = UriIriDeserializer();
 
       // Test with URI containing encoded characters
-      final term = IriTerm('http://example.org/resource%20with%20spaces');
+      final term = const IriTerm('http://example.org/resource%20with%20spaces');
       final result = deserializer.fromRdfTerm(term, context);
 
       expect(
@@ -58,9 +58,9 @@ void main() {
       final deserializer = ResourceTypeDeserializer();
 
       // Test mapping IRIs to enum values
-      final personTerm = IriTerm('http://example.org/Person');
-      final organizationTerm = IriTerm('http://example.org/Organization');
-      final unknownTerm = IriTerm('http://example.org/Unknown');
+      final personTerm = const IriTerm('http://example.org/Person');
+      final organizationTerm = const IriTerm('http://example.org/Organization');
+      final unknownTerm = const IriTerm('http://example.org/Unknown');
 
       expect(
         deserializer.fromRdfTerm(personTerm, context),
@@ -80,7 +80,7 @@ void main() {
       final deserializer = ResourceDeserializer();
 
       // Test custom deserialization logic
-      final term = IriTerm('http://example.org/resources/123');
+      final term = const IriTerm('http://example.org/resources/123');
       final result = deserializer.fromRdfTerm(term, context);
 
       expect(result.id, equals('123'));
@@ -96,7 +96,7 @@ class StringIriDeserializer implements IriTermDeserializer<String> {
     IriTerm term,
     covariant MockDeserializationContext context,
   ) {
-    return term.iri;
+    return term.value;
   }
 }
 
@@ -104,7 +104,7 @@ class StringIriDeserializer implements IriTermDeserializer<String> {
 class UriIriDeserializer implements IriTermDeserializer<Uri> {
   @override
   Uri fromRdfTerm(IriTerm term, covariant MockDeserializationContext context) {
-    return Uri.parse(term.iri);
+    return Uri.parse(term.value);
   }
 }
 
@@ -123,9 +123,9 @@ class ResourceTypeDeserializer implements IriTermDeserializer<ResourceType> {
     IriTerm term,
     covariant MockDeserializationContext context,
   ) {
-    final type = _mapping[term.iri];
+    final type = _mapping[term.value];
     if (type == null) {
-      throw ArgumentError('Unknown resource type: ${term.iri}');
+      throw ArgumentError('Unknown resource type: ${term.value}');
     }
     return type;
   }
@@ -147,15 +147,15 @@ class ResourceDeserializer implements IriTermDeserializer<Resource> {
     covariant MockDeserializationContext context,
   ) {
     // Extract ID from IRI pattern like http://example.org/resources/{id}
-    final uri = Uri.parse(term.iri);
+    final uri = Uri.parse(term.value);
     final segments = uri.pathSegments;
 
     if (segments.isEmpty) {
-      throw ArgumentError('Invalid resource IRI: ${term.iri}');
+      throw ArgumentError('Invalid resource IRI: ${term.value}');
     }
 
     final id = segments.last;
-    final namespace = term.iri.substring(0, term.iri.length - id.length);
+    final namespace = term.value.substring(0, term.value.length - id.length);
 
     return Resource(id: id, namespace: namespace);
   }

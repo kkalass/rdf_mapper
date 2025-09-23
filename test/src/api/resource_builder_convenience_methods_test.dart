@@ -18,8 +18,8 @@ void main() {
   group('ResourceBuilder convenience methods', () {
     group('addRdfList', () {
       test('should serialize a simple list of strings', () {
-        final subject = IriTerm('http://example.org/book');
-        final predicate = IriTerm('http://example.org/chapters');
+        final subject = const IriTerm('http://example.org/book');
+        final predicate = const IriTerm('http://example.org/chapters');
         final chapters = ['Chapter 1', 'Chapter 2', 'Chapter 3'];
 
         final (_, triples) = context
@@ -67,8 +67,8 @@ void main() {
       });
 
       test('should serialize an empty list', () {
-        final subject = IriTerm('http://example.org/book');
-        final predicate = IriTerm('http://example.org/chapters');
+        final subject = const IriTerm('http://example.org/book');
+        final predicate = const IriTerm('http://example.org/chapters');
         final chapters = <String>[];
 
         final (_, triples) = context
@@ -89,8 +89,8 @@ void main() {
       });
 
       test('should serialize a single-item list', () {
-        final subject = IriTerm('http://example.org/book');
-        final predicate = IriTerm('http://example.org/chapters');
+        final subject = const IriTerm('http://example.org/book');
+        final predicate = const IriTerm('http://example.org/chapters');
         final chapters = ['Chapter 1'];
 
         final (_, triples) = context
@@ -128,8 +128,8 @@ void main() {
       });
 
       test('should work with custom item serializer', () {
-        final subject = IriTerm('http://example.org/book');
-        final predicate = IriTerm('http://example.org/chapters');
+        final subject = const IriTerm('http://example.org/book');
+        final predicate = const IriTerm('http://example.org/chapters');
         final chapters = ['chapter one', 'chapter two'];
 
         final (_, triples) = context
@@ -159,8 +159,8 @@ void main() {
         // Register a serializer for TestPerson
         registry.registerSerializer<TestPerson>(TestPersonSerializer());
 
-        final subject = IriTerm('http://example.org/team');
-        final predicate = IriTerm('http://example.org/members');
+        final subject = const IriTerm('http://example.org/team');
+        final predicate = const IriTerm('http://example.org/members');
         final members = [
           TestPerson(iri: 'http://example.org/person1', name: 'Alice'),
           TestPerson(iri: 'http://example.org/person2', name: 'Bob'),
@@ -182,7 +182,7 @@ void main() {
         expect(firstTriples.length, equals(2));
 
         final personIris =
-            firstTriples.map((t) => (t.object as IriTerm).iri).toSet();
+            firstTriples.map((t) => (t.object as IriTerm).value).toSet();
         expect(
             personIris,
             equals(
@@ -190,7 +190,8 @@ void main() {
 
         // Check person data was serialized
         final nameTriples = triples
-            .where((t) => t.predicate == IriTerm('http://example.org/name'))
+            .where(
+                (t) => t.predicate == const IriTerm('http://example.org/name'))
             .toList();
         expect(nameTriples.length, equals(2));
 
@@ -205,15 +206,15 @@ void main() {
       });
 
       test('should work with method chaining', () {
-        final subject = IriTerm('http://example.org/book');
+        final subject = const IriTerm('http://example.org/book');
         final chapters = ['Chapter 1', 'Chapter 2'];
         final tags = ['fiction', 'adventure'];
 
         final (_, triples) = context
             .resourceBuilder(subject)
-            .addValue(IriTerm('http://example.org/title'), 'My Book')
-            .addRdfList(IriTerm('http://example.org/chapters'), chapters)
-            .addRdfList(IriTerm('http://example.org/tags'), tags)
+            .addValue(const IriTerm('http://example.org/title'), 'My Book')
+            .addRdfList(const IriTerm('http://example.org/chapters'), chapters)
+            .addRdfList(const IriTerm('http://example.org/tags'), tags)
             .build();
 
         // Should have:
@@ -224,7 +225,8 @@ void main() {
 
         // Check title
         final titleTriples = triples
-            .where((t) => t.predicate == IriTerm('http://example.org/title'))
+            .where(
+                (t) => t.predicate == const IriTerm('http://example.org/title'))
             .toList();
         expect(titleTriples.length, equals(1));
         expect((titleTriples.first.object as LiteralTerm).value,
@@ -234,14 +236,14 @@ void main() {
         final chapterTriples = triples
             .where((t) =>
                 t.subject == subject &&
-                t.predicate == IriTerm('http://example.org/chapters'))
+                t.predicate == const IriTerm('http://example.org/chapters'))
             .toList();
         expect(chapterTriples.length, equals(1));
 
         final tagTriples = triples
             .where((t) =>
                 t.subject == subject &&
-                t.predicate == IriTerm('http://example.org/tags'))
+                t.predicate == const IriTerm('http://example.org/tags'))
             .toList();
         expect(tagTriples.length, equals(1));
 
@@ -292,7 +294,7 @@ class TestPerson {
 /// Test serializer for TestPerson
 class TestPersonSerializer implements GlobalResourceSerializer<TestPerson> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/Person');
+  final IriTerm typeIri = const IriTerm('http://example.org/Person');
 
   @override
   (IriTerm, Iterable<Triple>) toRdfResource(
@@ -301,7 +303,7 @@ class TestPersonSerializer implements GlobalResourceSerializer<TestPerson> {
     RdfSubject? parentSubject,
   }) =>
       context
-          .resourceBuilder(IriTerm(value.iri))
-          .addValue(IriTerm('http://example.org/name'), value.name)
+          .resourceBuilder(context.createIriTerm(value.iri))
+          .addValue(const IriTerm('http://example.org/name'), value.name)
           .build();
 }

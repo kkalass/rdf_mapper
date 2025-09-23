@@ -14,11 +14,12 @@ void main() {
 
     group('Valid single root scenarios', () {
       test('should handle single subject with only literals', () {
-        final subject = IriTerm('http://example.org/person1');
+        final subject = const IriTerm('http://example.org/person1');
         final triples = [
-          Triple(
-              subject, IriTerm('http://example.org/name'), LiteralTerm('John')),
-          Triple(subject, IriTerm('http://example.org/age'), LiteralTerm('30')),
+          Triple(subject, const IriTerm('http://example.org/name'),
+              LiteralTerm('John')),
+          Triple(subject, const IriTerm('http://example.org/age'),
+              LiteralTerm('30')),
         ];
 
         final graph = RdfGraph(triples: triples);
@@ -29,16 +30,16 @@ void main() {
       });
 
       test('should handle hierarchical structure with clear root', () {
-        final person = IriTerm('http://example.org/person1');
+        final person = const IriTerm('http://example.org/person1');
         final address = BlankNodeTerm();
         final triples = [
-          Triple(
-              person, IriTerm('http://example.org/name'), LiteralTerm('John')),
-          Triple(person, IriTerm('http://example.org/address'), address),
-          Triple(address, IriTerm('http://example.org/street'),
+          Triple(person, const IriTerm('http://example.org/name'),
+              LiteralTerm('John')),
+          Triple(person, const IriTerm('http://example.org/address'), address),
+          Triple(address, const IriTerm('http://example.org/street'),
               LiteralTerm('Main St')),
-          Triple(
-              address, IriTerm('http://example.org/city'), LiteralTerm('NYC')),
+          Triple(address, const IriTerm('http://example.org/city'),
+              LiteralTerm('NYC')),
         ];
 
         final graph = RdfGraph(triples: triples);
@@ -50,18 +51,18 @@ void main() {
       });
 
       test('should handle complex hierarchy with multiple levels', () {
-        final person = IriTerm('http://example.org/person1');
+        final person = const IriTerm('http://example.org/person1');
         final address = BlankNodeTerm();
         final country = BlankNodeTerm();
         final triples = [
-          Triple(
-              person, IriTerm('http://example.org/name'), LiteralTerm('John')),
-          Triple(person, IriTerm('http://example.org/address'), address),
-          Triple(address, IriTerm('http://example.org/street'),
+          Triple(person, const IriTerm('http://example.org/name'),
+              LiteralTerm('John')),
+          Triple(person, const IriTerm('http://example.org/address'), address),
+          Triple(address, const IriTerm('http://example.org/street'),
               LiteralTerm('Main St')),
-          Triple(address, IriTerm('http://example.org/country'), country),
-          Triple(
-              country, IriTerm('http://example.org/code'), LiteralTerm('US')),
+          Triple(address, const IriTerm('http://example.org/country'), country),
+          Triple(country, const IriTerm('http://example.org/code'),
+              LiteralTerm('US')),
         ];
 
         final graph = RdfGraph(triples: triples);
@@ -74,13 +75,13 @@ void main() {
 
     group('Invalid multiple root scenarios', () {
       test('should reject graph with multiple unrelated subjects', () {
-        final person1 = IriTerm('http://example.org/person1');
-        final person2 = IriTerm('http://example.org/person2');
+        final person1 = const IriTerm('http://example.org/person1');
+        final person2 = const IriTerm('http://example.org/person2');
         final triples = [
-          Triple(
-              person1, IriTerm('http://example.org/name'), LiteralTerm('John')),
-          Triple(
-              person2, IriTerm('http://example.org/name'), LiteralTerm('Jane')),
+          Triple(person1, const IriTerm('http://example.org/name'),
+              LiteralTerm('John')),
+          Triple(person2, const IriTerm('http://example.org/name'),
+              LiteralTerm('Jane')),
         ];
 
         final graph = RdfGraph(triples: triples);
@@ -92,16 +93,16 @@ void main() {
       });
 
       test('should reject disconnected components', () {
-        final person = IriTerm('http://example.org/person1');
-        final company = IriTerm('http://example.org/company1');
+        final person = const IriTerm('http://example.org/person1');
+        final company = const IriTerm('http://example.org/company1');
         final address = BlankNodeTerm();
         final triples = [
-          Triple(
-              person, IriTerm('http://example.org/name'), LiteralTerm('John')),
-          Triple(
-              company, IriTerm('http://example.org/name'), LiteralTerm('ACME')),
-          Triple(company, IriTerm('http://example.org/address'), address),
-          Triple(address, IriTerm('http://example.org/street'),
+          Triple(person, const IriTerm('http://example.org/name'),
+              LiteralTerm('John')),
+          Triple(company, const IriTerm('http://example.org/name'),
+              LiteralTerm('ACME')),
+          Triple(company, const IriTerm('http://example.org/address'), address),
+          Triple(address, const IriTerm('http://example.org/street'),
               LiteralTerm('Business St')),
         ];
 
@@ -114,15 +115,15 @@ void main() {
 
     group('Challenging cycle scenarios', () {
       test('should handle legitimate bidirectional references', () {
-        final person = IriTerm('http://example.org/person1');
-        final company = IriTerm('http://example.org/company1');
+        final person = const IriTerm('http://example.org/person1');
+        final company = const IriTerm('http://example.org/company1');
         final triples = [
-          Triple(
-              person, IriTerm('http://example.org/name'), LiteralTerm('John')),
-          Triple(person, IriTerm('http://example.org/worksAt'), company),
-          Triple(
-              company, IriTerm('http://example.org/name'), LiteralTerm('ACME')),
-          Triple(company, IriTerm('http://example.org/employee'), person),
+          Triple(person, const IriTerm('http://example.org/name'),
+              LiteralTerm('John')),
+          Triple(person, const IriTerm('http://example.org/worksAt'), company),
+          Triple(company, const IriTerm('http://example.org/name'),
+              LiteralTerm('ACME')),
+          Triple(company, const IriTerm('http://example.org/employee'), person),
         ];
 
         final graph = RdfGraph(triples: triples);
@@ -135,11 +136,11 @@ void main() {
       });
 
       test('should handle self-referencing subject', () {
-        final person = IriTerm('http://example.org/person1');
+        final person = const IriTerm('http://example.org/person1');
         final triples = [
-          Triple(
-              person, IriTerm('http://example.org/name'), LiteralTerm('John')),
-          Triple(person, IriTerm('http://example.org/friend'),
+          Triple(person, const IriTerm('http://example.org/name'),
+              LiteralTerm('John')),
+          Triple(person, const IriTerm('http://example.org/friend'),
               person), // Self-reference
         ];
 
@@ -154,19 +155,19 @@ void main() {
       });
 
       test('should handle blank node cycles with IRI root', () {
-        final person = IriTerm('http://example.org/person1');
+        final person = const IriTerm('http://example.org/person1');
         final addr1 = BlankNodeTerm();
         final addr2 = BlankNodeTerm();
         final triples = [
-          Triple(
-              person, IriTerm('http://example.org/name'), LiteralTerm('John')),
-          Triple(person, IriTerm('http://example.org/address'), addr1),
-          Triple(addr1, IriTerm('http://example.org/nextAddress'), addr2),
-          Triple(addr2, IriTerm('http://example.org/previousAddress'),
+          Triple(person, const IriTerm('http://example.org/name'),
+              LiteralTerm('John')),
+          Triple(person, const IriTerm('http://example.org/address'), addr1),
+          Triple(addr1, const IriTerm('http://example.org/nextAddress'), addr2),
+          Triple(addr2, const IriTerm('http://example.org/previousAddress'),
               addr1), // Cycle
-          Triple(addr1, IriTerm('http://example.org/street'),
+          Triple(addr1, const IriTerm('http://example.org/street'),
               LiteralTerm('Main St')),
-          Triple(addr2, IriTerm('http://example.org/street'),
+          Triple(addr2, const IriTerm('http://example.org/street'),
               LiteralTerm('Oak St')),
         ];
 
@@ -185,10 +186,10 @@ void main() {
       test('should handle single blank node as root', () {
         final blank = BlankNodeTerm();
         final triples = [
-          Triple(blank, IriTerm('http://example.org/name'),
+          Triple(blank, const IriTerm('http://example.org/name'),
               LiteralTerm('BlankRoot')),
-          Triple(
-              blank, IriTerm('http://example.org/type'), LiteralTerm('Test')),
+          Triple(blank, const IriTerm('http://example.org/type'),
+              LiteralTerm('Test')),
         ];
 
         final graph = RdfGraph(triples: triples);
@@ -201,11 +202,11 @@ void main() {
 
       test('should handle blank node root with IRI objects', () {
         final blank = BlankNodeTerm();
-        final iri = IriTerm('http://example.org/person1');
+        final iri = const IriTerm('http://example.org/person1');
         final triples = [
-          Triple(blank, IriTerm('http://example.org/name'),
+          Triple(blank, const IriTerm('http://example.org/name'),
               LiteralTerm('Container')),
-          Triple(blank, IriTerm('http://example.org/contains'), iri),
+          Triple(blank, const IriTerm('http://example.org/contains'), iri),
         ];
 
         final graph = RdfGraph(triples: triples);
@@ -221,13 +222,15 @@ void main() {
         final childBlank1 = BlankNodeTerm();
         final childBlank2 = BlankNodeTerm();
         final triples = [
-          Triple(rootBlank, IriTerm('http://example.org/name'),
+          Triple(rootBlank, const IriTerm('http://example.org/name'),
               LiteralTerm('Root')),
-          Triple(rootBlank, IriTerm('http://example.org/child1'), childBlank1),
-          Triple(rootBlank, IriTerm('http://example.org/child2'), childBlank2),
-          Triple(childBlank1, IriTerm('http://example.org/value'),
+          Triple(rootBlank, const IriTerm('http://example.org/child1'),
+              childBlank1),
+          Triple(rootBlank, const IriTerm('http://example.org/child2'),
+              childBlank2),
+          Triple(childBlank1, const IriTerm('http://example.org/value'),
               LiteralTerm('Child1')),
-          Triple(childBlank2, IriTerm('http://example.org/value'),
+          Triple(childBlank2, const IriTerm('http://example.org/value'),
               LiteralTerm('Child2')),
         ];
 
@@ -241,12 +244,12 @@ void main() {
 
       test('should prefer IRI over blank node when both are toplevel', () {
         final blank = BlankNodeTerm();
-        final iri = IriTerm('http://example.org/person1');
+        final iri = const IriTerm('http://example.org/person1');
         final triples = [
-          Triple(blank, IriTerm('http://example.org/name'),
+          Triple(blank, const IriTerm('http://example.org/name'),
               LiteralTerm('BlankNode')),
-          Triple(
-              iri, IriTerm('http://example.org/name'), LiteralTerm('IriNode')),
+          Triple(iri, const IriTerm('http://example.org/name'),
+              LiteralTerm('IriNode')),
         ];
 
         final graph = RdfGraph(triples: triples);
@@ -261,16 +264,17 @@ void main() {
       test('should handle blank node as root with complex hierarchy', () {
         final rootBlank = BlankNodeTerm();
         final midBlank = BlankNodeTerm();
-        final leafIri = IriTerm('http://example.org/leaf');
+        final leafIri = const IriTerm('http://example.org/leaf');
         final triples = [
-          Triple(rootBlank, IriTerm('http://example.org/name'),
+          Triple(rootBlank, const IriTerm('http://example.org/name'),
               LiteralTerm('Root')),
-          Triple(rootBlank, IriTerm('http://example.org/child'), midBlank),
-          Triple(midBlank, IriTerm('http://example.org/name'),
-              LiteralTerm('Middle')),
-          Triple(midBlank, IriTerm('http://example.org/child'), leafIri),
           Triple(
-              leafIri, IriTerm('http://example.org/name'), LiteralTerm('Leaf')),
+              rootBlank, const IriTerm('http://example.org/child'), midBlank),
+          Triple(midBlank, const IriTerm('http://example.org/name'),
+              LiteralTerm('Middle')),
+          Triple(midBlank, const IriTerm('http://example.org/child'), leafIri),
+          Triple(leafIri, const IriTerm('http://example.org/name'),
+              LiteralTerm('Leaf')),
         ];
 
         final graph = RdfGraph(triples: triples);
@@ -284,9 +288,9 @@ void main() {
       test('should handle blank node self-reference', () {
         final blank = BlankNodeTerm();
         final triples = [
-          Triple(blank, IriTerm('http://example.org/name'),
+          Triple(blank, const IriTerm('http://example.org/name'),
               LiteralTerm('SelfRef')),
-          Triple(blank, IriTerm('http://example.org/ref'),
+          Triple(blank, const IriTerm('http://example.org/ref'),
               blank), // Self-reference
         ];
 
@@ -304,17 +308,19 @@ void main() {
         final childBlank2 = BlankNodeTerm();
         final grandChildBlank = BlankNodeTerm();
         final triples = [
-          Triple(rootBlank, IriTerm('http://example.org/name'),
+          Triple(rootBlank, const IriTerm('http://example.org/name'),
               LiteralTerm('Root')),
-          Triple(rootBlank, IriTerm('http://example.org/child'), childBlank1),
-          Triple(rootBlank, IriTerm('http://example.org/child'), childBlank2),
-          Triple(childBlank1, IriTerm('http://example.org/name'),
+          Triple(rootBlank, const IriTerm('http://example.org/child'),
+              childBlank1),
+          Triple(rootBlank, const IriTerm('http://example.org/child'),
+              childBlank2),
+          Triple(childBlank1, const IriTerm('http://example.org/name'),
               LiteralTerm('Child1')),
-          Triple(childBlank1, IriTerm('http://example.org/grandchild'),
+          Triple(childBlank1, const IriTerm('http://example.org/grandchild'),
               grandChildBlank),
-          Triple(childBlank2, IriTerm('http://example.org/name'),
+          Triple(childBlank2, const IriTerm('http://example.org/name'),
               LiteralTerm('Child2')),
-          Triple(grandChildBlank, IriTerm('http://example.org/name'),
+          Triple(grandChildBlank, const IriTerm('http://example.org/name'),
               LiteralTerm('GrandChild')),
         ];
 
@@ -329,14 +335,15 @@ void main() {
       test('should handle blank node with cycle to IRI that references back',
           () {
         final rootBlank = BlankNodeTerm();
-        final iri = IriTerm('http://example.org/person1');
+        final iri = const IriTerm('http://example.org/person1');
         final triples = [
-          Triple(rootBlank, IriTerm('http://example.org/name'),
+          Triple(rootBlank, const IriTerm('http://example.org/name'),
               LiteralTerm('Root')),
-          Triple(rootBlank, IriTerm('http://example.org/references'), iri),
-          Triple(iri, IriTerm('http://example.org/name'),
+          Triple(
+              rootBlank, const IriTerm('http://example.org/references'), iri),
+          Triple(iri, const IriTerm('http://example.org/name'),
               LiteralTerm('Referenced')),
-          Triple(iri, IriTerm('http://example.org/backref'),
+          Triple(iri, const IriTerm('http://example.org/backref'),
               rootBlank), // Creates cycle
         ];
 
@@ -364,10 +371,10 @@ void main() {
         final blank1 = BlankNodeTerm();
         final blank2 = BlankNodeTerm();
         final triples = [
-          Triple(blank1, IriTerm('http://example.org/name'),
+          Triple(blank1, const IriTerm('http://example.org/name'),
               LiteralTerm('Value1')),
-          Triple(blank1, IriTerm('http://example.org/ref'), blank2),
-          Triple(blank2, IriTerm('http://example.org/name'),
+          Triple(blank1, const IriTerm('http://example.org/ref'), blank2),
+          Triple(blank2, const IriTerm('http://example.org/name'),
               LiteralTerm('Value2')),
         ];
 
@@ -379,14 +386,15 @@ void main() {
       });
 
       test('should handle mixed IRI and blank node subjects', () {
-        final iri = IriTerm('http://example.org/person1');
+        final iri = const IriTerm('http://example.org/person1');
         final blank = BlankNodeTerm();
         final triples = [
-          Triple(iri, IriTerm('http://example.org/name'), LiteralTerm('John')),
-          Triple(iri, IriTerm('http://example.org/ref'), blank),
-          Triple(
-              blank, IriTerm('http://example.org/name'), LiteralTerm('Blank')),
-          Triple(blank, IriTerm('http://example.org/backRef'),
+          Triple(iri, const IriTerm('http://example.org/name'),
+              LiteralTerm('John')),
+          Triple(iri, const IriTerm('http://example.org/ref'), blank),
+          Triple(blank, const IriTerm('http://example.org/name'),
+              LiteralTerm('Blank')),
+          Triple(blank, const IriTerm('http://example.org/backRef'),
               iri), // Creates cycle
         ];
 
@@ -399,16 +407,17 @@ void main() {
       });
 
       test('should handle complex interconnected blank node hierarchy', () {
-        final iri = IriTerm('http://example.org/person1');
+        final iri = const IriTerm('http://example.org/person1');
         final blank1 = BlankNodeTerm();
         final blank2 = BlankNodeTerm();
         final blank3 = BlankNodeTerm();
         final triples = [
-          Triple(iri, IriTerm('http://example.org/name'), LiteralTerm('John')),
-          Triple(iri, IriTerm('http://example.org/child'), blank1),
-          Triple(blank1, IriTerm('http://example.org/sibling'), blank2),
-          Triple(blank2, IriTerm('http://example.org/parent'), blank3),
-          Triple(blank3, IriTerm('http://example.org/grandparent'),
+          Triple(iri, const IriTerm('http://example.org/name'),
+              LiteralTerm('John')),
+          Triple(iri, const IriTerm('http://example.org/child'), blank1),
+          Triple(blank1, const IriTerm('http://example.org/sibling'), blank2),
+          Triple(blank2, const IriTerm('http://example.org/parent'), blank3),
+          Triple(blank3, const IriTerm('http://example.org/grandparent'),
               iri), // Creates cycle back to IRI
         ];
 
@@ -425,9 +434,9 @@ void main() {
         final blank2 = BlankNodeTerm();
         final blank3 = BlankNodeTerm();
         final triples = [
-          Triple(blank1, IriTerm('http://example.org/next'), blank2),
-          Triple(blank2, IriTerm('http://example.org/next'), blank3),
-          Triple(blank3, IriTerm('http://example.org/next'),
+          Triple(blank1, const IriTerm('http://example.org/next'), blank2),
+          Triple(blank2, const IriTerm('http://example.org/next'), blank3),
+          Triple(blank3, const IriTerm('http://example.org/next'),
               blank1), // Complete cycle
         ];
 
@@ -441,13 +450,14 @@ void main() {
       });
 
       test('should handle subject that is object of a literal predicate', () {
-        final subject1 = IriTerm('http://example.org/person1');
-        final subject2 = IriTerm('http://example.org/person2');
+        final subject1 = const IriTerm('http://example.org/person1');
+        final subject2 = const IriTerm('http://example.org/person2');
         final triples = [
-          Triple(subject1, IriTerm('http://example.org/name'),
+          Triple(subject1, const IriTerm('http://example.org/name'),
               LiteralTerm('John')),
-          Triple(subject2, IriTerm('http://example.org/friend'), subject1),
-          Triple(subject2, IriTerm('http://example.org/name'),
+          Triple(
+              subject2, const IriTerm('http://example.org/friend'), subject1),
+          Triple(subject2, const IriTerm('http://example.org/name'),
               LiteralTerm('Jane')),
         ];
 
@@ -460,14 +470,14 @@ void main() {
       });
 
       test('should handle same subject in different contexts', () {
-        final subject = IriTerm('http://example.org/person1');
-        final object = IriTerm('http://example.org/person2');
+        final subject = const IriTerm('http://example.org/person1');
+        final object = const IriTerm('http://example.org/person2');
         final triples = [
-          Triple(
-              subject, IriTerm('http://example.org/name'), LiteralTerm('John')),
-          Triple(subject, IriTerm('http://example.org/friend'), object),
-          Triple(
-              object, IriTerm('http://example.org/name'), LiteralTerm('Jane')),
+          Triple(subject, const IriTerm('http://example.org/name'),
+              LiteralTerm('John')),
+          Triple(subject, const IriTerm('http://example.org/friend'), object),
+          Triple(object, const IriTerm('http://example.org/name'),
+              LiteralTerm('Jane')),
         ];
 
         final graph = RdfGraph(triples: triples);
@@ -479,11 +489,12 @@ void main() {
       });
 
       test('should reject multiple IRI subjects in cyclic graph', () {
-        final iri1 = IriTerm('http://example.org/person1');
-        final iri2 = IriTerm('http://example.org/person2');
+        final iri1 = const IriTerm('http://example.org/person1');
+        final iri2 = const IriTerm('http://example.org/person2');
         final triples = [
-          Triple(iri1, IriTerm('http://example.org/friend'), iri2),
-          Triple(iri2, IriTerm('http://example.org/friend'), iri1), // Cycle
+          Triple(iri1, const IriTerm('http://example.org/friend'), iri2),
+          Triple(
+              iri2, const IriTerm('http://example.org/friend'), iri1), // Cycle
         ];
 
         final graph = RdfGraph(triples: triples);
@@ -498,10 +509,10 @@ void main() {
 
     group('fromResource deserialization tests', () {
       test('should validate subject matches root in deserialization', () {
-        final correctSubject = IriTerm('http://example.org/person1');
-        final wrongSubject = IriTerm('http://example.org/person2');
+        final correctSubject = const IriTerm('http://example.org/person1');
+        final wrongSubject = const IriTerm('http://example.org/person2');
         final triples = [
-          Triple(correctSubject, IriTerm('http://example.org/name'),
+          Triple(correctSubject, const IriTerm('http://example.org/name'),
               LiteralTerm('John')),
         ];
 
@@ -520,12 +531,12 @@ void main() {
       });
 
       test('should reject subject mismatch when root differs', () {
-        final rootSubject = IriTerm('http://example.org/person1');
-        final wrongSubject = IriTerm('http://example.org/person2');
+        final rootSubject = const IriTerm('http://example.org/person1');
+        final wrongSubject = const IriTerm('http://example.org/person2');
         final triples = [
-          Triple(rootSubject, IriTerm('http://example.org/name'),
+          Triple(rootSubject, const IriTerm('http://example.org/name'),
               LiteralTerm('John')),
-          Triple(wrongSubject, IriTerm('http://example.org/name'),
+          Triple(wrongSubject, const IriTerm('http://example.org/name'),
               LiteralTerm('Jane')),
         ];
 

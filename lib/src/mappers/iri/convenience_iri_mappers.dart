@@ -10,8 +10,8 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 ///
 /// Examples:
 /// With base IRI `"http://example.org/document"`:
-/// - Serialization: `"section1"` → `IriTerm("http://example.org/document#section1")`
-/// - Deserialization: `IriTerm("http://example.org/document#section1")` → `"section1"`
+/// - Serialization: `"section1"` → `const IriTerm("http://example.org/document#section1")`
+/// - Deserialization: `const IriTerm("http://example.org/document#section1")` → `"section1"`
 ///
 /// For IRIs without fragments, deserialization returns an empty string.
 final class FragmentIriTermMapper implements IriTermMapper<String> {
@@ -28,12 +28,12 @@ final class FragmentIriTermMapper implements IriTermMapper<String> {
     final cleanBase = baseIri.endsWith('#')
         ? baseIri.substring(0, baseIri.length - 1)
         : baseIri;
-    return IriTerm('$cleanBase#$fragment');
+    return context.createIriTerm('$cleanBase#$fragment');
   }
 
   @override
   String fromRdfTerm(IriTerm term, DeserializationContext context) {
-    final iri = term.iri;
+    final iri = term.value;
     final fragmentIndex = iri.lastIndexOf('#');
 
     if (fragmentIndex == -1) {
@@ -52,8 +52,8 @@ final class FragmentIriTermMapper implements IriTermMapper<String> {
 ///
 /// Examples:
 /// With base IRI `"http://example.org/api/resources/"`:
-/// - Serialization: `"item123"` → `IriTerm("http://example.org/api/resources/item123")`
-/// - Deserialization: `IriTerm("http://example.org/api/resources/item123")` → `"item123"`
+/// - Serialization: `"item123"` → `const IriTerm("http://example.org/api/resources/item123")`
+/// - Deserialization: `const IriTerm("http://example.org/api/resources/item123")` → `"item123"`
 ///
 /// For IRIs ending with a slash, deserialization returns an empty string.
 final class LastPathElementIriTermMapper implements IriTermMapper<String> {
@@ -68,12 +68,12 @@ final class LastPathElementIriTermMapper implements IriTermMapper<String> {
   @override
   IriTerm toRdfTerm(String pathElement, SerializationContext context) {
     final cleanBase = baseIri.endsWith('/') ? baseIri : '$baseIri/';
-    return IriTerm('$cleanBase$pathElement');
+    return context.createIriTerm('$cleanBase$pathElement');
   }
 
   @override
   String fromRdfTerm(IriTerm term, DeserializationContext context) {
-    final iri = term.iri;
+    final iri = term.value;
 
     // If IRI ends with slash, return empty string (directory-like structure)
     if (iri.endsWith('/')) {

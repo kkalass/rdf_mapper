@@ -61,7 +61,7 @@
 /// }
 ///
 /// class TemperatureMapper extends DelegatingRdfLiteralTermMapper<Temperature, double> {
-///   static final celsiusType = IriTerm('http://qudt.org/vocab/unit/CEL');
+///   static final celsiusType = const IriTerm('http://qudt.org/vocab/unit/CEL');
 ///   const TemperatureMapper() : super(const DoubleMapper(), celsiusType);
 ///
 ///   @override
@@ -86,7 +86,7 @@
 /// const baseUri = 'http://docs.example.org/';
 /// const relativeMapper = IriRelativeMapper(baseUri);
 /// final relativeIri = relativeMapper.toRdfTerm('chapter1.html', context);
-/// // Creates: IriTerm('http://docs.example.org/chapter1.html')
+/// // Creates: const IriTerm('http://docs.example.org/chapter1.html')
 /// ```
 ///
 library rdf_mapper;
@@ -185,18 +185,24 @@ final class RdfMapper {
   ///
   /// [registry] The mapper registry to use for serialization/deserialization.
   /// [rdfCore] Optional RDF core instance for string parsing/serialization.
-  RdfMapper({required RdfMapperRegistry registry, RdfCore? rdfCore})
-      : _service = RdfMapperService(registry: registry),
-        _rdfCore = rdfCore ?? RdfCore.withStandardCodecs(),
-        _graphOperations =
-            GraphOperations(RdfMapperService(registry: registry));
+  RdfMapper(
+      {required RdfMapperRegistry registry,
+      RdfCore? rdfCore,
+      IriTermFactory iriTermFactory = IriTerm.validated})
+      : _service = RdfMapperService(
+            registry: registry, iriTermFactory: iriTermFactory),
+        _rdfCore = rdfCore ??
+            RdfCore.withStandardCodecs(iriTermFactory: iriTermFactory),
+        _graphOperations = GraphOperations(RdfMapperService(
+            registry: registry, iriTermFactory: iriTermFactory));
 
   /// Creates an RDF Mapper facade with a default registry and standard mappers.
   ///
   /// Returns a new RdfMapper instance initialized with a default registry.
   /// This is the simplest way to create an instance for general use.
-  factory RdfMapper.withDefaultRegistry() =>
-      RdfMapper(registry: RdfMapperRegistry());
+  factory RdfMapper.withDefaultRegistry(
+          {IriTermFactory iriTermFactory = IriTerm.validated}) =>
+      RdfMapper(registry: RdfMapperRegistry(), iriTermFactory: iriTermFactory);
 
   /// Creates an RDF Mapper facade with a custom-configured registry.
   ///
@@ -214,11 +220,11 @@ final class RdfMapper {
   /// });
   /// ```
   factory RdfMapper.withMappers(
-    void Function(RdfMapperRegistry registry) register,
-  ) {
+      void Function(RdfMapperRegistry registry) register,
+      {IriTermFactory iriTermFactory = IriTerm.validated}) {
     final registry = RdfMapperRegistry();
     register(registry);
-    return RdfMapper(registry: registry);
+    return RdfMapper(registry: registry, iriTermFactory: iriTermFactory);
   }
 
   /// Access to the underlying registry for custom mapper registration.
@@ -928,7 +934,7 @@ final class RdfMapper {
   ///
   ///   @override
   ///   (IriTerm, Iterable<Triple>) toRdfResource(Person instance, SerializationContext context, {RdfSubject? parentSubject}) {
-  ///     return context.resourceBuilder(IriTerm(instance.id))
+  ///     return context.resourceBuilder(const IriTerm(instance.id))
   ///       .addValue(FoafPerson.name, instance.name)
   ///       .build();
   ///   }

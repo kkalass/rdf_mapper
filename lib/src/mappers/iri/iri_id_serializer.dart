@@ -16,7 +16,7 @@ import 'package:rdf_mapper/src/api/serialization_context.dart';
 /// ```dart
 /// // Create a serializer that expands IDs to a specific namespace
 /// final personIdSerializer = IriIdSerializer(
-///   expand: (id, _) => IriTerm('http://example.org/people/$id'),
+///   expand: (id, _) => const IriTerm('http://example.org/people/$id'),
 /// );
 ///
 /// // Using the serializer to convert "1234" to "http://example.org/people/1234"

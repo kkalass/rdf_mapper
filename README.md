@@ -134,7 +134,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
   (IriTerm, Iterable<Triple>) toRdfResource(Person value, SerializationContext context, {RdfSubject? parentSubject}) {
 
     // convert dart objects to triples using the fluent builder API
-    return context.resourceBuilder(IriTerm(value.id))
+    return context.resourceBuilder(const IriTerm(value.id))
       .addValue(SchemaPerson.foafName, value.name)
       .addValue(SchemaPerson.foafAge, value.age)
       .build();
@@ -387,7 +387,7 @@ class BookMapper implements GlobalResourceMapper<Book> {
 
   @override
   (IriTerm, Iterable<Triple>) toRdfResource(Book book, SerializationContext context, {RdfSubject? parentSubject}) {
-    return context.resourceBuilder(IriTerm('http://example.org/book/${book.id}'))
+    return context.resourceBuilder(const IriTerm('http://example.org/book/${book.id}'))
         .addValue(SchemaBook.name, book.title)
         .addValue(SchemaBook.author, book.author)
         .addValue<ISBN>(SchemaBook.isbn, book.isbn)
@@ -421,7 +421,7 @@ class ChapterMapper implements LocalResourceMapper<Chapter> {
 
 class ISBNMapper implements IriTermMapper<ISBN> {
   @override
-  IriTerm toRdfTerm(ISBN isbn, SerializationContext context) => IriTerm('urn:isbn:${isbn.value}');
+  IriTerm toRdfTerm(ISBN isbn, SerializationContext context) => const IriTerm('urn:isbn:${isbn.value}');
 
   @override
   ISBN fromRdfTerm(IriTerm term, DeserializationContext context) => ISBN(term.iri.split(':').last);
@@ -598,7 +598,7 @@ class DocumentMapper<T> implements GlobalResourceMapper<Document<T>> {
   
   @override
   (IriTerm, Iterable<Triple>) toRdfResource(Document<T> document, SerializationContext context, {RdfSubject? parentSubject}) {
-    final subject = IriTerm(document.documentIri);
+    final subject = const IriTerm(document.documentIri);
     return context.resourceBuilder(subject)
       .addValue(
         Foaf.primaryTopic,
@@ -757,7 +757,7 @@ class PersonMapper implements GlobalResourceMapper<Person> {
 
   @override
   (IriTerm, Iterable<Triple>) toRdfResource(Person person, SerializationContext context, {RdfSubject? parentSubject}) {
-    return context.resourceBuilder(IriTerm(person.id))
+    return context.resourceBuilder(const IriTerm(person.id))
       .addValue(foafName, person.name)
       .addUnmapped(person.unmappedGraph) // Restores unmapped data
       .build();
@@ -938,7 +938,7 @@ ex:score "95.0"^^xsd:double .  # double instead of decimal
 
 **Solution 1: Custom Wrapper Types (Recommended)**
 ```dart
-@RdfLiteral(IriTerm('http://qudt.org/vocab/unit/CEL'))
+@RdfLiteral(const IriTerm('http://qudt.org/vocab/unit/CEL'))
 class Temperature {
   @RdfValue()
   final double celsius;
@@ -952,7 +952,7 @@ class Weight {
 }
 
 class WeightMapper extends DelegatingRdfLiteralTermMapper<Weight, double> {
-  static final kgDatatype = IriTerm('http://qudt.org/vocab/unit/KiloGM');
+  static final kgDatatype = const IriTerm('http://qudt.org/vocab/unit/KiloGM');
   
   const WeightMapper() : super(const DoubleMapper(), kgDatatype);
   

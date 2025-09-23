@@ -12,10 +12,10 @@ import 'package:test/test.dart';
 
 /// Test vocabulary for consistent property naming
 class TestVocab {
-  static final chapters = IriTerm('http://test.org/chapters');
-  static final titles = IriTerm('http://test.org/titles');
-  static final tags = IriTerm('http://test.org/tags');
-  static final contributors = IriTerm('http://test.org/contributors');
+  static final chapters = const IriTerm('http://test.org/chapters');
+  static final titles = const IriTerm('http://test.org/titles');
+  static final tags = const IriTerm('http://test.org/tags');
+  static final contributors = const IriTerm('http://test.org/contributors');
 }
 
 /// Test class for complex object serialization/deserialization
@@ -39,18 +39,18 @@ class TestAuthor {
 
 class TestAuthorMapper implements GlobalResourceMapper<TestAuthor> {
   @override
-  final IriTerm typeIri = IriTerm('http://test.org/Author');
+  final IriTerm typeIri = const IriTerm('http://test.org/Author');
 
   @override
   (IriTerm, Iterable<Triple>) toRdfResource(
       TestAuthor value, SerializationContext context,
       {RdfSubject? parentSubject}) {
-    final subject =
-        IriTerm('http://test.org/author/${value.name.replaceAll(' ', '_')}');
+    final subject = context.createIriTerm(
+        'http://test.org/author/${value.name.replaceAll(' ', '_')}');
     final triples = [
-      Triple(subject, IriTerm('http://test.org/name'),
+      Triple(subject, const IriTerm('http://test.org/name'),
           LiteralTerm.string(value.name)),
-      Triple(subject, IriTerm('http://test.org/email'),
+      Triple(subject, const IriTerm('http://test.org/email'),
           LiteralTerm.string(value.email)),
     ];
     return (subject, triples);
@@ -59,8 +59,9 @@ class TestAuthorMapper implements GlobalResourceMapper<TestAuthor> {
   @override
   TestAuthor fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
-    final name = reader.require<String>(IriTerm('http://test.org/name'));
-    final email = reader.require<String>(IriTerm('http://test.org/email'));
+    final name = reader.require<String>(const IriTerm('http://test.org/name'));
+    final email =
+        reader.require<String>(const IriTerm('http://test.org/email'));
     return TestAuthor(name, email);
   }
 }
@@ -101,7 +102,7 @@ void main() {
 
   /// Helper to create RDF numbered property IRIs (rdf:_1, rdf:_2, etc.)
   IriTerm rdfLi(int number) =>
-      IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#_$number');
+      IriTerm.validated('http://www.w3.org/1999/02/22-rdf-syntax-ns#_$number');
 
   /// Helper to find triples by predicate
   Iterable<Triple> findTriplesByPredicate(
@@ -116,7 +117,7 @@ void main() {
 
     for (final triple in triples) {
       if (triple.predicate is IriTerm) {
-        final predicateIri = (triple.predicate as IriTerm).iri;
+        final predicateIri = (triple.predicate as IriTerm).value;
         if (predicateIri.startsWith('${rdfNamespace}_')) {
           final numberStr = predicateIri.substring('${rdfNamespace}_'.length);
           final number = int.tryParse(numberStr);
@@ -281,8 +282,10 @@ void main() {
 
       test('deserializes complex objects with custom mapper', () {
         final seqSubject = BlankNodeTerm();
-        final author1Subject = IriTerm('http://test.org/author/Alice_Smith');
-        final author2Subject = IriTerm('http://test.org/author/Bob_Jones');
+        final author1Subject =
+            const IriTerm('http://test.org/author/Alice_Smith');
+        final author2Subject =
+            const IriTerm('http://test.org/author/Bob_Jones');
 
         graph = RdfGraph(triples: [
           // Setup sequence structure
@@ -291,13 +294,13 @@ void main() {
           Triple(seqSubject, rdfLi(2), author2Subject),
 
           // Setup author data
-          Triple(author1Subject, IriTerm('http://test.org/name'),
+          Triple(author1Subject, const IriTerm('http://test.org/name'),
               LiteralTerm.string('Alice Smith')),
-          Triple(author1Subject, IriTerm('http://test.org/email'),
+          Triple(author1Subject, const IriTerm('http://test.org/email'),
               LiteralTerm.string('alice@example.com')),
-          Triple(author2Subject, IriTerm('http://test.org/name'),
+          Triple(author2Subject, const IriTerm('http://test.org/name'),
               LiteralTerm.string('Bob Jones')),
-          Triple(author2Subject, IriTerm('http://test.org/email'),
+          Triple(author2Subject, const IriTerm('http://test.org/email'),
               LiteralTerm.string('bob@example.com')),
         ]);
         deserializationContext = DeserializationContextImpl(

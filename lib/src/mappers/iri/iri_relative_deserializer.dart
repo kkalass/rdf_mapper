@@ -40,6 +40,6 @@ final class IriRelativeDeserializer implements IriTermDeserializer<String> {
   /// Returns a string containing either a relative or absolute IRI.
   @override
   fromRdfTerm(IriTerm term, DeserializationContext context) {
-    return relativizeIri(term.iri, baseUri);
+    return relativizeIri(term.value, baseUri);
   }
 }

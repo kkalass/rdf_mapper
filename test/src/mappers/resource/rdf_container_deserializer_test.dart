@@ -44,11 +44,11 @@ class TestPerson {
 
 class TestPersonDeserializer implements GlobalResourceDeserializer<TestPerson> {
   @override
-  final IriTerm typeIri = IriTerm('http://test.org/Person');
+  final IriTerm typeIri = const IriTerm('http://test.org/Person');
 
   @override
   TestPerson fromRdfResource(IriTerm term, DeserializationContext context) {
-    return TestPerson(term.iri);
+    return TestPerson(term.value);
   }
 }
 
@@ -62,8 +62,7 @@ void main() {
   });
 
   /// Helper to create RDF numbered property IRIs (rdf:_1, rdf:_2, etc.)
-  IriTerm rdfLi(int number) =>
-      IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#_$number');
+  IriTerm rdfLi(int number) => IriTerm.validated('http://www.w3.org/1999/02/22-rdf-syntax-ns#_$number');
 
   group('RDF Container Deserializers', () {
     group('RdfSeqDeserializer', () {
@@ -121,8 +120,8 @@ void main() {
 
       test('deserializes resource items', () {
         final container = BlankNodeTerm();
-        final person1 = IriTerm('http://test.org/person1');
-        final person2 = IriTerm('http://test.org/person2');
+        final person1 = const IriTerm('http://test.org/person1');
+        final person2 = const IriTerm('http://test.org/person2');
 
         registry.registerDeserializer(TestPersonDeserializer());
 
@@ -363,7 +362,8 @@ void main() {
           Triple(container, rdfLi(1), LiteralTerm.string('Valid')),
           Triple(
               container,
-              IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#_invalid'),
+              const IriTerm(
+                  'http://www.w3.org/1999/02/22-rdf-syntax-ns#_invalid'),
               LiteralTerm.string('Invalid')),
           Triple(container, rdfLi(2), LiteralTerm.string('Also valid')),
         ]);
@@ -383,7 +383,7 @@ void main() {
           Triple(container, Rdf.type, Rdf.Seq),
           Triple(
               container,
-              IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#_0'),
+              const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#_0'),
               LiteralTerm.string('Zero index')),
           Triple(container, rdfLi(1), LiteralTerm.string('First')),
           Triple(container, rdfLi(2), LiteralTerm.string('Second')),
@@ -404,7 +404,7 @@ void main() {
           Triple(container, Rdf.type, Rdf.Seq),
           Triple(
               container,
-              IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#_-1'),
+              const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#_-1'),
               LiteralTerm.string('Negative')),
           Triple(container, rdfLi(1), LiteralTerm.string('Positive')),
         ]);
@@ -419,7 +419,7 @@ void main() {
 
       test('handles deserialization errors for individual items', () {
         final container = BlankNodeTerm();
-        final invalidIri = IriTerm('http://test.org/invalid');
+        final invalidIri = const IriTerm('http://test.org/invalid');
 
         graph = RdfGraph(triples: [
           Triple(container, Rdf.type, Rdf.Seq),

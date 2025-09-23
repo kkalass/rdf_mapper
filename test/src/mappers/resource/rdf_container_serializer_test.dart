@@ -37,14 +37,14 @@ class TestPerson {
 
 class TestPersonSerializer implements GlobalResourceSerializer<TestPerson> {
   @override
-  IriTerm get typeIri => IriTerm('http://test.org/Person');
+  IriTerm get typeIri => const IriTerm('http://test.org/Person');
 
   @override
   (IriTerm, Iterable<Triple>) toRdfResource(
       TestPerson instance, SerializationContext context,
       {RdfSubject? parentSubject}) {
-    final subject =
-        IriTerm('http://test.org/person/${instance.iri.split('/').last}');
+    final subject = context.createIriTerm(
+        'http://test.org/person/${instance.iri.split('/').last}');
     final triples = [
       Triple(subject, Rdf.type, typeIri),
     ];
@@ -74,7 +74,7 @@ void main() {
 
     for (final triple in triples) {
       if (triple.predicate is IriTerm) {
-        final predicateIri = (triple.predicate as IriTerm).iri;
+        final predicateIri = (triple.predicate as IriTerm).value;
         if (predicateIri.startsWith('${rdfNamespace}_')) {
           final numberStr = predicateIri.substring('${rdfNamespace}_'.length);
           final number = int.tryParse(numberStr);

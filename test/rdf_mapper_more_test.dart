@@ -148,7 +148,7 @@ final class TestItemRdfMapper implements GlobalResourceMapper<TestItem> {
   TestItemRdfMapper({required this.storageRoot});
 
   @override
-  final IriTerm typeIri = IriTerm(
+  final IriTerm typeIri = const IriTerm(
     "http://kalass.de/dart/rdf/test-ontology#TestItem",
   );
 
@@ -157,10 +157,10 @@ final class TestItemRdfMapper implements GlobalResourceMapper<TestItem> {
     final reader = context.reader(iri);
     return TestItem(
       name: reader.require(
-        IriTerm("http://kalass.de/dart/rdf/test-ontology#name"),
+        const IriTerm("http://kalass.de/dart/rdf/test-ontology#name"),
       ),
       age: reader.require(
-        IriTerm("http://kalass.de/dart/rdf/test-ontology#age"),
+        const IriTerm("http://kalass.de/dart/rdf/test-ontology#age"),
       ),
     );
   }
@@ -171,17 +171,17 @@ final class TestItemRdfMapper implements GlobalResourceMapper<TestItem> {
     SerializationContext context, {
     RdfSubject? parentSubject,
   }) {
-    final itemIri = IriTerm(
+    final itemIri = context.createIriTerm(
       "$storageRoot${Uri.encodeComponent(instance.name)}",
     );
     return context
         .resourceBuilder(itemIri)
         .addValue(
-          IriTerm("http://kalass.de/dart/rdf/test-ontology#name"),
+          const IriTerm("http://kalass.de/dart/rdf/test-ontology#name"),
           instance.name,
         )
         .addValue(
-          IriTerm("http://kalass.de/dart/rdf/test-ontology#age"),
+          const IriTerm("http://kalass.de/dart/rdf/test-ontology#age"),
           instance.age,
         )
         .build();

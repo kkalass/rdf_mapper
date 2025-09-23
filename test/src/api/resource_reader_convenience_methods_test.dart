@@ -17,8 +17,8 @@ void main() {
   group('ResourceReader convenience methods', () {
     group('requireRdfList', () {
       test('should deserialize a simple RDF list of strings', () {
-        final subject = IriTerm('http://example.org/book');
-        final predicate = IriTerm('http://example.org/chapters');
+        final subject = const IriTerm('http://example.org/book');
+        final predicate = const IriTerm('http://example.org/chapters');
 
         // Create RDF list structure: ( "Chapter 1" "Chapter 2" "Chapter 3" )
         final list1 = BlankNodeTerm();
@@ -49,8 +49,8 @@ void main() {
       });
 
       test('should deserialize an empty RDF list', () {
-        final subject = IriTerm('http://example.org/book');
-        final predicate = IriTerm('http://example.org/chapters');
+        final subject = const IriTerm('http://example.org/book');
+        final predicate = const IriTerm('http://example.org/chapters');
 
         // Create empty RDF list: ()
         final triples = [
@@ -68,8 +68,8 @@ void main() {
       });
 
       test('should work with custom item deserializer', () {
-        final subject = IriTerm('http://example.org/book');
-        final predicate = IriTerm('http://example.org/chapters');
+        final subject = const IriTerm('http://example.org/book');
+        final predicate = const IriTerm('http://example.org/chapters');
 
         // Create RDF list structure with custom deserializer that converts to uppercase
         final list1 = BlankNodeTerm();
@@ -99,8 +99,8 @@ void main() {
 
       test('should throw PropertyValueNotFoundException when list is missing',
           () {
-        final subject = IriTerm('http://example.org/book');
-        final predicate = IriTerm('http://example.org/chapters');
+        final subject = const IriTerm('http://example.org/book');
+        final predicate = const IriTerm('http://example.org/chapters');
 
         // Empty graph - no list exists
         graph = RdfGraph(triples: []);
@@ -119,12 +119,12 @@ void main() {
         // Register a deserializer for TestPerson
         registry.registerDeserializer<TestPerson>(TestPersonDeserializer());
 
-        final subject = IriTerm('http://example.org/team');
-        final predicate = IriTerm('http://example.org/members');
+        final subject = const IriTerm('http://example.org/team');
+        final predicate = const IriTerm('http://example.org/members');
 
         // Create list of people
-        final person1 = IriTerm('http://example.org/person1');
-        final person2 = IriTerm('http://example.org/person2');
+        final person1 = const IriTerm('http://example.org/person1');
+        final person2 = const IriTerm('http://example.org/person2');
         final list1 = BlankNodeTerm();
         final list2 = BlankNodeTerm();
 
@@ -135,10 +135,10 @@ void main() {
           Triple(list2, Rdf.first, person2),
           Triple(list2, Rdf.rest, Rdf.nil),
           // Person data
-          Triple(person1, IriTerm('http://example.org/name'),
+          Triple(person1, const IriTerm('http://example.org/name'),
               LiteralTerm('Alice')),
-          Triple(
-              person2, IriTerm('http://example.org/name'), LiteralTerm('Bob')),
+          Triple(person2, const IriTerm('http://example.org/name'),
+              LiteralTerm('Bob')),
         ];
 
         graph = RdfGraph(triples: triples);
@@ -155,8 +155,8 @@ void main() {
 
     group('optionalRdfList', () {
       test('should deserialize a simple RDF list of strings when present', () {
-        final subject = IriTerm('http://example.org/book');
-        final predicate = IriTerm('http://example.org/chapters');
+        final subject = const IriTerm('http://example.org/book');
+        final predicate = const IriTerm('http://example.org/chapters');
 
         // Create RDF list structure: ( "Chapter 1" "Chapter 2" )
         final list1 = BlankNodeTerm();
@@ -183,8 +183,8 @@ void main() {
       });
 
       test('should return null when list is missing', () {
-        final subject = IriTerm('http://example.org/book');
-        final predicate = IriTerm('http://example.org/chapters');
+        final subject = const IriTerm('http://example.org/book');
+        final predicate = const IriTerm('http://example.org/chapters');
 
         // Empty graph - no list exists
         graph = RdfGraph(triples: []);
@@ -197,8 +197,8 @@ void main() {
       });
 
       test('should deserialize an empty RDF list when present', () {
-        final subject = IriTerm('http://example.org/book');
-        final predicate = IriTerm('http://example.org/chapters');
+        final subject = const IriTerm('http://example.org/book');
+        final predicate = const IriTerm('http://example.org/chapters');
 
         // Create empty RDF list: ()
         final triples = [
@@ -217,8 +217,8 @@ void main() {
       });
 
       test('should work with custom item deserializer', () {
-        final subject = IriTerm('http://example.org/book');
-        final predicate = IriTerm('http://example.org/chapters');
+        final subject = const IriTerm('http://example.org/book');
+        final predicate = const IriTerm('http://example.org/chapters');
 
         // Create RDF list structure
         final list1 = BlankNodeTerm();
@@ -242,8 +242,8 @@ void main() {
       });
 
       test('should work with null-coalescing for default values', () {
-        final subject = IriTerm('http://example.org/book');
-        final predicate = IriTerm('http://example.org/chapters');
+        final subject = const IriTerm('http://example.org/book');
+        final predicate = const IriTerm('http://example.org/chapters');
 
         // Empty graph - no list exists
         graph = RdfGraph(triples: []);
@@ -299,12 +299,13 @@ class TestPerson {
 /// Test deserializer for TestPerson
 class TestPersonDeserializer implements GlobalResourceDeserializer<TestPerson> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/Person');
+  final IriTerm typeIri = const IriTerm('http://example.org/Person');
 
   @override
   TestPerson fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
-    final name = reader.require<String>(IriTerm('http://example.org/name'));
-    return TestPerson(iri: subject.iri, name: name);
+    final name =
+        reader.require<String>(const IriTerm('http://example.org/name'));
+    return TestPerson(iri: subject.value, name: name);
   }
 }

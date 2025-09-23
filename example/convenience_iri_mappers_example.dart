@@ -165,9 +165,10 @@ class DocumentSectionMapper implements GlobalResourceMapper<DocumentSection> {
 
     return context
         .resourceBuilder(subject)
-        .addValue(IriTerm('http://purl.org/dc/terms/title'), section.title)
         .addValue(
-            IriTerm('http://purl.org/dc/terms/description'), section.content)
+            const IriTerm('http://purl.org/dc/terms/title'), section.title)
+        .addValue(const IriTerm('http://purl.org/dc/terms/description'),
+            section.content)
         .build();
   }
 
@@ -177,9 +178,9 @@ class DocumentSectionMapper implements GlobalResourceMapper<DocumentSection> {
     final id = _fragmentMapper.fromRdfTerm(subject, context);
     final reader = context.reader(subject);
     final title =
-        reader.require<String>(IriTerm('http://purl.org/dc/terms/title'));
-    final content =
-        reader.require<String>(IriTerm('http://purl.org/dc/terms/description'));
+        reader.require<String>(const IriTerm('http://purl.org/dc/terms/title'));
+    final content = reader
+        .require<String>(const IriTerm('http://purl.org/dc/terms/description'));
 
     return DocumentSection(id, title, content);
   }
@@ -204,8 +205,8 @@ class UserProfileMapper implements GlobalResourceMapper<UserProfile> {
 
     return context
         .resourceBuilder(subject)
-        .addValue(IriTerm('http://xmlns.com/foaf/0.1/name'), user.name)
-        .addValue(IriTerm('http://xmlns.com/foaf/0.1/mbox'), user.email)
+        .addValue(const IriTerm('http://xmlns.com/foaf/0.1/name'), user.name)
+        .addValue(const IriTerm('http://xmlns.com/foaf/0.1/mbox'), user.email)
         .build();
   }
 
@@ -214,9 +215,9 @@ class UserProfileMapper implements GlobalResourceMapper<UserProfile> {
     final userId = _pathMapper.fromRdfTerm(subject, context);
     final reader = context.reader(subject);
     final name =
-        reader.require<String>(IriTerm('http://xmlns.com/foaf/0.1/name'));
+        reader.require<String>(const IriTerm('http://xmlns.com/foaf/0.1/name'));
     final email =
-        reader.require<String>(IriTerm('http://xmlns.com/foaf/0.1/mbox'));
+        reader.require<String>(const IriTerm('http://xmlns.com/foaf/0.1/mbox'));
 
     return UserProfile(userId, name, email);
   }
@@ -227,7 +228,7 @@ class DocumentWithAssignmentsMapper
   const DocumentWithAssignmentsMapper();
 
   @override
-  IriTerm? get typeIri => IriTerm('http://purl.org/dc/dcmitype/Text');
+  IriTerm? get typeIri => const IriTerm('http://purl.org/dc/dcmitype/Text');
 
   @override
   (IriTerm, Iterable<Triple>) toRdfResource(
@@ -238,14 +239,15 @@ class DocumentWithAssignmentsMapper
     // Use parentSubject if provided, otherwise create a deterministic IRI
     final subject = parentSubject is IriTerm
         ? parentSubject
-        : IriTerm(
+        : context.createIriTerm(
             'http://docs.example.org/documents/${doc.title.toLowerCase().replaceAll(' ', '-')}');
 
     return context
         .resourceBuilder(subject)
-        .addValue(IriTerm('http://purl.org/dc/terms/title'), doc.title)
-        .addValues(IriTerm('http://purl.org/dc/terms/hasPart'), doc.sections)
-        .addValues(IriTerm('http://purl.org/dc/terms/contributor'),
+        .addValue(const IriTerm('http://purl.org/dc/terms/title'), doc.title)
+        .addValues(
+            const IriTerm('http://purl.org/dc/terms/hasPart'), doc.sections)
+        .addValues(const IriTerm('http://purl.org/dc/terms/contributor'),
             doc.assignedReviewers)
         .build();
   }
@@ -255,12 +257,14 @@ class DocumentWithAssignmentsMapper
       IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     final title =
-        reader.require<String>(IriTerm('http://purl.org/dc/terms/title'));
+        reader.require<String>(const IriTerm('http://purl.org/dc/terms/title'));
     final sections = reader
-        .getValues<DocumentSection>(IriTerm('http://purl.org/dc/terms/hasPart'))
+        .getValues<DocumentSection>(
+            const IriTerm('http://purl.org/dc/terms/hasPart'))
         .toList();
     final reviewers = reader
-        .getValues<UserProfile>(IriTerm('http://purl.org/dc/terms/contributor'))
+        .getValues<UserProfile>(
+            const IriTerm('http://purl.org/dc/terms/contributor'))
         .toList();
 
     return DocumentWithAssignments(

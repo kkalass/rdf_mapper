@@ -28,7 +28,7 @@ class DeserializerNotFoundException extends RdfMappingException {
   /// @param serializerType The type of deserializer that was being looked up
   /// @param type The RDF type IRI for which no deserializer was found
   DeserializerNotFoundException.forTypeIri(this._serializerType, IriTerm type)
-      : _t = type.iri;
+      : _t = type.value;
 
   @override
   String toString() =>

@@ -62,24 +62,25 @@ class TestAddress {
 /// Custom deserializers for testing
 class TestPersonDeserializer implements GlobalResourceDeserializer<TestPerson> {
   @override
-  final IriTerm typeIri = IriTerm('http://example.org/Person');
+  final IriTerm typeIri = const IriTerm('http://example.org/Person');
 
   @override
   TestPerson fromRdfResource(IriTerm term, DeserializationContext context) {
-    return TestPerson(term.iri);
+    return TestPerson(term.value);
   }
 }
 
 class TestAddressDeserializer
     implements LocalResourceDeserializer<TestAddress> {
   @override
-  IriTerm? get typeIri => IriTerm('http://example.org/Address');
+  IriTerm? get typeIri => const IriTerm('http://example.org/Address');
 
   @override
   TestAddress fromRdfResource(
       BlankNodeTerm term, DeserializationContext context) {
     final reader = context.reader(term);
-    final city = reader.require<String>(IriTerm('http://example.org/city'));
+    final city =
+        reader.require<String>(const IriTerm('http://example.org/city'));
     return TestAddress(city: city);
   }
 }
@@ -111,7 +112,7 @@ class IriToStringDeserializer implements IriTermDeserializer<String> {
   @override
   String fromRdfTerm(IriTerm term, DeserializationContext context) {
     // Extract the fragment or last part of the IRI as string value
-    final uri = Uri.parse(term.iri);
+    final uri = Uri.parse(term.value);
     return uri.fragment.isNotEmpty ? uri.fragment : uri.pathSegments.last;
   }
 }
@@ -129,7 +130,7 @@ class CountryIriDeserializer implements IriTermDeserializer<Country> {
   @override
   Country fromRdfTerm(IriTerm term, DeserializationContext context) {
     // Extract country code from IRI like http://example.org/country/DE
-    final uri = Uri.parse(term.iri);
+    final uri = Uri.parse(term.value);
     final countryCode = uri.pathSegments.last;
     final countryName = _countryNames[countryCode] ?? 'Unknown';
     return Country(countryCode, countryName);
@@ -318,9 +319,9 @@ void main() {
       final node2 = BlankNodeTerm();
       final node3 = BlankNodeTerm();
 
-      final person1Iri = IriTerm('http://example.org/person1');
-      final person2Iri = IriTerm('http://example.org/person2');
-      final person3Iri = IriTerm('http://example.org/person3');
+      final person1Iri = const IriTerm('http://example.org/person1');
+      final person2Iri = const IriTerm('http://example.org/person2');
+      final person3Iri = const IriTerm('http://example.org/person3');
 
       graph = RdfGraph(triples: [
         // RDF List structure
@@ -334,16 +335,16 @@ void main() {
         // Type declarations for the persons (optional, but good practice)
         Triple(
             person1Iri,
-            IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-            IriTerm('http://example.org/Person')),
+            const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+            const IriTerm('http://example.org/Person')),
         Triple(
             person2Iri,
-            IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-            IriTerm('http://example.org/Person')),
+            const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+            const IriTerm('http://example.org/Person')),
         Triple(
             person3Iri,
-            IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-            IriTerm('http://example.org/Person')),
+            const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+            const IriTerm('http://example.org/Person')),
       ]);
 
       // Register the deserializer
@@ -379,17 +380,17 @@ void main() {
         // Address 1 properties
         Triple(
             address1,
-            IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-            IriTerm('http://example.org/Address')),
-        Triple(address1, IriTerm('http://example.org/city'),
+            const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+            const IriTerm('http://example.org/Address')),
+        Triple(address1, const IriTerm('http://example.org/city'),
             LiteralTerm.string('Hamburg')),
 
         // Address 2 properties
         Triple(
             address2,
-            IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-            IriTerm('http://example.org/Address')),
-        Triple(address2, IriTerm('http://example.org/city'),
+            const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+            const IriTerm('http://example.org/Address')),
+        Triple(address2, const IriTerm('http://example.org/city'),
             LiteralTerm.string('Berlin')),
       ]);
 
@@ -411,8 +412,8 @@ void main() {
       final listNode1 = BlankNodeTerm();
       final listNode2 = BlankNodeTerm();
 
-      final personIri1 = IriTerm('http://example.org/person1');
-      final personIri2 = IriTerm('http://example.org/person2');
+      final personIri1 = const IriTerm('http://example.org/person1');
+      final personIri2 = const IriTerm('http://example.org/person2');
 
       graph = RdfGraph(triples: [
         // RDF List structure with only global resources
@@ -424,14 +425,14 @@ void main() {
         // Person 1 (global resource)
         Triple(
             personIri1,
-            IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-            IriTerm('http://example.org/Person')),
+            const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+            const IriTerm('http://example.org/Person')),
 
         // Person 2 (global resource)
         Triple(
             personIri2,
-            IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-            IriTerm('http://example.org/Person')),
+            const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+            const IriTerm('http://example.org/Person')),
       ]);
 
       // Register deserializers
@@ -467,17 +468,17 @@ void main() {
         // Address 1 properties
         Triple(
             address1,
-            IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-            IriTerm('http://example.org/Address')),
-        Triple(address1, IriTerm('http://example.org/city'),
+            const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+            const IriTerm('http://example.org/Address')),
+        Triple(address1, const IriTerm('http://example.org/city'),
             LiteralTerm.string('Vienna')),
 
         // Address 2 properties
         Triple(
             address2,
-            IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-            IriTerm('http://example.org/Address')),
-        Triple(address2, IriTerm('http://example.org/city'),
+            const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+            const IriTerm('http://example.org/Address')),
+        Triple(address2, const IriTerm('http://example.org/city'),
             LiteralTerm.string('Prague')),
       ]);
 
@@ -501,9 +502,10 @@ void main() {
       final listNode2 = BlankNodeTerm();
       final listNode3 = BlankNodeTerm();
 
-      final statusActive = IriTerm('http://example.org/status#active');
-      final statusPending = IriTerm('http://example.org/status#pending');
-      final statusInactive = IriTerm('http://example.org/status#inactive');
+      final statusActive = const IriTerm('http://example.org/status#active');
+      final statusPending = const IriTerm('http://example.org/status#pending');
+      final statusInactive =
+          const IriTerm('http://example.org/status#inactive');
 
       graph = RdfGraph(triples: [
         // RDF List structure with IRI values (not resources)
@@ -533,9 +535,9 @@ void main() {
       final listNode2 = BlankNodeTerm();
       final listNode3 = BlankNodeTerm();
 
-      final germanyIri = IriTerm('http://example.org/country/DE');
-      final franceIri = IriTerm('http://example.org/country/FR');
-      final italyIri = IriTerm('http://example.org/country/IT');
+      final germanyIri = const IriTerm('http://example.org/country/DE');
+      final franceIri = const IriTerm('http://example.org/country/FR');
+      final italyIri = const IriTerm('http://example.org/country/IT');
 
       graph = RdfGraph(triples: [
         // RDF List structure with country IRIs
@@ -568,8 +570,8 @@ void main() {
       final listNode1 = BlankNodeTerm();
       final listNode2 = BlankNodeTerm();
 
-      final spainIri = IriTerm('http://example.org/country/ES');
-      final austriaIri = IriTerm('http://example.org/country/AT');
+      final spainIri = const IriTerm('http://example.org/country/ES');
+      final austriaIri = const IriTerm('http://example.org/country/AT');
 
       graph = RdfGraph(triples: [
         // RDF List structure
@@ -599,7 +601,8 @@ void main() {
       final listNode2 = BlankNodeTerm();
       final listNode3 = BlankNodeTerm();
 
-      final categoryIri = IriTerm('http://example.org/category#electronics');
+      final categoryIri =
+          const IriTerm('http://example.org/category#electronics');
 
       graph = RdfGraph(triples: [
         // Mixed list: string literal, IRI as value, string literal
@@ -728,8 +731,8 @@ void main() {
 
     test('handles list with circular references in element values', () {
       // Create objects that reference each other circularly
-      final personIri1 = IriTerm('http://example.org/person1');
-      final personIri2 = IriTerm('http://example.org/person2');
+      final personIri1 = const IriTerm('http://example.org/person1');
+      final personIri2 = const IriTerm('http://example.org/person2');
       final listNode1 = BlankNodeTerm();
       final listNode2 = BlankNodeTerm();
 
@@ -741,9 +744,11 @@ void main() {
         Triple(listNode2, Rdf.rest, Rdf.nil),
 
         // Person 1 refers to Person 2
-        Triple(personIri1, IriTerm('http://example.org/knows'), personIri2),
+        Triple(
+            personIri1, const IriTerm('http://example.org/knows'), personIri2),
         // Person 2 refers back to Person 1 (circular reference)
-        Triple(personIri2, IriTerm('http://example.org/knows'), personIri1),
+        Triple(
+            personIri2, const IriTerm('http://example.org/knows'), personIri1),
       ]);
 
       final cyclicContext = DeserializationContextImpl(
@@ -808,7 +813,7 @@ void main() {
 
         // Additional triples that might confuse cycle detection
         // (but these are not part of the list chain)
-        Triple(node3, IriTerm('http://example.org/other'), node1),
+        Triple(node3, const IriTerm('http://example.org/other'), node1),
       ]);
 
       final validContext = DeserializationContextImpl(

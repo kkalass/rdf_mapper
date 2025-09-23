@@ -148,9 +148,13 @@ class RdfObjectStringCodec<T> extends Codec<T, String> {
     void Function(RdfMapperRegistry registry)? register,
     RdfMapper? rdfMapper,
     CompletenessMode completeness = CompletenessMode.strict,
+    IriTermFactory iriTermFactory = IriTerm.validated,
   }) {
     var objectCodec = RdfObjectCodec<T>.forMappers(
-        register: register, rdfMapper: rdfMapper, completeness: completeness);
+        register: register,
+        rdfMapper: rdfMapper,
+        completeness: completeness,
+        iriTermFactory: iriTermFactory);
     var graphCodec = (core ?? rdf).codec(contentType: contentType);
 
     return RdfObjectStringCodec<T>(

@@ -27,7 +27,7 @@ import 'package:rdf_mapper/rdf_mapper.dart';
 ///
 /// // Custom mapper using Celsius datatype
 /// class TemperatureMapper extends DelegatingRdfLiteralTermMapper<Temperature, double> {
-///   static final celsiusDatatype = IriTerm('http://qudt.org/vocab/unit/CEL');
+///   static final celsiusDatatype = const IriTerm('http://qudt.org/vocab/unit/CEL');
 ///
 ///   const TemperatureMapper() : super(const DoubleMapper(), celsiusDatatype);
 ///

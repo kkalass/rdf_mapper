@@ -23,7 +23,7 @@ final class IriFullMapper implements IriTermMapper<String> {
   /// @return An IRI term with the specified IRI
   @override
   toRdfTerm(String iri, SerializationContext context) {
-    return IriTerm(iri);
+    return context.createIriTerm(iri);
   }
 
   /// Converts an IRI term to its full string representation.
@@ -33,7 +33,7 @@ final class IriFullMapper implements IriTermMapper<String> {
   /// @return The complete IRI string
   @override
   fromRdfTerm(IriTerm term, DeserializationContext context) {
-    return term.iri;
+    return term.value;
   }
 }
 
@@ -47,7 +47,7 @@ final class UriIriMapper implements IriTermMapper<Uri> {
   /// @return An IRI term with the specified URI
   @override
   IriTerm toRdfTerm(Uri uri, SerializationContext context) {
-    return IriTerm(uri.toString());
+    return context.createIriTerm(uri.toString());
   }
 
   /// Converts an IRI term to its full URI representation.
@@ -57,6 +57,6 @@ final class UriIriMapper implements IriTermMapper<Uri> {
   /// @return The complete URI
   @override
   Uri fromRdfTerm(IriTerm term, DeserializationContext context) {
-    return Uri.parse(term.iri);
+    return Uri.parse(term.value);
   }
 }

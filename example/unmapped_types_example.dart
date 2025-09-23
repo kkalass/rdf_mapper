@@ -26,7 +26,7 @@ _:addr
   print('=== Deep Mapping with RdfGraph ===');
   final personWithGraph = rdfMapper.decodeObject<PersonWithGraph>(
     turtle,
-    subject: IriTerm('http://example.org/person'),
+    subject: const IriTerm('http://example.org/person'),
   );
   print('Name: ${personWithGraph.name}');
   print(
@@ -38,7 +38,7 @@ _:addr
   print('\n=== Shallow Mapping with Map<IriTerm, List<RdfObject>> ===');
   final personWithMap = rdfMapper.decodeObject<PersonWithMap>(
     turtle,
-    subject: IriTerm('http://example.org/person'),
+    subject: const IriTerm('http://example.org/person'),
     completeness: CompletenessMode
         .lenient, // Needed because blank node triples are not captured
   );
@@ -77,9 +77,9 @@ class PersonWithGraphMapper implements GlobalResourceMapper<PersonWithGraph> {
   PersonWithGraph fromRdfResource(
       IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
-    final foafName = IriTerm('http://xmlns.com/foaf/0.1/name');
+    final foafName = const IriTerm('http://xmlns.com/foaf/0.1/name');
     return PersonWithGraph(
-      id: subject.iri,
+      id: subject.value,
       name: reader.require<String>(foafName),
       unmappedGraph: reader.getUnmapped<RdfGraph>(), // Deep mapping
     );
@@ -89,9 +89,9 @@ class PersonWithGraphMapper implements GlobalResourceMapper<PersonWithGraph> {
   (IriTerm, Iterable<Triple>) toRdfResource(
       PersonWithGraph value, SerializationContext context,
       {RdfSubject? parentSubject}) {
-    final foafName = IriTerm('http://xmlns.com/foaf/0.1/name');
+    final foafName = const IriTerm('http://xmlns.com/foaf/0.1/name');
     return context
-        .resourceBuilder(IriTerm(value.id))
+        .resourceBuilder(context.createIriTerm(value.id))
         .addValue(foafName, value.name)
         .addUnmapped(value.unmappedGraph)
         .build();
@@ -119,9 +119,9 @@ class PersonWithMapMapper implements GlobalResourceMapper<PersonWithMap> {
   PersonWithMap fromRdfResource(
       IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
-    final foafName = IriTerm('http://xmlns.com/foaf/0.1/name');
+    final foafName = const IriTerm('http://xmlns.com/foaf/0.1/name');
     return PersonWithMap(
-      id: subject.iri,
+      id: subject.value,
       name: reader.require<String>(foafName),
       unmappedData: reader
           .getUnmapped<Map<IriTerm, List<RdfObject>>>(), // Shallow mapping
@@ -132,9 +132,9 @@ class PersonWithMapMapper implements GlobalResourceMapper<PersonWithMap> {
   (IriTerm, Iterable<Triple>) toRdfResource(
       PersonWithMap value, SerializationContext context,
       {RdfSubject? parentSubject}) {
-    final foafName = IriTerm('http://xmlns.com/foaf/0.1/name');
+    final foafName = const IriTerm('http://xmlns.com/foaf/0.1/name');
     return context
-        .resourceBuilder(IriTerm(value.id))
+        .resourceBuilder(context.createIriTerm(value.id))
         .addValue(foafName, value.name)
         .addUnmapped(value.unmappedData)
         .build();

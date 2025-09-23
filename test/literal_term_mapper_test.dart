@@ -33,8 +33,8 @@ void main() {
 
         // However, this term alone is not a valid RDF document - it needs to be part of a triple
         // To create a valid RDF document, we need at least one triple with subject, predicate, and object
-        final subject = IriTerm('http://example.org/resource');
-        final predicate = IriTerm('http://example.org/property');
+        final subject = const IriTerm('http://example.org/resource');
+        final predicate = const IriTerm('http://example.org/property');
 
         // Create a valid RDF graph with a triple containing our literal
         final graph = RdfGraph(
@@ -76,7 +76,7 @@ void main() {
 
       // Find the name triple that should have a literal as its object
       final nameTriples = graph.findTriples(
-        subject: IriTerm(person.id),
+        subject: IriTerm.validated(person.id),
         predicate: TestPersonMapper.namePredicate,
       );
 
@@ -90,7 +90,7 @@ void main() {
 
       // Same for age
       final ageTriples = graph.findTriples(
-        subject: IriTerm(person.id),
+        subject: IriTerm.validated(person.id),
         predicate: TestPersonMapper.agePredicate,
       );
 
@@ -156,7 +156,7 @@ void main() {
 
         // Check that the graph contains triples for each string in the list
         final stringListTriples = graph.findTriples(
-          subject: IriTerm(container.id),
+          subject: IriTerm.validated(container.id),
           predicate: TestCollectionContainerMapper.stringListPredicate,
         );
 
@@ -212,7 +212,7 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
   TestPerson fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return TestPerson(
-      id: subject.iri,
+      id: subject.value,
       name: reader.require<String>(namePredicate),
       age: reader.require<int>(agePredicate),
     );
@@ -225,9 +225,9 @@ class TestPersonMapper implements GlobalResourceMapper<TestPerson> {
     RdfSubject? parentSubject,
   }) {
     return context
-        .resourceBuilder(IriTerm(instance.id))
+        .resourceBuilder(context.createIriTerm(instance.id))
         .addValue(
-          IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+          const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
           personTypeIri,
         )
         .addValue(namePredicate, instance.name)
@@ -247,10 +247,10 @@ class TestCollectionContainer {
 // Test mapper for collection container
 class TestCollectionContainerMapper
     implements GlobalResourceMapper<TestCollectionContainer> {
-  static final IriTerm containerTypeIri = IriTerm(
+  static final IriTerm containerTypeIri = const IriTerm(
     'http://example.org/CollectionContainer',
   );
-  static final IriTerm stringListPredicate = IriTerm(
+  static final IriTerm stringListPredicate = const IriTerm(
     'http://example.org/stringList',
   );
 
@@ -267,7 +267,7 @@ class TestCollectionContainerMapper
     // Read the string list directly
     final stringList = reader.getValues<String>(stringListPredicate);
 
-    return TestCollectionContainer(id: subject.iri, stringList: stringList);
+    return TestCollectionContainer(id: subject.value, stringList: stringList);
   }
 
   @override
@@ -277,11 +277,11 @@ class TestCollectionContainerMapper
     RdfSubject? parentSubject,
   }) {
     // Create builder with subject
-    final builder = context.resourceBuilder(IriTerm(instance.id));
+    final builder = context.resourceBuilder(context.createIriTerm(instance.id));
 
     // Add type triple
     builder.addValue(
-      IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+      const IriTerm('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
       typeIri,
     );
 

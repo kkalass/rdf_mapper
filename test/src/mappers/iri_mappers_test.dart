@@ -55,7 +55,7 @@ void main() {
           final term = serializer.toRdfTerm(iri, serializationContext);
 
           expect(term, isA<IriTerm>());
-          expect(term.iri, equals(iri));
+          expect(term.value, equals(iri));
         }
       });
 
@@ -65,7 +65,7 @@ void main() {
         final iri = 'http://example.org/resource#fragment?query=value&param=2';
         final term = serializer.toRdfTerm(iri, serializationContext);
 
-        expect(term.iri, equals(iri));
+        expect(term.value, equals(iri));
       });
     });
 
@@ -73,7 +73,7 @@ void main() {
       test('properly prefixes IDs with base URL', () {
         const baseUrl = 'http://example.org/resources/';
         final serializer = IriIdSerializer(
-          expand: (id, _) => IriTerm('$baseUrl$id'),
+          expand: (id, _) => IriTerm.validated('$baseUrl$id'),
         );
 
         final ids = ['123', 'abc-456', 'item_789'];
@@ -82,25 +82,25 @@ void main() {
           final term = serializer.toRdfTerm(id, serializationContext);
 
           expect(term, isA<IriTerm>());
-          expect(term.iri, equals('$baseUrl$id'));
+          expect(term.value, equals('$baseUrl$id'));
         }
       });
 
       test('handles empty IDs', () {
         const baseUrl = 'http://example.org/resources/';
         final serializer = IriIdSerializer(
-          expand: (id, _) => IriTerm('$baseUrl$id'),
+          expand: (id, _) => IriTerm.validated('$baseUrl$id'),
         );
 
         final term = serializer.toRdfTerm('', serializationContext);
 
-        expect(term.iri, equals(baseUrl));
+        expect(term.value, equals(baseUrl));
       });
 
       test('throws assertion error when ID contains slashes', () {
         const baseUrl = 'http://example.org/resources/';
         final serializer = IriIdSerializer(
-          expand: (id, _) => IriTerm('$baseUrl$id'),
+          expand: (id, _) => IriTerm.validated('$baseUrl$id'),
         );
 
         expect(
@@ -122,7 +122,7 @@ void main() {
         ];
 
         for (final iri in validIris) {
-          final term = IriTerm(iri);
+          final term = IriTerm.validated(iri);
           final result = deserializer.fromRdfTerm(term, deserializationContext);
 
           expect(result, isA<String>());
@@ -134,7 +134,7 @@ void main() {
         final deserializer = IriFullDeserializer();
 
         final iri = 'http://example.org/resource#fragment?query=value&param=2';
-        final term = IriTerm(iri);
+        final term = IriTerm.validated(iri);
         final result = deserializer.fromRdfTerm(term, deserializationContext);
 
         expect(result, equals(iri));
@@ -145,10 +145,10 @@ void main() {
       test('extracts data using custom extractor function', () {
         // Create a deserializer that extracts the last path segment of a URL
         final deserializer = ExtractingIriTermDeserializer<String>(
-          extract: (term, _) => term.iri.split('/').last,
+          extract: (term, _) => term.value.split('/').last,
         );
 
-        final term = IriTerm('http://example.org/resources/resource-123');
+        final term = const IriTerm('http://example.org/resources/resource-123');
         final result = deserializer.fromRdfTerm(term, deserializationContext);
 
         expect(result, equals('resource-123'));
@@ -156,10 +156,10 @@ void main() {
 
       test('works with Uri objects', () {
         final deserializer = ExtractingIriTermDeserializer<Uri>(
-          extract: (term, _) => Uri.parse(term.iri),
+          extract: (term, _) => Uri.parse(term.value),
         );
 
-        final term = IriTerm(
+        final term = const IriTerm(
           'http://example.org/resources/resource-123?param=value',
         );
         final result = deserializer.fromRdfTerm(term, deserializationContext);
@@ -175,12 +175,12 @@ void main() {
         // Create a deserializer for our Resource type
         final deserializer = ExtractingIriTermDeserializer<Resource>(
           extract: (term, _) {
-            final uri = Uri.parse(term.iri);
+            final uri = Uri.parse(term.value);
             return Resource(host: uri.host, path: uri.path);
           },
         );
 
-        final term = IriTerm('http://example.org/resources/resource-123');
+        final term = const IriTerm('http://example.org/resources/resource-123');
         final result = deserializer.fromRdfTerm(term, deserializationContext);
 
         expect(result, isA<Resource>());
@@ -196,15 +196,15 @@ void main() {
         // Create a deserializer with an extractor that throws for invalid IRIs
         final deserializer = ExtractingIriTermDeserializer<Uri>(
           extract: (term, _) {
-            if (!term.iri.startsWith('http')) {
-              throw FormatException('Not a valid HTTP URI: ${term.iri}');
+            if (!term.value.startsWith('http')) {
+              throw FormatException('Not a valid HTTP URI: ${term.value}');
             }
-            return Uri.parse(term.iri);
+            return Uri.parse(term.value);
           },
         );
 
         // Valid HTTP URI should work
-        final validTerm = IriTerm('http://example.org/resources/123');
+        final validTerm = const IriTerm('http://example.org/resources/123');
         final validResult = deserializer.fromRdfTerm(
           validTerm,
           deserializationContext,
@@ -212,7 +212,7 @@ void main() {
         expect(validResult, isA<Uri>());
 
         // Invalid URI should throw DeserializationException
-        final invalidTerm = IriTerm('ftp://example.org/file.txt');
+        final invalidTerm = const IriTerm('ftp://example.org/file.txt');
         expect(
           () => deserializer.fromRdfTerm(invalidTerm, deserializationContext),
           throwsA(isA<DeserializationException>()),
