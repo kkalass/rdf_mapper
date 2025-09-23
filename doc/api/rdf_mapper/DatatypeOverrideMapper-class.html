@@ -100,7 +100,7 @@ custom datatypes in your annotations, handling the correct usage patterns intern
 </code></pre>
 <h2 id="example---manual-usage-advanced">Example - Manual Usage (Advanced)</h2>
 <pre class="language-dart"><code class="language-dart">// Define a custom datatype for temperature values
-final celsiusType = IriTerm('http://qudt.org/vocab/unit/CEL');
+final celsiusType = const IriTerm('http://qudt.org/vocab/unit/CEL');
 
 // Create a mapper that treats doubles as Celsius temperatures
 final temperatureMapper = DatatypeOverrideMapper&lt;double&gt;(celsiusType);
@@ -184,7 +184,7 @@ localRegistry.registerMapper&lt;String&gt;(mapper);                // ❌
     <h2>Constructors</h2>
     <dl class="constructor-summary-list">
         <dt id="DatatypeOverrideMapper.new" class="callable">
-          <span class="name"><a href="../rdf_mapper/DatatypeOverrideMapper/DatatypeOverrideMapper.html">DatatypeOverrideMapper.new</a></span><span class="signature">(<span class="parameter" id="-param-datatype"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">datatype</span></span>)</span>
+          <span class="name"><a href="../rdf_mapper/DatatypeOverrideMapper/DatatypeOverrideMapper.html">DatatypeOverrideMapper.new</a></span><span class="signature">(<span class="parameter" id="-param-datatype"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">datatype</span></span>)</span>
         </dt>
         <dd>
           Creates a datatype override mapper with the specified custom <code>datatype</code>.
@@ -200,7 +200,7 @@ localRegistry.registerMapper&lt;String&gt;(mapper);                // ❌
     <dl class="properties">
         <dt id="datatype" class="property">
   <span class="name"><a href="../rdf_mapper/DatatypeOverrideMapper/datatype.html">datatype</a></span>
-  <span class="signature">&#8594; <a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/IriTerm-class.html">IriTerm</a></span>
+  <span class="signature">&#8594; <a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/IriTerm-class.html">IriTerm</a></span>
   
 
 </dt>
@@ -244,7 +244,7 @@ localRegistry.registerMapper&lt;String&gt;(mapper);                // ❌
     <h2>Methods</h2>
     <dl class="callables">
         <dt id="fromRdfTerm" class="callable">
-  <span class="name"><a href="../rdf_mapper/DatatypeOverrideMapper/fromRdfTerm.html">fromRdfTerm</a></span><span class="signature">(<wbr><span class="parameter" id="fromRdfTerm-param-term"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/LiteralTerm-class.html">LiteralTerm</a></span> <span class="parameter-name">term</span>, </span><span class="parameter" id="fromRdfTerm-param-context"><span class="type-annotation"><a href="../rdf_mapper/DeserializationContext-class.html">DeserializationContext</a></span> <span class="parameter-name">context</span>, {</span><span class="parameter" id="fromRdfTerm-param-bypassDatatypeCheck"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">bypassDatatypeCheck</span> = <span class="default-value">false</span></span>})
+  <span class="name"><a href="../rdf_mapper/DatatypeOverrideMapper/fromRdfTerm.html">fromRdfTerm</a></span><span class="signature">(<wbr><span class="parameter" id="fromRdfTerm-param-term"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/LiteralTerm-class.html">LiteralTerm</a></span> <span class="parameter-name">term</span>, </span><span class="parameter" id="fromRdfTerm-param-context"><span class="type-annotation"><a href="../rdf_mapper/DeserializationContext-class.html">DeserializationContext</a></span> <span class="parameter-name">context</span>, {</span><span class="parameter" id="fromRdfTerm-param-bypassDatatypeCheck"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">bypassDatatypeCheck</span> = <span class="default-value">false</span></span>})
     <span class="returntype parameter">&#8594; T</span>
   </span>
   
@@ -271,7 +271,7 @@ localRegistry.registerMapper&lt;String&gt;(mapper);                // ❌
 
         <dt id="toRdfTerm" class="callable">
   <span class="name"><a href="../rdf_mapper/DatatypeOverrideMapper/toRdfTerm.html">toRdfTerm</a></span><span class="signature">(<wbr><span class="parameter" id="toRdfTerm-param-value"><span class="type-annotation">T</span> <span class="parameter-name">value</span>, </span><span class="parameter" id="toRdfTerm-param-context"><span class="type-annotation"><a href="../rdf_mapper/SerializationContext-class.html">SerializationContext</a></span> <span class="parameter-name">context</span></span>)
-    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/LiteralTerm-class.html">LiteralTerm</a></span>
+    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/LiteralTerm-class.html">LiteralTerm</a></span>
   </span>
   
 
@@ -345,7 +345,7 @@ localRegistry.registerMapper&lt;String&gt;(mapper);                // ❌
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.10.1
+      0.10.2
   </span>
   
 </footer>

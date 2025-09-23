@@ -116,6 +116,19 @@ domain objects to their RDF representation.</p>
       id="instance-methods">
     <h2>Methods</h2>
     <dl class="callables">
+        <dt id="createIriTerm" class="callable">
+  <span class="name"><a href="../rdf_mapper/SerializationContext/createIriTerm.html">createIriTerm</a></span><span class="signature">(<wbr><span class="parameter" id="createIriTerm-param-value"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">value</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/IriTerm-class.html">IriTerm</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Creates an IRI term from a string value.
+  
+
+</dd>
+
         <dt id="noSuchMethod" class="callable inherited">
   <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
     <span class="returntype parameter">&#8594; dynamic</span>
@@ -131,7 +144,7 @@ domain objects to their RDF representation.</p>
 
         <dt id="resource" class="callable">
   <span class="name"><a href="../rdf_mapper/SerializationContext/resource.html">resource</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="resource-param-instance"><span class="type-annotation">T</span> <span class="parameter-name">instance</span>, {</span><span class="parameter" id="resource-param-serializer"><span class="type-annotation"><a href="../rdf_mapper/ResourceSerializer-class.html">ResourceSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">serializer</span></span>})
-    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
   </span>
   
 
@@ -143,7 +156,7 @@ domain objects to their RDF representation.</p>
 </dd>
 
         <dt id="resourceBuilder" class="callable">
-  <span class="name"><a href="../rdf_mapper/SerializationContext/resourceBuilder.html">resourceBuilder</a></span><span class="signature">&lt;<wbr><span class="type-parameter">S extends <a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/RdfSubject-class.html">RdfSubject</a></span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="resourceBuilder-param-subject"><span class="type-annotation">S</span> <span class="parameter-name">subject</span></span>)
+  <span class="name"><a href="../rdf_mapper/SerializationContext/resourceBuilder.html">resourceBuilder</a></span><span class="signature">&lt;<wbr><span class="type-parameter">S extends <a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/RdfSubject-class.html">RdfSubject</a></span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="resourceBuilder-param-subject"><span class="type-annotation">S</span> <span class="parameter-name">subject</span></span>)
     <span class="returntype parameter">&#8594; <a href="../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S</span>&gt;</span></span>
   </span>
   
@@ -156,8 +169,8 @@ domain objects to their RDF representation.</p>
 </dd>
 
         <dt id="serialize" class="callable">
-  <span class="name"><a href="../rdf_mapper/SerializationContext/serialize.html">serialize</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="serialize-param-value"><span class="type-annotation">T</span> <span class="parameter-name">value</span>, {</span><span class="parameter" id="serialize-param-serializer"><span class="type-annotation"><a href="../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">serializer</span>, </span><span class="parameter" id="serialize-param-parentSubject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/RdfSubject-class.html">RdfSubject</a>?</span> <span class="parameter-name">parentSubject</span></span>})
-    <span class="returntype parameter">&#8594; (<span class="field"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/RdfTerm-class.html">RdfTerm</a></span>&gt;</span></span>, </span><span class="field"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/Triple-class.html">Triple</a></span>&gt;</span></span></span>)</span>
+  <span class="name"><a href="../rdf_mapper/SerializationContext/serialize.html">serialize</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="serialize-param-value"><span class="type-annotation">T</span> <span class="parameter-name">value</span>, {</span><span class="parameter" id="serialize-param-serializer"><span class="type-annotation"><a href="../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">serializer</span>, </span><span class="parameter" id="serialize-param-parentSubject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/RdfSubject-class.html">RdfSubject</a>?</span> <span class="parameter-name">parentSubject</span></span>})
+    <span class="returntype parameter">&#8594; (<span class="field"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/RdfTerm-class.html">RdfTerm</a></span>&gt;</span></span>, </span><span class="field"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/Triple-class.html">Triple</a></span>&gt;</span></span></span>)</span>
   </span>
   
 
@@ -170,7 +183,7 @@ domain objects to their RDF representation.</p>
 
         <dt id="toLiteralTerm" class="callable">
   <span class="name"><a href="../rdf_mapper/SerializationContext/toLiteralTerm.html">toLiteralTerm</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="toLiteralTerm-param-value"><span class="type-annotation">T</span> <span class="parameter-name">value</span>, {</span><span class="parameter" id="toLiteralTerm-param-serializer"><span class="type-annotation"><a href="../rdf_mapper/LiteralTermSerializer-class.html">LiteralTermSerializer</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span>?</span> <span class="parameter-name">serializer</span></span>})
-    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/LiteralTerm-class.html">LiteralTerm</a></span>
+    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/LiteralTerm-class.html">LiteralTerm</a></span>
   </span>
   
 
@@ -244,7 +257,7 @@ domain objects to their RDF representation.</p>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.10.1
+      0.10.2
   </span>
   
 </footer>

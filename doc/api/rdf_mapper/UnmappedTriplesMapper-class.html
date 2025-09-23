@@ -63,12 +63,12 @@ It provides the mechanism for round-trip fidelity when working with RDF data tha
 contains more information than what your object model explicitly represents.</p>
 <p>The mapper converts between:</p>
 <ul>
-<li>Collections of <a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/Triple-class.html">Triple</a> instances (representing raw RDF data)</li>
+<li>Collections of <a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/Triple-class.html">Triple</a> instances (representing raw RDF data)</li>
 <li>Typed Dart objects that can store and manage these triples</li>
 </ul>
 <p>Common implementations:</p>
 <ul>
-<li><code>RdfGraphMapper</code>: Maps to/from <a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/RdfGraph-class.html">RdfGraph</a> instances (default)</li>
+<li><code>RdfGraphMapper</code>: Maps to/from <a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/RdfGraph-class.html">RdfGraph</a> instances (default)</li>
 <li>Custom mappers: For specialized graph data structures or optimized storage</li>
 </ul>
 <p>Usage in lossless mapping:</p>
@@ -179,7 +179,7 @@ class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
     <h2>Methods</h2>
     <dl class="callables">
         <dt id="fromUnmappedTriples" class="callable inherited">
-  <span class="name"><a href="../rdf_mapper/UnmappedTriplesDeserializer/fromUnmappedTriples.html">fromUnmappedTriples</a></span><span class="signature">(<wbr><span class="parameter" id="fromUnmappedTriples-param-triples"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/Triple-class.html">Triple</a></span>&gt;</span></span> <span class="parameter-name">triples</span></span>)
+  <span class="name"><a href="../rdf_mapper/UnmappedTriplesDeserializer/fromUnmappedTriples.html">fromUnmappedTriples</a></span><span class="signature">(<wbr><span class="parameter" id="fromUnmappedTriples-param-triples"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/Triple-class.html">Triple</a></span>&gt;</span></span> <span class="parameter-name">triples</span></span>)
     <span class="returntype parameter">&#8594; T</span>
   </span>
   
@@ -218,8 +218,8 @@ class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
 </dd>
 
         <dt id="toUnmappedTriples" class="callable inherited">
-  <span class="name"><a href="../rdf_mapper/UnmappedTriplesSerializer/toUnmappedTriples.html">toUnmappedTriples</a></span><span class="signature">(<wbr><span class="parameter" id="toUnmappedTriples-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="toUnmappedTriples-param-value"><span class="type-annotation">T</span> <span class="parameter-name">value</span></span>)
-    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
+  <span class="name"><a href="../rdf_mapper/UnmappedTriplesSerializer/toUnmappedTriples.html">toUnmappedTriples</a></span><span class="signature">(<wbr><span class="parameter" id="toUnmappedTriples-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/RdfSubject-class.html">RdfSubject</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="toUnmappedTriples-param-value"><span class="type-annotation">T</span> <span class="parameter-name">value</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Iterable-class.html">Iterable</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/Triple-class.html">Triple</a></span>&gt;</span></span>
   </span>
   
 
@@ -280,7 +280,7 @@ class PersonMapper implements GlobalResourceMapper&lt;Person&gt; {
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.10.1
+      0.10.2
   </span>
   
 </footer>

@@ -67,8 +67,8 @@ when the same Dart classes are used for both RDF mapping and other formats
 <p>Examples:
 With base URI <code>"http://example.org/base/"</code>:</p>
 <ul>
-<li>Serialization: <code>"resource/1"</code> → <code>IriTerm("http://example.org/base/resource/1")</code></li>
-<li>Deserialization: <code>IriTerm("http://example.org/base/resource/1")</code> → <code>"resource/1"</code></li>
+<li>Serialization: <code>"resource/1"</code> → <code>const IriTerm("http://example.org/base/resource/1")</code></li>
+<li>Deserialization: <code>const IriTerm("http://example.org/base/resource/1")</code> → <code>"resource/1"</code></li>
 </ul>
 <p>This is particularly useful for document-relative IRI references where maintaining
 the relative structure is important for readability and portability in non-RDF formats.</p>
@@ -161,7 +161,7 @@ the relative structure is important for readability and portability in non-RDF f
     <h2>Methods</h2>
     <dl class="callables">
         <dt id="fromRdfTerm" class="callable">
-  <span class="name"><a href="../rdf_mapper/IriRelativeMapper/fromRdfTerm.html">fromRdfTerm</a></span><span class="signature">(<wbr><span class="parameter" id="fromRdfTerm-param-term"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">term</span>, </span><span class="parameter" id="fromRdfTerm-param-context"><span class="type-annotation"><a href="../rdf_mapper/DeserializationContext-class.html">DeserializationContext</a></span> <span class="parameter-name">context</span></span>)
+  <span class="name"><a href="../rdf_mapper/IriRelativeMapper/fromRdfTerm.html">fromRdfTerm</a></span><span class="signature">(<wbr><span class="parameter" id="fromRdfTerm-param-term"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">term</span>, </span><span class="parameter" id="fromRdfTerm-param-context"><span class="type-annotation"><a href="../rdf_mapper/DeserializationContext-class.html">DeserializationContext</a></span> <span class="parameter-name">context</span></span>)
     <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
   </span>
   
@@ -188,7 +188,7 @@ the relative structure is important for readability and portability in non-RDF f
 
         <dt id="toRdfTerm" class="callable">
   <span class="name"><a href="../rdf_mapper/IriRelativeMapper/toRdfTerm.html">toRdfTerm</a></span><span class="signature">(<wbr><span class="parameter" id="toRdfTerm-param-iri"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">iri</span>, </span><span class="parameter" id="toRdfTerm-param-context"><span class="type-annotation"><a href="../rdf_mapper/SerializationContext-class.html">SerializationContext</a></span> <span class="parameter-name">context</span></span>)
-    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/IriTerm-class.html">IriTerm</a></span>
+    <span class="returntype parameter">&#8594; <a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/IriTerm-class.html">IriTerm</a></span>
   </span>
   
 
@@ -262,7 +262,7 @@ the relative structure is important for readability and portability in non-RDF f
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.10.1
+      0.10.2
   </span>
   
 </footer>

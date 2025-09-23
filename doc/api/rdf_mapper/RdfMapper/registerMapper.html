@@ -103,7 +103,7 @@ for serialization to work correctly.</p>
 
   @override
   (IriTerm, Iterable&lt;Triple&gt;) toRdfResource(Person instance, SerializationContext context, {RdfSubject? parentSubject}) {
-    return context.resourceBuilder(IriTerm(instance.id))
+    return context.resourceBuilder(const IriTerm(instance.id))
       .addValue(FoafPerson.name, instance.name)
       .build();
   }
@@ -183,7 +183,7 @@ rdfMapper.registerMapper&lt;MyCustomGraph&gt;(MyCustomGraphMapper());
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.10.1
+      0.10.2
   </span>
   
 </footer>

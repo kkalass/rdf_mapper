@@ -60,8 +60,8 @@
 use the subject IRI as the base URI for relative IRI resolution. It's primarily designed
 for <strong>code generation scenarios</strong> and generic factory patterns where the base URI is not
 known at compile time.</p>
-<p><strong>For hand-written code</strong>, directly using <code>IriRelativeSerializer(subject.iri)</code> and
-<code>IriRelativeDeserializer(subject.iri)</code> is usually simpler and more straightforward.</p>
+<p><strong>For hand-written code</strong>, directly using <code>IriRelativeSerializer(subject.value)</code> and
+<code>IriRelativeDeserializer(subject.value)</code> is usually simpler and more straightforward.</p>
 <h2 id="key-features">Key Features</h2>
 <ul>
 <li><strong>Automatic Base URI Resolution</strong>: Uses the subject IRI as base URI for each serialization/deserialization</li>
@@ -86,7 +86,7 @@ class GeneratedPersonMapper implements GlobalResourceMapper&lt;Person&gt; {
   Person fromRdfResource(IriTerm subject, DeserializationContext context) {
     final reader = context.reader(subject);
     return Person(
-      id: subject.iri,
+      id: subject.value,
       name: reader.require&lt;String&gt;(FoafPerson.name),
       // Automatically uses subject IRI as base - no hardcoded URIs!
       photoPath: reader.optional&lt;String&gt;(
@@ -98,7 +98,7 @@ class GeneratedPersonMapper implements GlobalResourceMapper&lt;Person&gt; {
 
   @override
   (IriTerm, Iterable&lt;Triple&gt;) toRdfResource(Person person, SerializationContext context, {RdfSubject? parentSubject}) {
-    final subject = IriTerm(person.id);
+    final subject = const IriTerm(person.id);
     return context
         .resourceBuilder(subject)
         .addValue(FoafPerson.name, person.name)
@@ -116,7 +116,7 @@ class GeneratedPersonMapper implements GlobalResourceMapper&lt;Person&gt; {
 <pre class="language-dart"><code class="language-dart">// Simpler approach for hand-written code:
 photoPath: reader.optional&lt;String&gt;(
   FoafPerson.image,
-  deserializer: IriRelativeDeserializer(subject.iri)
+  deserializer: IriRelativeDeserializer(subject.value)
 ),
 </code></pre>
 <h2 id="behavior">Behavior</h2>
@@ -217,7 +217,7 @@ absolute IRIs in the RDF representation for proper semantic web compatibility.</
     <h2>Methods</h2>
     <dl class="callables">
         <dt id="deserializer" class="callable">
-  <span class="name"><a href="../rdf_mapper/IriRelativeSerializationProvider/deserializer.html">deserializer</a></span><span class="signature">(<wbr><span class="parameter" id="deserializer-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="deserializer-param-context"><span class="type-annotation"><a href="../rdf_mapper/DeserializationContext-class.html">DeserializationContext</a></span> <span class="parameter-name">context</span></span>)
+  <span class="name"><a href="../rdf_mapper/IriRelativeSerializationProvider/deserializer.html">deserializer</a></span><span class="signature">(<wbr><span class="parameter" id="deserializer-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="deserializer-param-context"><span class="type-annotation"><a href="../rdf_mapper/DeserializationContext-class.html">DeserializationContext</a></span> <span class="parameter-name">context</span></span>)
     <span class="returntype parameter">&#8594; <a href="../rdf_mapper/Deserializer-class.html">Deserializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>
   </span>
   
@@ -243,7 +243,7 @@ absolute IRIs in the RDF representation for proper semantic web compatibility.</
 </dd>
 
         <dt id="serializer" class="callable">
-  <span class="name"><a href="../rdf_mapper/IriRelativeSerializationProvider/serializer.html">serializer</a></span><span class="signature">(<wbr><span class="parameter" id="serializer-param-parent"><span class="type-annotation">D</span> <span class="parameter-name">parent</span>, </span><span class="parameter" id="serializer-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="serializer-param-context"><span class="type-annotation"><a href="../rdf_mapper/SerializationContext-class.html">SerializationContext</a></span> <span class="parameter-name">context</span></span>)
+  <span class="name"><a href="../rdf_mapper/IriRelativeSerializationProvider/serializer.html">serializer</a></span><span class="signature">(<wbr><span class="parameter" id="serializer-param-parent"><span class="type-annotation">D</span> <span class="parameter-name">parent</span>, </span><span class="parameter" id="serializer-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/IriTerm-class.html">IriTerm</a></span> <span class="parameter-name">subject</span>, </span><span class="parameter" id="serializer-param-context"><span class="type-annotation"><a href="../rdf_mapper/SerializationContext-class.html">SerializationContext</a></span> <span class="parameter-name">context</span></span>)
     <span class="returntype parameter">&#8594; <a href="../rdf_mapper/Serializer-class.html">Serializer</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span>
   </span>
   
@@ -318,7 +318,7 @@ absolute IRIs in the RDF representation for proper semantic web compatibility.</
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.10.1
+      0.10.2
   </span>
   
 </footer>

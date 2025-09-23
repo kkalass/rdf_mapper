@@ -70,11 +70,11 @@ that were captured using <a href="../../rdf_mapper/ResourceReader/getUnmapped.ht
 deserialization operation. This ensures complete round-trip fidelity when
 serializing objects that contain unmapped data.</p>
 <p>The <code>value</code> parameter should be a data structure containing RDF triples,
-typically an <a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/RdfGraph-class.html">RdfGraph</a> or a custom type that implements <a href="../../rdf_mapper/UnmappedTriplesMapper-class.html">UnmappedTriplesMapper</a>.
+typically an <a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/RdfGraph-class.html">RdfGraph</a> or a custom type that implements <a href="../../rdf_mapper/UnmappedTriplesMapper-class.html">UnmappedTriplesMapper</a>.
 If no <code>unmappedTriplesSerializer</code> is provided, the system will attempt to
 find a registered mapper for the type of <code>value</code>.</p>
 <p>Usage example:</p>
-<pre class="language-dart"><code class="language-dart">return context.resourceBuilder(IriTerm(person.id))
+<pre class="language-dart"><code class="language-dart">return context.resourceBuilder(const IriTerm(person.id))
   .addValue(foafName, person.name)
   .addValue(foafAge, person.age)
   .addUnmapped(person.unmappedGraph)  // Restore previously captured data
@@ -126,7 +126,7 @@ The optional <code>unmappedTriplesSerializer</code> can be provided for custom s
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.10.1
+      0.10.2
   </span>
   
 </footer>

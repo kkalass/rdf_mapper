@@ -116,7 +116,7 @@ class Temperature {
 }
 
 class TemperatureMapper extends DelegatingRdfLiteralTermMapper&lt;Temperature, double&gt; {
-  static final celsiusType = IriTerm('http://qudt.org/vocab/unit/CEL');
+  static final celsiusType = const IriTerm('http://qudt.org/vocab/unit/CEL');
   const TemperatureMapper() : super(const DoubleMapper(), celsiusType);
 
   @override
@@ -141,7 +141,7 @@ final personFromGraph = rdfMapper.graph.deserialize&lt;Person&gt;(graph);
 const baseUri = 'http://docs.example.org/';
 const relativeMapper = IriRelativeMapper(baseUri);
 final relativeIri = relativeMapper.toRdfTerm('chapter1.html', context);
-// Creates: IriTerm('http://docs.example.org/chapter1.html')
+// Creates: const IriTerm('http://docs.example.org/chapter1.html')
 </code></pre>
 </section>
 
@@ -659,7 +659,7 @@ but use different RDF datatypes.
 
 </dt>
 <dd>
-  Default implementation of <a href="../rdf_mapper/UnmappedTriplesMapper-class.html">UnmappedTriplesMapper</a> for <a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/RdfGraph-class.html">RdfGraph</a>.
+  Default implementation of <a href="../rdf_mapper/UnmappedTriplesMapper-class.html">UnmappedTriplesMapper</a> for <a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/RdfGraph-class.html">RdfGraph</a>.
 </dd>
 
           <dt id="RdfListDeserializer">
@@ -975,7 +975,7 @@ but use different RDF datatypes.
 </dd>
 
           <dt id="ResourceBuilder">
-  <span class="name "><a href="../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S extends <a href="https://pub.dev/documentation/rdf_core/0.9.14/rdf/RdfSubject-class.html">RdfSubject</a></span>&gt;</span></span> 
+  <span class="name "><a href="../rdf_mapper/ResourceBuilder-class.html">ResourceBuilder</a><span class="signature">&lt;<wbr><span class="type-parameter">S extends <a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/RdfSubject-class.html">RdfSubject</a></span>&gt;</span></span> 
 
 </dt>
 <dd>
@@ -1430,7 +1430,7 @@ but use different RDF datatypes.
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.10.1
+      0.10.2
   </span>
   
 </footer>

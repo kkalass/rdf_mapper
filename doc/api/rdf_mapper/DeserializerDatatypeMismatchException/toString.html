@@ -85,20 +85,20 @@ mainly for debugging or logging.</p>
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">@override
 String toString() {
-  final isActualXsd = actual.iri.startsWith(Xsd.namespace);
-  final isExpectedXsd = expected.iri.startsWith(Xsd.namespace);
+  final isActualXsd = actual.value.startsWith(Xsd.namespace);
+  final isExpectedXsd = expected.value.startsWith(Xsd.namespace);
   final shortActual = isActualXsd
-      ? &#39;xsd:${actual.iri.substring(Xsd.namespace.length)}&#39;
-      : actual.iri;
+      ? &#39;xsd:${actual.value.substring(Xsd.namespace.length)}&#39;
+      : actual.value;
   final shortExpected = isExpectedXsd
-      ? &#39;xsd:${expected.iri.substring(Xsd.namespace.length)}&#39;
-      : expected.iri;
+      ? &#39;xsd:${expected.value.substring(Xsd.namespace.length)}&#39;
+      : expected.value;
   final dartActual = isActualXsd
-      ? &#39;Xsd.${actual.iri.substring(Xsd.namespace.length)}&#39;
-      : &quot;IriTerm(&#39;${actual.iri}&#39;)&quot;;
+      ? &#39;Xsd.${actual.value.substring(Xsd.namespace.length)}&#39;
+      : &quot;const IriTerm(&#39;${actual.value}&#39;)&quot;;
   final dartActualConstContext = isActualXsd
-      ? &#39;Xsd.${actual.iri.substring(Xsd.namespace.length)}&#39;
-      : &quot;IriTerm.prevalidated(&#39;${actual.iri}&#39;)&quot;;
+      ? &#39;Xsd.${actual.value.substring(Xsd.namespace.length)}&#39;
+      : &quot;const IriTerm(&#39;${actual.value}&#39;)&quot;;
   final targetTypeCapitalized =
       &#39;${targetType.toString()[0].toUpperCase()}${targetType.toString().substring(1)}&#39;;
   return &#39;&#39;&#39;
@@ -185,7 +185,7 @@ to the same RDF datatype (${shortExpected}), preserving semantic meaning and pre
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.10.1
+      0.10.2
   </span>
   
 </footer>
