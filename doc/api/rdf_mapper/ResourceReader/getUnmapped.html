@@ -75,7 +75,7 @@ When <code>globalUnmapped</code> is true, it collects ALL unmapped triples from 
 graph, useful for document pattern scenarios where you want to preserve all
 unprocessed data.</p>
 <p>The collected triples are converted into the specified type <code>T</code> using an
-<a href="../../rdf_mapper/UnmappedTriplesDeserializer-class.html">UnmappedTriplesDeserializer</a>. The default implementation supports <a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/RdfGraph-class.html">RdfGraph</a>.</p>
+<a href="../../rdf_mapper/UnmappedTriplesDeserializer-class.html">UnmappedTriplesDeserializer</a>. The default implementation supports <a href="https://pub.dev/documentation/rdf_core/0.9.20/rdf/RdfGraph-class.html">RdfGraph</a>.</p>
 <p><strong>Important</strong>: This method should typically be called last in your mapper's
 <code>fromRdfResource</code> method, after all explicit property mappings have been performed.
 This ensures only truly unmapped triples are captured.</p>
@@ -111,7 +111,7 @@ Document&lt;Person&gt; fromRdfResource(IriTerm subject, DeserializationContext c
 <li><code>globalUnmapped</code> - When true, collects unmapped triples from the entire graph instead of just this subject.
 Requires a deep deserializer that supports blank node traversal.</li>
 </ul>
-<p>Returns the unmapped triples converted to type <code>T</code>, typically an <a href="https://pub.dev/documentation/rdf_core/0.9.15/rdf/RdfGraph-class.html">RdfGraph</a>.</p>
+<p>Returns the unmapped triples converted to type <code>T</code>, typically an <a href="https://pub.dev/documentation/rdf_core/0.9.20/rdf/RdfGraph-class.html">RdfGraph</a>.</p>
 </section>
 
 
@@ -152,7 +152,7 @@ Requires a deep deserializer that supports blank node traversal.</li>
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.10.2
+      0.10.3
   </span>
   
 </footer>
