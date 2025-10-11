@@ -66,7 +66,8 @@ void main() {
         final result = mapper.toRdfTerm('#section1', serializationContext);
 
         expect(result, isA<IriTerm>());
-        expect(result.value, equals('http://example.org/base/document#section1'));
+        expect(
+            result.value, equals('http://example.org/base/document#section1'));
       });
 
       test('resolves empty string to base URI', () {

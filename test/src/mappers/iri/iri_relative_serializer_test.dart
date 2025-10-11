@@ -61,7 +61,8 @@ void main() {
         final result = serializer.toRdfTerm('#section1', serializationContext);
 
         expect(result, isA<IriTerm>());
-        expect(result.value, equals('http://example.org/base/document#section1'));
+        expect(
+            result.value, equals('http://example.org/base/document#section1'));
       });
 
       test('resolves query-only reference', () {
@@ -72,8 +73,8 @@ void main() {
             serializer.toRdfTerm('?param=value', serializationContext);
 
         expect(result, isA<IriTerm>());
-        expect(
-            result.value, equals('http://example.org/base/document?param=value'));
+        expect(result.value,
+            equals('http://example.org/base/document?param=value'));
       });
 
       test('resolves empty string to base URI', () {

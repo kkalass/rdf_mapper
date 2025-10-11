@@ -96,14 +96,16 @@ void main() {
     group('toRdfTerm', () {
       test('appends path element to base IRI', () {
         final result = mapper.toRdfTerm('item123', serializationContext);
-        expect(result.value, equals('http://example.org/api/resources/item123'));
+        expect(
+            result.value, equals('http://example.org/api/resources/item123'));
       });
 
       test('handles base IRI without trailing slash', () {
         const mapperNoSlash =
             LastPathElementIriTermMapper('http://example.org/api/resources');
         final result = mapperNoSlash.toRdfTerm('item123', serializationContext);
-        expect(result.value, equals('http://example.org/api/resources/item123'));
+        expect(
+            result.value, equals('http://example.org/api/resources/item123'));
       });
 
       test('handles empty path element', () {

@@ -62,7 +62,8 @@ void main() {
   });
 
   /// Helper to create RDF numbered property IRIs (rdf:_1, rdf:_2, etc.)
-  IriTerm rdfLi(int number) => IriTerm.validated('http://www.w3.org/1999/02/22-rdf-syntax-ns#_$number');
+  IriTerm rdfLi(int number) =>
+      IriTerm.validated('http://www.w3.org/1999/02/22-rdf-syntax-ns#_$number');
 
   group('RDF Container Deserializers', () {
     group('RdfSeqDeserializer', () {

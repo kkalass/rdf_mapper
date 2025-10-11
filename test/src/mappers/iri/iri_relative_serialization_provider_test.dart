@@ -31,7 +31,8 @@ void main() {
         // Test that it uses the subject IRI as base by serializing a relative IRI
         final result = (serializer as IriRelativeSerializer)
             .toRdfTerm('photos/avatar.jpg', serializationContext);
-        expect(result.value, equals('https://example.org/doc/photos/avatar.jpg'));
+        expect(
+            result.value, equals('https://example.org/doc/photos/avatar.jpg'));
       });
 
       test('creates deserializer with subject IRI as base', () {
@@ -113,7 +114,8 @@ void main() {
         // Test person-relative photo path
         final photoIri =
             serializer.toRdfTerm('photos/avatar.jpg', serializationContext);
-        expect(photoIri.value, equals('https://alice.example/photos/avatar.jpg'));
+        expect(
+            photoIri.value, equals('https://alice.example/photos/avatar.jpg'));
 
         // Test relativization back to person IRI
         final absolutePhoto =
