@@ -585,26 +585,48 @@ final class RdfMapperRegistry {
   ///
   /// Returns true if a mapper is registered for type T, false otherwise
   bool hasIriTermDeserializerFor<T>() => _iriTermDeserializers.containsKey(T);
+  bool hasIriTermDeserializerForDartType(Type type) =>
+      _iriTermDeserializers.containsKey(type);
   bool hasGlobalResourceDeserializerFor<T>() =>
       _globalResourceDeserializers.containsKey(T);
+  bool hasGlobalResourceDeserializerForDartType(Type type) =>
+      _globalResourceDeserializers.containsKey(type);
   bool hasGlobalResourceDeserializerForType(IriTerm typeIri) =>
       _globalResourceDeserializersByType.containsKey(typeIri);
   bool hasLiteralTermDeserializerFor<T>() =>
       _literalTermDeserializers.containsKey(T);
+  bool hasLiteralTermDeserializerForDartType(Type type) =>
+      _literalTermDeserializers.containsKey(type);
   bool hasLocalResourceDeserializerFor<T>() =>
       _localResourceDeserializers.containsKey(T);
+  bool hasLocalResourceDeserializerForDartType(Type type) =>
+      _localResourceDeserializers.containsKey(type);
   bool hasIriTermSerializerFor<T>() => _iriTermSerializers.containsKey(T);
+  bool hasIriTermSerializerForDartType(Type type) =>
+      _iriTermSerializers.containsKey(type);
   bool hasLiteralTermSerializerFor<T>() =>
       _literalTermSerializers.containsKey(T);
+  bool hasLiteralTermSerializerForDartType(Type type) =>
+      _literalTermSerializers.containsKey(type);
   bool hasResourceSerializerFor<T>() => _resourceSerializers.containsKey(T);
+  bool hasResourceSerializerForDartType(Type type) =>
+      _resourceSerializers.containsKey(type);
   bool hasUnmappedTriplesDeserializerFor<T>() =>
       _unmappedTriplesDeserializers.containsKey(T);
+  bool hasUnmappedTriplesDeserializerForDartType(Type type) =>
+      _unmappedTriplesDeserializers.containsKey(type);
   bool hasUnmappedTriplesSerializerFor<T>() =>
       _unmappedTriplesSerializers.containsKey(T);
+  bool hasUnmappedTriplesSerializerForDartType(Type type) =>
+      _unmappedTriplesSerializers.containsKey(type);
   bool hasMultiObjectsDeserializerFor<T>() =>
       _multiObjectsDeserializers.containsKey(T);
+  bool hasMultiObjectsDeserializerForDartType(Type type) =>
+      _multiObjectsDeserializers.containsKey(type);
   bool hasMultiObjectsSerializerFor<T>() =>
       _multiObjectsSerializers.containsKey(T);
+  bool hasMultiObjectsSerializerForDartType(Type type) =>
+      _multiObjectsSerializers.containsKey(type);
 }
 
 // These are internal adapter classes, typically used only by CommonResourceMapper.

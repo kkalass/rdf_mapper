@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.3] - 2025-10-11
+
+### Added
+
+- **Runtime Type-Based Mapper Existence Checks**: Extended `RdfMapperRegistry` API with runtime type parameter variants for all `has*For<T>()` methods
+  - Added `hasIriTermDeserializerForDartType(Type type)` to complement `hasIriTermDeserializerFor<T>()`
+  - Added `hasGlobalResourceDeserializerForDartType(Type type)` to complement `hasGlobalResourceDeserializerFor<T>()`
+  - Added `hasLiteralTermDeserializerForDartType(Type type)` to complement `hasLiteralTermDeserializerFor<T>()`
+  - Added `hasLocalResourceDeserializerForDartType(Type type)` to complement `hasLocalResourceDeserializerFor<T>()`
+  - Added `hasIriTermSerializerForDartType(Type type)` to complement `hasIriTermSerializerFor<T>()`
+  - Added `hasLiteralTermSerializerForDartType(Type type)` to complement `hasLiteralTermSerializerFor<T>()`
+  - Added `hasResourceSerializerForDartType(Type type)` to complement `hasResourceSerializerFor<T>()`
+  - Added `hasUnmappedTriplesDeserializerForDartType(Type type)` to complement `hasUnmappedTriplesDeserializerFor<T>()`
+  - Added `hasUnmappedTriplesSerializerForDartType(Type type)` to complement `hasUnmappedTriplesSerializerFor<T>()`
+  - Added `hasMultiObjectsDeserializerForDartType(Type type)` to complement `hasMultiObjectsDeserializerFor<T>()`
+  - Added `hasMultiObjectsSerializerForDartType(Type type)` to complement `hasMultiObjectsSerializerFor<T>()`
+  - Enables mapper existence checks when only runtime type information is available
+  - Useful for scenarios with nullable types, dynamic type resolution, or reflection-based code
+  - Maintains consistency with existing `get*ByType()` methods that already accept runtime Type parameters
+
 ## [0.10.2] - 2025-09-23
 
 ### Added
