@@ -167,8 +167,10 @@ final class GraphOperations {
     RdfGraph graph, {
     RdfSubject? subject,
     void Function(RdfMapperRegistry registry)? register,
+    CompletenessMode completeness = CompletenessMode.strict,
   }) {
-    return objectCodec<T>(register: register).decode(graph, subject: subject);
+    return objectCodec<T>(register: register, completeness: completeness)
+        .decode(graph, subject: subject);
   }
 
   /// Deserializes all subjects of type [T] from an RDF graph.
