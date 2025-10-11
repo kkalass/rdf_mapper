@@ -59,6 +59,7 @@
 <li><span class="parameter" id="decodeObject-param-subject"><span class="type-annotation"><a href="https://pub.dev/documentation/rdf_core/0.9.20/rdf/RdfSubject-class.html">RdfSubject</a>?</span> <span class="parameter-name">subject</span>, </span></li>
 <li><span class="parameter" id="decodeObject-param-register"><span class="type-annotation">void</span> <span class="parameter-name">register</span>(<ol class="parameter-list single-line"> <li><span class="parameter" id="param-registry"><span class="type-annotation"><a href="../../rdf_mapper/RdfMapperRegistry-class.html">RdfMapperRegistry</a></span> <span class="parameter-name">registry</span></span></li>
 </ol>)?, </span></li>
+<li><span class="parameter" id="decodeObject-param-completeness"><span class="type-annotation"><a href="../../rdf_mapper/CompletenessMode.html">CompletenessMode</a></span> <span class="parameter-name">completeness</span> = <span class="default-value">CompletenessMode.strict</span>, </span></li>
 </ol>})
 
       
@@ -99,8 +100,10 @@ Throws <a href="../../rdf_mapper/NoDeserializableSubjectsException-class.html">N
   RdfGraph graph, {
   RdfSubject? subject,
   void Function(RdfMapperRegistry registry)? register,
+  CompletenessMode completeness = CompletenessMode.strict,
 }) {
-  return objectCodec&lt;T&gt;(register: register).decode(graph, subject: subject);
+  return objectCodec&lt;T&gt;(register: register, completeness: completeness)
+      .decode(graph, subject: subject);
 }</code></pre>
 </section>
 
@@ -129,7 +132,7 @@ Throws <a href="../../rdf_mapper/NoDeserializableSubjectsException-class.html">N
 <footer>
   <span class="no-break">
     rdf_mapper
-      0.10.3
+      0.10.4
   </span>
   
 </footer>
