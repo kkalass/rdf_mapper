@@ -1,5 +1,5 @@
 name: rdf_mapper
-version: 0.10.5-dev
+version: 0.10.5
 homepage: https://kkalass.github.io/rdf_mapper/
 repository: https://github.com/kkalass/rdf_mapper
 issue_tracker: https://github.com/kkalass/rdf_mapper/issues
@@ -14,8 +14,7 @@ changelog: CHANGELOG.md
 license: LICENSE
 maintainers:
   - "Klas Kalaß <habbatical@gmail.com>"
-description: >
-  ORM-like mapping between plain Dart classes and RdfGraph from rdf_core. Companion library for https://pub.dev/packages/rdf_core.
+description: "DEPRECATED: Moved to locorda_rdf_mapper. This package is no longer maintained."
 environment:
   sdk: '^3.6.0'
 dependencies:

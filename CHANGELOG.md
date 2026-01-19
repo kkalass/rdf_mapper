@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.5] - 2026-01-19
+
+### Deprecated
+
+- **This package is deprecated and no longer maintained.**
+- All functionality has been moved to [`locorda_rdf_mapper`](https://pub.dev/packages/locorda_rdf_mapper) as part of the [locorda](https://github.com/locorda) project.
+- Please migrate to the new package by replacing `rdf_mapper` with `locorda_rdf_mapper` in your `pubspec.yaml` and updating your imports.
+- **Important:** All rdf_* packages have been moved. You must also migrate dependencies like `rdf_core` to [`locorda_rdf_core`](https://pub.dev/packages/locorda_rdf_core).
+- This repository will be archived.
+
 ## [0.10.4] - 2025-10-11
 
 ### Added
